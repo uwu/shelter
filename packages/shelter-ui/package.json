@@ -1,0 +1,16 @@
+{
+  "name": "shelter-ui",
+  "description": "Discord components remade for Shelter",
+  "version": "1.0.0",
+  "author": "uwu.network",
+  "repository": "github:uwu/shelter",
+  "type": "module",
+  "main": "src/index.tsx",
+  "module": "src/index.tsx",
+  "devDependencies": {
+    "solid-js": "^1.5.7"
+  },
+  "peerDependencies": {
+    "solid-js": "^1.5.7"
+  }
+}

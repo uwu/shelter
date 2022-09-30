@@ -4,6 +4,8 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
-    "declaration": true
+    "declaration": true,
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js"
   }
 }

@@ -1,12 +1,35 @@
 lockfileVersion: 5.4
 
-specifiers:
-  esbuild: ^0.15.10
-  typescript: ^4.8.4
+importers:
 
-devDependencies:
-  esbuild: 0.15.10
-  typescript: 4.8.4
+  .:
+    specifiers:
+      esbuild: ^0.15.10
+      typescript: ^4.8.4
+    devDependencies:
+      esbuild: 0.15.10
+      typescript: 4.8.4
+
+  packages/shelter:
+    specifiers:
+      solid-js: ^1.5.7
+      solid-styled-jsx: ^0.27.1
+      styled-jsx: ^5.0.7
+    devDependencies:
+      solid-js: 1.5.7
+      solid-styled-jsx: 0.27.1_kog6faz5abyjyzi6pfiuoewnm4
+      styled-jsx: 5.0.7
+
+  packages/shelter-ui:
+    specifiers:
+      solid-js: ^1.5.7
+      solid-styled-jsx: ^0.27.1
+      styled-jsx: ^5.0.7
+    dependencies:
+      solid-styled-jsx: 0.27.1_kog6faz5abyjyzi6pfiuoewnm4
+      styled-jsx: 5.0.7
+    devDependencies:
+      solid-js: 1.5.7
 
 packages:
 
@@ -27,6 +50,12 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /babel-plugin-transform-rename-import/2.3.0:
+    resolution: {integrity: sha512-dPgJoT57XC0PqSnLgl2FwNvxFrWlspatX2dkk7yjKQj5HHGw071vAcOf+hqW8ClqcBDMvEbm6mevn5yHAD8mlQ==}
+
+  /csstype/3.1.1:
+    resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
 
   /esbuild-android-64/0.15.10:
     resolution: {integrity: sha512-UI7krF8OYO1N7JYTgLT9ML5j4+45ra3amLZKx7LO3lmLt1Ibn8t3aZbX5Pu4BjWiqDuJ3m/hsvhPhK/5Y/YpnA==}
@@ -237,6 +266,34 @@ packages:
       esbuild-windows-64: 0.15.10
       esbuild-windows-arm64: 0.15.10
     dev: true
+
+  /solid-js/1.5.7:
+    resolution: {integrity: sha512-L1UuyMuZZARAwzXo5NZDhE6yxc14aqNbVOUoGzvlcxRZo1Cm4ExhPV0diEfwDyiKG/igqNNLkNurHkXiI5sVEg==}
+    dependencies:
+      csstype: 3.1.1
+
+  /solid-styled-jsx/0.27.1_kog6faz5abyjyzi6pfiuoewnm4:
+    resolution: {integrity: sha512-s/BidA5ii4cGuWbk4cB3qajXkZuBfqaoQPhw0Exzbc8Y3fqy2g0qshmJyop0iuSZgJ8FpJ9UeYVLhRF0GZbVpA==}
+    peerDependencies:
+      solid-js: ^1.0.0
+      styled-jsx: ^3.4.4
+    dependencies:
+      babel-plugin-transform-rename-import: 2.3.0
+      solid-js: 1.5.7
+      styled-jsx: 5.0.7
+
+  /styled-jsx/5.0.7:
+    resolution: {integrity: sha512-b3sUzamS086YLRuvnaDigdAewz1/EFYlHpYBP5mZovKEdQQOIIYq8lApylub3HHZ6xFjV051kkGU7cudJmrXEA==}
+    engines: {node: '>= 12.0.0'}
+    peerDependencies:
+      '@babel/core': '*'
+      babel-plugin-macros: '*'
+      react: '>= 16.8.0 || 17.x.x || ^18.0.0-0'
+    peerDependenciesMeta:
+      '@babel/core':
+        optional: true
+      babel-plugin-macros:
+        optional: true
 
   /typescript/4.8.4:
     resolution: {integrity: sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ==}
