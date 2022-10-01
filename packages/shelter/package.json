@@ -1,3 +1,5 @@
 {
-  "scripts": {}
+  "scripts": {
+    "build": "esbuild ./src/index.ts --bundle --outfile='./dist/shelter.js'"
+  }
 }
