@@ -11,7 +11,14 @@ importers:
       typescript: 4.8.4
 
   packages/shelter:
-    specifiers: {}
+    specifiers:
+      '@cumjar/websmack': ^1.2.0
+      solid-js: ^1.5.7
+      spitroast: ^1.4.2
+    dependencies:
+      '@cumjar/websmack': 1.2.0
+      solid-js: 1.5.7
+      spitroast: 1.4.2
 
   packages/shelter-ui:
     specifiers:
@@ -20,6 +27,10 @@ importers:
       solid-js: 1.5.7
 
 packages:
+
+  /@cumjar/websmack/1.2.0:
+    resolution: {integrity: sha512-CtNQ3/EdeEAEx8bAPi3eKNCC41P88u40ja69TwpVerMZ93l0Kk7NpfvqY+YW50AvBN90FdmfLCRsJYzPIxQ90A==}
+    dev: false
 
   /@esbuild/android-arm/0.15.10:
     resolution: {integrity: sha512-FNONeQPy/ox+5NBkcSbYJxoXj9GWu8gVGJTVmUyoOCKQFDTrHVKgNSzChdNt0I8Aj/iKcsDf2r9BFwv+FSNUXg==}
@@ -41,7 +52,6 @@ packages:
 
   /csstype/3.1.1:
     resolution: {integrity: sha512-DJR/VvkAvSZW9bTouZue2sSxDwdTN92uHjqeKVm+0dAqdfNykRzQ95tay8aXMBAAPpUiq4Qcug2L7neoRh2Egw==}
-    dev: true
 
   /esbuild-android-64/0.15.10:
     resolution: {integrity: sha512-UI7krF8OYO1N7JYTgLT9ML5j4+45ra3amLZKx7LO3lmLt1Ibn8t3aZbX5Pu4BjWiqDuJ3m/hsvhPhK/5Y/YpnA==}
@@ -257,7 +267,10 @@ packages:
     resolution: {integrity: sha512-L1UuyMuZZARAwzXo5NZDhE6yxc14aqNbVOUoGzvlcxRZo1Cm4ExhPV0diEfwDyiKG/igqNNLkNurHkXiI5sVEg==}
     dependencies:
       csstype: 3.1.1
-    dev: true
+
+  /spitroast/1.4.2:
+    resolution: {integrity: sha512-iEBsKg3EXTQj2nikYIMtOE5YSqbI5CtRxVYI+Gh+9HeQxf4u86UWF5yC5eTVAoReZSogbD2M37JYG8TYGBnFTg==}
+    dev: false
 
   /typescript/4.8.4:
     resolution: {integrity: sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ==}
