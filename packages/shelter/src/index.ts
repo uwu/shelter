@@ -11,7 +11,7 @@ const start = performance.now()
 log("shelter is initializing...")
 
 getDispatcher().then(FluxDispatcher => {
-  // We can potentially move the window obj to it's own module later, I think it's help with typedefs?
+  // We can potentially move the window obj to it's own module later, I think it'd help with typedefs?
   window["shelter"] = {
     FluxDispatcher,
     patcher,
