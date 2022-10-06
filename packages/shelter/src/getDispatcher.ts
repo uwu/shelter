@@ -24,7 +24,7 @@ export default async function getDispatcher() { // TODO: Actually type the dispa
   }
 
   // Promises bubble up, this is fine.
-  if (!dispatcher) return new Promise((res) => {
+  if (!dispatcher) dispatcher = new Promise((res) => {
     // Are you happy now?
     Object.defineProperty(Object.prototype, "_dispatcher", {
       set(value) {
