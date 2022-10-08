@@ -2,6 +2,7 @@ import getDispatcher from "./getDispatcher";
 import * as patcher from "spitroast";
 import * as solid from "solid-js";
 import * as util from "./util";
+import * as ui from "shelter-ui";
 import { initSettings } from "./settings";
 
 // We can move this somewhere else, I just put it here for now.
@@ -19,6 +20,7 @@ log("shelter is initializing...");
 
 getDispatcher().then(async (FluxDispatcher) => {
   const cleanupSettings = await initSettings();
+  ui.initCss();
 
   // We can potentially move the window obj to it's own module later, I think it'd help with typedefs?
   window["shelter"] = {
@@ -26,8 +28,10 @@ getDispatcher().then(async (FluxDispatcher) => {
     patcher,
     solid,
     util,
+    ui: {...ui, initCss: undefined, uninitCss: undefined},
     unpatch() {
       cleanupSettings();
+      ui.uninitCss();
     },
   };
 

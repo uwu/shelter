@@ -2,6 +2,78 @@
 
 import getDispatcher from "./getDispatcher";
 import { awaitDispatch, getFiber, reactFiberWalker } from "./util";
+import { Component, createSignal, JSX } from "solid-js";
+import { Button, ButtonColors } from "shelter-ui";
+
+const SettingsInj: Component<{
+  dividerClasses: string;
+  headerClasses: string;
+  tabClasses: string;
+  mainSection: Element;
+  content: JSX.Element;
+  dispatcher: any;
+}> = (props) => {
+  const [settingsOpen, setSettingsOpen] = createSignal(false);
+
+  // when a tab is selected, this dispatches a change to a non-existent tab and back again.
+  let ignoreNextDispatch = false;
+  const cb = (d) => {
+    //debugger;
+    setSettingsOpen(false);
+
+    // TODO: fix all this stuff
+    /*if (ignoreNextDispatch) {
+			ignoreNextDispatch = false;
+			return;
+		}
+
+		if (!d.SHLTR_REDISPATCH) {
+			// dispatch empty
+			props.dispatcher.dispatch({ type: "USER_SETTINGS_MODAL_SET_SECTION", SHLTR_REDISPATCH: d });
+			return;
+		}
+
+		// redispatch
+		queueMicrotask(() => props.dispatcher.dispatch(d.SHLTR_REDISPATCH));
+		ignoreNextDispatch = true;*/
+  };
+
+  props.dispatcher.subscribe("USER_SETTINGS_MODAL_SET_SECTION", cb);
+  const cleanup = () => props.dispatcher.unsubscribe("USER_SETTINGS_MODAL_SET_SECTION", cb);
+
+  const div = (
+    <div style="display: contents">
+      <div class={props.dividerClasses} />
+      <div class={props.headerClasses} role="button" tabIndex="-1">
+        Shelter
+      </div>
+      <div
+        class={props.tabClasses}
+        role="tab"
+        aria-selected={settingsOpen()}
+        aria-disabled={false}
+        tabIndex="-1"
+        aria-label="Test tab"
+        style={{
+          background: settingsOpen() && "var(--background-modifier-selected)",
+        }}
+        onclick={() => {
+          if (settingsOpen()) return;
+          setSettingsOpen(true);
+          props.mainSection.firstElementChild.innerHTML = "";
+          props.mainSection.firstElementChild.append((<div style="display: contents">{props.content}</div>) as Element);
+        }}
+      >
+        Test tab
+      </div>
+    </div>
+  );
+
+  // this is bad and deprecated and ew but 'cause we're not in a real solid app we can't use onCleanup :( -- sink
+  (div as Element).addEventListener("DOMNodeRemovedFromDocument", cleanup);
+
+  return div;
+};
 
 export async function initSettings() {
   const FluxDispatcher = await getDispatcher();
@@ -22,7 +94,8 @@ export async function initSettings() {
     // microtask is necessary to allow react to finish rendering the ui before we run
     queueMicrotask(() => {
       const sidebar = document.querySelector("nav > [role=tablist]");
-      if (!sidebar) return;
+      const mainSection = document.querySelector("[role=tabpanel]");
+      if (!sidebar || !mainSection) return;
 
       const changelogIdx = [...sidebar.children].findIndex(
         (c) => reactFiberWalker(getFiber(c), "id", true)?.pendingProps?.id === "changelog"
@@ -36,30 +109,29 @@ export async function initSettings() {
       const dividerClasses = dividerAboveChangelog.className;
       const headerClasses = sidebar.firstElementChild.className;
 
-      const shelterDivider = <div class={dividerClasses} />;
-
-      const shelterHeader = (
-        <div class={headerClasses} role="button" tabIndex="-1">
-          Shelter
-        </div>
+      const content = (
+        <>
+          {Object.values(ButtonColors).map((c) => (
+            <div style="display:flex; gap:1rem">
+              {[0, 1, 2, 3].map((l) => (
+                <Button look={l} color={c}>
+                  test
+                </Button>
+              ))}
+            </div>
+          ))}
+        </>
       );
 
-      const shelterTab = (
-        <div
-          class={tabClasses}
-          role="tab"
-          aria-selected={false}
-          aria-disabled={false}
-          tabIndex="-1"
-          aria-label="Test tab"
-        >
-          Test tab
-        </div>
+      const injection = (
+        <SettingsInj
+          {...{ dividerClasses, headerClasses, tabClasses, mainSection }}
+          dispatcher={FluxDispatcher}
+          content={content}
+        />
       );
 
-      sidebar.insertBefore(shelterDivider as Element, dividerAboveChangelog);
-      sidebar.insertBefore(shelterHeader as Element, dividerAboveChangelog);
-      sidebar.insertBefore(shelterTab as Element, dividerAboveChangelog);
+      sidebar.insertBefore(injection as Element, dividerAboveChangelog);
     });
   };
 
