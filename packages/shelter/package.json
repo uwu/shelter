@@ -4,6 +4,7 @@
   },
   "dependencies": {
     "@cumjar/websmack": "^1.2.0",
+    "shelter-ui": "workspace:*",
     "solid-js": "^1.5.7",
     "spitroast": "^1.4.2"
   },

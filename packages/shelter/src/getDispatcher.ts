@@ -11,12 +11,12 @@ export default async function getDispatcher() { // TODO: Actually type the dispa
   if (dispatcher) return dispatcher;
 
   try {
-    // @ts-expect-error We have a fallback, it's okay
     dispatcher = Object.values(
       webpackChunk("webpackChunkdiscord_app")[0]
     ).find(
-      // @ts-expect-error We have a fallback
+      // @ts-expect-error We have a fallback, it's okay
       (x) => x?.exports?.default?._dispatcher
+      // @ts-expect-error We have a fallback
     ).exports.default._dispatcher;
   } catch {
     // I know what you're thinking.
