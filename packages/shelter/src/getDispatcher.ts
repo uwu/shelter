@@ -6,16 +6,17 @@ declare global {
   }
 }
 
+let dispatcher;
 export default async function getDispatcher() { // TODO: Actually type the dispatcher
-  let dispatcher;
+  if (dispatcher) return dispatcher;
 
   try {
+    // @ts-expect-error We have a fallback, it's okay
     dispatcher = Object.values(
       webpackChunk("webpackChunkdiscord_app")[0]
     ).find(
-      // @ts-expect-error We have a fallback, see below!
+      // @ts-expect-error We have a fallback
       (x) => x?.exports?.default?._dispatcher
-      // @ts-expect-error See above! ^
     ).exports.default._dispatcher;
   } catch {
     // I know what you're thinking.

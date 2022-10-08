@@ -1,5 +1,5 @@
 import {build} from "esbuild";
-import pluginBabel from "esbuild-plugin-babel";
+import { solidPlugin } from "esbuild-plugin-solid";
 
 build({
 	entryPoints: ["src/index.ts"],
@@ -8,11 +8,6 @@ build({
 	sourcemap: "external",
 	minify: true,
 	plugins: [
-		pluginBabel({
-			config: {
-				// unfortunately babel must transform the typescript, just having it parse it is not enough.
-				presets: ["@babel/preset-typescript", "solid"]
-			}
-		})
+		solidPlugin()
 	]
 })

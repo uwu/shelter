@@ -8,9 +8,6 @@
     "spitroast": "^1.4.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.19.3",
-    "@babel/preset-typescript": "^7.18.6",
-    "babel-preset-solid": "^1.5.7",
-    "esbuild-plugin-babel": "^0.2.3"
+    "esbuild-plugin-solid": "^0.4.2"
   }
 }
