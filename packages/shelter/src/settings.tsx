@@ -23,28 +23,30 @@ export async function initSettings() {
       const dividerClasses = dividerAboveChangelog.className;
       const headerClasses = sidebar.firstElementChild.className;
 
-      // TODO: try to get babel-preset-solid to play nice with esbuild
-      const shelterDivider = document.createElement("div");
-      shelterDivider.className = dividerClasses;
+      const shelterDivider = <div class={dividerClasses} />;
 
-      const shelterHeader = document.createElement("div");
-      shelterHeader.className = headerClasses;
-      shelterHeader.setAttribute("role", "button");
-      shelterHeader.tabIndex = -1;
-      shelterHeader.textContent = "Shelter";
+      const shelterHeader = (
+        <div class={headerClasses} role="button" tabIndex="-1">
+          Shelter
+        </div>
+      );
 
-      const shelterTab = document.createElement("div");
-      shelterTab.className = tabClasses;
-      shelterTab.setAttribute("role", "tab");
-      shelterTab.ariaSelected = "false";
-      shelterTab.ariaDisabled = "false";
-      shelterTab.tabIndex = -1;
-      shelterTab.ariaLabel = "Test tab";
-      shelterTab.textContent = "Test tab";
+      const shelterTab = (
+        <div
+          class={tabClasses}
+          role="tab"
+          aria-selected={false}
+          aria-disabled={false}
+          tabIndex="-1"
+          aria-label="Test tab"
+        >
+          Test tab
+        </div>
+      );
 
-      sidebar.insertBefore(shelterDivider, dividerAboveChangelog);
-      sidebar.insertBefore(shelterHeader, dividerAboveChangelog);
-      sidebar.insertBefore(shelterTab, dividerAboveChangelog);
+      sidebar.insertBefore(shelterDivider as Element, dividerAboveChangelog);
+      sidebar.insertBefore(shelterHeader as Element, dividerAboveChangelog);
+      sidebar.insertBefore(shelterTab as Element, dividerAboveChangelog);
     });
 
   FluxDispatcher.subscribe("USER_SETTINGS_MODAL_OPEN", cb);
