@@ -1,12 +1,25 @@
 // Injects a section into user settings
 
 import getDispatcher from "./getDispatcher";
-import { getFiber, reactFiberWalker } from "./util";
+import { awaitDispatch, getFiber, reactFiberWalker } from "./util";
 
 export async function initSettings() {
   const FluxDispatcher = await getDispatcher();
 
-  const cb = () =>
+  let firstDispatch = true;
+  let canceled = false;
+
+  const cb = async () => {
+    // wait for lazy loading on initial user settings open
+    if (firstDispatch) {
+      await awaitDispatch("USER_PROFILE_FETCH_SUCCESS");
+      firstDispatch = false;
+    }
+
+    // I <3 async
+    if (canceled) return;
+
+    // microtask is necessary to allow react to finish rendering the ui before we run
     queueMicrotask(() => {
       const sidebar = document.querySelector("nav > [role=tablist]");
       if (!sidebar) return;
@@ -48,8 +61,12 @@ export async function initSettings() {
       sidebar.insertBefore(shelterHeader as Element, dividerAboveChangelog);
       sidebar.insertBefore(shelterTab as Element, dividerAboveChangelog);
     });
+  };
 
   FluxDispatcher.subscribe("USER_SETTINGS_MODAL_OPEN", cb);
 
-  return () => FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
+  return () => {
+    FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
+    canceled = true;
+  };
 }

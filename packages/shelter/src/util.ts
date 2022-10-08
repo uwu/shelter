@@ -1,3 +1,5 @@
+import getDispatcher from "./getDispatcher";
+
 interface Fiber extends Record<any, any> {
   // TODO: maybe type this lol
 }
@@ -16,3 +18,13 @@ export function reactFiberWalker(node: Fiber, prop: string | symbol, goUp = fals
 
   return reactFiberWalker(goUp ? node.return : node.child, prop, goUp) ?? reactFiberWalker(node.sibling, prop, goUp);
 }
+
+export const awaitDispatch = (type: string) =>
+  new Promise<any>(async (res) => {
+    const dispatcher = await getDispatcher();
+    const cb = (d) => {
+      res(d);
+      dispatcher.unsubscribe(type, cb);
+    };
+    dispatcher.subscribe(type, cb);
+  });
