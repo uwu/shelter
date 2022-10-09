@@ -3,7 +3,7 @@
 import getDispatcher from "./getDispatcher";
 import { awaitDispatch, getFiber, reactFiberWalker } from "./util";
 import { Component, createSignal, JSX } from "solid-js";
-import { Button, ButtonColors } from "shelter-ui";
+import { Button, ButtonColors, withCleanup } from "shelter-ui";
 
 const SettingsInj: Component<{
   dividerClasses: string;
@@ -12,7 +12,7 @@ const SettingsInj: Component<{
   mainSection: Element;
   content: JSX.Element;
   dispatcher: any;
-}> = (props) => {
+}> = withCleanup((onCleanup, props) => {
   const [settingsOpen, setSettingsOpen] = createSignal<[HTMLDivElement, Element] | undefined>();
 
   // when we are clicked, we hide discord's settings page and insert our own
@@ -30,7 +30,7 @@ const SettingsInj: Component<{
   };
 
   props.dispatcher.subscribe("USER_SETTINGS_MODAL_SET_SECTION", cb);
-  const cleanup = () => props.dispatcher.unsubscribe("USER_SETTINGS_MODAL_SET_SECTION", cb);
+  onCleanup(() => props.dispatcher.unsubscribe("USER_SETTINGS_MODAL_SET_SECTION", cb));
 
   const div = (
     <div style="display: contents">
@@ -55,7 +55,7 @@ const SettingsInj: Component<{
 
           setSettingsOpen([theirDiv, ourDiv]);
 
-          theirDiv.style.display = "none"
+          theirDiv.style.display = "none";
           props.mainSection.append(ourDiv);
         }}
       >
@@ -64,11 +64,8 @@ const SettingsInj: Component<{
     </div>
   );
 
-  // this is bad and deprecated and ew but 'cause we're not in a real solid app we can't use onCleanup :( -- sink
-  (div as Element).addEventListener("DOMNodeRemovedFromDocument", cleanup);
-
   return div;
-};
+});
 
 export async function initSettings() {
   const FluxDispatcher = await getDispatcher();
