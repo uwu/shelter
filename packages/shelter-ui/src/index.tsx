@@ -23,7 +23,7 @@ export const withCleanup =
 
 let initedStyle: HTMLStyleElement;
 
-export const initCss = () =>
+export const initCss = () => {
   document.head.append(
     (initedStyle = (
       <style>
@@ -34,9 +34,10 @@ export const initCss = () =>
     ) as HTMLStyleElement)
   );
 
-export const uninitCss = () => {
-  initedStyle.remove();
-  initedStyle = undefined;
+  return () => {
+    initedStyle.remove();
+    initedStyle = undefined;
+  }
 };
 
 export const Text: Component<{ children: JSX.Element }> = (props) => (

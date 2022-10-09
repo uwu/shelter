@@ -19,8 +19,11 @@ const start = performance.now();
 log("shelter is initializing...");
 
 getDispatcher().then(async (FluxDispatcher) => {
-  const cleanupSettings = await initSettings();
-  ui.initCss();
+  // load all the things in parallel :D
+  const unloads = await Promise.all([
+    ui.initCss(),
+    initSettings()
+  ]);
 
   // We can potentially move the window obj to it's own module later, I think it'd help with typedefs?
   window["shelter"] = {
@@ -28,11 +31,8 @@ getDispatcher().then(async (FluxDispatcher) => {
     patcher,
     solid,
     util,
-    ui: {...ui, initCss: undefined, uninitCss: undefined},
-    unpatch() {
-      cleanupSettings();
-      ui.uninitCss();
-    },
+    ui: { ...ui, initCss: undefined },
+    unload: () => unloads.forEach((p) => p()),
   };
 
   log(`shelter is initialized. took: ${(performance.now() - start).toFixed(1)}ms`);
