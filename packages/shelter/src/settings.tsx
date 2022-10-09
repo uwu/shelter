@@ -13,29 +13,20 @@ const SettingsInj: Component<{
   content: JSX.Element;
   dispatcher: any;
 }> = (props) => {
-  const [settingsOpen, setSettingsOpen] = createSignal(false);
+  const [settingsOpen, setSettingsOpen] = createSignal<[HTMLDivElement, Element] | undefined>();
 
-  // when a tab is selected, this dispatches a change to a non-existent tab and back again.
-  let ignoreNextDispatch = false;
-  const cb = (d) => {
-    //debugger;
-    setSettingsOpen(false);
+  // when we are clicked, we hide discord's settings page and insert our own
+  // when we detect a set_section dispatch, we re-show discord's settings page and remove our own.
+  // TODO: hide the selected style from Discord's tab
+  // TODO: support more than one tab
 
-    // TODO: fix all this stuff
-    /*if (ignoreNextDispatch) {
-			ignoreNextDispatch = false;
-			return;
-		}
+  const cb = () => {
+    if (!settingsOpen()) return;
+    const [theirDiv, ourDiv] = settingsOpen();
+    setSettingsOpen();
 
-		if (!d.SHLTR_REDISPATCH) {
-			// dispatch empty
-			props.dispatcher.dispatch({ type: "USER_SETTINGS_MODAL_SET_SECTION", SHLTR_REDISPATCH: d });
-			return;
-		}
-
-		// redispatch
-		queueMicrotask(() => props.dispatcher.dispatch(d.SHLTR_REDISPATCH));
-		ignoreNextDispatch = true;*/
+    ourDiv.remove();
+    theirDiv.style.display = "";
   };
 
   props.dispatcher.subscribe("USER_SETTINGS_MODAL_SET_SECTION", cb);
@@ -50,18 +41,22 @@ const SettingsInj: Component<{
       <div
         class={props.tabClasses}
         role="tab"
-        aria-selected={settingsOpen()}
+        aria-selected={!!settingsOpen()}
         aria-disabled={false}
         tabIndex="-1"
         aria-label="Test tab"
         style={{
-          background: settingsOpen() && "var(--background-modifier-selected)",
+          background: settingsOpen() ? "var(--background-modifier-selected)" : "",
         }}
         onclick={() => {
           if (settingsOpen()) return;
-          setSettingsOpen(true);
-          props.mainSection.firstElementChild.innerHTML = "";
-          props.mainSection.firstElementChild.append((<div style="display: contents">{props.content}</div>) as Element);
+          const theirDiv = props.mainSection.firstElementChild as HTMLDivElement;
+          const ourDiv = (<div style="display: contents">{props.content}</div>) as Element;
+
+          setSettingsOpen([theirDiv, ourDiv]);
+
+          theirDiv.style.display = "none"
+          props.mainSection.append(ourDiv);
         }}
       >
         Test tab
