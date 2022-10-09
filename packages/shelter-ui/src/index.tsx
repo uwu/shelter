@@ -1,6 +1,7 @@
 import { Component, JSX } from "solid-js";
 
 export * from "./button";
+export * from "./switch";
 
 // without comma in <T,> it parses it as JSX! (eg <T></T>)
 export const withCleanup =

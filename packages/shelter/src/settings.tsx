@@ -32,7 +32,7 @@ const SettingsInj: Component<{
   props.dispatcher.subscribe("USER_SETTINGS_MODAL_SET_SECTION", cb);
   onCleanup(() => props.dispatcher.unsubscribe("USER_SETTINGS_MODAL_SET_SECTION", cb));
 
-  const div = (
+  return (
     <div style="display: contents">
       <div class={props.dividerClasses} />
       <div class={props.headerClasses} role="button" tabIndex="-1">
@@ -63,8 +63,6 @@ const SettingsInj: Component<{
       </div>
     </div>
   );
-
-  return div;
 });
 
 export async function initSettings() {
