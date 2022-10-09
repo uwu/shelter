@@ -9,6 +9,7 @@
     "spitroast": "^1.4.2"
   },
   "devDependencies": {
+    "esbuild": "^0.15.10",
     "esbuild-plugin-solid": "^0.4.2"
   }
 }
