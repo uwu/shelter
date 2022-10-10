@@ -10,7 +10,7 @@ const SettingsInj: Component<{
   headerClasses: string;
   tabClasses: string;
   mainSection: Element;
-  content: JSX.Element;
+  content: Component;
   dispatcher: any;
 }> = withCleanup((onCleanup, props) => {
   const [settingsOpen, setSettingsOpen] = createSignal<[HTMLDivElement, Element] | undefined>();
@@ -51,7 +51,7 @@ const SettingsInj: Component<{
         onclick={() => {
           if (settingsOpen()) return;
           const theirDiv = props.mainSection.firstElementChild as HTMLDivElement;
-          const ourDiv = (<div style="display: contents">{props.content}</div>) as Element;
+          const ourDiv = (<div style="display: contents">{props.content({})}</div>) as Element;
 
           setSettingsOpen([theirDiv, ourDiv]);
 
@@ -99,7 +99,7 @@ export async function initSettings() {
       const dividerClasses = dividerAboveChangelog.className;
       const headerClasses = sidebar.firstElementChild.className;
 
-      const content = (
+      const content = () => (
         <>
           {Object.values(ButtonColors).map((c) => (
             <div style="display:flex; gap:1rem">
