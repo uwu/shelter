@@ -51,7 +51,7 @@ export const Switch: Component<{ checked?: boolean; disabled?: boolean; onChange
     style={{
       position: "relative",
       cursor: "pointer",
-      background: props.checked ? "var(--old-green)" : "hsl(218, calc(var(--saturation-factor, 1) * 4.6%), 46.9%)",
+      background: props.checked ? "hsl(139, calc(var(--saturation-factor, 1) * 47.3%), 43.9%)" : "hsl(218, calc(var(--saturation-factor, 1) * 4.6%), 46.9%)",
       height: "24px",
       width: "40px",
       "border-radius": "12px",
