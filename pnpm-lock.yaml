@@ -13,17 +13,22 @@ importers:
       '@cumjar/websmack': ^1.2.0
       esbuild: ^0.15.10
       esbuild-plugin-solid: ^0.4.2
+      shelter-assets: workspace:*
       shelter-ui: workspace:*
       solid-js: ^1.5.7
       spitroast: ^1.4.2
     dependencies:
       '@cumjar/websmack': 1.2.0
+      shelter-assets: link:../shelter-assets
       shelter-ui: link:../shelter-ui
       solid-js: 1.5.7
       spitroast: 1.4.2
     devDependencies:
       esbuild: 0.15.10
       esbuild-plugin-solid: 0.4.2_2cadobjxrehtwrfj6brvelnqz4
+
+  packages/shelter-assets:
+    specifiers: {}
 
   packages/shelter-ui:
     specifiers:
