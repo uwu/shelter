@@ -1,4 +1,4 @@
-import getDispatcher from "./getDispatcher";
+import { getDispatcher } from "./dispatcher";
 
 interface Fiber extends Record<any, any> {
   // TODO: maybe type this lol

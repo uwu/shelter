@@ -1,6 +1,6 @@
 // Injects a section into user settings
 
-import getDispatcher from "./getDispatcher";
+import { getDispatcher } from "./dispatcher";
 import { awaitDispatch, getFiber, reactFiberWalker } from "./util";
 import { Component, createSignal, JSX } from "solid-js";
 import { Button, ButtonColors, withCleanup } from "shelter-ui";

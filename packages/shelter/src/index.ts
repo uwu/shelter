@@ -1,4 +1,4 @@
-import getDispatcher from "./getDispatcher";
+import { FluxStores, getDispatcher } from "./dispatcher";
 import * as patcher from "spitroast";
 import * as solid from "solid-js";
 import * as util from "./util";
@@ -31,6 +31,7 @@ getDispatcher().then(async (FluxDispatcher) => {
     patcher,
     solid,
     util,
+    FluxStores,
     ui: { ...ui, initCss: undefined },
     unload: () => unloads.forEach((p) => p()),
   };
