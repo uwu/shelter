@@ -45,7 +45,7 @@ const SettingsInj: Component<{
         aria-selected={!!settingsOpen()}
         aria-disabled={false}
         tabIndex="-1"
-        aria-label="Test tab"
+        aria-label="Shelter Settings"
         style={{
           background: settingsOpen() ? "var(--background-modifier-selected)" : "",
         }}
@@ -60,7 +60,7 @@ const SettingsInj: Component<{
           props.mainSection.append(ourDiv);
         }}
       >
-        Test tab
+        Settings
       </div>
     </div>
   );

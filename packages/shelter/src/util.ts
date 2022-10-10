@@ -28,3 +28,12 @@ export const awaitDispatch = (type: string) =>
     };
     dispatcher.subscribe(type, cb);
   });
+
+export function log(text) {
+  console.log(
+    "%cshelter%c",
+    "background: linear-gradient(180deg, #2A3B4B 0%, #2BFAAC 343.17%); color: white; padding: 6px",
+    "",
+    text
+  );
+}
