@@ -2,8 +2,9 @@
 
 import { getDispatcher } from "./dispatcher";
 import { awaitDispatch, getFiber, reactFiberWalker } from "./util";
-import { Component, createSignal, JSX } from "solid-js";
-import { Button, ButtonColors, withCleanup } from "shelter-ui";
+import { Settings } from "./components/Settings";
+import { Component, createSignal } from "solid-js";
+import { withCleanup } from "shelter-ui";
 
 const SettingsInj: Component<{
   dividerClasses: string;
@@ -99,25 +100,11 @@ export async function initSettings() {
       const dividerClasses = dividerAboveChangelog.className;
       const headerClasses = sidebar.firstElementChild.className;
 
-      const content = () => (
-        <>
-          {Object.values(ButtonColors).map((c) => (
-            <div style="display:flex; gap:1rem">
-              {[0, 1, 2, 3].map((l) => (
-                <Button look={l} color={c}>
-                  test
-                </Button>
-              ))}
-            </div>
-          ))}
-        </>
-      );
-
       const injection = (
         <SettingsInj
           {...{ dividerClasses, headerClasses, tabClasses, mainSection }}
           dispatcher={FluxDispatcher}
-          content={content}
+          content={Settings}
         />
       );
 
