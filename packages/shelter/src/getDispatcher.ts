@@ -30,7 +30,7 @@ export default async function getDispatcher() { // TODO: Actually type the dispa
     Object.defineProperty(Object.prototype, "_dispatcher", {
       set(value) {
         dispatcher = value;
-        if (!dispatcher) {
+        if (dispatcher) {
           res(dispatcher);
           delete Object.prototype._dispatcher;
         }
