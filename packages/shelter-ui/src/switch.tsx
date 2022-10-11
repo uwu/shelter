@@ -1,9 +1,10 @@
 import {Component, createEffect} from "solid-js";
 
-const TickPath1 = " M7.89561 14.8538L6.30462 13.2629L14.3099 5.25755L15.9009 6.84854L7.89561 14.8538Z";
-const TickPath2 = " M4.08643 11.0903L5.67742 9.49929L9.4485  13.2704L7.85751 14.8614L4.08643 11.0903Z";
-const CrossPath1 = "M5.13231 6.72963L6.7233  5.13864L14.855  13.2704L13.264  14.8614L5.13231 6.72963Z";
-const CrossPath2 = "M13.2704 5.13864L14.8614 6.72963L6.72963 14.8614L5.13864 13.2704L13.2704 5.13864Z";
+// good luck editing these by hand AND making them look good in animation :D --sink
+const TickPath1 = " M 4.08643 11.0903 L 5.67742 9.49929 L 9.4485  13.2704 L 7.85751 14.8614 L 4.08643 11.0903 Z";
+const TickPath2 = " M 14.3099 5.25755 L 15.9009 6.84854 L 7.89561 14.8538 L 6.30462 13.2629 L 14.3099 5.25755 Z";
+const CrossPath1 = "M 5.13231 6.72963 L 6.7233  5.13864 L 14.855  13.2704 L 13.264  14.8614 L 5.13231 6.72963 Z";
+const CrossPath2 = "M 13.2704 5.13864 L 14.8614 6.72963 L 6.72963 14.8614 L 5.13864 13.2704 L 13.2704 5.13864 Z";
 
 const TickCol = " hsl(139, calc(var(--saturation-factor, 1) * 47.3%), 43.9%)";
 const CrossCol = "hsl(218, calc(var(--saturation-factor, 1) * 4.6%) , 46.9%)";
@@ -50,7 +51,6 @@ export const Switch: Component<{ checked?: boolean; disabled?: boolean; onChange
   <div
     style={{
       position: "relative",
-      cursor: "pointer",
       background: props.checked ? "hsl(139, calc(var(--saturation-factor, 1) * 47.3%), 43.9%)" : "hsl(218, calc(var(--saturation-factor, 1) * 4.6%), 46.9%)",
       height: "24px",
       width: "40px",
@@ -86,6 +86,7 @@ export const Switch: Component<{ checked?: boolean; disabled?: boolean; onChange
         position: "absolute",
         margin: 0,
         opacity: 0,
+        cursor: "pointer",
       }}
       type="checkbox"
       tabindex="0"
