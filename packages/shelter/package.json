@@ -11,8 +11,9 @@
   },
   "devDependencies": {
     "esbuild": "^0.15.10",
-    "esbuild-css-modules-plugin": "^2.6.1-beta.1",
     "esbuild-plugin-solid": "^0.4.2",
-    "esbuild-sass-plugin": "^2.3.3"
+    "esbuild-sass-plugin-ysink": "^2.3.3",
+    "postcss": "^8.4.17",
+    "postcss-modules": "^5.0.0"
   }
 }

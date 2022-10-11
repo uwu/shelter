@@ -1,6 +1,6 @@
 import { Component, JSX, mergeProps } from "solid-js";
 import { injectCss } from "./util";
-import classes, {css} from "./button.tsx.css";
+import {classes, css} from "./button.tsx.scss";
 
 let injectedCss = false;
 

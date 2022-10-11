@@ -1,11 +1,19 @@
-declare module "*.tsx.css" {
+declare module "*.tsx.scss" {
 	export const css: string;
-	const _default: Record<string, string>;
-	export default _default;
+	export const classes: Record<string, string>;
 }
 
-declare module "*.jsx.css" {
+declare module "*.jsx.scss" {
 	export const css: string;
-	const _default: Record<string, string>;
-	export default _default;
+	export const classes: Record<string, string>;
+}
+
+declare module "*.tsx.sass" {
+	export const css: string;
+	export const classes: Record<string, string>;
+}
+
+declare module "*.jsx.sass" {
+	export const css: string;
+	export const classes: Record<string, string>;
 }
