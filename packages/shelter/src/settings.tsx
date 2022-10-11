@@ -2,9 +2,9 @@
 
 import { getDispatcher } from "./dispatcher";
 import { awaitDispatch, getFiber, reactFiberWalker } from "./util";
-import { Settings } from "./components/Settings";
 import { Component, createSignal } from "solid-js";
 import { withCleanup } from "shelter-ui";
+import Settings from "./components/Settings";
 
 const SettingsInj: Component<{
   dividerClasses: string;

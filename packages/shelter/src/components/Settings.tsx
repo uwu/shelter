@@ -1,45 +1,37 @@
-import { Component, createSignal } from "solid-js";
-import { Divider, Switch, Text } from "shelter-ui";
+import { createSignal } from "solid-js";
+import { Divider, Switch, Text, injectCss } from "shelter-ui";
 import { isLogging, setLoggingState } from "../dispatchLogger";
-import ShelterLogo from "shelter-assets/banner/banner.png";
+import { classes, css } from "./Settings.tsx.scss";
+import ShelterLogo from "./ShelterLogo";
 
-// TODO: Not style tags, and cleanup
+let injectedCss = false;
 
-export const Settings: Component = (props) => {
-  const [logState, setLogState] = createSignal(isLogging);
+export default () => {
+  if (!injectedCss) {
+    injectCss(css);
+    injectedCss = true;
+  }
+
+  const [logSwitcState, setLogSwitchState] = createSignal(isLogging);
 
   return (
     <>
-      <div
-        style={{
-          display: "flex",
-          "flex-direction": "row",
-          gap: "0.5rem",
-          "align-items": "center",
-        }}
-      >
-        <img style={{ display: "inline", "border-radius": "0.725rem" }} src={ShelterLogo} width={225} height={80.5} />
-        {/* TODO: awful */}
+      <div class={classes.row}>
+        <ShelterLogo />
         <Text>
-          <span
-            style={{
-              "font-style": "oblique",
-              "font-size": "x-large",
-            }}
-          >
-            - an attempt to prepare for the worst
-          </span>
+          <span class={classes.slogan}>- an attempt to prepare for the worst</span>
         </Text>
       </div>
       <Divider mt mb />
-      <div style={{ display: "flex", "flex-direction": "column", gap: "0.5rem", "padding": "0.25rem" }}> {/* until sink adds margin options to divider */}
-        <div style={{ display: "flex", "flex-direction": "row", "align-items": "center" }}>
+      <div class={classes.column} style={{ padding: "0.25rem" }}>
+        {/* TODO: SwitchItem */}
+        <div class={classes.row}>
           <Text>Log FluxDispatcher events to the console</Text>
           <span style={{ "margin-left": "auto" }}>
             <Switch
-              checked={logState()}
+              checked={logSwitcState()}
               onChange={(newState) => {
-                setLogState(newState);
+                setLogSwitchState(newState);
                 setLoggingState(newState);
               }}
             />
