@@ -42,6 +42,8 @@ electron.app.on("ready", () => {
 });
 //#endregion
 
+let injected = false;
+
 const { BrowserWindow } = electron;
 const propertyNames = Object.getOwnPropertyNames(electronCache.exports);
 
@@ -53,10 +55,13 @@ for (const propertyName of propertyNames) {
     ...Object.getOwnPropertyDescriptor(electron, propertyName),
     get: () => propertyName === "BrowserWindow" ? class extends BrowserWindow {
       constructor(opts) {
-        let originalPreload = JSON.stringify({path:opts.webPreferences.preload});
-        fs.writeFileSync(path.join(basePath, "app", "preload.json"), originalPreload);
-        opts.webPreferences.preload = path.join(basePath, "app", "preload.js");
-
+        if(opts.resizable && !injected) { // Prevents injecting into splash screen since it's not resizable
+          let originalPreload = JSON.stringify({path:opts.webPreferences.preload});
+          fs.writeFileSync(path.join(basePath, "app", "preload.json"), originalPreload);
+          opts.webPreferences.preload = path.join(basePath, "app", "preload.js");
+          injected = true;  
+        }
+        
         const window = new BrowserWindow(opts);
         return window;
       }
