@@ -1,7 +1,7 @@
 import { Component, JSX, mergeProps } from "solid-js";
 import { injectCss } from "./util";
+import classes, {css} from "./button.tsx.css";
 
-const css = `.SHLTR_BTN{transition:background-color .17s ease,color .17s ease;color:var(--shltr-btn-col);background:var(--shltr-btn-bg);cursor:pointer;display:flex;justify-content:center;align-items:center;border:none;border-radius:3px;font-size:14px;font-weight:500;line-height:16px;padding:2px 16px;user-select:none}.SHLTR_BTN:hover{background:var(--shltr-btn-bg-hov)}`;
 let injectedCss = false;
 
 export enum ButtonLooks {
@@ -112,7 +112,7 @@ export const Button: Component<{
       aria-label={props["aria-label"]}
       type={props.type}
       disabled={props.disabled}
-      class={props.class + " SHLTR_BTN"}
+      class={`${props.class} ${classes.button}`}
       style={{
         width: props.grow ? props.size[0] : "auto",
         height: props.size[1],

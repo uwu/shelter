@@ -1,6 +1,7 @@
 import { build } from "esbuild";
-import { postcssModules, sassPlugin } from "esbuild-sass-plugin";
+//import { postcssModules, sassPlugin } from "esbuild-sass-plugin";
 import { solidPlugin } from "esbuild-plugin-solid";
+import cssModules from "esbuild-css-modules-plugin";
 
 build({
   entryPoints: ["src/index.ts"],
@@ -15,7 +16,11 @@ build({
   },
   plugins: [
     solidPlugin(),
-    sassPlugin({ style: "compressed", transform: postcssModules({ localsConvention: "camelCaseOnly" }) }),
+    //sassPlugin({  style: "compressed", type: "css", sourceMap: false }),
+    cssModules({
+      inject: false,
+      filter: /.+\.[tj]sx?\.css/g
+    })
   ],
 });
 
