@@ -4,11 +4,11 @@ import classes, {css} from "./button.tsx.css";
 
 let injectedCss = false;
 
-export enum ButtonLooks {
-  FILLED,
-  INVERTED,
-  OUTLINED,
-  LINK,
+export const ButtonLooks = {
+  FILLED: classes.filled,
+  INVERTED: classes.inverted,
+  OUTLINED: classes.outlined,
+  LINK: classes.link,
   //BLANK,
 }
 
@@ -41,23 +41,23 @@ export const ButtonColors: Record<string, ButtonColor> = {
   ],
 };
 
-type ButtonSize = [string, string, JSX.CSSProperties?];
+type ButtonSize = [string, string, string];
 
 export const ButtonSizes: Record<string, ButtonSize> = {
-  // SIZE: [width, height, extra]
-  NONE: ["", ""],
-  TINY: ["53px", "24px"],
-  SMALL: ["60px", "32px"],
-  MEDIUM: ["96px", "38px"],
-  LARGE: ["130px", "44px"],
-  XLARGE: ["148px", "50px", { "font-size": "16px", "line-height": "normal", padding: "2px 20px" }],
-  MIN: ["auto", "auto", { padding: "2px 4px", display: "inline" }],
-  MAX: ["100%", "100%", { "font-size": "16px" }],
-  ICON: ["", "auto", { padding: "4px" }],
+  // SIZE: [width, height, class]
+  NONE: ["", "", ""],
+  TINY: ["53px", "24px", ""],
+  SMALL: ["60px", "32px", ""],
+  MEDIUM: ["96px", "38px", ""],
+  LARGE: ["130px", "44px", ""],
+  XLARGE: ["148px", "50px", classes.xlarge],
+  MIN: ["auto", "auto", classes.large],
+  MAX: ["100%", "100%", classes.max],
+  ICON: ["", "auto", classes.icon],
 };
 
 export const Button: Component<{
-  look?: ButtonLooks;
+  look?: string;
   color?: ButtonColor;
   size?: ButtonSize;
   grow?: boolean;
@@ -87,24 +87,6 @@ export const Button: Component<{
     injectedCss = true;
   }
 
-  const btnCol = () => (props.look === ButtonLooks.INVERTED ? props.color[0] : props.color[1]);
-
-  const btnBg = () =>
-    props.look === ButtonLooks.OUTLINED || props.look === ButtonLooks.LINK
-      ? "transparent"
-      : props.look === ButtonLooks.INVERTED
-      ? props.color[1]
-      : props.color[0];
-
-  const btnBgHov = () =>
-    props.look === ButtonLooks.INVERTED
-      ? btnBg()
-      : props.look === ButtonLooks.LINK
-      ? "transparent"
-      : props.look === ButtonLooks.OUTLINED
-      ? props.color[0]
-      : props.color[2];
-
   return (
     <button
       onClick={props.onClick}
@@ -112,17 +94,19 @@ export const Button: Component<{
       aria-label={props["aria-label"]}
       type={props.type}
       disabled={props.disabled}
-      class={`${props.class} ${classes.button}`}
+      class={props.class}
+      classList={{
+        [classes.button]: true,
+        [props.look]: true,
+        [classes.grow]: props.grow,
+        [props.size[2]]: true,
+      }}
       style={{
-        width: props.grow ? props.size[0] : "auto",
-        height: props.size[1],
-        border: props.look === ButtonLooks.OUTLINED && `1px solid ${props.color[0]}`,
-        "min-width": props.size[0],
-        "min-height": props.size[1],
-        "--shltr-btn-col": btnCol(),
-        "--shltr-btn-bg": btnBg(),
-        "--shltr-btn-bg-hov": btnBgHov(),
-        ...props.size[2],
+        "--shltr-btn-w": props.size[0],
+        "--shltr-btn-h": props.size[1],
+        "--shltr-btn-col": props.color[1],
+        "--shltr-btn-bg": props.color[0],
+        "--shltr-btn-bg-hov": props.color[2],
         ...props.style,
       }}
     >
