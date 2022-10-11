@@ -31,8 +31,8 @@ export const Settings: Component = (props) => {
           </span>
         </Text>
       </div>
-      <Divider />
-      <div style={{ display: "flex", "flex-direction": "column", gap: "0.5rem", "padding": "0.25rem", "margin-top": "20px" }}> {/* until sink adds margin options to divider */}
+      <Divider mt mb />
+      <div style={{ display: "flex", "flex-direction": "column", gap: "0.5rem", "padding": "0.25rem" }}> {/* until sink adds margin options to divider */}
         <div style={{ display: "flex", "flex-direction": "row", "align-items": "center" }}>
           <Text>Log FluxDispatcher events to the console</Text>
           <span style={{ "margin-left": "auto" }}>

@@ -14,10 +14,11 @@ export const Text: Component<{ children: JSX.Element }> = (props) => (
   </span>
 );
 
-export const Divider: Component = () => (
+export const Divider: Component<{mt?: boolean | string, mb?: boolean | string}> = (props) => (
   <div
     style={{
-      "margin-top": "20px",
+      "margin-top": typeof props.mt === "string" ? props.mt : props.mt ? "20px" : "",
+      "margin-bottom": typeof props.mb === "string" ? props.mb : props.mb ? "20px" : "",
       width: "100%",
       height: "1px",
       "border-top": "thin solid var(--background-modifier-accent)",
