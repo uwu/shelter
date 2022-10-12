@@ -1,6 +1,6 @@
 import { Component, JSX, mergeProps } from "solid-js";
 import { injectCss } from "./util";
-import {classes, css} from "./button.tsx.scss";
+import { classes, css } from "./button.tsx.scss";
 
 let injectedCss = false;
 
@@ -10,7 +10,7 @@ export const ButtonLooks = {
   OUTLINED: classes.outlined,
   LINK: classes.link,
   //BLANK,
-}
+};
 
 type ButtonColor = [string, string, string];
 

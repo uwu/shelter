@@ -14,7 +14,7 @@ export const Text: Component<{ children: JSX.Element }> = (props) => (
   </span>
 );
 
-export const Divider: Component<{mt?: boolean | string, mb?: boolean | string}> = (props) => (
+export const Divider: Component<{ mt?: boolean | string; mb?: boolean | string }> = (props) => (
   <div
     style={{
       "margin-top": typeof props.mt === "string" ? props.mt : props.mt ? "20px" : "",

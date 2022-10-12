@@ -16,7 +16,9 @@ export async function initDispatchLogger() {
   let toUnpatch;
   const dispatcher = await getDispatcher();
   if (dispatcher._interceptor) {
-    toUnpatch = after("_interceptor", dispatcher, (args) => { logFunc(args[0]) });
+    toUnpatch = after("_interceptor", dispatcher, (args) => {
+      logFunc(args[0]);
+    });
   } else {
     dispatcher.setInterceptor(logFunc);
     toUnpatch = () => dispatcher.setInterceptor();

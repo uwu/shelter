@@ -1,49 +1,58 @@
 .button {
-    transition: background-color .17s ease, color .17s ease;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: none;
-    border-radius: 3px;
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 16px;
-    padding: 2px 16px;
-    user-select: none;
-    width: var(--shltr-btn-w);
-    height: var(--shltr-btn-h);
-    min-width: var(--shltr-btn-w);
-    min-height: var(--shltr-btn-h);
+  transition: background-color 0.17s ease, color 0.17s ease;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border-radius: 3px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 16px;
+  padding: 2px 16px;
+  user-select: none;
+  width: var(--shltr-btn-w);
+  height: var(--shltr-btn-h);
+  min-width: var(--shltr-btn-w);
+  min-height: var(--shltr-btn-h);
 
-    &.grow { width: auto }
-    &.filled, &.outlined:hover {
-        color: var(--shltr-btn-col);
-        background: var(--shltr-btn-bg)
-    }
-    &.filled:hover { background: var(--shltr-btn-bg-hov) }
-    &.inverted {
-        color: var(--shltr-btn-bg);
-        background: var(--shltr-btn-col);
-    }
-    &.link {
-        color: unset;
-        background: transparent;
-    }
-    &.outlined {
-        color: var(--shltr-btn-bg);
-        border: 1px solid var(--shltr-btn-bg);
-        background: transparent;
-    }
-    &.xlarge {
-        font-size: 16px;
-        line-height: normal;
-        padding: 2px 20px
-    }
-    &.large {
-        padding: 2px 4px;
-        display: inline
-    }
-    &.max { font-size: 16px }
-    &.icon { padding: 4px }
+  &.grow {
+    width: auto;
+  }
+  &.filled,
+  &.outlined:hover {
+    color: var(--shltr-btn-col);
+    background: var(--shltr-btn-bg);
+  }
+  &.filled:hover {
+    background: var(--shltr-btn-bg-hov);
+  }
+  &.inverted {
+    color: var(--shltr-btn-bg);
+    background: var(--shltr-btn-col);
+  }
+  &.link {
+    color: unset;
+    background: transparent;
+  }
+  &.outlined {
+    color: var(--shltr-btn-bg);
+    border: 1px solid var(--shltr-btn-bg);
+    background: transparent;
+  }
+  &.xlarge {
+    font-size: 16px;
+    line-height: normal;
+    padding: 2px 20px;
+  }
+  &.large {
+    padding: 2px 4px;
+    display: inline;
+  }
+  &.max {
+    font-size: 16px;
+  }
+  &.icon {
+    padding: 4px;
+  }
 }

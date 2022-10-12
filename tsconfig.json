@@ -6,6 +6,6 @@
     "moduleResolution": "node",
     "declaration": true,
     "jsx": "preserve",
-    "jsxImportSource": "solid-js",
+    "jsxImportSource": "solid-js"
   }
 }

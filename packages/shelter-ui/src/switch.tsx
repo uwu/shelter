@@ -1,4 +1,4 @@
-import {Component, createEffect} from "solid-js";
+import { Component, createEffect } from "solid-js";
 
 // good luck editing these by hand AND making them look good in animation :D --sink
 const TickPath1 = " M 4.08643 11.0903 L 5.67742 9.49929 L 9.4485  13.2704 L 7.85751 14.8614 L 4.08643 11.0903 Z";
@@ -23,7 +23,7 @@ const ButtonIcon: Component<{ state: boolean }> = (props) => {
 
     animate1.beginElement();
     animate2.beginElement();
-  })
+  });
 
   return (
     <svg viewBox="0 0 20 20" fill="none">
@@ -51,12 +51,14 @@ export const Switch: Component<{ checked?: boolean; disabled?: boolean; onChange
   <div
     style={{
       position: "relative",
-      background: props.checked ? "hsl(139, calc(var(--saturation-factor, 1) * 47.3%), 43.9%)" : "hsl(218, calc(var(--saturation-factor, 1) * 4.6%), 46.9%)",
+      background: props.checked
+        ? "hsl(139, calc(var(--saturation-factor, 1) * 47.3%), 43.9%)"
+        : "hsl(218, calc(var(--saturation-factor, 1) * 4.6%), 46.9%)",
       height: "24px",
       width: "40px",
       "border-radius": "12px",
       transition: "background 250ms",
-      opacity: props.disabled ? 0.3 : ""
+      opacity: props.disabled ? 0.3 : "",
     }}
   >
     {/* the slider */}

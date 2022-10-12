@@ -1,1 +1,4 @@
-{"name":"shelter_injector","main":"index.js"}
+{
+  "name": "shelter_injector",
+  "main": "index.js"
+}

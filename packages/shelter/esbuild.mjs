@@ -1,6 +1,6 @@
-import {build} from "esbuild";
-import {postcssModules, sassPlugin} from "esbuild-sass-plugin-ysink";
-import {solidPlugin} from "esbuild-plugin-solid";
+import { build } from "esbuild";
+import { postcssModules, sassPlugin } from "esbuild-sass-plugin-ysink";
+import { solidPlugin } from "esbuild-plugin-solid";
 
 build({
   entryPoints: ["src/index.ts"],
@@ -15,11 +15,10 @@ build({
   },
   plugins: [
     solidPlugin(),
-	  sassPlugin({
-		  style: "compressed",
-		  sourceMap: false,
-		  transform: postcssModules({localsConvention: "camelCaseOnly", inject: false})
-	  }),
+    sassPlugin({
+      style: "compressed",
+      sourceMap: false,
+      transform: postcssModules({ localsConvention: "camelCaseOnly", inject: false }),
+    }),
   ],
 });
-

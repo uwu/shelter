@@ -31,8 +31,8 @@ export async function getDispatcher() {
       // Are you happy now?
       Object.defineProperty(Object.prototype, "_dispatcher", {
         set(value) {
-          this[dispatcherSymbol] = value
-          
+          this[dispatcherSymbol] = value;
+
           if (dispatcher) {
             dispatcher = value;
             res(dispatcher);
