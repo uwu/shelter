@@ -8,6 +8,7 @@ const localBundle = process.env.SHELTER_DIST_PATH;
     try {
         const originalPreload = require("./preload.json").path;
         require(originalPreload);
+
         if(localBundle) {
             // Can't inject into head since it doesn't exist yet
             let shelterBundle = readFileSync(resolve(join(localBundle, "shelter.js")), "utf8");
@@ -22,7 +23,10 @@ const localBundle = process.env.SHELTER_DIST_PATH;
             document.head.appendChild(document.createElement("script")).innerHTML = shelterBundle;
         }
     }
-    catch(e) {
-        console.error("[shelter-inject] Failed to inject.", e);
+    catch(err) {
+        if(localBundle) {
+            require("electron").ipcRenderer.invoke("shelter-inject-fail", err);
+        }
+        console.error("[shelter-inject] Failed to inject.\n", err);
     }
 })();

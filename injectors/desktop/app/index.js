@@ -15,6 +15,23 @@ electron.app.setAppPath(originalAppPath);
 electron.app.name = originalPackage.name;
 //#endregion
 
+electron.ipcMain.handle("shelter-inject-fail", (ev, err) => {
+  console.error("[shelter-inject] Failed to inject.\n", err);
+  const options = {
+      type: 'error',
+      buttons: ['Continue', 'Close Discord'],
+      defaultId: 0,
+      cancelId: 1,
+      message: 'Shelter failed to load from local dist. \nCheck console for more info.',
+      detail: err.message
+  };
+  let pressedButtonId = electron.dialog.showMessageBoxSync(null, options);
+  if(pressedButtonId == 1) {
+    process.exit()
+  }
+  return 0;
+})
+
 const electronCache = require.cache[require.resolve("electron")];
 
 //#region CSP Removal
