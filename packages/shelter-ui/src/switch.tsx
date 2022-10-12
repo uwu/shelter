@@ -1,4 +1,6 @@
-import { Component, createEffect } from "solid-js";
+import { Component, createEffect, JSX, Show } from "solid-js";
+import { genId } from "./util";
+import { Divider } from "./index";
 
 // good luck editing these by hand AND making them look good in animation :D --sink
 const TickPath1 = " M 4.08643 11.0903 L 5.67742 9.49929 L 9.4485  13.2704 L 7.85751 14.8614 L 4.08643 11.0903 Z";
@@ -45,9 +47,12 @@ const ButtonIcon: Component<{ state: boolean }> = (props) => {
   );
 };
 
-export const Switch: Component<{ checked?: boolean; disabled?: boolean; onChange?(newVal: boolean): void }> = (
-  props
-) => (
+export const Switch: Component<{
+  id?: string;
+  checked?: boolean;
+  disabled?: boolean;
+  onChange?(newVal: boolean): void;
+}> = (props) => (
   <div
     style={{
       position: "relative",
@@ -81,6 +86,7 @@ export const Switch: Component<{ checked?: boolean; disabled?: boolean; onChange
     </div>
     {/* the actual input: useful for accesibility etc */}
     <input
+      id={props.id}
       style={{
         display: "block",
         width: "100%",
@@ -98,3 +104,59 @@ export const Switch: Component<{ checked?: boolean; disabled?: boolean; onChange
     />
   </div>
 );
+
+export const SwitchItem: Component<{
+  value: boolean;
+  onChange?(v: boolean): void;
+  disabled?: boolean;
+  children: JSX.Element;
+  note?: JSX.Element;
+  hideBorder?: boolean;
+}> = (props) => {
+  const id = genId();
+
+  return (
+    <div style={{ display: "flex", "flex-direction": "column", "margin-bottom": "20px" }}>
+      <div style={{ display: "flex", width: "100%", "align-items": "center" }}>
+        <label
+          for={id}
+          style={{
+            flex: 1,
+            display: "block",
+            overflow: "hidden",
+            margin: 0,
+            color: "var(--header-primary)",
+            "line-height": "24px",
+            "font-weight": 500,
+            "word-wrap": "break-word",
+            cursor: "pointer",
+          }}
+        >
+          {props.children}
+        </label>
+        <div style={{ flex: "0 0 auto" }}>
+          <Switch id={id} checked={props.value} onChange={props.onChange} disabled={props.disabled} />
+        </div>
+      </div>
+
+      <Show when={props.note} keyed>
+        <div
+          style={{
+            "margin-top": "8px",
+            color: "var(--header-secondary)",
+            "font-size": "14px",
+            "line-height": "20px",
+            "font-weight": 400,
+            cursor: "default",
+          }}
+        >
+          {props.note}
+        </div>
+      </Show>
+
+      <Show when={!props.hideBorder} keyed>
+        <Divider />
+      </Show>
+    </div>
+  );
+};

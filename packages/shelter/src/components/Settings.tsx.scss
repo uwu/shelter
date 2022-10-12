@@ -1,6 +1,7 @@
 .row {
   display: flex;
-  flex-direction: row;
+  // default
+  //flex-direction: row;
   gap: 0.5rem;
   align-items: center;
 }
@@ -13,5 +14,4 @@
 
 .slogan {
   font-style: oblique;
-  font-size: x-large;
 }

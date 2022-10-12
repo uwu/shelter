@@ -1,0 +1,54 @@
+// discord calls this `title` but w/e
+.h {
+  // what is this for in discord's original styles?
+  //flex: 1;
+  cursor: default;
+  font-family: var(--font-display);
+  color: var(--header-primary);
+}
+
+.h1 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.h2 {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.h1,
+.h2 {
+  font-weight: 500;
+}
+
+.h3 {
+  line-height: 24px;
+  font-weight: 400;
+}
+
+.h4 {
+  line-height: 20px;
+}
+
+.h3,
+.h4 {
+  font-size: 16px;
+}
+
+.h5 {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--header-secondary);
+}
+
+.h4,
+.h5 {
+  font-weight: 500;
+}
+
+.h2,
+.h4,
+.h5 {
+  text-transform: uppercase;
+}

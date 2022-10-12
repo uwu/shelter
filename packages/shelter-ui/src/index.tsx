@@ -3,6 +3,7 @@ import { Component, JSX } from "solid-js";
 export * from "./util";
 export * from "./button";
 export * from "./switch";
+export * from "./header";
 
 export const Text: Component<{ children: JSX.Element }> = (props) => (
   <span
