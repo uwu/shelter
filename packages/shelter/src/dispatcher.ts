@@ -7,6 +7,7 @@ declare global {
 }
 
 let dispatcher;
+let dispatcherSymbol = Symbol("SHELTER_DISPATCHER_CONTAINER");
 
 export async function getDispatcher() {
   // TODO: Actually type the dispatcher
@@ -30,14 +31,16 @@ export async function getDispatcher() {
       // Are you happy now?
       Object.defineProperty(Object.prototype, "_dispatcher", {
         set(value) {
-          dispatcher = value;
+          this[dispatcherSymbol] = value
+          
           if (dispatcher) {
+            dispatcher = value;
             res(dispatcher);
             delete Object.prototype._dispatcher;
           }
         },
         get() {
-          return dispatcher;
+          return this[dispatcherSymbol];
         },
       });
     });
