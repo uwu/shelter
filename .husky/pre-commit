@@ -1,0 +1,7 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+prettier -wc .
+for file in $(git diff --name-only --cached); do
+  git add "$file" || true
+done
