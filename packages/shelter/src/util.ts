@@ -1,4 +1,4 @@
-import { getDispatcher } from "./dispatcher";
+import { FluxStore, getDispatcher } from "./dispatcher";
 import { createSignal } from "solid-js";
 
 interface Fiber extends Record<any, any> {
@@ -62,8 +62,8 @@ export function createListener(type: string, onCleanup: (cb: () => void) => void
 
 // gets the data from a flux store reactively
 export function createSubscription<TState>(
-  store: any,
-  getStateFromStore: (store: any) => TState,
+  store: FluxStore,
+  getStateFromStore: (store: FluxStore) => TState,
   onCleanup: (cb: () => void) => void
 ): () => TState {
   const [data, setData] = createSignal(getStateFromStore(store));

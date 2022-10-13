@@ -6,8 +6,11 @@ declare global {
   }
 }
 
-let dispatcher;
-let dispatcherSymbol = Symbol("SHELTER_DISPATCHER_CONTAINER");
+export type Dispatcher = any; // TODO
+export type FluxStore = any; // TODO
+
+let dispatcher: Dispatcher | Promise<Dispatcher>;
+const dispatcherSymbol = Symbol("SHELTER_DISPATCHER_CONTAINER");
 
 export async function getDispatcher() {
   // TODO: Actually type the dispatcher
@@ -48,7 +51,7 @@ export async function getDispatcher() {
   return dispatcher;
 }
 
-export let FluxStores = {};
+export let FluxStores: Record<string, FluxStore | FluxStore[]> = {};
 
 const realDispatchTokenKey = Symbol("shelter _dispatchToken");
 Object.defineProperty(Object.prototype, "_dispatchToken", {

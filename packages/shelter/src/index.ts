@@ -11,7 +11,7 @@ util.log("shelter is initializing...");
 
 getDispatcher().then(async (FluxDispatcher) => {
   // load all the things in parallel :D
-  const unloads = await Promise.all([initSettings(), initDispatchLogger(), ui.cleanupCss]);
+  const unloads = await Promise.all([initSettings(), initDispatchLogger(), ui.cleanupCss, patcher.unpatchAll]);
 
   // We can potentially move the window obj to it's own module later, I think it'd help with typedefs?
   window["shelter"] = {
