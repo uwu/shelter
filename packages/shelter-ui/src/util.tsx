@@ -40,4 +40,4 @@ export const injectCss = (css: string) => {
 
 // useful for when we don't need an ID for semantic purposes but do want one for another reason
 // such as accessibility or <label for={ID}>
-export const genId = () => "shltlr-ui-" + Math.random().toString(36).slice(2);
+export const genId = () => "shltr-ui-" + Math.random().toString(36).slice(2);
