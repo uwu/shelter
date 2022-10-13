@@ -1,6 +1,9 @@
-import { Component, createEffect, JSX, Show } from "solid-js";
-import { genId } from "./util";
+import { Component, createEffect, JSX, on, Show } from "solid-js";
+import { genId, injectCss } from "./util";
 import { Divider } from "./index";
+import { css, classes } from "./switch.tsx.scss";
+
+let injectedCss = false;
 
 // good luck editing these by hand AND making them look good in animation :D --sink
 const TickPath1 = " M 4.08643 11.0903 L 5.67742 9.49929 L 9.4485  13.2704 L 7.85751 14.8614 L 4.08643 11.0903 Z";
@@ -15,17 +18,21 @@ const ButtonIcon: Component<{ state: boolean }> = (props) => {
   let animate1: SVGAnimateElement;
   let animate2: SVGAnimateElement;
 
-  createEffect(() => {
-    props.state; // goofy ahh dependency tracking
-    if (!animate1 || !animate2) return;
+  // on() lets me use defer to not run on the first call
+  createEffect(
+    on(
+      [() => props.state],
+      ([s]) => {
+        // svg <animate> isn't like discord's animation by a long shot but it certainly looks tons better than just a snap
+        animate1.setAttribute("values", s ? `${CrossPath1};${TickPath1}` : `${TickPath1};${CrossPath1}`);
+        animate2.setAttribute("values", s ? `${CrossPath2};${TickPath2}` : `${TickPath2};${CrossPath2}`);
 
-    // svg <animate> isn't like discord's animation by a long shot but it certainly looks tons better than just a snap
-    animate1.setAttribute("values", props.state ? `${CrossPath1};${TickPath1}` : `${TickPath1};${CrossPath1}`);
-    animate2.setAttribute("values", props.state ? `${CrossPath2};${TickPath2}` : `${TickPath2};${CrossPath2}`);
-
-    animate1.beginElement();
-    animate2.beginElement();
-  });
+        animate1.beginElement();
+        animate2.beginElement();
+      },
+      { defer: true }
+    )
+  );
 
   return (
     <svg viewBox="0 0 20 20" fill="none">
@@ -52,58 +59,36 @@ export const Switch: Component<{
   checked?: boolean;
   disabled?: boolean;
   onChange?(newVal: boolean): void;
-}> = (props) => (
-  <div
-    style={{
-      position: "relative",
-      background: props.checked
-        ? "hsl(139, calc(var(--saturation-factor, 1) * 47.3%), 43.9%)"
-        : "hsl(218, calc(var(--saturation-factor, 1) * 4.6%), 46.9%)",
-      height: "24px",
-      width: "40px",
-      "border-radius": "12px",
-      transition: "background 250ms",
-      opacity: props.disabled ? 0.3 : "",
-    }}
-  >
-    {/* the slider */}
+}> = (props) => {
+  if (!injectedCss) {
+    injectCss(css);
+    injectedCss = true;
+  }
+
+  return (
     <div
-      style={{
-        position: "absolute",
-        left: "3px",
-        top: "3px",
-        height: "18px",
-        width: "18px",
-        "border-radius": "9px",
-        // (container width - slider width) - (2 * margin size)
-        transform: props.checked ? `translateX(${40 - 18 - 3 * 2}px)` : "",
-        // i found this bezier purely by playing about on cubic-bezier.com
-        transition: "transform 250ms cubic-bezier(.33,0,.24,1.02)",
-        background: "white",
+      class={classes.switch}
+      classList={{
+        [classes.on]: props.checked,
+        [classes.disabled]: props.disabled,
       }}
     >
-      <ButtonIcon state={props.checked} />
+      {/* the slider */}
+      <div class={classes.slider}>
+        <ButtonIcon state={props.checked} />
+      </div>
+      {/* the actual input: useful for accesibility etc */}
+      <input
+        id={props.id}
+        type="checkbox"
+        tabindex="0"
+        checked={props.checked}
+        disabled={props.disabled}
+        onchange={() => props.onChange(!props.checked)}
+      />
     </div>
-    {/* the actual input: useful for accesibility etc */}
-    <input
-      id={props.id}
-      style={{
-        display: "block",
-        width: "100%",
-        height: "100%",
-        position: "absolute",
-        margin: 0,
-        opacity: 0,
-        cursor: "pointer",
-      }}
-      type="checkbox"
-      tabindex="0"
-      checked={props.checked}
-      disabled={props.disabled}
-      onchange={() => props.onChange(!props.checked)}
-    />
-  </div>
-);
+  );
+};
 
 export const SwitchItem: Component<{
   value: boolean;
@@ -116,42 +101,16 @@ export const SwitchItem: Component<{
   const id = genId();
 
   return (
-    <div style={{ display: "flex", "flex-direction": "column", "margin-bottom": "20px" }}>
-      <div style={{ display: "flex", width: "100%", "align-items": "center" }}>
-        <label
-          for={id}
-          style={{
-            flex: 1,
-            display: "block",
-            overflow: "hidden",
-            margin: 0,
-            color: "var(--header-primary)",
-            "line-height": "24px",
-            "font-weight": 500,
-            "word-wrap": "break-word",
-            cursor: "pointer",
-          }}
-        >
-          {props.children}
-        </label>
-        <div style={{ flex: "0 0 auto" }}>
+    <div class={classes.sitem}>
+      <div class={classes.irow}>
+        <label for={id}>{props.children}</label>
+        <div>
           <Switch id={id} checked={props.value} onChange={props.onChange} disabled={props.disabled} />
         </div>
       </div>
 
       <Show when={props.note} keyed>
-        <div
-          style={{
-            "margin-top": "8px",
-            color: "var(--header-secondary)",
-            "font-size": "14px",
-            "line-height": "20px",
-            "font-weight": 400,
-            cursor: "default",
-          }}
-        >
-          {props.note}
-        </div>
+        <div class={classes.note}>{props.note}</div>
       </Show>
 
       <Show when={!props.hideBorder} keyed>
