@@ -39,7 +39,9 @@ export function log(text) {
   );
 }
 
-export function createSubscription(type: string, onCleanup: (cb: () => void) => void): () => any {
+// listens for dispatches with the given type and returns a signal with the data of the most recent dispatch
+// of that type. signal is undefined between listener create and first dispatch.
+export function createListener(type: string, onCleanup: (cb: () => void) => void): () => any {
   const [subData, setSubData] = createSignal();
 
   let cancel = false,
@@ -56,4 +58,19 @@ export function createSubscription(type: string, onCleanup: (cb: () => void) => 
   });
 
   return subData;
+}
+
+// gets the data from a flux store reactively
+export function createSubscription<TState>(
+  store: any,
+  getStateFromStore: (store: any) => TState,
+  onCleanup: (cb: () => void) => void
+): () => TState {
+  const [data, setData] = createSignal(getStateFromStore(store));
+
+  const cb = () => setData(() => getStateFromStore(store));
+  store.addChangeListener(cb);
+  onCleanup(() => store.removeChangeListener(cb));
+
+  return data;
 }
