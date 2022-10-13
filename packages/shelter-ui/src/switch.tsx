@@ -114,7 +114,7 @@ export const SwitchItem: Component<{
       </Show>
 
       <Show when={!props.hideBorder} keyed>
-        <Divider />
+        <Divider mt />
       </Show>
     </div>
   );
