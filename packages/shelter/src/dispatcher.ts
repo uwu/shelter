@@ -1,19 +1,16 @@
 import { webpackChunk } from "@cumjar/websmack";
+import { Dispatcher, FluxStore } from "./types";
 
 declare global {
   interface Object {
-    _dispatcher: undefined;
+    _dispatcher?: Dispatcher;
   }
 }
-
-export type Dispatcher = any; // TODO
-export type FluxStore = any; // TODO
 
 let dispatcher: Dispatcher | Promise<Dispatcher>;
 const dispatcherSymbol = Symbol("SHELTER_DISPATCHER_CONTAINER");
 
 export async function getDispatcher() {
-  // TODO: Actually type the dispatcher
   if (dispatcher) return dispatcher;
 
   try {

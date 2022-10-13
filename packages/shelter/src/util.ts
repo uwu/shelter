@@ -1,9 +1,6 @@
-import { FluxStore, getDispatcher } from "./dispatcher";
 import { createSignal } from "solid-js";
-
-interface Fiber extends Record<any, any> {
-  // TODO: maybe type this lol
-}
+import { getDispatcher } from "./dispatcher";
+import { Fiber, FluxStore } from "./types";
 
 declare global {
   interface Element {
@@ -13,7 +10,7 @@ declare global {
 
 export const getFiber = (n: Element): Fiber => n.__reactFiber$;
 
-export function reactFiberWalker(node: Fiber, prop: string | symbol, goUp = false): Fiber {
+export function reactFiberWalker(node: Fiber, prop: string | symbol, goUp = false): undefined | null | Fiber {
   if (!node) return;
   if (node.pendingProps?.[prop] !== undefined) return node;
 
@@ -61,9 +58,9 @@ export function createListener(type: string, onCleanup: (cb: () => void) => void
 }
 
 // gets the data from a flux store reactively
-export function createSubscription<TState>(
-  store: FluxStore,
-  getStateFromStore: (store: FluxStore) => TState,
+export function createSubscription<TState, TStoreData = any>(
+  store: FluxStore<TStoreData>,
+  getStateFromStore: (store: FluxStore<TStoreData>) => TState,
   onCleanup: (cb: () => void) => void
 ): () => TState {
   const [data, setData] = createSignal(getStateFromStore(store));
