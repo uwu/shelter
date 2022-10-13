@@ -1,4 +1,5 @@
 import { getDispatcher } from "./dispatcher";
+import { createSignal } from "solid-js";
 
 interface Fiber extends Record<any, any> {
   // TODO: maybe type this lol
@@ -36,4 +37,23 @@ export function log(text) {
     "",
     text
   );
+}
+
+export function createSubscription(type: string, onCleanup: (cb: () => void) => void): () => any {
+  const [subData, setSubData] = createSignal();
+
+  let cancel = false,
+    dispatcher;
+  getDispatcher().then((d) => {
+    if (cancel) return;
+    dispatcher = d;
+    dispatcher.subscribe(type, setSubData);
+  });
+
+  onCleanup(() => {
+    cancel = true;
+    dispatcher?.unsubscribe(type, setSubData);
+  });
+
+  return subData;
 }
