@@ -22,12 +22,8 @@ export const Header: Component<{ tag: string; children: JSX.Element; class?: str
   return (
     <Dynamic
       component={props.tag === HeaderTags.H5 ? "h3" : "h2"}
-      class={props.class}
+      class={`${props.class} ${props.tag ?? HeaderTags.H5} ${classes.h}`}
       id={props.id}
-      classList={{
-        [props.tag ?? HeaderTags.H5]: true,
-        [classes.h]: true,
-      }}
     >
       {props.children}
     </Dynamic>

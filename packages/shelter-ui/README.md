@@ -4,7 +4,22 @@ A set of UI components designed to look identical to Discord's, built entirely i
 
 The API signatures are not identical to Discord's react components.
 
-// TODO ToC / nav
+These components are only expected to work inside Discord.
+For use outside of Discord, a solution may or may not be implemented.
+
+## ToC:
+
+- [Utils](#utils)
+  - [`withCleanup`](#withcleanup)
+  - [`injectCss`](#injectcss)
+  - [`genId`](#genid)
+- [Components](#components)
+  - [`<Text>`](#text)
+  - [`<Header>`](#header)
+  - [`<Divider />`](#divider-)
+  - [`<Button>`](#button)
+  - [`<Switch />`](#switch-)
+  - [`<SwitchItem>`](#switchitem)
 
 ## Utils
 
@@ -74,6 +89,20 @@ Text just renders some text, using Discord's current text colour.
 <Text>This is some text</Text>
 ```
 
+### `<Header>`
+
+Header is, well, a header. It has three styles, chosen by the `tag` prop.
+
+- **H1**: A nice big header - like the ones at the top of user settings sections.
+- **H2**: A slightly smaller header, with allcaps text.
+- **H3**: A smaller again header - like "Gifts you purchased" in settings.
+- **H4**: Smaller again, allcaps text.
+- **H5**: Small, allcaps text, default - like "sms backup authentication" in settings.
+
+```jsx
+<Header tag={HeaderTags.H1}>My cool page</Header>
+```
+
 ### `<Divider />`
 
 Divider renders a grey horizontal divider line.
@@ -131,5 +160,5 @@ Unless `hideBorder` is set, a `<Divider />` is rendered under the component.
 The child elements of the component is the title displayed next to the switch.
 
 ```jsx
-<SwitchItem note="Does cool things" value={...}>A cool option</SwichItem>
+<SwitchItem note="Does cool things" value={/*...*/}>A cool option</SwitchItem>
 ```
