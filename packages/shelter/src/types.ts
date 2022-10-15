@@ -3,7 +3,7 @@ export interface Dispatcher {
   _actionHandlers: unknown;
 
   _currentDispatchActionType: undefined | string;
-  _interceptor: (payload: any) => undefined | boolean;
+  _interceptor?: (payload: any) => void | boolean;
   _processingWaitQueue: boolean;
   _subscriptions: Record<string, Set<(payload: any) => void>>;
   _waitQueue: unknown[];
@@ -18,7 +18,7 @@ export interface Dispatcher {
 
   register(name: string, actionHandler: Record<string, (e: any) => void>, storeDidChange: (e: any) => boolean): string;
 
-  setInterceptor(interceptor: (payload: any) => undefined | boolean): void;
+  setInterceptor(interceptor?: (payload: any) => void | boolean): void;
 
   subscribe(actionType: string, callback: (payload: any) => void);
 
