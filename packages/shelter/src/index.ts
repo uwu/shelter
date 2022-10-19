@@ -5,7 +5,7 @@ import * as util from "./util";
 import * as ui from "shelter-ui";
 import { initSettings } from "./settings";
 import { initDispatchLogger } from "./dispatchLogger";
-import dbStore from "./dbStore";
+import storage from "./storage";
 
 const start = performance.now();
 util.log("shelter is initializing...");
@@ -21,7 +21,7 @@ getDispatcher().then(async (FluxDispatcher) => {
     solid,
     util,
     FluxStores,
-    dbStore,
+    dbStore: await storage("dbstore"),
     ui: { ...ui, cleanupCss: undefined },
     unload: () => unloads.forEach((p) => p()),
   };

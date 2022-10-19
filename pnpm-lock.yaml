@@ -1,21 +1,13 @@
 lockfileVersion: 5.4
 
 importers:
-  .:
-    specifiers:
-      husky: ^8.0.1
-      typescript: ^4.8.4
-    devDependencies:
-      husky: 8.0.1
-      typescript: 4.8.4
-
   packages/shelter:
     specifiers:
       "@cumjar/websmack": ^1.2.0
       esbuild: ^0.15.10
       esbuild-plugin-solid: ^0.4.2
       esbuild-sass-plugin-ysink: ^2.3.3
-      idb-keyval: ^6.2.0
+      idb: ^7.1.0
       postcss: ^8.4.17
       postcss-modules: ^5.0.0
       shelter-assets: workspace:*
@@ -24,7 +16,7 @@ importers:
       spitroast: ^1.4.2
     dependencies:
       "@cumjar/websmack": 1.2.0
-      idb-keyval: 6.2.0
+      idb: 7.1.0
       shelter-assets: link:../shelter-assets
       shelter-ui: link:../shelter-ui
       solid-js: 1.5.7
@@ -35,15 +27,6 @@ importers:
       esbuild-sass-plugin-ysink: 2.3.3
       postcss: 8.4.17
       postcss-modules: 5.0.0_postcss@8.4.17
-
-  packages/shelter-assets:
-    specifiers: {}
-
-  packages/shelter-ui:
-    specifiers:
-      solid-js: ^1.5.7
-    devDependencies:
-      solid-js: 1.5.7
 
 packages:
   /@ampproject/remapping/2.2.0:
@@ -1182,13 +1165,6 @@ packages:
       { integrity: sha512-c3Ab/url5ksaT0WyleslpBEthOzWhrjQbg75y7XUsfSzi3Dgzt0l8w5e7DylRn15MTlMMD58dTfzddNS2kcAjQ== }
     dev: true
 
-  /husky/8.0.1:
-    resolution:
-      { integrity: sha512-xs7/chUH/CKdOCs7Zy0Aev9e/dKOMZf3K1Az1nar3tzlv0jfqnYtu235bstsWTmXOR0EfINrPa97yy4Lz6RiKw== }
-    engines: { node: ">=14" }
-    hasBin: true
-    dev: true
-
   /icss-replace-symbols/1.1.0:
     resolution:
       { integrity: sha512-chIaY3Vh2mh2Q3RGXttaDIzeiPvaVXJ+C4DAh/w3c37SKZ/U6PGMmuicR2EQQp9bKG8zLMCl7I+PtIoOOPp8Gg== }
@@ -1204,11 +1180,9 @@ packages:
       postcss: 8.4.17
     dev: true
 
-  /idb-keyval/6.2.0:
+  /idb/7.1.0:
     resolution:
-      { integrity: sha512-uw+MIyQn2jl3+hroD7hF8J7PUviBU7BPKWw4f/ISf32D4LoGu98yHjrzWWJDASu9QNrX10tCJqk9YY0ClWm8Ng== }
-    dependencies:
-      safari-14-idb-fix: 3.0.0
+      { integrity: sha512-Wsk07aAxDsntgYJY4h0knZJuTxM73eQ4reRAO+Z1liOh8eMCJ/MoDS8fCui1vGT9mnjtl1sOu3I2i/W1swPYZg== }
     dev: false
 
   /immutable/4.1.0:
@@ -1424,11 +1398,6 @@ packages:
       supports-preserve-symlinks-flag: 1.0.0
     dev: true
 
-  /safari-14-idb-fix/3.0.0:
-    resolution:
-      { integrity: sha512-eBNFLob4PMq8JA1dGyFn6G97q3/WzNtFK4RnzT1fnLq+9RyrGknzYiM/9B12MnKAxuj1IXr7UKYtTNtjyKMBog== }
-    dev: false
-
   /safe-buffer/5.1.2:
     resolution:
       { integrity: sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g== }
@@ -1499,13 +1468,6 @@ packages:
     engines: { node: ">=8.0" }
     dependencies:
       is-number: 7.0.0
-    dev: true
-
-  /typescript/4.8.4:
-    resolution:
-      { integrity: sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ== }
-    engines: { node: ">=4.2.0" }
-    hasBin: true
     dev: true
 
   /update-browserslist-db/1.0.10_browserslist@4.21.4:
