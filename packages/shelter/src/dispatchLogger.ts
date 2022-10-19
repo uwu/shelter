@@ -1,10 +1,10 @@
 import { after } from "spitroast";
 import { getDispatcher } from "./dispatcher";
 import { log } from "./util";
-import { dbStore } from "./storage";
+import { dbStore, defaults } from "./storage";
 
 // TODO: This should be rewritten when we have proper dispatch intercepting!
-dbStore.logDispatch ??= false;
+defaults(dbStore, { logDispatch: false });
 
 const logFunc = (payload) => {
   if (dbStore.logDispatch) log(payload);
