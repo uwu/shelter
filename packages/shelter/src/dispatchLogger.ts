@@ -1,14 +1,13 @@
 import { after } from "spitroast";
 import { getDispatcher } from "./dispatcher";
 import { log } from "./util";
-import { createSignal } from "solid-js";
+import { dbStore } from "./storage";
 
 // TODO: This should be rewritten when we have proper dispatch intercepting!
-
-export let [isLogging, setLoggingState] = createSignal(false); // who says these are only for UI? --sink
+dbStore.logDispatch ??= false;
 
 const logFunc = (payload) => {
-  if (isLogging()) log(payload);
+  if (dbStore.logDispatch) log(payload);
 };
 
 export async function initDispatchLogger() {
