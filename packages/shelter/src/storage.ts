@@ -4,8 +4,16 @@ import { openDB } from "idb";
 // can't use a solid store as i could do with bespoke logic for idb
 // so heres a custom proxy impl -- sink
 
+// we need a number thats always bigger than last time for idb reasons
+let incr = 0;
+const bigNumber = Date.now() + incr++;
+
 export default async (name: string) => {
-  const db = await openDB("shelter", 1);
+  const db = await openDB("shelter", bigNumber, {
+    upgrade(udb) {
+      if (!udb.objectStoreNames.contains(name)) udb.createObjectStore(name);
+    },
+  });
 
   const signals: Record<string, Signal<any>> = {};
 
