@@ -1,4 +1,4 @@
-import { createSignal } from "solid-js";
+import { batch, createSignal } from "solid-js";
 import { getDispatcher } from "./dispatcher";
 import { Fiber, FluxStore } from "./types";
 
@@ -71,3 +71,5 @@ export function createSubscription<TState, TStoreData = any>(
 
   return data;
 }
+
+export const storeAssign = <T>(store: T, toApply: T) => batch(() => Object.assign(store, toApply));
