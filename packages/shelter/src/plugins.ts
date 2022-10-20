@@ -8,7 +8,8 @@ import { log } from "./util";
 type StoredPlugin = {
   on: boolean;
   js: string;
-  update: string | false;
+  update: boolean;
+  src?: string;
   manifest: Record<string, string>;
 };
 
@@ -108,11 +109,11 @@ async function updatePlugin(pluginId: string) {
   if (!data) throw new Error(`attempted to update a non-existent plugin: ${pluginId}`);
   if (loadedPlugins[pluginId]) throw new Error(`attempted to update a loaded plugin: ${pluginId}`);
 
-  if (data.update !== false) {
+  if (data.update && data.src) {
     try {
       const [newPluginText, newPluginManifest] = await Promise.all([
-        fetch(new URL("plugin.js", data.update)).then((r) => r.text()),
-        fetch(new URL("plugin.json", data.update)).then((r) => r.json()),
+        fetch(new URL("plugin.js", data.src)).then((r) => r.text()),
+        fetch(new URL("plugin.json", data.src)).then((r) => r.json()),
       ]);
 
       internalData[pluginId] = {
@@ -144,4 +145,21 @@ export async function initAllPlugins() {
 
   // makes things cleaner in index.ts init
   return stopAllPlugins;
+}
+
+export function addPlugin(id: string, plugin: StoredPlugin) {
+  // validate
+  if (typeof id !== "string" || id in internalData) throw new Error("plugin ID invalid or taken");
+
+  if (
+    typeof plugin.js !== "string" ||
+    typeof plugin.update !== "boolean" ||
+    (plugin.src !== undefined && typeof plugin.src !== "string") ||
+    typeof plugin.manifest !== "object"
+  )
+    throw new Error("Plugin object failed validation");
+
+  plugin.on = false;
+
+  internalData[id] = plugin;
 }
