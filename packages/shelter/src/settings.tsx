@@ -2,7 +2,7 @@
 
 import { getDispatcher } from "./dispatcher";
 import { awaitDispatch, getFiber, reactFiberWalker } from "./util";
-import { Component, createSignal } from "solid-js";
+import { Component, createSignal, onCleanup } from "solid-js";
 import { withCleanup } from "shelter-ui";
 import Settings from "./components/Settings";
 
@@ -13,7 +13,7 @@ const SettingsInj: Component<{
   mainSection: Element;
   content: Component;
   dispatcher: any;
-}> = withCleanup((onCleanup, props) => {
+}> = withCleanup((props) => {
   const [settingsOpen, setSettingsOpen] = createSignal<[HTMLDivElement, Element] | undefined>();
 
   // when we are clicked, we hide discord's settings page and insert our own

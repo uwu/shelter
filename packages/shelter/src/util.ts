@@ -1,4 +1,4 @@
-import { batch, createSignal } from "solid-js";
+import { batch, createSignal, onCleanup } from "solid-js";
 import { getDispatcher } from "./dispatcher";
 import { Fiber, FluxStore } from "./types";
 
@@ -38,7 +38,7 @@ export function log(text: any, func: "log" | "warn" | "error" = "log") {
 
 // listens for dispatches with the given type and returns a signal with the data of the most recent dispatch
 // of that type. signal is undefined between listener create and first dispatch.
-export function createListener(type: string, onCleanup: (cb: () => void) => void): () => any {
+export function createListener(type: string): () => any {
   const [subData, setSubData] = createSignal();
 
   let cancel = false,
@@ -60,8 +60,7 @@ export function createListener(type: string, onCleanup: (cb: () => void) => void
 // gets the data from a flux store reactively
 export function createSubscription<TState, TStoreData = any>(
   store: FluxStore<TStoreData>,
-  getStateFromStore: (store: FluxStore<TStoreData>) => TState,
-  onCleanup: (cb: () => void) => void
+  getStateFromStore: (store: FluxStore<TStoreData>) => TState
 ): () => TState {
   const [data, setData] = createSignal(getStateFromStore(store));
 

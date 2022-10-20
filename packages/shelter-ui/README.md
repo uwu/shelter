@@ -27,15 +27,20 @@ Not components, but UI utils used in shelter.
 
 ### `withCleanup`
 
-`withCleanup` is a higher-order component that introduces a replacement for solid's onCleanup.
+`withCleanup` is a higher-order component that helps solid's onCleanup work.
 
-Throughout shelter and shelter-ui, required onCleanup functions must be passed in by the user.
-This is because shelter uses components in ways that make solid's onCleanup unable to detect unmounts.
+In shelter, often times elements will not be in a proper solid reactive scope.
+This is often the case when you inject a solid element into a React-rendered DOM.
+When React rips your element off the page, solid's onCleanup wouldn't run -
+wrapping your component in withCleanup fixes this.
 
-To get around this use this custom implementation:
+Note: anywhere you pass an element to shelter APIs (eg settings, modals),
+expect that shelter will do this for you,
+and that manually wrapping in withCleanup is not necessary.
 
 ```jsx
-const myComponent = withCleanup((onCleanup, props) => {
+import { onCleanup } from "solid-js";
+const myComponent = withCleanup((props) => {
   onCleanup(() => console.log("component unmounted from DOM!"));
 
   return <div>My cool component</div>;
