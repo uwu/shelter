@@ -22,7 +22,7 @@ export const Header: Component<{ tag: string; children: JSX.Element; class?: str
   return (
     <Dynamic
       component={props.tag === HeaderTags.H5 ? "h3" : "h2"}
-      class={`${props.class} ${props.tag ?? HeaderTags.H5} ${classes.h}`}
+      class={`${props.class ?? ""} ${props.tag ?? HeaderTags.H5} ${classes.h}`}
       id={props.id}
     >
       {props.children}

@@ -4,6 +4,8 @@ export * from "./util";
 export * from "./button";
 export * from "./switch";
 export * from "./header";
+export * from "./openModal";
+export * from "./modals";
 
 export const Text: Component<{ children: JSX.Element }> = (props) => (
   <span

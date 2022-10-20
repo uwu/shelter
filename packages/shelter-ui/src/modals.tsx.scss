@@ -1,0 +1,100 @@
+@mixin nice-scrollbars {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thin-thumb) var(--scrollbar-thin-track);
+
+  &::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    border-color: var(--scrollbar-thin-track);
+    background-color: var(--scrollbar-thin-track);
+    border: 2px solid var(--scrollbar-thin-track);
+  }
+  &::-webkit-scrollbar-thumb {
+    background-clip: padding-box;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    background-color: var(--scrollbar-thin-thumb);
+    min-height: 40px;
+  }
+  &::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+}
+
+$RADIUS: 4px;
+
+.mroot {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 9999;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+}
+
+.modal {
+  background: var(--modal-background);
+  border-radius: $RADIUS;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  flex-flow: column nowrap;
+  color: var(--text-normal); // quite useful in modal body and modal footer :)
+}
+
+.sm {
+  width: 440px;
+  min-height: 200px;
+  max-height: 720px;
+}
+
+.md {
+  width: 600px;
+  min-height: 400px;
+  max-height: 800px;
+}
+
+.body {
+  flex: 1 1 auto;
+  overflow: hidden auto;
+  position: relative;
+  padding: 0 8px 20px 16px;
+
+  @include nice-scrollbars;
+}
+
+.head,
+.foot {
+  flex: 0 0 auto;
+  padding: 16px;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+}
+
+.foot {
+  background: var(--modal-footer-background);
+  border-radius: 0 0 $RADIUS $RADIUS;
+}
+
+.cbtn {
+  height: 26px;
+  padding: 2px;
+  cursor: pointer;
+  opacity: 0.5;
+  color: var(--interactive-normal);
+  background: transparent;
+  border: none;
+  margin: 0;
+
+  &:hover {
+    opacity: 1;
+    color: var(--interactive-hover);
+  }
+}

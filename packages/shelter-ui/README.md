@@ -13,6 +13,7 @@ For use outside of Discord, a solution may or may not be implemented.
   - [`withCleanup`](#withcleanup)
   - [`injectCss`](#injectcss)
   - [`genId`](#genid)
+  - [`openModal`](#openmodal)
 - [Components](#components)
   - [`<Text>`](#text)
   - [`<Header>`](#header)
@@ -20,6 +21,10 @@ For use outside of Discord, a solution may or may not be implemented.
   - [`<Button>`](#button)
   - [`<Switch />`](#switch-)
   - [`<SwitchItem>`](#switchitem)
+  - [`<ModalRoot>`](#modalroot)
+  - [`<ModalHeader>`](#modalheader)
+  - [`<ModalBody>`](#modalbody)
+  - [`<ModalFooter>`](#modalfooter)
 
 ## Utils
 
@@ -82,6 +87,19 @@ export default () => {
     </>
   );
 };
+```
+
+### `openModal`
+
+`openModal` opens the given component in a fullscreen popup modal.
+
+It passes your component one prop, `close`, which is a function that closes the modal.
+
+It returns a function that removes your modal.
+
+```js
+const remove = openModal((p) => <button onclick={p}>Hi!</button>);
+remove();
 ```
 
 ## Components
@@ -167,3 +185,41 @@ The child elements of the component is the title displayed next to the switch.
 ```jsx
 <SwitchItem note="Does cool things" value={/*...*/}>A cool option</SwitchItem>
 ```
+
+### `<ModalRoot>`
+
+The root component of a discord-styled modal.
+
+Takes a `size` from `ModalSizes` and some child elements.
+
+`size` defaults to `ModalSizes.SMALL`.
+
+All provided child parts of the modal (header, body, footer) are optional.
+
+```jsx
+<ModalRoot size={ModalSizes.SMALL}>
+  <ModalHeader /* noClose */ close={closeFn}>My cool modal</ModalHeader>
+  <ModalBody>Look mom! I'm on the shelter-ui modal!</ModalBody>
+  <ModalFooter>Uhhhhh idk this is the footer ig, its a good place for buttons!</ModalFooter>
+</ModalRoot>
+```
+
+### `<ModalHeader>`
+
+The header of a discord-styled modal.
+
+Takes a prop, `close`, which is the function that closes the modal.
+
+Also has an optional boolean prop `noClose` which hides the close button.
+
+### `<ModalBody>`
+
+The body of a discord-styled modal.
+
+Has nice discord scrollbars and plays well with the header and footer when overflowed.
+
+### `<ModalFooter>`
+
+Takes no props.
+
+The footer of a discord-styled-modal, good for buttons!
