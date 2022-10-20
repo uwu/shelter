@@ -111,10 +111,11 @@ async function updatePlugin(pluginId: string) {
 
   if (data.update && data.src) {
     try {
-      const [newPluginText, newPluginManifest] = await Promise.all([
-        fetch(new URL("plugin.js", data.src)).then((r) => r.text()),
-        fetch(new URL("plugin.json", data.src)).then((r) => r.json()),
-      ]);
+      const newPluginManifest = await (await fetch(new URL("plugin.json", data.src))).json();
+
+      if (data.manifest.hash !== undefined && newPluginManifest.hash === data.manifest.hash) return false;
+
+      const newPluginText = await (await fetch(new URL("plugin.js", data.src))).text();
 
       internalData[pluginId] = {
         ...data,
@@ -162,4 +163,10 @@ export function addPlugin(id: string, plugin: StoredPlugin) {
   plugin.on = false;
 
   internalData[id] = plugin;
+}
+
+export function removePlugin(id: string) {
+  if (!internalData[id]) throw new Error(`attempted to remove non-existent plugin ${id}`);
+  if (loadedPlugins[id]) stopPlugin(id);
+  delete internalData[id];
 }
