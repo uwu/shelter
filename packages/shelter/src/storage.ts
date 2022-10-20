@@ -25,11 +25,7 @@ async function getDb(store: string) {
 
   const prom = openDB("shelter", Date.now(), {
     upgrade(udb) {
-      for (const name of storesToAdd)
-        if (!udb.objectStoreNames.contains(name)) {
-          udb.createObjectStore(name);
-          console.log([...udb.objectStoreNames]);
-        }
+      for (const name of storesToAdd) if (!udb.objectStoreNames.contains(name)) udb.createObjectStore(name);
     },
   }).then((db) => {
     storesToAdd = [];
@@ -52,7 +48,7 @@ export const storage = <T = any>(name: string) => {
     db = d;
 
     const keys = await db.getAllKeys(name);
-    Promise.all(keys.map(async (k) => [k, await db.get(name, k)])).then((vals) => {
+    await Promise.all(keys.map(async (k) => [k, await db.get(name, k)])).then((vals) => {
       for (const [k, v] of vals) {
         if (!signals.hasOwnProperty(k)) {
           signals[k] = createSignal(v);
@@ -100,22 +96,17 @@ export const storage = <T = any>(name: string) => {
       return true;
     },
 
-    has(_, p) {
-      return signals.hasOwnProperty(p);
-    },
+    has: (_, p) => p in signals,
 
-    ownKeys() {
-      return Object.keys(signals);
-    },
+    ownKeys: () => Object.keys(signals),
 
-    getOwnPropertyDescriptor(_, p) {
-      return {
-        value: p,
-        enumerable: true,
-        configurable: true,
-        writable: true,
-      };
-    },
+    // without this, properties are not enumerable! (object.keys wouldn't work)
+    getOwnPropertyDescriptor: (_, p) => ({
+      value: p,
+      enumerable: true,
+      configurable: true,
+      writable: true,
+    }),
   });
 };
 
@@ -134,6 +125,6 @@ export const waitInit = (store: ShelterStore<unknown>) => new Promise<void>((res
 export const defaults = <T = any>(store: ShelterStore<T>, fallbacks: Record<string, T>) =>
   whenInited(store, () =>
     batch(() => {
-      for (const k in fallbacks) if (!(k in fallbacks)) store[k] = fallbacks[k];
+      for (const k in fallbacks) if (!(k in store)) store[k] = fallbacks[k];
     })
   );
