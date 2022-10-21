@@ -8,7 +8,6 @@ declare global {
 }
 
 let dispatcher: Dispatcher | Promise<Dispatcher>;
-const dispatcherSymbol = Symbol("SHELTER_DISPATCHER_CONTAINER");
 
 export async function getDispatcher() {
   if (dispatcher) return dispatcher;
@@ -31,17 +30,15 @@ export async function getDispatcher() {
       // Are you happy now?
       Object.defineProperty(Object.prototype, "_dispatcher", {
         set(value) {
-          this[dispatcherSymbol] = value;
-
           if (dispatcher) {
-            dispatcher = value;
+            dispatcher = Object.defineProperty(this, "_dispatcher", {
+              value,
+            })._dispatcher;
             res(dispatcher);
             delete Object.prototype._dispatcher;
           }
         },
-        get() {
-          return this[dispatcherSymbol];
-        },
+        configurable: true,
       });
     });
 
