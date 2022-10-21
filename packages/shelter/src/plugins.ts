@@ -134,7 +134,7 @@ async function updatePlugin(pluginId: string) {
 
 const stopAllPlugins = () => Object.keys(internalData).forEach(stopPlugin);
 
-export async function initAllPlugins() {
+export async function startAllPlugins() {
   // allow plugin stores to connect to IDB, as we need to read persisted data from them straight away
   await Promise.all([waitInit(internalData), waitInit(pluginData)]);
 
@@ -148,7 +148,7 @@ export async function initAllPlugins() {
   return stopAllPlugins;
 }
 
-export function addPlugin(id: string, plugin: StoredPlugin) {
+export function addLocalPlugin(id: string, plugin: StoredPlugin) {
   // validate
   if (typeof id !== "string" || id in internalData) throw new Error("plugin ID invalid or taken");
 
@@ -165,8 +165,28 @@ export function addPlugin(id: string, plugin: StoredPlugin) {
   internalData[id] = plugin;
 }
 
+export async function addRemotePlugin(id: string, src: string) {
+  // validate
+  if (typeof id !== "string" || id in internalData) throw new Error("plugin ID invalid or taken");
+
+  internalData[id] = {
+    src,
+    update: true,
+    on: false,
+    manifest: {},
+    js: "",
+  };
+
+  try {
+    if (!(await updatePlugin(id))) delete internalData[id];
+  } catch (e) {
+    delete internalData[id];
+    throw e;
+  }
+}
+
 export function removePlugin(id: string) {
   if (!internalData[id]) throw new Error(`attempted to remove non-existent plugin ${id}`);
-  if (loadedPlugins[id]) stopPlugin(id);
+  if (id in loadedPlugins) stopPlugin(id);
   delete internalData[id];
 }

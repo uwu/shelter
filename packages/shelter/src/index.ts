@@ -13,15 +13,15 @@ import { dbStore } from "./storage";
 const start = performance.now();
 util.log("shelter is initializing...");
 
+function without<T extends Record<string, any>>(object: T, ...keys: string[]) {
+  const cloned = { ...object };
+  keys.forEach((k) => delete cloned[k]);
+  return cloned;
+}
+
 getDispatcher().then(async (FluxDispatcher) => {
   // load all the things in parallel :D
-  const unloads = await Promise.all([
-    initSettings(),
-    initDispatchLogger(),
-    plugins.initAllPlugins(),
-    ui.cleanupCss,
-    patcher.unpatchAll,
-  ]);
+  const unloads = await Promise.all([initSettings(), initDispatchLogger(), ui.cleanupCss, patcher.unpatchAll]);
 
   // We can potentially move the window obj to it's own module later, I think it'd help with typedefs?
   window["shelter"] = {
@@ -31,12 +31,15 @@ getDispatcher().then(async (FluxDispatcher) => {
     solidStore,
     solidWeb,
     util,
-    plugins: { ...plugins, initAllPlugins: undefined },
+    plugins: without(plugins, "startAllPlugins"),
     FluxStores,
     dbStore,
-    ui: { ...ui, cleanupCss: undefined },
+    ui: without(ui, "cleanupCss"),
     unload: () => unloads.forEach((p) => p()),
   };
+
+  // this one should run last!
+  unloads.push(await plugins.startAllPlugins());
 
   util.log(`shelter is initialized. took: ${(performance.now() - start).toFixed(1)}ms`);
 });
