@@ -1,4 +1,4 @@
-import { isInited, storage, waitInit } from "./storage";
+import { isInited, signalOf, solidMutWithSignal, storage, waitInit } from "./storage";
 import { JSX } from "solid-js";
 import { createMutable } from "solid-js/store";
 import { log } from "./util";
@@ -20,16 +20,19 @@ type EvaledPlugin = {
 };
 
 const internalData = storage<StoredPlugin>("plugins-internal");
-const pluginData = storage("plugins-data");
-const loadedPlugins = createMutable({} as Record<string, EvaledPlugin>);
+const pluginStorages = storage("plugins-data");
+const [internalLoaded, loadedPlugins] = solidMutWithSignal(createMutable({} as Record<string, EvaledPlugin>));
+
+export const installedPlugins = signalOf(internalData);
+export { loadedPlugins };
 
 function createStorage(pluginId: string): [Record<string, any>, () => void] {
-  if (!isInited(pluginData))
+  if (!isInited(pluginStorages))
     throw new Error("to keep data persistent, plugin storages must not be created until connected to IDB");
 
-  const data = createMutable((pluginData[pluginId] ?? {}) as Record<string, any>);
+  const data = createMutable((pluginStorages[pluginId] ?? {}) as Record<string, any>);
 
-  const flush = () => (pluginData[pluginId] = { ...data });
+  const flush = () => (pluginStorages[pluginId] = { ...data });
 
   return [
     new Proxy(data, {
@@ -50,7 +53,7 @@ export function startPlugin(pluginId: string) {
   const data = internalData[pluginId];
   if (!data) throw new Error(`attempted to load a non-existent plugin: ${pluginId}`);
 
-  if (loadedPlugins[pluginId]) throw new Error("attempted to load an already loaded plugin");
+  if (internalLoaded[pluginId]) throw new Error("attempted to load an already loaded plugin");
 
   const [store, flushStore] = createStorage(pluginId);
 
@@ -69,7 +72,7 @@ export function startPlugin(pluginId: string) {
   try {
     // noinspection CommaExpressionJS
     const plugin: EvaledPlugin = (0, eval)(pluginString)(shelterPluginEdition);
-    loadedPlugins[pluginId] = plugin;
+    internalLoaded[pluginId] = plugin;
 
     plugin.onLoad?.();
 
@@ -78,19 +81,19 @@ export function startPlugin(pluginId: string) {
     log(`plugin ${pluginId} errored while loading and will be unloaded: ${e}`, "error");
 
     try {
-      loadedPlugins[pluginId]?.onUnload?.();
+      internalLoaded[pluginId]?.onUnload?.();
     } catch (e2) {
       log(`plugin ${pluginId} errored while unloading: ${e2}`, "error");
     }
 
-    delete loadedPlugins[pluginId];
+    delete internalLoaded[pluginId];
     internalData[pluginId] = { ...data, on: false };
   }
 }
 
 export function stopPlugin(pluginId: string) {
   const data = internalData[pluginId];
-  const loadedData = loadedPlugins[pluginId];
+  const loadedData = internalLoaded[pluginId];
   if (!data) throw new Error(`attempted to unload a non-existent plugin: ${pluginId}`);
   if (!loadedData) throw new Error(`attempted to unload a non-loaded plugin: ${pluginId}`);
 
@@ -100,14 +103,14 @@ export function stopPlugin(pluginId: string) {
     log(`plugin ${pluginId} errored while unloading: ${e}`, "error");
   }
 
-  delete loadedPlugins[pluginId];
+  delete internalLoaded[pluginId];
   internalData[pluginId] = { ...data, on: false };
 }
 
 async function updatePlugin(pluginId: string) {
   const data = internalData[pluginId];
   if (!data) throw new Error(`attempted to update a non-existent plugin: ${pluginId}`);
-  if (loadedPlugins[pluginId]) throw new Error(`attempted to update a loaded plugin: ${pluginId}`);
+  if (internalLoaded[pluginId]) throw new Error(`attempted to update a loaded plugin: ${pluginId}`);
 
   if (data.update && data.src) {
     try {
@@ -136,7 +139,7 @@ const stopAllPlugins = () => Object.keys(internalData).forEach(stopPlugin);
 
 export async function startAllPlugins() {
   // allow plugin stores to connect to IDB, as we need to read persisted data from them straight away
-  await Promise.all([waitInit(internalData), waitInit(pluginData)]);
+  await Promise.all([waitInit(internalData), waitInit(pluginStorages)]);
 
   // update in parallel
   await Promise.all(Object.keys(internalData).map(updatePlugin));
@@ -187,6 +190,6 @@ export async function addRemotePlugin(id: string, src: string) {
 
 export function removePlugin(id: string) {
   if (!internalData[id]) throw new Error(`attempted to remove non-existent plugin ${id}`);
-  if (id in loadedPlugins) stopPlugin(id);
+  if (id in internalLoaded) stopPlugin(id);
   delete internalData[id];
 }

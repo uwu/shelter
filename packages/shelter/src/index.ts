@@ -8,7 +8,7 @@ import * as util from "./util";
 import * as plugins from "./plugins";
 import { initSettings } from "./settings";
 import { initDispatchLogger } from "./dispatchLogger";
-import { dbStore } from "./storage";
+import * as storage from "./storage";
 
 const start = performance.now();
 util.log("shelter is initializing...");
@@ -33,7 +33,7 @@ getDispatcher().then(async (FluxDispatcher) => {
     util,
     plugins: without(plugins, "startAllPlugins"),
     FluxStores,
-    dbStore,
+    storage,
     ui: without(ui, "cleanupCss"),
     unload: () => unloads.forEach((p) => p()),
   };

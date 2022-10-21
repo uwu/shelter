@@ -6,12 +6,14 @@ import { IDBPDatabase, openDB } from "idb";
 
 const symWait = Symbol();
 const symDb = Symbol();
+const symSig = Symbol();
 
 interface ShelterStore<T> {
   [_: string]: T;
 
   [symWait]: (cb: () => void) => void;
   [symDb]: IDBPDatabase<any>;
+  [symSig]: () => Record<string, T>;
 }
 
 // we have to mutex opening the db for adding new stores etc to work correctly
@@ -44,6 +46,13 @@ export const storage = <T = any>(name: string) => {
   const waitQueue: (() => void)[] = [];
   const waitInit = (cb: () => void) => (db ? cb() : waitQueue.push(cb));
 
+  const [mainSignal, setMainSignal] = createSignal({});
+  const updateMainSignal = () => {
+    const o = {};
+    for (const k in signals) o[k] = signals[k][0]();
+    setMainSignal(o);
+  };
+
   getDb(name).then(async (d) => {
     db = d;
 
@@ -54,6 +63,7 @@ export const storage = <T = any>(name: string) => {
           signals[k] = createSignal(v);
         }
       }
+      updateMainSignal();
     });
 
     waitQueue.forEach((cb) => cb());
@@ -64,6 +74,7 @@ export const storage = <T = any>(name: string) => {
       // internal things
       if (p === symWait) return waitInit;
       if (p === symDb) return db;
+      if (p === symSig) return mainSignal;
 
       // etc
       if (typeof p === "symbol") throw new Error("cannot index db store with a symbol");
@@ -71,7 +82,12 @@ export const storage = <T = any>(name: string) => {
       if (signals[p]) return signals[p][0]();
 
       const [sig, setsig] = (signals[p] = createSignal());
-      waitInit(() => db.get(name, p).then((v) => setsig(() => v)));
+      waitInit(() =>
+        db.get(name, p).then((v) => {
+          setsig(() => v);
+          updateMainSignal();
+        })
+      );
       return sig();
     },
 
@@ -81,6 +97,7 @@ export const storage = <T = any>(name: string) => {
       if (!signals[p]) signals[p] = createSignal();
       const [, setsig] = signals[p];
       setsig(() => v);
+      updateMainSignal();
 
       waitInit(() => db.put(name, v, p));
 
@@ -91,6 +108,7 @@ export const storage = <T = any>(name: string) => {
       if (typeof p === "symbol") throw new Error("cannot index db store with a symbol");
 
       delete signals[p];
+      updateMainSignal();
       waitInit(() => db.delete(name, p));
 
       return true;
@@ -128,3 +146,27 @@ export const defaults = <T = any>(store: ShelterStore<T>, fallbacks: Record<stri
       for (const k in fallbacks) if (!(k in store)) store[k] = fallbacks[k];
     })
   );
+
+/** gets a signal containing the whole store as an object */
+export const signalOf = <T = any>(store: ShelterStore<T>): (() => Record<string, T>) => store[symSig];
+
+/** wraps a solid mutable to provide a global signal */
+export const solidMutWithSignal = <T extends object = any>(store: T) /*: [T, () => T]*/ => {
+  const [sig, setSig] = createSignal<T>();
+  const update = () => setSig(() => ({ ...store }));
+  return [
+    new Proxy(store, {
+      set(t, p, v, r) {
+        const success = Reflect.set(t, p, v, r);
+        if (success) update();
+        return success;
+      },
+      deleteProperty(t, p) {
+        const success = Reflect.deleteProperty(t, p);
+        if (success) update();
+        return success;
+      },
+    }),
+    sig,
+  ];
+};
