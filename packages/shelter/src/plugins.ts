@@ -141,11 +141,15 @@ export async function startAllPlugins() {
   // allow plugin stores to connect to IDB, as we need to read persisted data from them straight away
   await Promise.all([waitInit(internalData), waitInit(pluginStorages)]);
 
+  const allPlugins = Object.keys(internalData);
+
   // update in parallel
-  await Promise.all(Object.keys(internalData).map(updatePlugin));
+  await Promise.all(allPlugins.map(updatePlugin));
+
+  const toStart = allPlugins.filter((id) => internalData[id].on);
 
   // probably safer to do this in series though :p
-  Object.keys(internalData).forEach(startPlugin);
+  toStart.forEach(startPlugin);
 
   // makes things cleaner in index.ts init
   return stopAllPlugins;

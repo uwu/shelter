@@ -1,7 +1,8 @@
 import { Divider, injectCss, Header, HeaderTags, SwitchItem } from "shelter-ui";
+import { dbStore } from "../storage";
 import { classes, css } from "./Settings.tsx.scss";
 import ShelterLogo from "./ShelterLogo";
-import { dbStore } from "../storage";
+import Plugins from "./Plugins";
 
 let injectedCss = false;
 
@@ -18,9 +19,11 @@ export default () => {
       </Header>
       <Divider mt mb />
       <div class={classes.column} style={{ padding: "0.25rem" }}>
-        <SwitchItem hideBorder value={dbStore.logDispatch} onChange={(v) => (dbStore.logDispatch = v)}>
+        <SwitchItem value={dbStore.logDispatch} onChange={(v) => (dbStore.logDispatch = v)}>
           Log FluxDispatcher events to the console
         </SwitchItem>
+
+        <Plugins />
       </div>
     </>
   );

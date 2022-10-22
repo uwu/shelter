@@ -1,0 +1,30 @@
+$DIM: hsl(216, calc(var(--saturation-factor, 1) * 3.7%), 73.5%);
+
+.list {
+  color: var(--text-normal);
+}
+
+.plugin {
+  border: 1px solid var(--background-accent);
+  border-radius: 4px;
+  padding: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+
+  color: $DIM;
+
+  strong,
+  .author {
+    // plugin name, author
+    color: var(--header-primary);
+  }
+}
+
+.desc {
+  font-size: 0.9em;
+  color: $DIM;
+}

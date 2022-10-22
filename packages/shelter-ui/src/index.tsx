@@ -28,3 +28,5 @@ export const Divider: Component<{ mt?: boolean | string; mb?: boolean | string }
     }}
   />
 );
+
+export const Space: Component = () => <pre> </pre>;

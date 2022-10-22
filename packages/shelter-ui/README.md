@@ -25,6 +25,7 @@ For use outside of Discord, a solution may or may not be implemented.
   - [`<ModalHeader>`](#modalheader)
   - [`<ModalBody>`](#modalbody)
   - [`<ModalFooter>`](#modalfooter)
+  - [`<Space />`](#space-)
 
 ## Utils
 
@@ -223,3 +224,7 @@ Has nice discord scrollbars and plays well with the header and footer when overf
 Takes no props.
 
 The footer of a discord-styled-modal, good for buttons!
+
+### `<Space />`
+
+A spacebar character. Useful in flexboxes etc.
