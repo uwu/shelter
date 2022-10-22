@@ -32,9 +32,7 @@ export async function getDispatcher() {
       Object.defineProperty(Object.prototype, "_dispatcher", {
         set(value) {
           if (dispatcher) {
-            dispatcher = Object.defineProperty(this, "_dispatcher", {
-              value,
-            })._dispatcher;
+            dispatcher = Object.defineProperty(this, "_dispatcher", { value })._dispatcher;
             res(dispatcher);
             delete Object.prototype._dispatcher;
           }
