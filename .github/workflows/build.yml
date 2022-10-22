@@ -28,12 +28,13 @@ jobs:
           pnpm i
 
       - name: Build
+        working-directory: packages/shelter
         run: npm run build
 
       - name: Push builds
         run: |
           rm $GITHUB_WORKSPACE/builds/* || true
-          cp -r dist/* $GITHUB_WORKSPACE/builds || true
+          cp -r packages/shelter/dist/* $GITHUB_WORKSPACE/builds || true
           cd $GITHUB_WORKSPACE/builds
           git config --local user.email "actions@github.com"
           git config --local user.name "GitHub Actions"
