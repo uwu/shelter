@@ -1,4 +1,4 @@
-import { Component, createSignal } from "solid-js";
+import { Component, createEffect, createMemo, createSignal } from "solid-js";
 import { classes, css } from "./modals.tsx.scss";
 import { injectCss, withCleanup } from "./util";
 
@@ -15,35 +15,44 @@ const ModalRoot: Component = withCleanup(() => {
     cssInjected = true;
   }
 
-  const currentModal = () => currentModals()[0];
+  const modalCount = createMemo(() => currentModals().length);
 
   return (
-    <div class={classes.mroot} onclick={popModal} aria-modal role="dialog">
-      {currentModal()?.({ close: popModal })}
+    <div class={classes.mroot} aria-modal role="dialog">
+      <div class={classes.bg} onclick={popModal} />
+
+      {currentModals().map((M, idx) => (
+        <div
+          classList={{
+            [classes.wrap]: true,
+            [classes.active]: idx === modalCount() - 1,
+          }}
+        >
+          <M close={() => popSpecificModal(M)} />
+        </div>
+      ))}
     </div>
   );
 });
 
-const mountModal = () => document.body.append((modalElem = (<ModalRoot />) as HTMLDivElement));
-
-function unmountModal() {
-  modalElem?.remove();
-  modalElem = undefined;
-}
+// modal mounting and unmounting
+createEffect(() => {
+  if (currentModals().length === 0) {
+    modalElem?.remove();
+    modalElem = undefined;
+  } else if (!modalElem) document.body.append((modalElem = (<ModalRoot />) as HTMLDivElement));
+});
 
 function popModal() {
-  const modalCount = currentModals().length;
-
-  setCurrentModals(currentModals().slice(1));
-  if (modalCount === 1) unmountModal();
+  setCurrentModals(currentModals().slice(0, -1));
 }
 
-const popSpecificModal = (comp: Component<ModalProps>) => setCurrentModals(currentModals().filter((m) => m !== comp));
+function popSpecificModal(comp: Component<ModalProps>) {
+  setCurrentModals(currentModals().filter((m) => m !== comp));
+}
 
 export function openModal(comp: Component<ModalProps>) {
-  const modalCount = currentModals().length;
-  setCurrentModals([comp, ...currentModals()]);
-  if (modalCount === 0) mountModal();
+  setCurrentModals([...currentModals(), comp]);
 
   return () => popSpecificModal(comp);
 }
