@@ -85,7 +85,7 @@ export async function initSettings() {
     // microtask is necessary to allow react to finish rendering the ui before we run
     queueMicrotask(() => {
       const sidebar = document.querySelector("nav > [role=tablist]");
-      const mainSection = document.querySelector("[role=tabpanel]");
+      const mainSection = document.querySelector("[role=tabpanel]:not([aria-labelledby])");
       if (!sidebar || !mainSection) return;
 
       const changelogIdx = [...sidebar.children].findIndex(
