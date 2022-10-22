@@ -1,5 +1,5 @@
 import { batch, createSignal, onCleanup } from "solid-js";
-import { getDispatcher } from "./dispatcher";
+import { getDispatcher } from "./flux";
 import { Fiber, FluxStore } from "./types";
 
 declare global {

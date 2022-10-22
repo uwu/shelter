@@ -1,5 +1,5 @@
 import { after } from "spitroast";
-import { getDispatcher } from "./dispatcher";
+import { getDispatcher } from "./flux";
 import { log } from "./util";
 import { dbStore, defaults } from "./storage";
 

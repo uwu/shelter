@@ -1,5 +1,6 @@
 import { webpackChunk } from "@cumjar/websmack";
 import { Dispatcher, FluxStore } from "./types";
+import { instead } from "spitroast";
 
 declare global {
   interface Object {
@@ -45,20 +46,57 @@ export async function getDispatcher() {
   return dispatcher;
 }
 
-export let FluxStores: Record<string, FluxStore | FluxStore[]> = {};
+export const stores: Record<string, FluxStore | FluxStore[]> = {};
 
 const realDispatchTokenKey = Symbol("shelter _dispatchToken");
 Object.defineProperty(Object.prototype, "_dispatchToken", {
   set(value) {
     this[realDispatchTokenKey] = value;
     const name = this.getName();
-    if (!FluxStores[name]) FluxStores[name] = this;
+    if (!stores[name]) stores[name] = this;
     else {
-      if (Array.isArray(FluxStores[name])) FluxStores[name].push(this);
-      else FluxStores[name] = [FluxStores[name], this];
+      if (Array.isArray(stores[name])) stores[name].push(this);
+      else stores[name] = [stores[name], this];
     }
   },
   get() {
     return this[realDispatchTokenKey];
   },
 });
+
+type Intercept = (payload: any) => void | [any, boolean];
+
+let intercepts: Intercept[] = [];
+let interceptInjected = false;
+
+async function injectIntercept() {
+  if (interceptInjected) return;
+  interceptInjected = true;
+
+  const FluxDispatcher = await getDispatcher();
+
+  FluxDispatcher._interceptor ??= () => {}; // patcher needs smth to patch!
+
+  instead("_interceptor", FluxDispatcher, ([payload], orig) => {
+    for (const intercept of intercepts) {
+      const res = intercept(payload);
+      if (res) {
+        if (res[1]) return true;
+        payload = res[0];
+      }
+    }
+
+    return orig(payload);
+  });
+}
+
+export function intercept(cb: Intercept) {
+  // noinspection JSIgnoredPromiseFromCall
+  injectIntercept();
+
+  intercepts.push(cb);
+
+  return () => {
+    intercepts = intercepts.filter((i) => i !== cb);
+  };
+}

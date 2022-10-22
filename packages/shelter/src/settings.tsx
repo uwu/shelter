@@ -1,6 +1,6 @@
 // Injects a section into user settings
 
-import { getDispatcher } from "./dispatcher";
+import { getDispatcher } from "./flux";
 import { awaitDispatch, getFiber, reactFiberWalker } from "./util";
 import { Component, createSignal, onCleanup } from "solid-js";
 import { withCleanup } from "shelter-ui";

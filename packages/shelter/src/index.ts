@@ -1,4 +1,4 @@
-import { FluxStores, getDispatcher } from "./dispatcher";
+import * as flux from "./flux";
 import * as patcher from "spitroast";
 import * as solid from "solid-js";
 import * as solidStore from "solid-js/store";
@@ -19,20 +19,22 @@ function without<T extends Record<string, any>>(object: T, ...keys: string[]) {
   return cloned;
 }
 
-getDispatcher().then(async (FluxDispatcher) => {
+flux.getDispatcher().then(async (FluxDispatcher) => {
   // load all the things in parallel :D
   const unloads = await Promise.all([initSettings(), initDispatchLogger(), ui.cleanupCss, patcher.unpatchAll]);
 
   // We can potentially move the window obj to it's own module later, I think it'd help with typedefs?
   window["shelter"] = {
-    FluxDispatcher,
-    patcher,
+    flux: {
+      ...flux,
+      dispatcher: FluxDispatcher,
+    },
+    patcher: without(patcher, "unpatchAll"),
     solid,
     solidStore,
     solidWeb,
     util,
     plugins: without(plugins, "startAllPlugins"),
-    FluxStores,
     storage,
     ui: without(ui, "cleanupCss"),
     unload: () => unloads.forEach((p) => p()),
