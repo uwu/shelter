@@ -1,15 +1,16 @@
 import { Component, createEffect, createMemo, createSignal } from "solid-js";
 import { classes, css } from "./modals.tsx.scss";
-import { injectCss, withCleanup } from "./util";
+import { injectCss } from "./util";
+import { render } from "solid-js/web";
 
 type ModalProps = { close(): void };
 
 const [currentModals, setCurrentModals] = createSignal<Component<ModalProps>[]>([]);
-let modalElem: HTMLDivElement;
+let dispose: () => void;
 
 let cssInjected = false;
 
-const ModalRoot: Component = withCleanup(() => {
+const ModalRoot: Component = () => {
   if (!cssInjected) {
     injectCss(css);
     cssInjected = true;
@@ -18,29 +19,42 @@ const ModalRoot: Component = withCleanup(() => {
   const modalCount = createMemo(() => currentModals().length);
 
   return (
-    <div class={classes.mroot} aria-modal role="dialog">
+    <>
       <div class={classes.bg} onclick={popModal} />
 
-      {currentModals().map((M, idx) => (
-        <div
-          classList={{
-            [classes.wrap]: true,
-            [classes.active]: idx === modalCount() - 1,
-          }}
-        >
-          <M close={() => popSpecificModal(M)} />
-        </div>
-      ))}
-    </div>
+      {currentModals() && console.log("modals changed")}
+
+      {currentModals().map((M, idx) => {
+        console.log("encountered", M);
+        return (
+          <div
+            classList={{
+              [classes.wrap]: true,
+              [classes.active]: idx === modalCount() - 1,
+            }}
+          >
+            <M close={() => popSpecificModal(M)} />
+          </div>
+        );
+      })}
+    </>
   );
-});
+};
 
 // modal mounting and unmounting
 createEffect(() => {
   if (currentModals().length === 0) {
-    modalElem?.remove();
-    modalElem = undefined;
-  } else if (!modalElem) document.body.append((modalElem = (<ModalRoot />) as HTMLDivElement));
+    dispose?.();
+    dispose = undefined;
+  } else if (!dispose) {
+    const root = (<div class={classes.mroot} aria-modal role="dialog" />) as HTMLDivElement;
+    document.body.append(root);
+    const disp = render(() => <ModalRoot />, root);
+    dispose = () => {
+      disp();
+      root.remove();
+    };
+  }
 });
 
 function popModal() {
