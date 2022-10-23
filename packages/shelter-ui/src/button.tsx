@@ -22,7 +22,7 @@ export const ButtonColors: Record<string, ButtonColor> = {
   BRAND: ["var(--brand-experiment)", "var(--interactive-active)", "var(--brand-experiment-560)"],
   RED: ["var(--text-danger)", "var(--interactive-active)", "var(--button-danger-background-hover)"],
   GREEN: ["var(--button-positive-background)", "var(--interactive-active)", "var(--button-positive-background-hover)"],
-  PRIMARY: [
+  SECONDARY: [
     "var(--button-secondary-background)",
     "hsl(0,calc(var(--saturation-factor, 1)*0%),100%)",
     "var(--button-secondary-background-hover)",

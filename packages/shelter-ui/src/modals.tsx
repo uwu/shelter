@@ -1,6 +1,8 @@
-import { Component, JSX } from "solid-js";
+import { Component, JSX, onCleanup } from "solid-js";
 import { classes } from "./modals.tsx.scss";
 import { Header, HeaderTags } from "./header";
+import { Button, ButtonColors, ButtonSizes } from "./button";
+import { openModal } from "./openModal";
 
 export const ModalSizes = {
   SMALL: classes.sm,
@@ -48,3 +50,79 @@ export const ModalHeader: Component<{
 export const ModalBody: Component<{ children?: JSX.Element }> = (props) => (
   <div class={classes.body}>{props.children}</div>
 );
+
+const confirmColours = {
+  danger: ButtonColors.RED,
+  confirm: ButtonColors.GREEN,
+};
+
+type ModalTypes = "neutral" | "danger" | "confirm";
+
+export const ModalConfirmFooter: Component<{
+  close(): void;
+  confirmText?: string;
+  cancelText?: string;
+  type?: ModalTypes;
+  onConfirm?(): void;
+  onCancel?(): void;
+}> = (props) => (
+  <ModalFooter>
+    <div class={classes.confirm}>
+      <Button
+        size={ButtonSizes.MEDIUM}
+        color={ButtonColors.SECONDARY}
+        onClick={() => {
+          props.onCancel?.();
+          props.close();
+        }}
+      >
+        {props.cancelText ?? "Cancel"}
+      </Button>
+      <Button
+        size={ButtonSizes.MEDIUM}
+        color={confirmColours[props.type ?? "neutral"]}
+        onClick={() => {
+          props.onConfirm?.();
+          props.close();
+        }}
+      >
+        {props.confirmText ?? "Confirm"}
+      </Button>
+    </div>
+  </ModalFooter>
+);
+
+export const openConfirmationModal = ({
+  body,
+  header,
+  confirmText,
+  cancelText,
+  type,
+  size,
+}: {
+  body?: Component;
+  header?: Component;
+  confirmText?: string;
+  cancelText?: string;
+  type?: ModalTypes;
+  size?: string;
+}) =>
+  new Promise<void>((res, rej) => {
+    openModal((props) => {
+      onCleanup(rej);
+      return (
+        <ModalRoot size={size}>
+          <ModalHeader close={props.close}>{header({})}</ModalHeader>
+          <ModalBody>{body({})}</ModalBody>
+          <ModalConfirmFooter
+            onConfirm={res}
+            onCancel={rej}
+            close={props.close}
+            confirmText={confirmText}
+            cancelText={cancelText}
+            type={type}
+          />
+        </ModalRoot>
+      );
+    });
+  });

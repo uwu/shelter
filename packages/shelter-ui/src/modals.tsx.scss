@@ -106,6 +106,12 @@ $RADIUS: 4px;
   border-radius: 0 0 $RADIUS $RADIUS;
 }
 
+.confirm {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
 .cbtn {
   height: 26px;
   padding: 2px;
