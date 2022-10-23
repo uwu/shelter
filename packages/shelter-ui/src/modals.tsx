@@ -10,8 +10,14 @@ export const ModalSizes = {
 export const ModalRoot: Component<{
   size?: string;
   children?: JSX.Element;
+  class?: string;
+  style?: string | JSX.CSSProperties;
 }> = (props) => (
-  <div onclick={(e) => e.stopPropagation()} class={`${classes.modal} ${props.size ?? ModalSizes.SMALL}`}>
+  <div
+    onclick={(e) => e.stopPropagation()}
+    class={`${classes.modal} ${props.size ?? ModalSizes.SMALL} ${props.class ?? ""}`}
+    style={props.style}
+  >
     {props.children}
   </div>
 );
