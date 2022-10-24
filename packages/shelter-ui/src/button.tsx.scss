@@ -17,18 +17,18 @@
   min-height: var(--shltr-btn-h);
 
   &[disabled] {
-    //TODO
+    filter: brightness(0.6);
   }
 
   &.grow {
     width: auto;
   }
   &.filled,
-  &.outlined:hover {
+  &.outlined:hover:not([disabled]) {
     color: var(--shltr-btn-col);
     background: var(--shltr-btn-bg);
   }
-  &.filled:hover {
+  &.filled:hover:not([disabled]) {
     background: var(--shltr-btn-bg-hov);
   }
   &.inverted {
