@@ -16,6 +16,10 @@
   min-width: var(--shltr-btn-w);
   min-height: var(--shltr-btn-h);
 
+  &[disabled] {
+    //TODO
+  }
+
   &.grow {
     width: auto;
   }

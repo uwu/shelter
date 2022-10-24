@@ -3,6 +3,7 @@ import { classes } from "./modals.tsx.scss";
 import { Header, HeaderTags } from "./header";
 import { Button, ButtonColors, ButtonSizes } from "./button";
 import { openModal } from "./openModal";
+import { IconClose } from "./icons";
 
 export const ModalSizes = {
   SMALL: classes.sm,
@@ -37,12 +38,7 @@ export const ModalHeader: Component<{
     <Header tag={HeaderTags.H1}>{props.children}</Header>
 
     <button class={classes.cbtn} style={{ display: props.noClose ? "none" : "" }} onclick={props.close}>
-      <svg role="img" width="24" height="24" viewBox="0 0 24 24">
-        <path
-          fill="currentColor"
-          d="M18.4 4L12 10.4L5.6 4L4 5.6L10.4 12L4 18.4L5.6 20L12 13.6L18.4 20L20 18.4L13.6 12L20 5.6L18.4 4Z"
-        />
-      </svg>
+      <IconClose />
     </button>
   </div>
 );
@@ -65,10 +61,13 @@ export const ModalConfirmFooter: Component<{
   type?: ModalTypes;
   onConfirm?(): void;
   onCancel?(): void;
+  disabled?: boolean;
+  cancelDisabled?: boolean;
 }> = (props) => (
   <ModalFooter>
     <div class={classes.confirm}>
       <Button
+        disabled={props.cancelDisabled}
         size={ButtonSizes.MEDIUM}
         color={ButtonColors.SECONDARY}
         onClick={() => {
@@ -79,6 +78,7 @@ export const ModalConfirmFooter: Component<{
         {props.cancelText ?? "Cancel"}
       </Button>
       <Button
+        disabled={props.disabled}
         size={ButtonSizes.MEDIUM}
         color={confirmColours[props.type ?? "neutral"]}
         onClick={() => {

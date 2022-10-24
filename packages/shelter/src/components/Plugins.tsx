@@ -1,7 +1,8 @@
-import { createSignal, For, Index, JSX } from "solid-js";
+import { createSignal, JSX } from "solid-js";
 import { installedPlugins, startPlugin, stopPlugin } from "../plugins";
 import { css, classes } from "./Plugins.tsx.scss";
-import { Header, HeaderTags, injectCss, Space, Switch } from "shelter-ui";
+import { Header, HeaderTags, IconAdd, injectCss, openModal, Space, Switch } from "shelter-ui";
+import PluginAddModal from "./PluginAddModal";
 
 let cssInjected = false;
 
@@ -13,7 +14,15 @@ export default (): JSX.Element => {
 
   return (
     <div class={classes.list}>
-      <Header tag={HeaderTags.H3}>Plugins</Header>
+      <Header tag={HeaderTags.H3}>
+        Plugins
+        <div
+          style={{ display: "inline", "margin-left": ".3rem", cursor: "pointer" }}
+          onclick={() => openModal((props) => <PluginAddModal close={props.close} />)}
+        >
+          <IconAdd />
+        </div>
+      </Header>
 
       {Object.entries(installedPlugins()).map(([id, plugin]) => {
         const [on, setOn] = createSignal(plugin.on);
