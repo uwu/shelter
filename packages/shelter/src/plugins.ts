@@ -5,7 +5,7 @@ import { log } from "./util";
 
 // a lot of this is adapted from cumcord, but some of it is new, and hopefully the code should be a lot less messy :)
 
-type StoredPlugin = {
+export type StoredPlugin = {
   on: boolean;
   js: string;
   update: boolean;
@@ -13,7 +13,7 @@ type StoredPlugin = {
   manifest: Record<string, string>;
 };
 
-type EvaledPlugin = {
+export type EvaledPlugin = {
   onLoad?(): void;
   onUnload(): void;
   settings?(): JSX.Element;

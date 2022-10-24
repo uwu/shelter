@@ -1,10 +1,67 @@
-import { createSignal, JSX } from "solid-js";
-import { installedPlugins, startPlugin, stopPlugin } from "../plugins";
+import { Component, createSignal, JSX } from "solid-js";
+import { installedPlugins, removePlugin, startPlugin, stopPlugin, StoredPlugin } from "../plugins";
 import { css, classes } from "./Plugins.tsx.scss";
-import { Header, HeaderTags, IconAdd, injectCss, openModal, Space, Switch } from "shelter-ui";
+import {
+  Header,
+  HeaderTags,
+  IconAdd,
+  IconBin,
+  injectCss,
+  openConfirmationModal,
+  openModal,
+  Space,
+  Switch,
+} from "shelter-ui";
 import PluginAddModal from "./PluginAddModal";
 
 let cssInjected = false;
+
+const PluginCard: Component<{
+  id: string;
+  plugin: StoredPlugin;
+}> = (props) => {
+  const [on, setOn] = createSignal(props.plugin.on);
+
+  return (
+    <div class={classes.plugin}>
+      <div class={classes.row}>
+        <strong>{props.plugin.manifest.name}</strong>
+        <Space />
+        by
+        <Space />
+        <span class={classes.author}>{props.plugin.manifest.author}</span>
+        <div style="flex:1" />
+        <button
+          class={classes.btn}
+          onclick={() =>
+            openConfirmationModal({
+              body: () => `Are you sure you want to delete plugin ${props.plugin.manifest.name}?`,
+              header: () => "Confirm plugin deletion",
+              type: "danger",
+              confirmText: "Delete",
+            }).then(
+              () => removePlugin(props.id),
+              () => {}
+            )
+          }
+        >
+          <IconBin />
+        </button>
+        <Switch
+          checked={on()}
+          onChange={(newVal) => {
+            if (props.plugin.on === newVal) return;
+            setOn(!on());
+            // oh no! i have to save my pretty animations! (this is utterly stupid)
+            setTimeout(() => (newVal ? startPlugin(props.id) : stopPlugin(props.id)), 250);
+          }}
+        />
+      </div>
+
+      <span class={classes.desc}>{props.plugin.manifest.description}</span>
+    </div>
+  );
+};
 
 export default (): JSX.Element => {
   if (!cssInjected) {
@@ -24,33 +81,9 @@ export default (): JSX.Element => {
         </div>
       </Header>
 
-      {Object.entries(installedPlugins()).map(([id, plugin]) => {
-        const [on, setOn] = createSignal(plugin.on);
-
-        return (
-          <div class={classes.plugin}>
-            <div class={classes.row}>
-              <strong>{plugin.manifest.name}</strong>
-              <Space />
-              by
-              <Space />
-              <span class={classes.author}>{plugin.manifest.author}</span>
-              <div style="flex:1" />
-              <Switch
-                checked={on()}
-                onChange={(newVal) => {
-                  if (plugin.on === newVal) return;
-                  setOn(!on());
-                  // oh no! i have to save my pretty animations! (this is utterly stupid)
-                  setTimeout(() => (newVal ? startPlugin(id) : stopPlugin(id)), 250);
-                }}
-              />
-            </div>
-
-            <span class={classes.desc}>{plugin.manifest.description}</span>
-          </div>
-        );
-      })}
+      {Object.entries(installedPlugins()).map(([id, plugin]) => (
+        <PluginCard {...{ id, plugin }} />
+      ))}
     </div>
   );
 };
