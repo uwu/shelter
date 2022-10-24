@@ -172,13 +172,13 @@ export function addLocalPlugin(id: string, plugin: StoredPlugin) {
   internalData[id] = plugin;
 }
 
-export async function addRemotePlugin(id: string, src: string) {
+export async function addRemotePlugin(id: string, src: string, update = true) {
   // validate
   if (typeof id !== "string" || id in internalData) throw new Error("plugin ID invalid or taken");
 
   internalData[id] = {
     src,
-    update: true,
+    update,
     on: false,
     manifest: {},
     js: "",

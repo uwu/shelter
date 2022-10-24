@@ -1,6 +1,6 @@
 import { Header, HeaderTags, ModalBody, ModalConfirmFooter, ModalHeader, ModalRoot, SwitchItem } from "shelter-ui";
 import { Component, createSignal, Match, Switch } from "solid-js";
-import { installedPlugins } from "../plugins";
+import { addLocalPlugin, addRemotePlugin, installedPlugins } from "../plugins";
 
 // TODO: discord input component
 const TextBox: Component<{
@@ -19,9 +19,12 @@ export default (props: { close(): void }) => {
   const [local, setLocal] = createSignal(false);
 
   const [rSrc, setRSrc] = createSignal("");
+  const [rUpdate, setRUpdate] = createSignal(true);
+
   const [lName, setLName] = createSignal("");
   const [lCode, setLCode] = createSignal("");
   const [lAuthor, setLAuthor] = createSignal("");
+  const [lDesc, setLDesc] = createSignal("");
 
   const newId = () => {
     if (!local()) return rSrc().split("://")[1];
@@ -59,12 +62,18 @@ export default (props: { close(): void }) => {
           <Match when={!local()} keyed={false}>
             <Header tag={HeaderTags.H4}>URL</Header>
             <TextBox placeholder="https://example.com/my-plugin" signal={[rSrc, setRSrc]} />
+            <SwitchItem value={rUpdate()} onChange={setRUpdate} hideBorder>
+              Automatically update
+            </SwitchItem>
           </Match>
+
           <Match when={local()} keyed={false}>
             <Header tag={HeaderTags.H4}>Name</Header>
             <TextBox placeholder="My Cool Plugin" signal={[lName, setLName]} />
             <Header tag={HeaderTags.H4}>Author</Header>
             <TextBox placeholder="Rin" signal={[lAuthor, setLAuthor]} />
+            <Header tag={HeaderTags.H4}>Description</Header>
+            <TextBox placeholder="The plugin is very cool and helpful" signal={[lDesc, setLDesc]} />
             <Header tag={HeaderTags.H4}>Code</Header>
             {/* TODO: monaco */}
             <textarea
@@ -89,8 +98,26 @@ export default (props: { close(): void }) => {
         close={props.close}
         confirmText={local() ? "Add" : "Fetch"}
         disabled={!validate()}
-        onConfirm={() => {
-          console.log("//TODO");
+        onConfirm={async () => {
+          if (local()) {
+            try {
+              addLocalPlugin(newId(), {
+                js: lCode(),
+                manifest: {
+                  name: lName(),
+                  author: lAuthor(),
+                  description: lDesc(),
+                },
+                on: false,
+                update: false,
+              });
+              // TODO: toasts
+            } catch (e) {}
+          } else {
+            try {
+              await addRemotePlugin(newId(), rSrc());
+            } catch (e) {}
+          }
         }}
       />
     </ModalRoot>
