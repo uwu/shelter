@@ -6,10 +6,15 @@ import { css, classes } from "./switch.tsx.scss";
 let injectedCss = false;
 
 // good luck editing these by hand AND making them look good in animation :D --sink
-const TickPath1 = " M 4.08643 11.0903 L 5.67742 9.49929 L 9.4485  13.2704 L 7.85751 14.8614 L 4.08643 11.0903 Z";
-const TickPath2 = " M 14.3099 5.25755 L 15.9009 6.84854 L 7.89561 14.8538 L 6.30462 13.2629 L 14.3099 5.25755 Z";
-const CrossPath1 = "M 5.13231 6.72963 L 6.7233  5.13864 L 14.855  13.2704 L 13.264  14.8614 L 5.13231 6.72963 Z";
-const CrossPath2 = "M 13.2704 5.13864 L 14.8614 6.72963 L 6.72963 14.8614 L 5.13864 13.2704 L 13.2704 5.13864 Z";
+
+//           point 1 -\        point 2 -\
+//        start at -\ |      line to -\ |        point 3 -\        point 4 -\   close path -\
+const TickPath1 = " M 4.08643 11.0903 L 5.67742 9.49929 L 9.4485  13.2704 L 7.85751 14.8614 Z";
+const InterPath1 = "M 4.24365 11.125  L 4.24365 8.87500 L 15.7437 8.87504 L 15.7437 11.1251 Z";
+const CrossPath1 = "M 5.13231 6.72963 L 6.7233  5.13864 L 14.855  13.2704 L 13.264  14.8614 Z";
+const TickPath2 = " M 14.3099 5.25755 L 15.9009 6.84854 L 7.89561 14.8538 L 6.30462 13.2629 Z";
+const InterPath2 = "M 15.7437 8.87504 L 15.7437 11.1251 L 4.24365 11.125  L 4.24365 8.87500 Z";
+const CrossPath2 = "M 13.2704 5.13864 L 14.8614 6.72963 L 6.72963 14.8614 L 5.13864 13.2704 Z";
 
 const TickCol = " hsl(139, calc(var(--saturation-factor, 1) * 47.3%), 43.9%)";
 const CrossCol = "hsl(218, calc(var(--saturation-factor, 1) * 4.6%) , 46.9%)";
@@ -24,8 +29,14 @@ const ButtonIcon: Component<{ state: boolean }> = (props) => {
       [() => props.state],
       ([s]) => {
         // svg <animate> isn't like discord's animation by a long shot but it certainly looks tons better than just a snap
-        animate1.setAttribute("values", s ? `${CrossPath1};${TickPath1}` : `${TickPath1};${CrossPath1}`);
-        animate2.setAttribute("values", s ? `${CrossPath2};${TickPath2}` : `${TickPath2};${CrossPath2}`);
+        animate1.setAttribute(
+          "values",
+          s ? `${CrossPath1};${InterPath1};${TickPath1}` : `${TickPath1};${InterPath1};${CrossPath1}`
+        );
+        animate2.setAttribute(
+          "values",
+          s ? `${CrossPath2};${InterPath2};${TickPath2}` : `${TickPath2};${InterPath2};${CrossPath2}`
+        );
 
         animate1.beginElement();
         animate2.beginElement();
