@@ -95,7 +95,7 @@ export const Switch: Component<{
         tabindex="0"
         checked={props.checked}
         disabled={props.disabled}
-        onchange={() => props.onChange(!props.checked)}
+        onchange={() => props.onChange?.(!props.checked)}
       />
     </div>
   );

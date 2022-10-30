@@ -1,0 +1,47 @@
+.cbwrap {
+  display: flex;
+  color: var(--text-normal);
+  align-items: center;
+  &,
+  & > label {
+    cursor: pointer;
+  }
+}
+
+.checkbox {
+  position: relative;
+  margin-right: 8px;
+
+  input {
+    display: block;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+}
+
+.icon {
+  height: 24px;
+  width: 24px;
+  padding: 2px;
+  border: 1px solid hsl(218, calc(var(--saturation-factor, 1) * 4.6%), 46.9%);
+  border-radius: 6px;
+  color: transparent;
+
+  &.active {
+    border-color: var(--brand-experiment-400);
+    color: var(--interactive-active);
+    background: var(--brand-experiment-500);
+  }
+}
+
+.disabled {
+  opacity: 0.3;
+  &,
+  & > label {
+    cursor: not-allowed;
+  }
+}
