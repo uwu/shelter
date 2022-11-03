@@ -1,19 +1,16 @@
-import { Header, HeaderTags, ModalBody, ModalConfirmFooter, ModalHeader, ModalRoot, SwitchItem } from "shelter-ui";
-import { Component, createSignal, Match, Switch } from "solid-js";
+import {
+  Header,
+  HeaderTags,
+  ModalBody,
+  ModalConfirmFooter,
+  ModalHeader,
+  ModalRoot,
+  SwitchItem,
+  TextArea,
+  TextBox,
+} from "shelter-ui";
+import { createSignal, Match, Switch } from "solid-js";
 import { addLocalPlugin, addRemotePlugin, installedPlugins } from "../plugins";
-
-// TODO: discord input component
-const TextBox: Component<{
-  placeholder: string;
-  signal: [() => string, (v: string) => void];
-}> = (props) => (
-  <input
-    placeholder={props.placeholder}
-    type="text"
-    value={props.signal[0]()}
-    onInput={(e) => props.signal[1]((e.target as HTMLInputElement).value)}
-  />
-);
 
 export default (props: { close(): void }) => {
   const [local, setLocal] = createSignal(false);
@@ -61,7 +58,7 @@ export default (props: { close(): void }) => {
         <Switch>
           <Match when={!local()} keyed={false}>
             <Header tag={HeaderTags.H4}>URL</Header>
-            <TextBox placeholder="https://example.com/my-plugin" signal={[rSrc, setRSrc]} />
+            <TextBox placeholder="https://example.com/my-plugin" value={rSrc()} onInput={setRSrc} />
             <SwitchItem value={rUpdate()} onChange={setRUpdate} hideBorder>
               Automatically update
             </SwitchItem>
@@ -69,15 +66,16 @@ export default (props: { close(): void }) => {
 
           <Match when={local()} keyed={false}>
             <Header tag={HeaderTags.H4}>Name</Header>
-            <TextBox placeholder="My Cool Plugin" signal={[lName, setLName]} />
+            <TextBox placeholder="My Cool Plugin" value={lName()} onInput={setLName} />
             <Header tag={HeaderTags.H4}>Author</Header>
-            <TextBox placeholder="Rin" signal={[lAuthor, setLAuthor]} />
+            <TextBox placeholder="Rin" value={lAuthor()} onInput={setLAuthor} />
             <Header tag={HeaderTags.H4}>Description</Header>
-            <TextBox placeholder="The plugin is very cool and helpful" signal={[lDesc, setLDesc]} />
+            <TextBox placeholder="The plugin is very cool and helpful" value={lDesc()} onInput={setLDesc} />
             <Header tag={HeaderTags.H4}>Code</Header>
             {/* TODO: monaco */}
-            <textarea
-              style="font-family: monospace"
+            <TextArea
+              mono
+              resize-y
               placeholder={`{
   onload() {
     const { name } = shelter.plugin.manifest;
@@ -88,7 +86,7 @@ export default (props: { close(): void }) => {
   }
 }`}
               value={lCode()}
-              onInput={(e) => setLCode((e.target as HTMLTextAreaElement).value)}
+              onInput={setLCode}
             />
           </Match>
         </Switch>
