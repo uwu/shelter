@@ -57,13 +57,15 @@ export function startPlugin(pluginId: string) {
 
   const [store, flushStore] = createStorage(pluginId);
 
-  const shelterPluginEdition = { ...window["shelter"] }; // TODO figure out if avoiding window actually matters
-  shelterPluginEdition.plugin = {
-    store,
-    flushStore,
-    manifest: data.manifest,
-    showSettings() {
-      throw new Error("not implemented"); //TODO
+  const shelterPluginEdition = {
+    ...window["shelter"],
+    plugin: {
+      store,
+      flushStore,
+      manifest: data.manifest,
+      showSettings() {
+        throw new Error("not implemented"); //TODO
+      },
     },
   };
 
