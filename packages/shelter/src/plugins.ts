@@ -67,11 +67,13 @@ export function startPlugin(pluginId: string) {
     },
   };
 
-  const pluginString = `shelter=>{return ${data.js}}${atob("Ci8v")}# sourceURL=shelter/${pluginId}`;
+  const pluginString = `shelter=>{return ${data.js}}${atob("Ci8v")}# sourceURL=s://!SHELTER/${pluginId}`;
 
   try {
     // noinspection CommaExpressionJS
-    const plugin: EvaledPlugin = (0, eval)(pluginString)(shelterPluginEdition);
+    const rawPlugin: EvaledPlugin = (0, eval)(pluginString)(shelterPluginEdition);
+    // clone this because the way some bundlers defineProperty does not play nice with the solid store
+    const plugin = { ...rawPlugin };
     internalLoaded[pluginId] = plugin;
 
     plugin.onLoad?.();
