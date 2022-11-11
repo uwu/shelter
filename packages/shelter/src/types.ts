@@ -3,7 +3,7 @@ export interface Dispatcher {
   _actionHandlers: unknown;
 
   _currentDispatchActionType: undefined | string;
-  _interceptor?: (payload: any) => void | boolean;
+  _interceptors?: ((payload: any) => void | boolean)[];
   _processingWaitQueue: boolean;
   _subscriptions: Record<string, Set<(payload: any) => void>>;
   _waitQueue: unknown[];

@@ -11,16 +11,16 @@ import { initDispatchLogger } from "./dispatchLogger";
 import * as storage from "./storage";
 import { observe, unobserve } from "./observer";
 
-const start = performance.now();
-util.log("shelter is initializing...");
-
 function without<T extends Record<string, any>>(object: T, ...keys: string[]) {
   const cloned = { ...object };
   keys.forEach((k) => delete cloned[k]);
   return cloned;
 }
 
-flux.getDispatcher().then(async (FluxDispatcher) => {
+const start = performance.now();
+util.log("shelter is initializing...");
+
+(async () => {
   // load all the things in parallel :D
   const unloads = await Promise.all([
     initSettings(),
@@ -32,10 +32,14 @@ flux.getDispatcher().then(async (FluxDispatcher) => {
 
   // We can potentially move the window obj to it's own module later, I think it'd help with typedefs?
   window["shelter"] = {
-    flux: {
-      ...flux,
-      dispatcher: FluxDispatcher,
-    },
+    flux: without(
+      {
+        ...flux,
+        dispatcher: await flux.getDispatcher(),
+      },
+      "injectIntercept",
+      "getDispatcher"
+    ),
     patcher: without(patcher, "unpatchAll"),
     solid,
     solidStore,
@@ -52,4 +56,4 @@ flux.getDispatcher().then(async (FluxDispatcher) => {
   unloads.push(await plugins.startAllPlugins());
 
   util.log(`shelter is initialized. took: ${(performance.now() - start).toFixed(1)}ms`);
-});
+})();

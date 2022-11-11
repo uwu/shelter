@@ -73,9 +73,9 @@ async function injectIntercept() {
 
   const FluxDispatcher = await getDispatcher();
 
-  FluxDispatcher._interceptor ??= () => {}; // patcher needs smth to patch!
+  FluxDispatcher._interceptors ??= [];
 
-  instead("_interceptor", FluxDispatcher, ([payload], orig) => {
+  const cb = (payload) => {
     for (const intercept of intercepts) {
       const res = intercept(payload);
       if (res) {
@@ -83,9 +83,11 @@ async function injectIntercept() {
         payload = res[0];
       }
     }
+  };
 
-    return orig(payload);
-  });
+  FluxDispatcher._interceptors.splice(0, 0, cb);
+
+  return () => (FluxDispatcher._interceptors = FluxDispatcher._interceptors?.filter((v) => v !== cb));
 }
 
 export function intercept(cb: Intercept) {
