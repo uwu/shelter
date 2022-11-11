@@ -9,6 +9,7 @@ export * from "./openModal";
 export * from "./modals";
 export * from "./icons";
 export * from "./textbox";
+export * from "./bridges";
 
 export const Text: Component<{ children: JSX.Element }> = (props) => (
   <span

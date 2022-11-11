@@ -14,6 +14,8 @@ For use outside of Discord, a solution may or may not be implemented.
   - [`injectCss`](#injectcss)
   - [`genId`](#genid)
   - [`openModal`](#openmodal)
+  - [`<ReactInSolidBridge />`](#reactinsolidbridge-)
+  - [`SolidInReactBridge`](#solidinreactbridge)
 - [Components](#components)
   - [`<Text>`](#text)
   - [`<Header>`](#header)
@@ -87,6 +89,34 @@ It returns a function that removes your modal.
 ```js
 const remove = openModal((p) => <button onclick={p}>Hi!</button>);
 remove();
+```
+
+### `<ReactInSolidBridge />`
+
+Renders a React component in Solid.
+
+```jsx
+function Component({ className }) {
+  return React.createElement("div", { className }, "yeah uh its a div");
+}
+
+<ReactInSolidBridge ReactDOM={ReactDOM} comp={Component} props={{ className: "reactelem" }} />;
+```
+
+### `SolidInReactBridge`
+
+Renders a Solid component in React.
+
+```jsx
+function Component(props) {
+  return <div class={props.className}>yeah uh its a div</div>;
+}
+
+React.createElement(SolidInReactBridge, {
+  comp: Component,
+  props: { className: "solidelem" },
+  React,
+});
 ```
 
 ## Components
