@@ -3,7 +3,7 @@
 import { getDispatcher } from "./flux";
 import { awaitDispatch, getFiber, reactFiberWalker } from "./util";
 import { Component, createSignal, onCleanup } from "solid-js";
-import { withCleanup } from "shelter-ui";
+import { ReactiveRoot } from "shelter-ui";
 import Settings from "./components/Settings";
 
 const SettingsInj: Component<{
@@ -13,7 +13,7 @@ const SettingsInj: Component<{
   mainSection: Element;
   content: Component;
   dispatcher: any;
-}> = withCleanup((props) => {
+}> = (props) => {
   const [settingsOpen, setSettingsOpen] = createSignal<[HTMLDivElement, Element] | undefined>();
 
   // when we are clicked, we hide discord's settings page and insert our own
@@ -64,7 +64,7 @@ const SettingsInj: Component<{
       </div>
     </div>
   );
-});
+};
 
 export async function initSettings() {
   const FluxDispatcher = await getDispatcher();
@@ -101,11 +101,13 @@ export async function initSettings() {
       const headerClasses = sidebar.firstElementChild.className;
 
       const injection = (
-        <SettingsInj
-          {...{ dividerClasses, headerClasses, tabClasses, mainSection }}
-          dispatcher={FluxDispatcher}
-          content={Settings}
-        />
+        <ReactiveRoot>
+          <SettingsInj
+            {...{ dividerClasses, headerClasses, tabClasses, mainSection }}
+            dispatcher={FluxDispatcher}
+            content={Settings}
+          />
+        </ReactiveRoot>
       );
 
       sidebar.insertBefore(injection as Element, dividerAboveChangelog);

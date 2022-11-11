@@ -9,6 +9,7 @@ import * as plugins from "./plugins";
 import { initSettings } from "./settings";
 import { initDispatchLogger } from "./dispatchLogger";
 import * as storage from "./storage";
+import { observe, unobserve } from "./observer";
 
 const start = performance.now();
 util.log("shelter is initializing...");
@@ -21,7 +22,13 @@ function without<T extends Record<string, any>>(object: T, ...keys: string[]) {
 
 flux.getDispatcher().then(async (FluxDispatcher) => {
   // load all the things in parallel :D
-  const unloads = await Promise.all([initSettings(), initDispatchLogger(), ui.cleanupCss, patcher.unpatchAll]);
+  const unloads = await Promise.all([
+    initSettings(),
+    initDispatchLogger(),
+    ui.cleanupCss,
+    patcher.unpatchAll,
+    unobserve,
+  ]);
 
   // We can potentially move the window obj to it's own module later, I think it'd help with typedefs?
   window["shelter"] = {
@@ -36,6 +43,7 @@ flux.getDispatcher().then(async (FluxDispatcher) => {
     util,
     plugins: without(plugins, "startAllPlugins"),
     storage,
+    observeDom: observe,
     ui: without(ui, "cleanupCss"),
     unload: () => unloads.forEach((p) => p()),
   };
