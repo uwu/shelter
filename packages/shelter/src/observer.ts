@@ -8,7 +8,10 @@ const observer = new MutationObserver((records) => {
   // de-dupe to be sure
   const changedElems = new Set<MutationNode>();
 
-  for (const record of records) changedElems.add(record.target as MutationNode);
+  for (const record of records) {
+    changedElems.add(record.target as MutationNode);
+    for (const e of record.removedNodes) changedElems.add(e as MutationNode);
+  }
 
   for (const elem of changedElems)
     for (const [sel, cb] of observations) {
