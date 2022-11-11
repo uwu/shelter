@@ -10,7 +10,7 @@ For use outside of Discord, a solution may or may not be implemented.
 ## ToC:
 
 - [Utils](#utils)
-  - [`withCleanup`](#withcleanup)
+  - [`<ReactiveRoot>`](#reactiveroot)
   - [`injectCss`](#injectcss)
   - [`genId`](#genid)
   - [`openModal`](#openmodal)
@@ -31,26 +31,12 @@ For use outside of Discord, a solution may or may not be implemented.
 
 Not components, but UI utils used in shelter.
 
-### `withCleanup`
+### `<ReactiveRoot>`
 
-`withCleanup` is a higher-order component that helps solid's onCleanup work.
-
-In shelter, often times elements will not be in a proper solid reactive scope.
-This is often the case when you inject a solid element into a React-rendered DOM.
-When React rips your element off the page, solid's onCleanup wouldn't run -
-wrapping your component in withCleanup fixes this.
-
-Note: anywhere you pass an element to shelter APIs (eg settings, modals),
-expect that shelter will do this for you,
-and that manually wrapping in withCleanup is not necessary.
+`ReactiveRoot` creates a solid reactive root, to ensure that `onCleanup` works, and fix some reactivity bugs.
 
 ```jsx
-import { onCleanup } from "solid-js";
-const myComponent = withCleanup((props) => {
-  onCleanup(() => console.log("component unmounted from DOM!"));
-
-  return <div>My cool component</div>;
-});
+elem.append(<ReactiveRoot>{/* ... */}</ReactiveRoot>);
 ```
 
 ### `injectCss`

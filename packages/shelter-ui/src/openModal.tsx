@@ -1,7 +1,6 @@
 import { Component, createEffect, createMemo, createSignal, For } from "solid-js";
 import { classes, css } from "./modals.tsx.scss";
-import { injectCss } from "./util";
-import { render } from "solid-js/web";
+import { injectCss, ReactiveRoot } from "./util";
 
 type ModalProps = { close(): void };
 
@@ -56,13 +55,16 @@ createEffect(() => {
     dispose?.();
     dispose = undefined;
   } else if (!dispose) {
-    const root = (<div class={classes.mroot} aria-modal role="dialog" />) as HTMLDivElement;
+    const root = (
+      <ReactiveRoot>
+        <div class={classes.mroot} aria-modal role="dialog">
+          <ModalRoot />
+        </div>
+      </ReactiveRoot>
+    ) as HTMLDivElement;
+
     document.body.append(root);
-    const disp = render(() => <ModalRoot />, root);
-    dispose = () => {
-      disp();
-      root.remove();
-    };
+    dispose = () => root.remove();
   }
 });
 

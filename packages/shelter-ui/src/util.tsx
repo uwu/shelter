@@ -1,23 +1,14 @@
-import { Component, createRoot, getOwner } from "solid-js";
+import { Component, JSX } from "solid-js";
+import { render } from "solid-js/web";
 
-export const withCleanup =
-  <T,>(comp: Component<T>): Component<T> =>
-  (props) => {
-    // DOMNodeRemovedFromDocument is deprecated but when react rips us off the dom this is the only way to know
+export const ReactiveRoot: Component<{ children: JSX.Element }> = (props) => {
+  const root = (<div style="display:contents" />) as HTMLDivElement;
 
-    // if a reactive root already exists, we dont need to do this!
-    if (getOwner()) return comp(props);
+  const dispose = render(() => <>{props.children}</>, root);
+  root.addEventListener("DOMNodeRemovedFromDocument", dispose);
 
-    return createRoot((dispose) => {
-      const ret = comp(props);
-
-      const elem = ret instanceof Element ? ret : ((<div style="display:contents">{ret}</div>) as HTMLDivElement);
-
-      elem.addEventListener("DOMNodeRemovedFromDocument", dispose);
-
-      return elem;
-    });
-  };
+  return root;
+};
 
 let injectedStyles: HTMLStyleElement[] = [];
 
