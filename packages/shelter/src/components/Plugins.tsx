@@ -1,12 +1,16 @@
-import { Component, createSignal, JSX } from "solid-js";
-import { installedPlugins, removePlugin, startPlugin, stopPlugin, StoredPlugin } from "../plugins";
+import { Component, createSignal, JSX, Show } from "solid-js";
+import { getSettings, installedPlugins, removePlugin, startPlugin, stopPlugin, StoredPlugin } from "../plugins";
 import { css, classes } from "./Plugins.tsx.scss";
 import {
   Header,
   HeaderTags,
   IconAdd,
   IconBin,
+  IconCog,
   injectCss,
+  ModalBody,
+  ModalHeader,
+  ModalRoot,
   openConfirmationModal,
   openModal,
   Space,
@@ -31,6 +35,22 @@ const PluginCard: Component<{
         <Space />
         <span class={classes.author}>{props.plugin.manifest.author}</span>
         <div style="flex:1" />
+        <Show keyed when={getSettings(props.id)}>
+          <button
+            class={classes.btn}
+            style={on() ? "" : "opacity: 0"}
+            onclick={() =>
+              openModal((mprops) => (
+                <ModalRoot>
+                  <ModalHeader close={mprops.close}>Settings - {props.plugin.manifest.name}</ModalHeader>
+                  <ModalBody>{getSettings(props.id)({})}</ModalBody>
+                </ModalRoot>
+              ))
+            }
+          >
+            <IconCog />
+          </button>
+        </Show>
         <button
           class={classes.btn}
           onclick={() =>

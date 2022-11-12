@@ -201,3 +201,5 @@ export function removePlugin(id: string) {
   if (id in internalLoaded) stopPlugin(id);
   delete internalData[id];
 }
+
+export const getSettings = (id: string) => internalLoaded[id]?.settings;
