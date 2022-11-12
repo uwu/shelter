@@ -28,7 +28,7 @@ Web injector and instructions for how to install coming soon.
 
 ## How do I make a plugin?
 
-See DOCS.md
+See [DOCS.md](DOCS.md)
 
 ## Is there a plugin repo / website / build tool / etc.?
 
