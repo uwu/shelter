@@ -1,6 +1,5 @@
-import { webpackChunk } from "@cumjar/websmack";
 import { Dispatcher, FluxStore } from "./types";
-import { instead } from "spitroast";
+import exfiltrate from "./exfiltrate";
 
 declare global {
   interface Object {
@@ -13,53 +12,24 @@ let dispatcher: Dispatcher | Promise<Dispatcher>;
 export async function getDispatcher() {
   if (dispatcher) return dispatcher;
 
-  try {
-    dispatcher = Object.values(webpackChunk("webpackChunkdiscord_app")[0]).find(
-      // @ts-expect-error We have a fallback, it's okay
-      (x) => x?.exports?.default?._dispatcher
-      // @ts-expect-error We have a fallback
-    ).exports.default._dispatcher;
-  } catch {
-    // I know what you're thinking.
-    // You're thinking "What the fuck? An error not being handled?!"
-    // Read below!!!
-  }
-
   // Promises bubble up, this is fine.
-  if (!dispatcher)
-    dispatcher = new Promise((res) => {
-      // Are you happy now?
-      Object.defineProperty(Object.prototype, "_dispatcher", {
-        set(value) {
-          if (dispatcher) {
-            dispatcher = Object.defineProperty(this, "_dispatcher", { value })._dispatcher;
-            res(dispatcher);
-            delete Object.prototype._dispatcher;
-          }
-        },
-        configurable: true,
-      });
-    });
-
-  return dispatcher;
+  return (dispatcher = exfiltrate("_dispatcher").then((fluxstore) => fluxstore._dispatcher));
 }
 
 export const stores: Record<string, FluxStore | FluxStore[]> = {};
 
-const realDispatchTokenKey = Symbol("shelter _dispatchToken");
-Object.defineProperty(Object.prototype, "_dispatchToken", {
-  set(value) {
-    this[realDispatchTokenKey] = value;
-    const name = this.getName();
-    if (!stores[name]) stores[name] = this;
-    else {
-      if (Array.isArray(stores[name])) stores[name].push(this);
-      else stores[name] = [stores[name], this];
-    }
-  },
-  get() {
-    return this[realDispatchTokenKey];
-  },
+// noinspection JSIgnoredPromiseFromCall
+exfiltrate("_dispatchToken", (store) => {
+  const name = store.getName();
+  if (!stores[name]) stores[name] = store;
+  else {
+    if (Array.isArray(stores[name])) stores[name].push(store);
+    else stores[name] = [stores[name], store];
+  }
+
+  // abusing the "filter" to just steal all the stores
+  // but why not?
+  return false;
 });
 
 type Intercept = (payload: any) => void | [any, boolean];

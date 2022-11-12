@@ -1,22 +1,14 @@
 import { Component, createEffect, createSignal, onCleanup } from "solid-js";
 import { ReactiveRoot } from "./util";
+//import exfiltrate from "../../shelter/src/exfiltrate"
 
 // exfiltrate react
 /*let [React, setReact] = createSignal<any>();
 let [ReactDOM, setReactDOM] = createSignal<any>();
 export { React, ReactDOM };
-const realIntKey = Symbol("SHLTR_UI_int");
 
-Object.defineProperty(Object.prototype, "__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED", {
-	set(value) {
-		this[realIntKey] = value;
-		if (!React() && this.createElement) setReact(this);
-		if (!ReactDOM() && this.createRoot) setReactDOM(this);
-	},
-	get() {
-		return this[realIntKey];
-	},
-});*/
+exfiltrate("createElement").then(setReact);
+exfiltrate("findDOMNode").then(setReactDOM);*/
 
 export const ReactInSolidBridge: Component<{ ReactDOM; comp: (props: any) => any; props?: object }> = (props) => {
   const root = <div style="display:contents" />;
