@@ -2,6 +2,8 @@
 
 _an attempt to prepare for the worst_
 
+[![wakatime](https://wakatime.com/badge/github/uwu/shelter.svg)](https://wakatime.com/badge/github/uwu/shelter)
+
 ## What is shelter?
 
 shelter is a new generation client mod built to be essentially bulletproof.
