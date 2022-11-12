@@ -2,6 +2,7 @@ import { isInited, signalOf, solidMutWithSignal, storage, waitInit } from "./sto
 import { JSX } from "solid-js";
 import { createMutable } from "solid-js/store";
 import { log } from "./util";
+import { ModalBody, ModalHeader, ModalRoot, openModal } from "shelter-ui";
 
 // a lot of this is adapted from cumcord, but some of it is new, and hopefully the code should be a lot less messy :)
 
@@ -63,9 +64,13 @@ export function startPlugin(pluginId: string) {
       store,
       flushStore,
       manifest: data.manifest,
-      showSettings() {
-        throw new Error("not implemented"); //TODO
-      },
+      showSettings: () =>
+        openModal((mprops) => (
+          <ModalRoot>
+            <ModalHeader close={mprops.close}>Settings - {data.manifest.name}</ModalHeader>
+            <ModalBody>{getSettings(pluginId)({})}</ModalBody>
+          </ModalRoot>
+        )),
     },
   };
 
