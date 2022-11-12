@@ -10,7 +10,9 @@ const observer = new MutationObserver((records) => {
 
   for (const record of records) {
     changedElems.add(record.target as MutationNode);
-    for (const e of record.removedNodes) changedElems.add(e as MutationNode);
+
+    for (const e of record.removedNodes)
+      if (e instanceof HTMLElement || e instanceof SVGElement) changedElems.add(e as MutationNode);
   }
 
   for (const elem of changedElems)

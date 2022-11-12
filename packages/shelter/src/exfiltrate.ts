@@ -11,7 +11,6 @@ export default function (prop: string, filter?: (t: any) => boolean) {
       configurable: true,
       enumerable: false,
       set(v: any) {
-        debugger;
         if (this === Object.prototype) {
           hitProto = true;
           Object.prototype[protoKey] = v;
@@ -32,7 +31,6 @@ export default function (prop: string, filter?: (t: any) => boolean) {
       },
 
       get() {
-        debugger;
         return this[protoKey];
       },
     });
