@@ -1,7 +1,8 @@
 const { resolve, join } = require("path");
 const { readFileSync } = require("fs");
-// TODO: Get CI working so I can replace placeholder url
-const remoteUrl = process.env.SHELTER_BUNDLE_URL || "placeholder";
+
+const remoteUrl =
+  process.env.SHELTER_BUNDLE_URL || "https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js";
 const localBundle = process.env.SHELTER_DIST_PATH;
 
 (async () => {
