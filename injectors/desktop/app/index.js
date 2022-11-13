@@ -13,23 +13,6 @@ electron.app.setAppPath(originalAppPath);
 electron.app.name = originalPackage.name;
 //#endregion
 
-electron.ipcMain.handle("shelter-inject-fail", (ev, err) => {
-  console.error("[shelter-inject] Failed to inject.\n", err);
-  const options = {
-    type: "error",
-    buttons: ["Continue", "Close Discord"],
-    defaultId: 0,
-    cancelId: 1,
-    message: "Shelter failed to load from local dist. \nCheck console for more info.",
-    detail: err.message,
-  };
-  let pressedButtonId = electron.dialog.showMessageBoxSync(null, options);
-  if (pressedButtonId == 1) {
-    process.exit();
-  }
-  return 0;
-});
-
 const electronCache = require.cache[require.resolve("electron")];
 
 //#region CSP Removal
@@ -86,4 +69,62 @@ for (const propertyName of propertyNames) {
 }
 
 electronCache.exports = newElectron;
-module.exports = require(originalAppPath);
+
+// holy shit i'm so stressed right now and i should not be coding at 1am
+// i hope it works
+// i can't think straight with this headache ugh
+// this is just a quick fix sorry for making this even more disgusting
+(async () => {
+  let shelterBundle = "";
+  const remoteUrl =
+    process.env.SHELTER_BUNDLE_URL || "https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js";
+  const localBundle = process.env.SHELTER_DIST_PATH;
+
+  try {
+    if (localBundle) {
+      shelterBundle = readFileSync(resolve(join(localBundle, "shelter.js")), "utf8");
+      shelterBundle += `\n//# sourceMappingURL=file:////${resolve(join(localBundle, "shelter.js.map"))}`;
+    } else {
+      // shelterBundle = await (await fetch(remoteUrl)).text();
+
+      let done = false;
+      const http = require("https"); // fucking hell
+      http.get(remoteUrl, (res) => {
+        res.on("data", (d) => {
+          shelterBundle += d;
+        });
+        res.on("end", () => (done = true));
+      });
+
+      while (!done)
+        // don't say i didn't warn you
+        await new Promise((r) => setTimeout(r));
+
+      if (!shelterBundle.includes("//# sourceMappingURL=")) {
+        shelterBundle += `\n//# sourceMappingURL=${remoteUrl + ".map"}`;
+      }
+    }
+  } catch (err) {
+    console.error("[shelter-inject] Failed to inject.\n", err);
+    const options = {
+      type: "error",
+      buttons: ["Continue", "Close Discord"],
+      defaultId: 0,
+      cancelId: 1,
+      message: "Shelter failed to load from local dist. \nCheck console for more info.",
+      detail: err.message,
+    };
+    let pressedButtonId = electron.dialog.showMessageBoxSync(null, options);
+    if (pressedButtonId == 1) {
+      process.exit();
+    }
+  }
+
+  electron.ipcMain.on("SHELTER_FHDIUSF", (event) => {
+    event.returnValue = shelterBundle;
+  });
+
+  console.log("[shelter-inject] early load hopefully successful");
+
+  module.exports = require(originalAppPath);
+})();
