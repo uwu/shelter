@@ -1,12 +1,12 @@
-# Created by 
+# Created by
 https://www.toptal.com/developers/gitignore/api/jetbrains+all,node
-# Edit at 
+# Edit at
 https://www.toptal.com/developers/gitignore?templates=jetbrains+all,node
 
 ### JetBrains+all ###
-# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, 
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm,
 CLion, Android Studio, WebStorm and Rider
-# Reference: 
+# Reference:
 https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 # User-specific stuff
@@ -36,7 +36,7 @@ https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 .idea/**/libraries
 
 # Gradle and Maven with auto-import
-# When using Gradle or Maven with auto-import, you should exclude module 
+# When using Gradle or Maven with auto-import, you should exclude module
 files,
 # since they will be recreated, and may cause churn.  Uncomment if using
 # auto-import.
@@ -123,7 +123,7 @@ coverage
 # nyc test coverage
 .nyc_output
 
-# Grunt intermediate storage 
+# Grunt intermediate storage
 (https://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
@@ -191,7 +191,7 @@ dist
 
 # Gatsby files
 .cache/
-# Comment in the public line in if your project uses Gatsby and not 
+# Comment in the public line in if your project uses Gatsby and not
 Next.js
 # https://nextjs.org/blog/next-9-1#public-directory-support
 # public
@@ -236,8 +236,11 @@ Next.js
 # SvelteKit build / generate output
 .svelte-kit
 
-# End of 
+# End of
 https://www.toptal.com/developers/gitignore/api/jetbrains+all,node
 
 ### MacOS hidden files ###
 .DS_STORE
+
+# uh yeah
+web-ext-artifacts
