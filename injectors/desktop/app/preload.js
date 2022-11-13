@@ -1,8 +1,8 @@
-const { webFrame, ipcRenderer } = require("electron");
+const { ipcRenderer, webFrame } = require("electron");
 
-const bundle = ipcRenderer.sendSync("SHELTER_FHDIUSF");
-if (bundle)
-  // document.appendChild(document.createElement("script")).innerHTML = bundle;
+ipcRenderer.invoke("SHELTER_BUNDLE_FETCH").then((bundle) => {
   webFrame.executeJavaScript(bundle);
-const originalPreload = require("./preload.json").path;
-require(originalPreload);
+});
+
+const originalPreload = ipcRenderer.sendSync("SHELTER_ORIGINAL_PRELOAD");
+if (originalPreload) require(originalPreload);
