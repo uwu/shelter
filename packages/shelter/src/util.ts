@@ -14,17 +14,15 @@ export function reactFiberWalker(
   node: Fiber,
   prop: string | symbol,
   goUp = false,
-  ignoreStringType = false,
-  maxSteps = 100
+  ignoreStringType = false
 ): undefined | null | Fiber {
-  let stepsWalked = 0;
-  while (stepsWalked++ < maxSteps) {
-    if (!node) return;
-    if (node.pendingProps?.[prop] !== undefined && (ignoreStringType ? typeof node.type !== "string" : true))
-      return node;
+  if (!node) return;
+  if (node.pendingProps?.[prop] !== undefined && (ignoreStringType ? typeof node.type !== "string" : true)) return node;
 
-    node = (goUp ? node.return : node.child) ?? node.sibling;
-  }
+  return (
+    reactFiberWalker(goUp ? node.return : node.child, prop, goUp, ignoreStringType) ??
+    reactFiberWalker(node.sibling, prop, goUp, ignoreStringType)
+  );
 }
 
 export const awaitDispatch = (type: string) =>
