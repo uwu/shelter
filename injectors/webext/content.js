@@ -6,11 +6,12 @@ async function fetchShelter() {
 //# sourceMappingURL=${SHELTER_URL}.map`;
 }
 
+// why does chrome have to be like this?
+// firefox does it fine, be like firefox.
+const promisifiedGet = (...a) => new Promise((res) => chrome.storage.local.get(...a, res));
+
 async function updateShelter() {
-  const [{ shelter: existingShelter }, newShelter] = await Promise.all([
-    chrome.storage.local.get("shelter"),
-    fetchShelter(),
-  ]);
+  const [{ shelter: existingShelter }, newShelter] = await Promise.all([promisifiedGet("shelter"), fetchShelter()]);
 
   if (existingShelter === newShelter) return;
 
@@ -21,7 +22,7 @@ async function updateShelter() {
 
 (async () => {
   try {
-    const { shelter } = await chrome.storage.local.get("shelter");
+    const { shelter } = await promisifiedGet("shelter");
 
     if (shelter) {
       const scriptTag = document.createElement("script");
