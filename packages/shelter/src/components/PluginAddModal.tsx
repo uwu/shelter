@@ -8,6 +8,7 @@ import {
   SwitchItem,
   TextArea,
   TextBox,
+  Space,
 } from "shelter-ui";
 import { createSignal, Match, Switch } from "solid-js";
 import { addLocalPlugin, addRemotePlugin, installedPlugins } from "../plugins";
@@ -59,6 +60,7 @@ export default (props: { close(): void }) => {
           <Match when={!local()} keyed={false}>
             <Header tag={HeaderTags.H4}>URL</Header>
             <TextBox placeholder="https://example.com/my-plugin" value={rSrc()} onInput={setRSrc} />
+            <Space />
             <SwitchItem value={rUpdate()} onChange={setRUpdate} hideBorder>
               Automatically update
             </SwitchItem>
