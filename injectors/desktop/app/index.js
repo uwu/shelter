@@ -48,7 +48,7 @@ electron.ipcMain.on("SHELTER_ORIGINAL_PRELOAD", (event) => {
 });
 
 electron.ipcMain.handle("SHELTER_BUNDLE_FETCH", async (event) => {
-  if (!shelterBundle) await Promise((r) => setImmediate(r));
+  if (!shelterBundle) await new Promise((r) => setImmediate(r));
 
   return shelterBundle;
 });
