@@ -96,11 +96,12 @@ remove();
 Renders a React component in Solid.
 
 ```jsx
+// this function comes from discord
 function Component({ className }) {
   return React.createElement("div", { className }, "yeah uh its a div");
 }
 
-<ReactInSolidBridge ReactDOM={ReactDOM} comp={Component} props={{ className: "reactelem" }} />;
+<ReactInSolidBridge comp={Component} props={{ className: "reactelem" }} />;
 ```
 
 ### `SolidInReactBridge`
@@ -115,7 +116,6 @@ function Component(props) {
 React.createElement(SolidInReactBridge, {
   comp: Component,
   props: { className: "solidelem" },
-  React,
 });
 ```
 

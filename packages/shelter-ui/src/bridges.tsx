@@ -1,22 +1,14 @@
 import { Component, createEffect, createSignal, onCleanup } from "solid-js";
 import { ReactiveRoot } from "./util";
-//import exfiltrate from "../../shelter/src/exfiltrate"
+import { React, ReactDOM } from "./react";
 
-// exfiltrate react
-/*let [React, setReact] = createSignal<any>();
-let [ReactDOM, setReactDOM] = createSignal<any>();
-export { React, ReactDOM };
-
-exfiltrate("createElement").then(setReact);
-exfiltrate("findDOMNode").then(setReactDOM);*/
-
-export const ReactInSolidBridge: Component<{ ReactDOM; comp: (props: any) => any; props?: object }> = (props) => {
+export const ReactInSolidBridge: Component<{ comp: (props: any) => any; props?: object }> = (props) => {
   const root = <div style="display:contents" />;
 
   let rroot;
 
   createEffect(() => {
-    rroot ??= props.ReactDOM.createRoot(root);
+    rroot ??= ReactDOM.createRoot(root);
     rroot.render(props.comp(props.props));
   });
 
@@ -25,7 +17,7 @@ export const ReactInSolidBridge: Component<{ ReactDOM; comp: (props: any) => any
   return root;
 };
 
-export const SolidInReactBridge = ({ comp, props, React }: { React: any; comp: Component<any>; props?: any }) => {
+export const SolidInReactBridge = ({ comp, props }: { comp: Component<any>; props?: any }) => {
   const ref = React.useRef();
   const propSignal = React.useRef(createSignal());
   const lastComp = React.useRef();
