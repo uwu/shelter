@@ -18,28 +18,33 @@ const remoteUrl =
   process.env.SHELTER_BUNDLE_URL || "https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js";
 const localBundle = process.env.SHELTER_DIST_PATH;
 
-let shelterBundle = "";
+const shelterBundle = new Promise((resolve, reject) => {
+  if (localBundle) {
+    let data = fs.readFileSync(path.join(localBundle, "shelter.js"), "utf8");
+    data += `\n//# sourceMappingURL=file:////${path.join(localBundle, "shelter.js.map")}`;
 
-if (localBundle) {
-  shelterBundle = fs.readFileSync(path.join(localBundle, "shelter.js"), "utf8");
-  shelterBundle += `\n//# sourceMappingURL=file:////${path.join(localBundle, "shelter.js.map")}`;
-} else {
-  const req = https.get(remoteUrl);
+    resolve(data);
+  } else {
+    const req = https.get(remoteUrl);
 
-  req.on("response", (res) => {
-    const chunks = [];
+    req.on("response", (res) => {
+      const chunks = [];
 
-    res.on("data", (chunk) => chunks.push(chunk));
-    res.on("end", () => {
-      shelterBundle = Buffer.concat(chunks).toString("utf-8");
+      res.on("data", (chunk) => chunks.push(chunk));
+      res.on("end", () => {
+        let data = Buffer.concat(chunks).toString("utf-8");
 
-      if (!shelterBundle.includes("//# sourceMappingURL="))
-        shelterBundle += `\n//# sourceMappingURL=${remoteUrl + ".map"}`;
+        if (!data.includes("//# sourceMappingURL=")) data += `\n//# sourceMappingURL=${remoteUrl + ".map"}`;
+
+        resolve(data);
+      });
     });
-  });
 
-  req.end();
-}
+    req.on("error", reject);
+
+    req.end();
+  }
+});
 // #endregion
 
 // #region IPC
@@ -47,11 +52,7 @@ electron.ipcMain.on("SHELTER_ORIGINAL_PRELOAD", (event) => {
   event.returnValue = event.sender.originalPreload;
 });
 
-electron.ipcMain.handle("SHELTER_BUNDLE_FETCH", async (event) => {
-  if (!shelterBundle) await new Promise((r) => setImmediate(r));
-
-  return shelterBundle;
-});
+electron.ipcMain.handle("SHELTER_BUNDLE_FETCH", () => shelterBundle);
 // #endregion
 
 // #region CSP
