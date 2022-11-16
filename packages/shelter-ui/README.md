@@ -107,6 +107,7 @@ function Component({ className }) {
 ### `SolidInReactBridge`
 
 Renders a Solid component in React.
+Using this is not recommended as you will need to provide your own React.
 
 ```jsx
 function Component(props) {
@@ -117,6 +118,22 @@ React.createElement(SolidInReactBridge, {
   comp: Component,
   props: { className: "solidelem" },
 });
+```
+
+### `renderSolidInReact`
+
+Just a wrapper to `React.createElement(SolidInReactBridge, {comp, props})`
+
+```jsx
+function Component(props) {
+  return <div class={props.className}>yeah uh its a div</div>;
+}
+
+// Get a Discord component using React fiber
+
+component.render = () => {
+  return renderSolidInReact(Component, { className: "solidelem" });
+};
 ```
 
 ## Components
