@@ -2,17 +2,20 @@ import { Component, createEffect, createSignal, onCleanup } from "solid-js";
 import { ReactiveRoot } from "./util";
 import { React, ReactDOM } from "./react";
 
-export const ReactInSolidBridge: Component<{ comp: (props: any) => any; props?: object }> = (props) => {
+export const ReactInSolidBridge: Component<{
+  children: any;
+  comp: (props: any) => any;
+  props?: object;
+}> = (props) => {
   const root = <div style="display:contents" />;
 
-  let rroot;
+  props.props = { ...props.props, children: props.children };
 
   createEffect(() => {
-    rroot ??= ReactDOM.createRoot(root);
-    rroot.render(props.comp(props.props));
+    ReactDOM.render(React.createElement(props.comp, props.props), root);
   });
 
-  onCleanup(() => rroot?.unmount());
+  onCleanup(() => ReactDOM?.unmountComponentAtNode(root));
 
   return root;
 };
@@ -26,7 +29,7 @@ export const SolidInReactBridge = (props: any) => {
   React.useEffect(() => {
     if (ref.current !== undefined) {
       ref.current.innerHTML = "";
-      ref.current.append(<ReactiveRoot>{props.comp(propSignal.current[0]())}</ReactiveRoot>);
+      ref.current.append(<ReactiveRoot children="">{props.comp(propSignal.current[0]())}</ReactiveRoot>);
     }
   }, [props]);
 
