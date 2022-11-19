@@ -24,6 +24,7 @@ Check the githubs of uwu members or search for `shelter-plugins`.
 ## How do I install it?
 
 ### Desktop
+
 - Download this repo.
 - Find your discord install folder and go into `resources/` - if theres a file called `app.asar` youre probably in the right place.
 - make the folder `resources/app/`
@@ -31,11 +32,13 @@ Check the githubs of uwu members or search for `shelter-plugins`.
 - fully close and restart discord
 
 ### Firefox
+
 https://addons.mozilla.org/en-GB/firefox/addon/shelter-injector/
 
 ### Chromium based browser
+
 - download this repo
-- copy the `injectors/webext` folder to somewhere safe 
+- copy the `injectors/webext` folder to somewhere safe
 - go to extensions and enable developer mode
 - click load unpacked and choose the folder in its safe place
 - ignore the mv2 error (see chrome.md one ive written it)

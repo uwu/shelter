@@ -28,6 +28,7 @@ async function updateShelter() {
       const scriptTag = document.createElement("script");
       scriptTag.textContent = shelter;
 
+      while (!document.head) await new Promise(setTimeout);
       document.head.append(scriptTag);
     }
 
