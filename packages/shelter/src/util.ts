@@ -4,11 +4,11 @@ import { Fiber, FluxStore } from "./types";
 
 declare global {
   interface Element {
-    __reactFiber$: Fiber;
+    [k: `__reactFiber$${string}`]: Fiber;
   }
 }
 
-export const getFiber = (n: Element): Fiber => n.__reactFiber$;
+export const getFiber = (n: Element): Fiber => n[Object.keys(n).find((key) => key.startsWith("__reactFiber$"))];
 
 export function reactFiberWalker(
   node: Fiber,
