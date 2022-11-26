@@ -182,6 +182,8 @@ export function addLocalPlugin(id: string, plugin: StoredPlugin) {
 }
 
 export async function addRemotePlugin(id: string, src: string, update = true) {
+  if (!id.endsWith("/")) id += "/";
+
   // validate
   if (typeof id !== "string" || id in internalData) throw new Error("plugin ID invalid or taken");
 
