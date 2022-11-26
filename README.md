@@ -26,7 +26,7 @@ Check the githubs of uwu members or search for `shelter-plugins`.
 ### Desktop
 
 - Download this repo.
-- Find your discord install folder and go into `resources/` - if theres a file called `app.asar` youre probably in the right place.
+- Find your discord install folder (`%LocalAppData%`) and go into `resources/` - if theres a file called `app.asar` youre probably in the right place.
 - make the folder `resources/app/`
 - copy the contents of `shelter/injectors/desktop/app/` into it
 - fully close and restart discord
