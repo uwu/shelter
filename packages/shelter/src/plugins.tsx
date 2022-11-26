@@ -123,11 +123,11 @@ async function updatePlugin(pluginId: string) {
 
   if (data.update && data.src) {
     try {
-      const newPluginManifest = await (await fetch(new URL("plugin.json", data.src))).json();
+      const newPluginManifest = await (await fetch(new URL("plugin.json", data.src), { cache: "no-store" })).json();
 
       if (data.manifest.hash !== undefined && newPluginManifest.hash === data.manifest.hash) return false;
 
-      const newPluginText = await (await fetch(new URL("plugin.js", data.src))).text();
+      const newPluginText = await (await fetch(new URL("plugin.js", data.src), { cache: "no-store" })).text();
 
       internalData[pluginId] = {
         ...data,
