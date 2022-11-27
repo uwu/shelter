@@ -4,6 +4,7 @@ import * as solid from "solid-js";
 import * as solidStore from "solid-js/store";
 import * as solidWeb from "solid-js/web";
 import * as ui from "shelter-ui";
+import * as reacts from "shelter-ui/src/react";
 import * as util from "./util";
 import * as plugins from "./plugins";
 import { initSettings } from "./settings";
@@ -50,6 +51,8 @@ util.log("shelter is initializing...");
     observeDom: observe,
     ui: without(ui, "cleanupCss"),
     unload: () => unloads.forEach((p) => p()),
+    // as much as it pains me to do this...
+    ...reacts,
   };
 
   // this one should run last!
