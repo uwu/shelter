@@ -12,16 +12,21 @@ export const getFiber = (n: Element): Fiber => n[Object.keys(n).find((key) => ke
 
 export function reactFiberWalker(
   node: Fiber,
-  prop: string | symbol,
+  filter: string | symbol | ((node: Fiber) => boolean),
   goUp = false,
   ignoreStringType = false
 ): undefined | null | Fiber {
+  if (typeof filter !== "function") {
+    const prop = filter;
+    filter = (n) => n.pendingProps[prop] !== undefined;
+  }
+
   if (!node) return;
-  if (node.pendingProps?.[prop] !== undefined && (ignoreStringType ? typeof node.type !== "string" : true)) return node;
+  if (filter(node) && (ignoreStringType ? typeof node.type !== "string" : true)) return node;
 
   return (
-    reactFiberWalker(goUp ? node.return : node.child, prop, goUp, ignoreStringType) ??
-    reactFiberWalker(node.sibling, prop, goUp, ignoreStringType)
+    reactFiberWalker(goUp ? node.return : node.child, filter, goUp, ignoreStringType) ??
+    reactFiberWalker(node.sibling, filter, goUp, ignoreStringType)
   );
 }
 

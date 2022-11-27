@@ -3,8 +3,40 @@
 import { getDispatcher } from "./flux";
 import { awaitDispatch, getFiber, reactFiberWalker } from "./util";
 import { Component, createSignal, onCleanup } from "solid-js";
-import { ReactiveRoot } from "shelter-ui";
+import { SolidInReactBridge } from "shelter-ui";
 import Settings from "./components/Settings";
+import { after } from "spitroast";
+
+type SettingsSection =
+  | ["divider"]
+  | ["header", string]
+  | ["section", string, string, Component]
+  | ["button", string, string, () => void];
+
+const injectedSections: SettingsSection[] = [
+  ["divider"],
+  ["header", "Shelter"],
+  ["section", "settings", "Settings", Settings],
+];
+
+const generatePredicateSections = () =>
+  injectedSections.map((s) => {
+    switch (s[0]) {
+      case "divider":
+        return { section: "DIVIDER" };
+      case "header":
+        return { section: "HEADER", label: s[1] };
+      case "button":
+        return { section: s[1], label: s[2], onClick: s[3] };
+
+      case "section":
+        return {
+          section: s[1],
+          label: s[2],
+          element: () => <SolidInReactBridge comp={s[3]} />,
+        };
+    }
+  });
 
 const SettingsInj: Component<{
   dividerClasses: string;
@@ -71,6 +103,7 @@ export async function initSettings() {
 
   let firstDispatch = true;
   let canceled = false;
+  let unpatch;
 
   const cb = async () => {
     // wait for lazy loading on initial user settings open
@@ -85,32 +118,30 @@ export async function initSettings() {
     // microtask is necessary to allow react to finish rendering the ui before we run
     queueMicrotask(() => {
       const sidebar = document.querySelector("nav > [role=tablist]");
-      const mainSection = document.querySelector("[role=tabpanel]:not([aria-labelledby])");
-      if (!sidebar || !mainSection) return;
+      if (!sidebar) return;
 
-      const changelogIdx = [...sidebar.children].findIndex(
-        (c) => reactFiberWalker(getFiber(c), "id", true)?.pendingProps?.id === "changelog"
-      );
-      if (changelogIdx === -1) return;
-
-      // indexes are kinda fucky so idk?
-      const dividerAboveChangelog = sidebar.children[changelogIdx];
-
-      const tabClasses = sidebar.children[changelogIdx + 1].className;
-      const dividerClasses = dividerAboveChangelog.className;
-      const headerClasses = sidebar.firstElementChild.className;
-
-      const injection = (
-        <ReactiveRoot>
-          <SettingsInj
-            {...{ dividerClasses, headerClasses, tabClasses, mainSection }}
-            dispatcher={FluxDispatcher}
-            content={Settings}
-          />
-        </ReactiveRoot>
+      const f = reactFiberWalker(
+        getFiber(sidebar),
+        (node) => typeof node?.type === "function" && node.type.prototype.getPredicateSections,
+        true
       );
 
-      sidebar.insertBefore(injection as Element, dividerAboveChangelog);
+      if (typeof f?.type !== "function") return;
+
+      unpatch = after("getPredicateSections", f.type.prototype, (args, ret: any[]) => {
+        const changelogIdx = ret.findIndex((s) => s.section === "changelog");
+        if (changelogIdx === -1) return;
+
+        // -1 to go ahead of the divider above it
+        ret.splice(changelogIdx - 1, 0, ...generatePredicateSections());
+      });
+
+      // trigger rerender for first load by clicking selected section
+      const sbarView = reactFiberWalker(getFiber(sidebar), (node) => typeof node.type === "string")?.stateNode;
+
+      if (sbarView instanceof Element) (sbarView.querySelector("[class*=selected]") as HTMLElement)?.click();
+
+      FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
     });
   };
 
@@ -119,5 +150,6 @@ export async function initSettings() {
   return () => {
     FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
     canceled = true;
+    unpatch?.();
   };
 }
