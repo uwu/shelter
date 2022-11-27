@@ -76,6 +76,13 @@ them -- sink
 
 https://github.com/uwu/shelter/blob/main/packages/shelter-ui/README.md
 
+### `React`, `ReactDOM`
+
+I'm sure you can figure out what these are.
+
+Please remember that shelter plugins should be using solid.
+React is provided as an escape hatch for difficult situations.
+
 ### `unload`
 
 Unloads the client.
