@@ -1,0 +1,28 @@
+{
+  "name": "Shelter MV3 Inj",
+  "version": "1.0",
+  "homepage_url": "https://github.com/uwu/shelter",
+  "description": "Injects shelter on discord.com/app - for MV3 browsers",
+
+  "manifest_version": 3,
+  "permissions": ["debugger", "storage"],
+  "host_permissions": ["https://*/*"],
+
+  "background": {
+    "service_worker": "worker.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://discord.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+
+  "icons": {},
+
+  "externally_connectable": {
+    "matches": ["https://discord.com/*"]
+  }
+}
