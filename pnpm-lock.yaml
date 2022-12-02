@@ -9,6 +9,12 @@ importers:
       husky: 8.0.1
       typescript: 4.8.4
 
+  injectors/mv3:
+    specifiers:
+      web-ext: ^7.3.1
+    devDependencies:
+      web-ext: 7.3.1
+
   injectors/webext:
     specifiers:
       web-ext: ^7.3.1

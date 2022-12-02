@@ -37,11 +37,13 @@ https://addons.mozilla.org/en-GB/firefox/addon/shelter-injector/
 
 ### Chromium based browser
 
-- download this repo
-- copy the `injectors/webext` folder to somewhere safe
-- go to extensions and enable developer mode
-- click load unpacked and choose the folder in its safe place
-- ignore the mv2 error (see chrome.md one ive written it)
+- Grab the latest MV2 release from this repo
+- Drag and drop the zip file onto the Chromium extensions page.
+- Ignore the MV2 error (see CHROME.md for more details)
+
+You can also do the same with the MV3 release.
+This will not throw an error about MV2 however there are a few
+caveats - notably worse CSP removal - see CHROME.md
 
 ## How do I make a plugin?
 
