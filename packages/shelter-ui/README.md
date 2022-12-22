@@ -16,6 +16,7 @@ For use outside of Discord, a solution may or may not be implemented.
   - [`openModal`](#openmodal)
   - [`<ReactInSolidBridge />`](#reactinsolidbridge-)
   - [`SolidInReactBridge`](#solidinreactbridge)
+  - [`<ErrorBoundary />`](#errorboundary-)
 - [Components](#components)
   - [`<Text>`](#text)
   - [`<Header>`](#header)
@@ -135,6 +136,10 @@ component.render = () => {
   return renderSolidInReact(Component, { className: "solidelem" });
 };
 ```
+
+### `<ErrorBoundary />`
+
+Safely catches any errors that occur, displays the error, and has a button to retry.
 
 ## Components
 

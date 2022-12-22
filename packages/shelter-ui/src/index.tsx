@@ -10,6 +10,7 @@ export * from "./modals";
 export * from "./icons";
 export * from "./textbox";
 export * from "./bridges";
+export * from "./errorboundary";
 
 export const Text: Component<{ children: JSX.Element }> = (props) => (
   <span

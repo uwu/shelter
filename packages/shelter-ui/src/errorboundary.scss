@@ -1,0 +1,20 @@
+// CSS adapted from Cumcord
+// https://github.com/Cumcord/Cumcord/blob/f98494df6e7ee781163a7f2a54f3197e92bf73a4/src/api/init.js#L46
+
+.errbound {
+  font-family: var(--font-display);
+  color: var(--text-normal);
+  padding: 16px;
+}
+
+.errboundtitle {
+  margin-bottom: 7px;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.errboundcode {
+  background-color: var(--background-secondary);
+  font-family: var(--font-code);
+  user-select: text;
+}
