@@ -2,7 +2,7 @@
 
 import { getDispatcher } from "./flux";
 import { awaitDispatch, getFiber, reactFiberWalker } from "./util";
-import { Component, createSignal, onCleanup } from "solid-js";
+import { Component } from "solid-js";
 import { SolidInReactBridge } from "shelter-ui";
 import Settings from "./components/Settings";
 import { after } from "spitroast";
@@ -19,8 +19,10 @@ const injectedSections: SettingsSection[] = [
   ["section", "settings", "Settings", Settings],
 ];
 
+let externalSections: SettingsSection[] = [];
+
 const generatePredicateSections = () =>
-  injectedSections.map((s) => {
+  [...injectedSections, ...externalSections].map((s) => {
     switch (s[0]) {
       case "divider":
         return { section: "DIVIDER" };
@@ -37,66 +39,6 @@ const generatePredicateSections = () =>
         };
     }
   });
-
-const SettingsInj: Component<{
-  dividerClasses: string;
-  headerClasses: string;
-  tabClasses: string;
-  mainSection: Element;
-  content: Component;
-  dispatcher: any;
-}> = (props) => {
-  const [settingsOpen, setSettingsOpen] = createSignal<[HTMLDivElement, Element] | undefined>();
-
-  // when we are clicked, we hide discord's settings page and insert our own
-  // when we detect a set_section dispatch, we re-show discord's settings page and remove our own.
-  // TODO: hide the selected style from Discord's tab
-  // TODO: support more than one tab
-
-  const cb = () => {
-    if (!settingsOpen()) return;
-    const [theirDiv, ourDiv] = settingsOpen();
-    setSettingsOpen();
-
-    ourDiv.remove();
-    theirDiv.style.display = "";
-  };
-
-  props.dispatcher.subscribe("USER_SETTINGS_MODAL_SET_SECTION", cb);
-  onCleanup(() => props.dispatcher.unsubscribe("USER_SETTINGS_MODAL_SET_SECTION", cb));
-
-  return (
-    <div style="display: contents">
-      <div class={props.dividerClasses} />
-      <div class={props.headerClasses} role="button" tabIndex="-1">
-        Shelter
-      </div>
-      <div
-        class={props.tabClasses}
-        role="tab"
-        aria-selected={!!settingsOpen()}
-        aria-disabled={false}
-        tabIndex="-1"
-        aria-label="Shelter Settings"
-        style={{
-          background: settingsOpen() ? "var(--background-modifier-selected)" : "",
-        }}
-        onclick={() => {
-          if (settingsOpen()) return;
-          const theirDiv = props.mainSection.firstElementChild as HTMLDivElement;
-          const ourDiv = (<div style="display: contents">{props.content({})}</div>) as Element;
-
-          setSettingsOpen([theirDiv, ourDiv]);
-
-          theirDiv.style.display = "none";
-          props.mainSection.append(ourDiv);
-        }}
-      >
-        Settings
-      </div>
-    </div>
-  );
-};
 
 export async function initSettings() {
   const FluxDispatcher = await getDispatcher();
@@ -152,4 +94,17 @@ export async function initSettings() {
     canceled = true;
     unpatch?.();
   };
+}
+
+export function registerSection(...sec: SettingsSection) {
+  externalSections.push(sec);
+
+  return () => {
+    const idx = externalSections.indexOf(sec);
+    if (idx !== -1) externalSections.splice(idx, 1);
+  };
+}
+
+export function removeAllSections() {
+  externalSections = [];
 }

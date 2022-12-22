@@ -7,7 +7,7 @@ import * as ui from "shelter-ui";
 import * as reacts from "shelter-ui/src/react";
 import * as util from "./util";
 import * as plugins from "./plugins";
-import { initSettings } from "./settings";
+import { initSettings, registerSection, removeAllSections } from "./settings";
 import { initDispatchLogger } from "./dispatchLogger";
 import * as storage from "./storage";
 import { observe, unobserve } from "./observer";
@@ -29,6 +29,7 @@ util.log("shelter is initializing...");
     ui.cleanupCss,
     patcher.unpatchAll,
     unobserve,
+    removeAllSections,
   ]);
 
   // We can potentially move the window obj to it's own module later, I think it'd help with typedefs?
@@ -50,6 +51,9 @@ util.log("shelter is initializing...");
     storage,
     observeDom: observe,
     ui: without(ui, "cleanupCss"),
+    settings: {
+      registerSection,
+    },
     unload: () => unloads.forEach((p) => p()),
     // as much as it pains me to do this...
     ...reacts,
