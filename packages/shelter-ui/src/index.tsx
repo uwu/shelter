@@ -11,6 +11,7 @@ export * from "./icons";
 export * from "./textbox";
 export * from "./bridges";
 export * from "./errorboundary";
+export * from "./toasts";
 
 export const Text: Component<{ children: JSX.Element }> = (props) => (
   <span

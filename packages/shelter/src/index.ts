@@ -10,12 +10,24 @@ import windowApi from "./windowApi";
 const start = performance.now();
 util.log("shelter is initializing...");
 
+async function waitToExist<T>(pred: () => Promise<T | undefined> | T | undefined) {
+  let val;
+  while (!val) {
+    val = await pred();
+    // @ts-expect-error wahhhhh wrong args to setTimeout
+    await new Promise(setTimeout);
+  }
+
+  return val;
+}
+
 (async () => {
   // load everything in parallel
   const unloads = await Promise.all([
     initSettings(),
     initDispatchLogger(),
     ui.cleanupCss,
+    waitToExist(() => document.getElementById("app-mount")).then(ui.initToasts),
     patcher.unpatchAll,
     unobserve,
     removeAllSections,

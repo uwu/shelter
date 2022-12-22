@@ -141,6 +141,21 @@ component.render = () => {
 
 Safely catches any errors that occur, displays the error, and has a button to retry.
 
+### `showToast`
+
+Shows a toast.
+
+```js
+// all of these props are optional!
+showToast({
+  title: "title!",
+  content: "a cool toast",
+  onClick() {},
+  class: "my-cool-toast",
+  duration: 3000,
+});
+```
+
 ## Components
 
 ### `<Text>`

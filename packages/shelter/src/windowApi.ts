@@ -34,7 +34,7 @@ const windowApi = async (unloads) => ({
   plugins: without(plugins, "startAllPlugins"),
   storage,
   observeDom: observe,
-  ui: without(ui, "cleanupCss"),
+  ui: without(ui, "cleanupCss", "initToasts"),
   settings: {
     registerSection,
   },
