@@ -1,28 +1,17 @@
-import * as flux from "./flux";
 import * as patcher from "spitroast";
-import * as solid from "solid-js";
-import * as solidStore from "solid-js/store";
-import * as solidWeb from "solid-js/web";
 import * as ui from "shelter-ui";
-import * as reacts from "shelter-ui/src/react";
 import * as util from "./util";
 import * as plugins from "./plugins";
-import { initSettings, registerSection, removeAllSections } from "./settings";
+import { initSettings, removeAllSections } from "./settings";
 import { initDispatchLogger } from "./dispatchLogger";
-import * as storage from "./storage";
-import { observe, unobserve } from "./observer";
-
-function without<T extends Record<string, any>>(object: T, ...keys: string[]) {
-  const cloned = { ...object };
-  keys.forEach((k) => delete cloned[k]);
-  return cloned;
-}
+import { unobserve } from "./observer";
+import windowApi from "./windowApi";
 
 const start = performance.now();
 util.log("shelter is initializing...");
 
 (async () => {
-  // load all the things in parallel :D
+  // load everything in parallel
   const unloads = await Promise.all([
     initSettings(),
     initDispatchLogger(),
@@ -32,34 +21,9 @@ util.log("shelter is initializing...");
     removeAllSections,
   ]);
 
-  // We can potentially move the window obj to it's own module later, I think it'd help with typedefs?
-  window["shelter"] = {
-    flux: without(
-      {
-        ...flux,
-        dispatcher: await flux.getDispatcher(),
-      },
-      "injectIntercept",
-      "getDispatcher"
-    ),
-    patcher: without(patcher, "unpatchAll"),
-    solid,
-    solidStore,
-    solidWeb,
-    util,
-    plugins: without(plugins, "startAllPlugins"),
-    storage,
-    observeDom: observe,
-    ui: without(ui, "cleanupCss"),
-    settings: {
-      registerSection,
-    },
-    unload: () => unloads.forEach((p) => p()),
-    // as much as it pains me to do this...
-    ...reacts,
-  };
+  window["shelter"] = await windowApi(unloads);
 
-  // this one should run last!
+  // once everything is fully inited, start plugins
   unloads.push(await plugins.startAllPlugins());
 
   util.log(`shelter is initialized. took: ${(performance.now() - start).toFixed(1)}ms`);

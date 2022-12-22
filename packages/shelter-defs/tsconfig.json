@@ -1,0 +1,13 @@
+{
+  "include": ["*.ts", "../*/*.d.ts", "../shelter/src/index.ts", "../shelter-ui/src/index.tsx"],
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "./dist",
+    "jsx": "preserve",
+    "jsxImportSource": "solid-js"
+  }
+}

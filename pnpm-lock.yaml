@@ -51,6 +51,21 @@ importers:
   packages/shelter-assets:
     specifiers: {}
 
+  packages/shelter-defs:
+    specifiers:
+      idb: ^7.1.0
+      shelter: workspace:^
+      solid-js: ^1.5.7
+      spitroast: ^1.4.2
+      typescript: ^4.9.4
+    dependencies:
+      idb: 7.1.0
+      solid-js: 1.5.7
+      spitroast: 1.4.2
+    devDependencies:
+      shelter: link:../shelter
+      typescript: 4.9.4
+
   packages/shelter-ui:
     specifiers:
       solid-js: ^1.5.7
@@ -4640,6 +4655,13 @@ packages:
   /typescript/4.8.4:
     resolution:
       { integrity: sha512-QCh+85mCy+h0IGff8r5XWzOVSbBO+KfeYrMQh7NJ58QujwcE22u+NUSmUxqF+un70P9GXKxa2HCNiTTMJknyjQ== }
+    engines: { node: ">=4.2.0" }
+    hasBin: true
+    dev: true
+
+  /typescript/4.9.4:
+    resolution:
+      { integrity: sha512-Uz+dTXYzxXXbsFpM86Wh3dKCxrQqUcVMxwU54orwlJjOpO3ao8L7j5lH+dWfTwgCwIuM9GQ2kvVotzYJMXTBZg== }
     engines: { node: ">=4.2.0" }
     hasBin: true
     dev: true

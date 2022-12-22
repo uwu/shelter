@@ -29,7 +29,7 @@ export const SolidInReactBridge = (props: any) => {
   React.useEffect(() => {
     if (ref.current !== undefined) {
       ref.current.innerHTML = "";
-      ref.current.append(<ReactiveRoot children="">{props.comp(propSignal.current[0]())}</ReactiveRoot>);
+      ref.current.append(<ReactiveRoot>{props.comp(propSignal.current[0]())}</ReactiveRoot>);
     }
   }, [props]);
 
