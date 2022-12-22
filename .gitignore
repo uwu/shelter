@@ -242,5 +242,6 @@ https://www.toptal.com/developers/gitignore/api/jetbrains+all,node
 ### MacOS hidden files ###
 .DS_STORE
 
-# uh yeah
+# web extension stuff
 web-ext-artifacts
+_metadata

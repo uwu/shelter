@@ -3,15 +3,12 @@
   "version": "1.0",
   "homepage_url": "https://github.com/uwu/shelter",
   "description": "Injects shelter on discord.com/app - for MV3 browsers",
-
   "manifest_version": 3,
-  "permissions": ["debugger", "storage"],
+  "permissions": ["debugger", "storage", "declarativeNetRequestWithHostAccess"],
   "host_permissions": ["https://*/*"],
-
   "background": {
     "service_worker": "worker.js"
   },
-
   "content_scripts": [
     {
       "matches": ["https://discord.com/*"],
@@ -19,10 +16,17 @@
       "run_at": "document_start"
     }
   ],
-
   "icons": {},
-
   "externally_connectable": {
     "matches": ["https://discord.com/*"]
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "discord_nocsp",
+        "enabled": true,
+        "path": "dnr_rules.json"
+      }
+    ]
   }
 }

@@ -42,8 +42,8 @@ https://addons.mozilla.org/en-GB/firefox/addon/shelter-injector/
 - Ignore the MV2 error (see CHROME.md for more details)
 
 You can also do the same with the MV3 release.
-This will not throw an error about MV2 however there are a few
-caveats - notably worse CSP removal - see CHROME.md
+This will not throw an error about MV2 however there are a couple of
+caveats - more jank and less thorough CSP removal.
 
 ## How do I make a plugin?
 

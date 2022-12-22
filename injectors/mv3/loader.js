@@ -49,7 +49,8 @@ async function communicate(data, extid, timeout = 2000) {
   });
 }
 
-// The stuff happens here
+// We remove CSP for discord.com/* via DNR
+// however keep this here just to be sure ;)
 patchFetch();
 
 // This gets replaced by the worker at runtime
