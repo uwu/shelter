@@ -1,9 +1,9 @@
 {
   "name": "@uwu/shelter-defs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": "shelter team (Cain Atkinson)",
   "license": "CC-0-1.0",
-  "repository": "gh:uwu/shelter",
+  "repository": "github:uwu/shelter",
   "types": "./dist/shelter-defs/rootdefs.d.ts",
   "scripts": {
     "prepare": "rm -rf dist && tsc"
