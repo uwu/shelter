@@ -17,6 +17,7 @@ For use outside of Discord, a solution may or may not be implemented.
   - [`<ReactInSolidBridge />`](#reactinsolidbridge-)
   - [`SolidInReactBridge`](#solidinreactbridge)
   - [`<ErrorBoundary />`](#errorboundary-)
+  - [`niceScrollbarsClass`](#nicescrollbarsclass)
 - [Components](#components)
   - [`<Text>`](#text)
   - [`<Header>`](#header)
@@ -154,6 +155,14 @@ showToast({
   class: "my-cool-toast",
   duration: 3000,
 });
+```
+
+### `niceScrollbarsClass`
+
+A getter that gets a class to add to an element to give it a nice scrollbar.
+
+```jsx
+<div class={`myclass myclass2 ${niceScrollbarsClass()}`} />
 ```
 
 ## Components
