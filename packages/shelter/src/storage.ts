@@ -1,8 +1,32 @@
 import { batch, createSignal, Signal } from "solid-js";
 import { IDBPDatabase, openDB } from "idb";
+import { log } from "./util";
 
 // can't use a solid store as i could do with bespoke logic for idb
 // so heres a custom proxy impl -- sink
+
+// idb cannot directly store solid mutables so this clones them
+function cloneRec(node: unknown, seenNodes: object[] = []) {
+  switch (typeof node) {
+    case "function":
+    case "symbol":
+      //throw new Error
+      log(`can't store a ${typeof node} in a shelter storage!`, "error");
+      return undefined;
+
+    case "object":
+      if (seenNodes?.includes(node)) throw new Error("can't store a circular reference in a shelter storage!");
+
+      const newObj = Array.isArray(node) ? [] : {};
+      for (const k of Object.keys(node)) {
+        newObj[k] = cloneRec(node[k], [...seenNodes, node]);
+      }
+      return newObj;
+
+    default:
+      return node as undefined | boolean | number | string | bigint;
+  }
+}
 
 const symWait = Symbol();
 const symDb = Symbol();
@@ -99,7 +123,7 @@ export const storage = <T = any>(name: string) => {
       setsig(() => v);
       updateMainSignal();
 
-      waitInit(() => db.put(name, v, p));
+      waitInit(() => db.put(name, cloneRec(v), p));
 
       return true;
     },
