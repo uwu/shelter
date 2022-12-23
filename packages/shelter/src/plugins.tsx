@@ -153,7 +153,9 @@ export async function startAllPlugins() {
   const allPlugins = Object.keys(internalData);
 
   // update in parallel
-  await Promise.all(allPlugins.map(updatePlugin));
+  const results = await Promise.allSettled(allPlugins.map(updatePlugin));
+
+  for (const res of results) if (res.status === "rejected") log(res.reason, "error");
 
   const toStart = allPlugins.filter((id) => internalData[id].on);
 
