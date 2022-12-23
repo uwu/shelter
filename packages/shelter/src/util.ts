@@ -85,3 +85,5 @@ export function createSubscription<TState, TStoreData = any>(
 }
 
 export const storeAssign = <T>(store: T, toApply: T) => batch(() => Object.assign(store, toApply));
+
+export const sleep = (ms = 0) => new Promise((r) => setTimeout(r, ms));

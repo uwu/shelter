@@ -6,20 +6,22 @@ import { initSettings, removeAllSections } from "./settings";
 import { initDispatchLogger } from "./dispatchLogger";
 import { unobserve } from "./observer";
 import windowApi from "./windowApi";
+import { sleep } from "./util";
 
 const start = performance.now();
 util.log("shelter is initializing...");
 
-async function waitToExist<T>(pred: () => Promise<T | undefined> | T | undefined) {
-  let val;
-  while (!val) {
-    val = await pred();
-    // @ts-expect-error wahhhhh wrong args to setTimeout
-    await new Promise(setTimeout);
+const waitForAppMount = async () => {
+  let appMount: HTMLDivElement;
+  while (!appMount) {
+    appMount = document.getElementById("app-mount") as HTMLDivElement;
+    await sleep();
   }
 
-  return val;
-}
+  while (appMount.childElementCount === 0) await sleep();
+
+  return appMount;
+};
 
 (async () => {
   // load everything in parallel
@@ -27,7 +29,7 @@ async function waitToExist<T>(pred: () => Promise<T | undefined> | T | undefined
     initSettings(),
     initDispatchLogger(),
     ui.cleanupCss,
-    waitToExist(() => document.getElementById("app-mount")).then(ui.initToasts),
+    waitForAppMount().then(ui.initToasts),
     patcher.unpatchAll,
     unobserve,
     removeAllSections,
