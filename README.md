@@ -29,6 +29,7 @@ Check the githubs of uwu members or search for `shelter-plugins`.
 - Find your discord install folder (`%LocalAppData%` for Windows) and go into `resources/` - if theres a file called `app.asar` youre probably in the right place.
 - make the folder `resources/app/`
 - copy the contents of `shelter/injectors/desktop/app/` into it
+- rename `app.asar` to `original.asar`
 - fully close and restart discord
 
 ### Firefox
