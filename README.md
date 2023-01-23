@@ -52,18 +52,12 @@ See [DOCS.md](DOCS.md)
 
 ## Is there a plugin repo / website / build tool / etc.?
 
-No.
+Possibly not.
 
-This is a much smaller project than Cumcord.
-We are generally through with client modding by now and this is developed for
-just a few reasons:
+This is a much smaller project right now than Cumcord was at the time of its death.
 
-- To prove the concept
-- To make a minimum viable mod that we will _almost never_ need to maintain
-- Because solving problems is neat.
+Please do not expect a huge ecosystem,
+but we do want to have a comfortable dev and user experience.
 
-Do not expect the fairly large, seamless ecosystem that Cumcord had.
-shelter will be small and no-nonsense.
-
-That said, keep an eye on the uwu gh org or our Discord server
-to see what we _are_ working on, outside of the client modding space.
+Keep an eye on the uwu gh org or our Discord server
+to see what we _are_ working on, inside and outside of the client modding space. :)
