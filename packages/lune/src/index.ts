@@ -34,7 +34,7 @@ if (topLevelParsed[0] in commands) {
 
   const parsedArgs = argparse({ ...command.argSchema, help: "bool" } as Record<string, "str" | "bool">, { skip: 1 });
   if (parsedArgs.help) console.log(command.helpText);
-  else exit(command.exec(parsedArgs) || 0);
+  else Promise.resolve(command.exec(parsedArgs)).then((res) => exit(res || 0));
 } else {
   console.log(`The command ${topLevelParsed[0]} was not recognised\n\n${helptext}`);
   exit(1);
