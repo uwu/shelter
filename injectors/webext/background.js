@@ -7,5 +7,5 @@ chrome.webRequest.onHeadersReceived.addListener(
   },
 
   { urls: ["*://*.discord.com/*", "*://discord.com/*"] },
-  ["blocking", "responseHeaders"]
+  ["blocking", "responseHeaders"],
 );

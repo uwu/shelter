@@ -10,7 +10,7 @@ const topLevelParsed = argparse(
     help: "bool",
     version: "bool",
   },
-  { dropUnknown: true }
+  { dropUnknown: true },
 );
 
 if (topLevelParsed.version) {

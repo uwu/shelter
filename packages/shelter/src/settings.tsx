@@ -65,7 +65,7 @@ export async function initSettings() {
       const f = reactFiberWalker(
         getFiber(sidebar),
         (node) => typeof node?.type === "function" && node.type.prototype.getPredicateSections,
-        true
+        true,
       );
 
       if (typeof f?.type !== "function") return;

@@ -59,7 +59,7 @@ electron.ipcMain.handle("SHELTER_BUNDLE_FETCH", () => shelterBundle);
 electron.app.on("ready", () => {
   electron.session.defaultSession.webRequest.onHeadersReceived(({ responseHeaders }, done) => {
     const cspHeaders = Object.keys(responseHeaders).filter((name) =>
-      name.toLowerCase().startsWith("content-security-policy")
+      name.toLowerCase().startsWith("content-security-policy"),
     );
 
     for (const header of cspHeaders) {

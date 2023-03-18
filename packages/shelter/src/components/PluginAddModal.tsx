@@ -27,9 +27,7 @@ export default (props: { close(): void }) => {
   const newId = () => {
     if (!local()) return rSrc().split("://")[1];
 
-    let id = lName()
-      .toLowerCase()
-      .replaceAll(/[^A-Za-z0-9-_.]/g, "-");
+    let id = lName().toLowerCase().replaceAll(/[^A-Za-z0-9-_.]/g, "-");
     while (installedPlugins[id]) id += "_";
 
     return id;

@@ -24,7 +24,7 @@ const windowApi = async (unloads) => ({
       dispatcher: await flux.getDispatcher(),
     },
     "injectIntercept",
-    "getDispatcher"
+    "getDispatcher",
   ),
   patcher: without(patcher, "unpatchAll"),
   solid,

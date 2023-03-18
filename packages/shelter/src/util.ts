@@ -14,7 +14,7 @@ export function reactFiberWalker(
   node: Fiber,
   filter: string | symbol | ((node: Fiber) => boolean),
   goUp = false,
-  ignoreStringType = false
+  ignoreStringType = false,
 ): undefined | null | Fiber {
   if (typeof filter !== "function") {
     const prop = filter;
@@ -45,7 +45,7 @@ export function log(text: any, func: "log" | "warn" | "error" = "log") {
     "%cshelter%c",
     "background: linear-gradient(180deg, #2A3B4B 0%, #2BFAAC 343.17%); color: white; padding: 6px",
     "",
-    text
+    text,
   );
 }
 
@@ -73,7 +73,7 @@ export function createListener(type: string): () => any {
 // gets the data from a flux store reactively
 export function createSubscription<TState, TStoreData = any>(
   store: FluxStore<TStoreData>,
-  getStateFromStore: (store: FluxStore<TStoreData>) => TState
+  getStateFromStore: (store: FluxStore<TStoreData>) => TState,
 ): () => TState {
   const [data, setData] = createSignal(getStateFromStore(store));
 

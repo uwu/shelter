@@ -31,18 +31,18 @@ const ButtonIcon: Component<{ state: boolean }> = (props) => {
         // svg <animate> isn't like discord's animation by a long shot but it certainly looks tons better than just a snap
         animate1.setAttribute(
           "values",
-          s ? `${CrossPath1};${InterPath1};${TickPath1}` : `${TickPath1};${InterPath1};${CrossPath1}`
+          s ? `${CrossPath1};${InterPath1};${TickPath1}` : `${TickPath1};${InterPath1};${CrossPath1}`,
         );
         animate2.setAttribute(
           "values",
-          s ? `${CrossPath2};${InterPath2};${TickPath2}` : `${TickPath2};${InterPath2};${CrossPath2}`
+          s ? `${CrossPath2};${InterPath2};${TickPath2}` : `${TickPath2};${InterPath2};${CrossPath2}`,
         );
 
         animate1.beginElement();
         animate2.beginElement();
       },
-      { defer: true }
-    )
+      { defer: true },
+    ),
   );
 
   return (

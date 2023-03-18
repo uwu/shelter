@@ -61,7 +61,7 @@ const PluginCard: Component<{
               confirmText: "Delete",
             }).then(
               () => removePlugin(props.id),
-              () => {}
+              () => {},
             )
           }
         >

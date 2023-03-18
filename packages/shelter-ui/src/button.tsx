@@ -79,7 +79,7 @@ export const Button: Component<{
       type: "button",
       class: "",
     },
-    rawProps
+    rawProps,
   );
 
   if (!injectedCss) {

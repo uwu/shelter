@@ -110,7 +110,7 @@ export const storage = <T = any>(name: string) => {
         db.get(name, p).then((v) => {
           setsig(() => v);
           updateMainSignal();
-        })
+        }),
       );
       return sig();
     },
@@ -168,7 +168,7 @@ export const defaults = <T = any>(store: ShelterStore<T>, fallbacks: Record<stri
   whenInited(store, () =>
     batch(() => {
       for (const k in fallbacks) if (!(k in store)) store[k] = fallbacks[k];
-    })
+    }),
   );
 
 /** gets a signal containing the whole store as an object */

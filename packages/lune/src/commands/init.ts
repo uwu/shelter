@@ -60,8 +60,8 @@ async function createPlugin(dir: string, name: string, author: string, desc: str
         description: desc,
       },
       null,
-      2
-    )
+      2,
+    ),
   );
 
   await writeFile(
@@ -70,12 +70,10 @@ async function createPlugin(dir: string, name: string, author: string, desc: str
 const {
 } = shelter;
 
-export function onLoad() {
-	// optional
+export function onLoad() { // optional
 }
 
-export function onUnload() {
-	// required
-}`.trim()
+export function onUnload() { // required
+}`.trim(),
   );
 }

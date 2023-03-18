@@ -41,9 +41,9 @@ function inject(tabId, code, detachOnFinish = true) {
         },
         () => {
           if (detachOnFinish) chrome.debugger.detach({ tabId });
-        }
+        },
       );
-    }
+    },
   );
 }
 
@@ -58,7 +58,7 @@ chrome.runtime.onMessage.addListener(async (msg, sender, sendResponse) => {
       // replace needs a function because dist usually contains "$&" which puts doit() in random places and produces syntax errors
       inject(
         sender.tab.id,
-        loader.replace("/extid/", chrome.runtime.id).replace("/* INJECT_SHELTER_SOURCE */", () => shelter)
+        loader.replace("/extid/", chrome.runtime.id).replace("/* INJECT_SHELTER_SOURCE */", () => shelter),
       );
     }
 
