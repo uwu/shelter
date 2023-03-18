@@ -1,5 +1,5 @@
 import { createHash } from "crypto";
-import { readdir, readFile, writeFile, rm } from "fs/promises";
+import { readFile, writeFile } from "fs/promises";
 import { resolve } from "path";
 import { existsSync } from "fs";
 import { build, Plugin } from "esbuild";
@@ -75,7 +75,7 @@ export async function buildPlugin(path: string, to: string, cfg: LuneCfg, dev = 
     bundle: true,
     minify: !dev,
     plugins: [
-      ...cfg.prePlugins,
+      ...(cfg.prePlugins ?? []),
       solidPlugin(),
       (cfg.cssModules
         ? sassPlugin({
@@ -88,7 +88,7 @@ export async function buildPlugin(path: string, to: string, cfg: LuneCfg, dev = 
           })
         : sassPlugin({ style: "compressed", sourceMap: false, type: "css-text" })) as any, // bad but version conflicts suck
       shelterEsbuildResolver(),
-      ...cfg.postPlugins,
+      ...(cfg.postPlugins ?? []),
     ],
     globalName: "__lune_temp_global",
   });

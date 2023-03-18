@@ -1,5 +1,6 @@
 import type { Command } from ".";
 import { hrtime } from "process";
+import { resolve } from "path";
 import { buildPlugin, loadCfg } from "../builder.js";
 
 export default {
@@ -25,7 +26,7 @@ Options:
 
     const timeBefore = hrtime.bigint();
 
-    const cfg = await loadCfg(args.cfg as string);
+    const cfg = await loadCfg((args.cfg as string) ?? resolve(dir, "lune.config.js"));
     await buildPlugin(dir, (args.to as string) ?? "./dist", cfg, args.dev as boolean);
 
     const timeAfter = hrtime.bigint();
