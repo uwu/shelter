@@ -1,5 +1,5 @@
 {
-  "name": "lune",
+  "name": "@uwu/lune",
   "version": "1.0.0",
   "description": "The CLI build tool for shelter",
   "bin": "dist/index.js",
@@ -8,11 +8,13 @@
   "homepage": "https://github.com/uwu/shelter/tree/main/packages/lune",
   "repository": "github:uwu/shelter",
   "scripts": {
-    "prepare": "tsc"
+    "prepare": "rm -rf dist && tsc"
   },
   "type": "module",
   "devDependencies": {
     "@types/node": "^18.15.3",
+    "postcss": "^8.4.21",
+    "postcss-modules": "^6.0.0",
     "typescript": "^5.0.2"
   },
   "dependencies": {
