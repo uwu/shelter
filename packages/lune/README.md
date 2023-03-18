@@ -111,9 +111,3 @@ The options are:
 - `cssModules: boolean` - if CSS Modules are enabled, by default `false`
 - `prePlugins: Plugin[]` - [esbuild](https://esbuild.github.io/) plugins to run before Lune's transforms
 - `postPlugins: Plugin[]` - esbuild plugins to run after Lune's transforms
-
-For IDE support, you can install Lune as a dev dependency in your repo (`pnpm i -Dw @uwu/lune` or equivalent for your
-favourite package manager), add `import { defineConfig } from "@uwu/lune"` to your config file, and wrap your exported
-object in a call to `export default defineConfig({})`.
-This function just passes your object through verbatim, but it hints to your IDE what the options are,
-and should provide inline documentation too!
