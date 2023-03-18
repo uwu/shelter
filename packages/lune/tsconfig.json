@@ -5,6 +5,7 @@
     "module": "ESNext",
     "moduleResolution": "node",
     "declaration": true,
-    "outDir": "dist"
+    "outDir": "dist",
+    "allowSyntheticDefaultImports": true
   }
 }

@@ -1,5 +1,6 @@
 import dev from "./dev.js";
 import init from "./init.js";
+import build from "./build.js";
 
 export interface Command {
   argSchema: Record<string, "bool" | "str">;
@@ -7,4 +8,4 @@ export interface Command {
   helpText: string;
 }
 
-export const commands: Record<string, Command> = { dev, init };
+export const commands: Record<string, Command> = { dev, init, build };
