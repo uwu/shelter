@@ -7,7 +7,7 @@ declare global {
   }
 }
 
-let dispatcher: Dispatcher | Promise<Dispatcher>;
+let dispatcher: Promise<Dispatcher>;
 
 export async function getDispatcher() {
   if (dispatcher) return dispatcher;
@@ -38,6 +38,9 @@ type Intercept = (payload: Record<string, any> & { type: string }) => any;
 let intercepts: Intercept[] = [];
 let interceptInjected = false;
 
+export const blockedSym = Symbol();
+export const modifiedSym = Symbol();
+
 async function injectIntercept() {
   if (interceptInjected) return;
   interceptInjected = true;
@@ -51,6 +54,7 @@ async function injectIntercept() {
       for (const k in Reflect.ownKeys(payload)) delete payload[k];
 
       Object.assign(payload, obj);
+      payload[modifiedSym] = 1;
     };
 
     for (const intercept of intercepts) {
@@ -58,14 +62,19 @@ async function injectIntercept() {
 
       // legacy return type handler: [modified, shouldDrop]
       if (Array.isArray(res)) {
-        if (res[1]) return true;
+        if (res[1]) {
+          payload[blockedSym] = 1;
+          return true;
+        }
         apply(res[0]);
       }
       // current API: nullish -> nothing, falsy -> block, object -> modify
       // NON-strict eq intentional here
       else if (res == null) continue;
-      else if (!res) return true;
-      else if (typeof res === "object") apply(res);
+      else if (!res) {
+        payload[blockedSym] = 1;
+        return true;
+      } else if (typeof res === "object") apply(res);
     }
   };
 

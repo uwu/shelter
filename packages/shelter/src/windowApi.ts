@@ -11,10 +11,10 @@ import { registerSection } from "./settings";
 import * as storage from "./storage";
 import { observe } from "./observer";
 
-function without<T extends Record<string, any>>(object: T, ...keys: string[]) {
+function without<T extends Record<string, any>, TK extends string>(object: T, ...keys: TK[]) {
   const cloned = { ...object };
   keys.forEach((k) => delete cloned[k]);
-  return cloned;
+  return cloned as Omit<T, TK>;
 }
 
 const windowApi = async (unloads) => ({
@@ -25,6 +25,8 @@ const windowApi = async (unloads) => ({
     },
     "injectIntercept",
     "getDispatcher",
+    "blockedSym",
+    "modifiedSym",
   ),
   patcher: without(patcher, "unpatchAll"),
   solid,
@@ -38,7 +40,7 @@ const windowApi = async (unloads) => ({
   settings: {
     registerSection,
   },
-  unload: () => unloads.forEach((p) => p()),
+  unload: () => unloads.forEach((p) => p?.()),
   // as much as it pains me to do this...
   ...reacts,
 });
