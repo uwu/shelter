@@ -32,7 +32,8 @@ exfiltrate("_dispatchToken", (store) => {
   return false;
 });
 
-type Intercept = (payload: any) => void | [any, boolean];
+// I would make this pass `any` but IDE support is always nice!
+type Intercept = (payload: Record<string, any> & { type: string }) => any;
 
 let intercepts: Intercept[] = [];
 let interceptInjected = false;
@@ -46,12 +47,25 @@ async function injectIntercept() {
   FluxDispatcher._interceptors ??= [];
 
   const cb = (payload) => {
+    const apply = (obj) => {
+      for (const k in Reflect.ownKeys(payload)) delete payload[k];
+
+      Object.assign(payload, obj);
+    };
+
     for (const intercept of intercepts) {
       const res = intercept(payload);
-      if (res) {
+
+      // legacy return type handler: [modified, shouldDrop]
+      if (Array.isArray(res)) {
         if (res[1]) return true;
-        payload = res[0];
+        apply(res[0]);
       }
+      // current API: nullish -> nothing, falsy -> block, object -> modify
+      // NON-strict eq intentional here
+      else if (res == null) continue;
+      else if (!res) return true;
+      else if (typeof res === "object") apply(res);
     }
   };
 
