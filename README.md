@@ -50,6 +50,8 @@ caveats - more jank and less thorough CSP removal.
 
 See [DOCS.md](DOCS.md)
 
+Also see [Lune's docs](https://github.com/uwu/shelter/tree/main/packages/lune#readme)
+
 ## Is there a plugin repo / website / build tool / etc.?
 
 Possibly not.
@@ -59,5 +61,5 @@ This is a much smaller project right now than Cumcord was at the time of its dea
 Please do not expect a huge ecosystem,
 but we do want to have a comfortable dev and user experience.
 
-Keep an eye on the uwu gh org or our Discord server
+Keep an eye on the uwu gh org or [our Discord server](https://discord.gg/FhHQQrVs7U)
 to see what we _are_ working on, inside and outside of the client modding space. :)
