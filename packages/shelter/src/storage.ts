@@ -159,7 +159,7 @@ export const dbStore = storage("dbstore");
 /** if the store is or is not yet connected to IDB */
 export const isInited = (store: ShelterStore<unknown>) => !!store[symDb];
 /** waits for the store to connect to IDB, then runs the callback (if connected, synchronously runs the callback now) */
-export const whenInited = (store: ShelterStore<unknown>, cb: () => void) => store[symWait](cb);
+export const whenInited = (store: ShelterStore<unknown>, cb: () => void) => store[symWait](cb) as void;
 /** returns a promise that resolves when the store is connected to IDB (if connected, resolves instantly) */
 export const waitInit = (store: ShelterStore<unknown>) => new Promise<void>((res) => whenInited(store, res));
 

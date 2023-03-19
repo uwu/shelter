@@ -73,7 +73,7 @@ async function injectIntercept() {
       else if (res == null) continue;
       else if (!res) {
         payload[blockedSym] = 1;
-        return true;
+        return true; // TODO: make sure other interceptors still get called (!!!!!!)
       } else if (typeof res === "object") apply(res);
     }
   };
