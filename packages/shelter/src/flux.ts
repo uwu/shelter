@@ -57,6 +57,8 @@ async function injectIntercept() {
       payload[modifiedSym] = 1;
     };
 
+    let blocked = false;
+
     for (const intercept of intercepts) {
       const res = intercept(payload);
 
@@ -64,7 +66,7 @@ async function injectIntercept() {
       if (Array.isArray(res)) {
         if (res[1]) {
           payload[blockedSym] = 1;
-          return true;
+          blocked = true;
         }
         apply(res[0]);
       }
@@ -73,9 +75,11 @@ async function injectIntercept() {
       else if (res == null) continue;
       else if (!res) {
         payload[blockedSym] = 1;
-        return true; // TODO: make sure other interceptors still get called (!!!!!!)
+        blocked = true;
       } else if (typeof res === "object") apply(res);
     }
+
+    return blocked;
   };
 
   FluxDispatcher._interceptors.splice(0, 0, cb);
