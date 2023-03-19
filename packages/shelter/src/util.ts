@@ -18,7 +18,7 @@ export function reactFiberWalker(
 ): undefined | null | Fiber {
   if (typeof filter !== "function") {
     const prop = filter;
-    filter = (n) => n.pendingProps[prop] !== undefined;
+    filter = (n) => n?.pendingProps?.[prop] !== undefined;
   }
 
   if (!node) return;
