@@ -48,7 +48,7 @@ caveats - more jank and less thorough CSP removal.
 
 ## How do I make a plugin?
 
-See [DOCS.md](DOCS.md)
+See [the docs](packages/shelter-docs/README.md)
 
 Also see [Lune's docs](https://github.com/uwu/shelter/tree/main/packages/lune#readme)
 

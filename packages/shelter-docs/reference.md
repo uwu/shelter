@@ -303,6 +303,14 @@ await sleep(5000);
 
 ## `shelter.storage`
 
+> ***POSSIBLE CONFUSION ALERT***
+>
+> *shelter stores* are a very specific terminology, and refers to a store tied very directly to IndexedDB, and the caveats (initing) that come with that.
+>
+> If you are only concerned with storing things from your plugin *you should use the plugin store and not use this*.
+>
+> `plugin.store`, the storage you are given in plugins, are NOT shelter stores, the `shelter.storage.*` APIs will NOT work with them, and they do not suffer from the initing issue described later.
+
 Shelter implements a storage API backed by [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API). The stores behave as if they were just objects:tm:, and have interoperability with SolidJS for reactivity.
 
 You may store anything as long as it is [cloneable](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#supported_types) (basically, no circular references and no functions).
@@ -312,12 +320,6 @@ You may store anything as long as it is [cloneable](https://developer.mozilla.or
 > While these stores will save data when you modify them, its very important to note that they are not *deeply* reactive.
 >
 > That is `store.foo = {}` will save but `store.foo.bar = {}` will not save.
-
-> ***POSSIBLE CONFUSION ALERT***
->
-> *shelter stores* are a very specific terminology, and refers to a store tied very directly to IndexedDB, and the caveats (initing) that come with that.
->
-> `plugin.store`, the storage you are given in plugins, are NOT shelter stores, the `shelter.storage.*` APIs will NOT work with them, and they do not suffer from the initing issue described later.
 
 ### `shelter.storage.storage`
 
@@ -487,7 +489,13 @@ plugin.manifest === {
 }
 ```
 
-// TODO: FINISH
+### `shelter.plugin.showSettings`
+
+```ts
+showSettings(): void
+```
+
+`showSettings` imperatively shows the settings modal for your plugin, assuming you have settings.
 
 ## `shelter.plugins`
 
