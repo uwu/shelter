@@ -337,12 +337,6 @@ Your returned shelter store behaves just like an object - you may assign to, `de
 >
 > You may start writing to the store safely, and shelter will try its absolute best to make everything just work:tm: (it will in 99% of cases), but if you wish to read, you should *wait for* your store - see the docs for notable functions below!
 
-### `shelter.storage.dbStore`
-
-`dbStore` is a shelter store that is pre-provided.
-
-You should NOT use this in your plugins - see `shelter.plugin.store`, but it is used for internal shelter storage, and may be useful for testing etc.
-
 ### `shelter.storage.isInited`
 
 ```ts

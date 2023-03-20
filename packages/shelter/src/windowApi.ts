@@ -34,7 +34,7 @@ const windowApi = async (unloads) => ({
   solidWeb,
   util,
   plugins: without(plugins, "startAllPlugins"),
-  storage,
+  storage: without(storage, "dbStore"),
   observeDom: observe,
   ui: without(ui, "cleanupCss", "initToasts"),
   settings: {
