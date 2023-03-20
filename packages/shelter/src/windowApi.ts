@@ -33,7 +33,7 @@ const windowApi = async (unloads) => ({
   solidStore,
   solidWeb,
   util,
-  plugins: without(plugins, "startAllPlugins"),
+  plugins: without(plugins, "startAllPlugins", "devmodePrivateApis"),
   storage,
   observeDom: observe,
   ui: without(ui, "cleanupCss", "initToasts"),

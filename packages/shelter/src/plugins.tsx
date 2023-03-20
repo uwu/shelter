@@ -3,6 +3,7 @@ import { JSX } from "solid-js";
 import { createMutable } from "solid-js/store";
 import { log } from "./util";
 import { ModalBody, ModalHeader, ModalRoot, openModal } from "shelter-ui";
+import { devModeReservedId } from "./devmode";
 
 // a lot of this is adapted from cumcord, but some of it is new, and hopefully the code should be a lot less messy :)
 
@@ -168,7 +169,8 @@ export async function startAllPlugins() {
 
 export function addLocalPlugin(id: string, plugin: StoredPlugin) {
   // validate
-  if (typeof id !== "string" || id in internalData) throw new Error("plugin ID invalid or taken");
+  if (typeof id !== "string" || id in internalData || id === devModeReservedId)
+    throw new Error("plugin ID invalid or taken");
 
   if (
     typeof plugin.js !== "string" ||
@@ -187,7 +189,8 @@ export async function addRemotePlugin(id: string, src: string, update = true) {
   if (!id.endsWith("/")) id += "/";
 
   // validate
-  if (typeof id !== "string" || id in internalData) throw new Error("plugin ID invalid or taken");
+  if (typeof id !== "string" || id in internalData || id === devModeReservedId)
+    throw new Error("plugin ID invalid or taken");
 
   internalData[id] = {
     src,
@@ -212,3 +215,15 @@ export function removePlugin(id: string) {
 }
 
 export const getSettings = (id: string) => internalLoaded[id]?.settings;
+
+// maybe this should be elsewhere but w/e
+export const devmodePrivateApis = {
+  initDevmodePlugin: () =>
+    (internalData[devModeReservedId] = {
+      update: false,
+      on: false,
+      manifest: {},
+      js: "{onUnload(){}}",
+    }),
+  replacePlugin: (obj: { js: string; manifest: object }) => Object.assign(internalData[devModeReservedId], obj),
+};

@@ -8,6 +8,10 @@ import { unobserve } from "./observer";
 import windowApi from "./windowApi";
 import { sleep } from "./util";
 
+// very temporary
+import * as devmode from "./devmode";
+window["shelterdevmode"] = devmode;
+
 const start = performance.now();
 util.log("shelter is initializing...");
 
