@@ -1,5 +1,6 @@
-import { Component, createSignal, JSX, Show } from "solid-js";
+import { Component, createSignal, JSX, Show, For } from "solid-js";
 import { getSettings, installedPlugins, removePlugin, startPlugin, stopPlugin, StoredPlugin } from "../plugins";
+import { devModeReservedId } from "../devmode";
 import { css, classes } from "./Plugins.tsx.scss";
 import {
   Header,
@@ -20,7 +21,7 @@ import PluginAddModal from "./PluginAddModal";
 
 let cssInjected = false;
 
-const PluginCard: Component<{
+export const PluginCard: Component<{
   id: string;
   plugin: StoredPlugin;
 }> = (props) => {
@@ -101,9 +102,15 @@ export default (): JSX.Element => {
         </div>
       </Header>
 
-      {Object.entries(installedPlugins()).map(([id, plugin]) => (
-        <PluginCard {...{ id, plugin }} />
-      ))}
+      {/* IIRC not using a <For> here was very intentional due to keying -- sink
+       * the only way to do what we need cleanly in solid looks *like this*!:
+       * https://codesandbox.io/s/explicit-keys-4iyen?file=/Key.js
+       */}
+      {Object.entries(installedPlugins())
+        .filter(([id]) => id !== devModeReservedId)
+        .map(([id, plugin]) => (
+          <PluginCard {...{ id, plugin }} />
+        ))}
     </div>
   );
 };

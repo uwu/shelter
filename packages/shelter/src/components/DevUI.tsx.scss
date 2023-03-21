@@ -1,0 +1,16 @@
+.head {
+  margin-bottom: .5rem;
+}
+
+// this weird name is cause i want to add collapsing later
+.open {
+  margin-bottom: 1rem;
+}
+
+.launch {
+  display: flex;
+
+  button {
+    flex-shrink: 0;
+  }
+}

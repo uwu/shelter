@@ -51,6 +51,9 @@ export async function initDevmode() {
 }
 
 function stopDevmode() {
+  try {
+    stopPlugin(devModeReservedId);
+  } catch {}
   removePlugin(devModeReservedId);
 }
 
