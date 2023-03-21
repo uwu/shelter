@@ -7,6 +7,7 @@ import { initDispatchLogger } from "./dispatchLogger";
 import { unobserve } from "./observer";
 import windowApi from "./windowApi";
 import { sleep } from "./util";
+import { initDevmode } from "./devmode";
 
 // very temporary
 import * as devmode from "./devmode";
@@ -36,6 +37,7 @@ const waitForAppMount = async () => {
     patcher.unpatchAll,
     unobserve,
     removeAllSections,
+    initDevmode(),
   ]);
 
   window["shelter"] = await windowApi(unloads);

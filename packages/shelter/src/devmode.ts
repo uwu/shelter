@@ -1,6 +1,8 @@
 import { devmodePrivateApis, installedPlugins, loadedPlugins, removePlugin, startPlugin, stopPlugin } from "./plugins";
 import { observe } from "./observer";
 import { injectCss } from "shelter-ui";
+import { css, classes } from "./devmode.css";
+import { sleep } from "./util";
 
 // any string would work here but this is funnier
 export const devModeReservedId = "__DEVMODE_PLUGIN_DO_NOT_USE_OR_YOU_WILL_BE_FIRED";
@@ -12,36 +14,40 @@ let websocket: WebSocket;
 
 const devModeIsOn = () => installedPlugins() && devModeReservedId in installedPlugins();
 
-let isDevButtonHovered = false;
-
-const css = `
-.shelter-devIcon > div > svg > path {
-  d: path("m15.5 3.9c-.2-.2-.6-.2-.9 0l-.8.8c-.2.2-.2.6 0 .8l6 6.1c.2.2.2.6 0 .8l-6 6.1c-.2.2-.2.6 0 .8l.8.8c.2.2.6.2.9 0l7.6-7.7c.2-.2.2-.6 0-.8l-7.6-7.7zm-5.4 1.6c.2-.2.2-.6 0-.8l-.8-.8c-.2-.2-.6-.2-.9 0l-7.6 7.7c-.2.2-.2.6 0 .8l7.6 7.7c.2.2.6.2.9 0l.8-.8c.2-.2.2-.6 0-.8l-6-6.1c-.2-.2-.2-.6 0-.8l6-6.1z")
-}
-`;
-
-// called on shelter reload, last.
+// called on shelter reload
 export async function initDevmode() {
-  // TODO
-  injectCss(css);
+  // needs <head>
+  while (!window.document?.head) await sleep();
+  const unstyle = injectCss(css);
 
-  observe(`[class*="anchor-"]`, (e: HTMLAnchorElement) => {
-    if (devModeIsOn && e.href === "https://support.discord.com/") {
+  let isDevButtonHovered = false;
+
+  const unobs1 = observe(`[class*="anchor-"]`, (e: HTMLAnchorElement) => {
+    if (devModeIsOn() && e.href === "https://support.discord.com/") {
       e.href = "#";
       e.target = "";
       // TODO: Open modal with dev component
       e.onclick = () => console.log("placeholder!");
-      e.classList.add("shelter-devIcon");
+      e.classList.add(classes.devicon);
       e.onmouseenter = () => (isDevButtonHovered = true);
       e.onmouseleave = () => (isDevButtonHovered = false);
     }
   });
 
-  observe(`[class*="layerContainer-"] > div > [class*="tooltip-"] > [class*="tooltipContent-"]`, (e: HTMLElement) => {
-    if (devModeIsOn() && isDevButtonHovered && e.innerText !== "Dev") {
-      e.innerText = "Dev";
-    }
-  });
+  const unobs2 = observe(
+    `[class*="layerContainer-"] > div > [class*="tooltip-"] > [class*="tooltipContent-"]`,
+    (e: HTMLElement) => {
+      if (devModeIsOn() && isDevButtonHovered && e.innerText !== "Dev") {
+        e.innerText = "Dev";
+      }
+    },
+  );
+
+  return () => {
+    unstyle();
+    unobs1();
+    unobs2();
+  };
 }
 
 function stopDevmode() {

@@ -1,5 +1,5 @@
 import { isInited, signalOf, solidMutWithSignal, storage, waitInit } from "./storage";
-import { JSX } from "solid-js";
+import { Component } from "solid-js";
 import { createMutable } from "solid-js/store";
 import { log } from "./util";
 import { ModalBody, ModalHeader, ModalRoot, openModal } from "shelter-ui";
@@ -18,7 +18,7 @@ export type StoredPlugin = {
 export type EvaledPlugin = {
   onLoad?(): void;
   onUnload(): void;
-  settings?(): JSX.Element;
+  settings?: Component;
 };
 
 const internalData = storage<StoredPlugin>("plugins-internal");
