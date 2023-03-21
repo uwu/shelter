@@ -158,7 +158,7 @@ export async function startAllPlugins() {
 
   for (const res of results) if (res.status === "rejected") log(res.reason, "error");
 
-  const toStart = allPlugins.filter((id) => internalData[id].on);
+  const toStart = allPlugins.filter((id) => internalData[id].on && id !== devModeReservedId);
 
   // probably safer to do this in series though :p
   toStart.forEach(startPlugin);

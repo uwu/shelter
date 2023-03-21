@@ -9,9 +9,6 @@ import windowApi from "./windowApi";
 import { sleep } from "./util";
 import { initDevmode } from "./devmode";
 
-// very temporary
-import * as devmode from "./devmode";
-
 const start = performance.now();
 util.log("shelter is initializing...");
 
@@ -37,16 +34,13 @@ const waitForAppMount = async () => {
     patcher.unpatchAll,
     unobserve,
     removeAllSections,
-    initDevmode(),
   ]);
 
   window["shelter"] = await windowApi(unloads);
 
   // once everything is fully inited, start plugins
-  unloads.push(await plugins.startAllPlugins());
+  // devmode uses plugins functionality
+  unloads.push(await plugins.startAllPlugins(), await initDevmode());
 
   util.log(`shelter is initialized. took: ${(performance.now() - start).toFixed(1)}ms`);
-
-  // very temporary
-  window["shelterdevmode"] = devmode;
 })();

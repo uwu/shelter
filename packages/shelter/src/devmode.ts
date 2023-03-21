@@ -2,7 +2,7 @@ import { devmodePrivateApis, installedPlugins, loadedPlugins, removePlugin, star
 import { observe } from "./observer";
 import { injectCss } from "shelter-ui";
 import { css, classes } from "./devmode.css";
-import { sleep } from "./util";
+import { log } from "./util";
 
 // any string would work here but this is funnier
 export const devModeReservedId = "__DEVMODE_PLUGIN_DO_NOT_USE_OR_YOU_WILL_BE_FIRED";
@@ -16,8 +16,6 @@ const devModeIsOn = () => installedPlugins() && devModeReservedId in installedPl
 
 // called on shelter reload
 export async function initDevmode() {
-  // needs <head>
-  while (!window.document?.head) await sleep();
   const unstyle = injectCss(css);
 
   let isDevButtonHovered = false;
@@ -43,19 +41,17 @@ export async function initDevmode() {
     },
   );
 
+  if (devModeIsOn())
+    await enableDevmodeUnchecked().catch((err) => {
+      log(["devmode not reopened since last time", err], "warn");
+      stopDevmode();
+    });
+
   return () => {
     unstyle();
     unobs1();
     unobs2();
   };
-}
-
-export function stopDevmode() {
-  if (!devModeIsOn()) return;
-  removePlugin(devModeReservedId);
-
-  websocket.close();
-  websocket = undefined;
 }
 
 // do i need to mutex this? yes!
@@ -99,4 +95,12 @@ export function enableDevmode() {
   devmodePrivateApis.initDevmodePlugin();
 
   return enableDevmodeUnchecked();
+}
+
+export function stopDevmode() {
+  if (!devModeIsOn()) return;
+  removePlugin(devModeReservedId);
+
+  websocket.close();
+  websocket = undefined;
 }
