@@ -6,6 +6,7 @@ import { resolve } from "path";
 import { mkdtemp, rm, readFile } from "fs/promises";
 import { watch } from "chokidar";
 import { buildPlugin, loadCfg, LuneCfg } from "../builder.js";
+import { hrtime } from "process";
 
 let current: { manifest: any; js: string };
 
@@ -16,8 +17,6 @@ function startWs() {
   wsServer.on("connection", (sockets) => {
     const broadcast = () =>
       new Promise<void>((res, rej) => {
-        console.log("Broadcasted on WS connection");
-
         sockets.send(JSON.stringify({ TYPE: "update" }), (err) => {
           if (err) rej(err);
           else res();
@@ -28,7 +27,7 @@ function startWs() {
 
     sockets.on("close", () => {
       broadcastList.delete(broadcast);
-      console.log("shelter instance disconnected");
+      console.log("shelter disconnected");
     });
 
     // initial broadcast
@@ -52,13 +51,11 @@ function startHttp() {
       res.statusCode = 500;
       res.end();
     }
-
-    console.log("Handled incoming HTTP request");
   });
 
   server.listen(1112, "127.0.0.1", () =>
     console.log(`lune dev up and running!
-Under the Developer Options header in shelter's settings, click "Tether to Lune".`),
+Under the Developer Options header in shelter's settings, enable "Lune Dev Mode".`),
   );
 
   //await new Promise(res => server.on("close", res));
@@ -67,7 +64,11 @@ Under the Developer Options header in shelter's settings, click "Tether to Lune"
 async function rebuildPlugin(cfg: LuneCfg, dir: string) {
   const outDir = await mkdtemp("lune-dev-");
 
+  const timeBefore = hrtime.bigint();
+
   await buildPlugin(dir, outDir, cfg, true);
+
+  const timeAfter = hrtime.bigint();
 
   current = {
     js: (await readFile(resolve(outDir, "plugin.js"))).toString(),
@@ -75,6 +76,8 @@ async function rebuildPlugin(cfg: LuneCfg, dir: string) {
   };
 
   await rm(outDir, { recursive: true });
+
+  console.log(`Rebuilt plugin; took ${(timeAfter - timeBefore) / 1000000n}ms`);
 }
 
 export default {

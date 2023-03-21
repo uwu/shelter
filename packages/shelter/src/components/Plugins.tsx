@@ -27,6 +27,8 @@ export const PluginCard: Component<{
 }> = (props) => {
   const [on, setOn] = createSignal(props.plugin.on);
 
+  const isDev = () => props.id === devModeReservedId;
+
   return (
     <div class={classes.plugin}>
       <div class={classes.row}>
@@ -52,22 +54,24 @@ export const PluginCard: Component<{
             <IconCog />
           </button>
         </Show>
-        <button
-          class={classes.btn}
-          onclick={() =>
-            openConfirmationModal({
-              body: () => `Are you sure you want to delete plugin ${props.plugin.manifest.name}?`,
-              header: () => "Confirm plugin deletion",
-              type: "danger",
-              confirmText: "Delete",
-            }).then(
-              () => removePlugin(props.id),
-              () => {},
-            )
-          }
-        >
-          <IconBin />
-        </button>
+        <Show keyed when={!isDev()}>
+          <button
+            class={classes.btn}
+            onclick={() =>
+              openConfirmationModal({
+                body: () => `Are you sure you want to delete plugin ${props.plugin.manifest.name}?`,
+                header: () => "Confirm plugin deletion",
+                type: "danger",
+                confirmText: "Delete",
+              }).then(
+                () => removePlugin(props.id),
+                () => {},
+              )
+            }
+          >
+            <IconBin />
+          </button>
+        </Show>
         <Switch
           checked={on()}
           onChange={(newVal) => {

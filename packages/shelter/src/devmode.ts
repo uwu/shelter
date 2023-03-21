@@ -50,11 +50,12 @@ export async function initDevmode() {
   };
 }
 
-function stopDevmode() {
-  try {
-    stopPlugin(devModeReservedId);
-  } catch {}
+export function stopDevmode() {
+  if (!devModeIsOn()) return;
   removePlugin(devModeReservedId);
+
+  websocket.close();
+  websocket = undefined;
 }
 
 // do i need to mutex this? yes!
@@ -75,17 +76,21 @@ async function refetchDevPlugin() {
 }
 
 // expects the dev mode plugin to already exist, but dev mode to not be inited.
-function enableDevmodeUnchecked() {
-  websocket = new WebSocket(websocketUrl);
+const enableDevmodeUnchecked = () =>
+  new Promise((res, rej) => {
+    websocket = new WebSocket(websocketUrl);
 
-  websocket.onclose = stopDevmode;
+    websocket.onclose = stopDevmode;
 
-  websocket.onmessage = (ev) => {
-    const msg = JSON.parse(ev.data);
+    websocket.onmessage = (ev) => {
+      const msg = JSON.parse(ev.data);
 
-    if (msg.TYPE === "update") refetchDevPlugin();
-  };
-}
+      if (msg.TYPE === "update") refetchDevPlugin();
+    };
+
+    websocket.onopen = res;
+    websocket.onerror = rej;
+  });
 
 export function enableDevmode() {
   if (devModeIsOn()) return;
@@ -93,5 +98,5 @@ export function enableDevmode() {
   // adds a stub devmode plugin
   devmodePrivateApis.initDevmodePlugin();
 
-  enableDevmodeUnchecked();
+  return enableDevmodeUnchecked();
 }
