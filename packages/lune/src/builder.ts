@@ -56,7 +56,7 @@ const MD5 = (data) => createHash("md5").update(data).digest("hex").toString();
 
 export const loadCfg = async (path = "lune.config.js") =>
   existsSync(resolve(".", path))
-    ? (await import(pathToFileURL(resolve(".", path)).href))?.default ?? ({} as LuneCfg)
+    ? (((await import(pathToFileURL(resolve(".", path)).href))?.default ?? {}) as LuneCfg)
     : {};
 
 export async function buildPlugin(path: string, to: string, cfg: LuneCfg, dev = false) {

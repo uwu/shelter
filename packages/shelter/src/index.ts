@@ -10,7 +10,6 @@ import { sleep } from "./util";
 
 // very temporary
 import * as devmode from "./devmode";
-window["shelterdevmode"] = devmode;
 
 const start = performance.now();
 util.log("shelter is initializing...");
@@ -45,4 +44,7 @@ const waitForAppMount = async () => {
   unloads.push(await plugins.startAllPlugins());
 
   util.log(`shelter is initialized. took: ${(performance.now() - start).toFixed(1)}ms`);
+
+  // very temporary
+  window["shelterdevmode"] = devmode;
 })();

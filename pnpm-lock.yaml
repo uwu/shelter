@@ -28,6 +28,7 @@ importers:
     specifiers:
       '@types/node': ^18.15.3
       '@types/ws': ^8.5.4
+      chokidar: ^3.5.3
       esbuild: ^0.17.12
       esbuild-plugin-solid: ^0.5.0
       esbuild-sass-plugin-ysink: ^2.3.3
@@ -36,6 +37,7 @@ importers:
       typescript: ^5.0.2
       ws: ^8.13.0
     dependencies:
+      chokidar: 3.5.3
       esbuild: 0.17.12
       esbuild-plugin-solid: 0.5.0_esbuild@0.17.12
       esbuild-sass-plugin-ysink: 2.3.3

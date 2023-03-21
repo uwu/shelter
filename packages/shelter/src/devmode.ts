@@ -1,4 +1,4 @@
-import { devmodePrivateApis, installedPlugins, removePlugin, startPlugin, stopPlugin } from "./plugins";
+import { devmodePrivateApis, installedPlugins, loadedPlugins, removePlugin, startPlugin, stopPlugin } from "./plugins";
 
 // any string would work here but this is funnier
 export const devModeReservedId = "__DEVMODE_PLUGIN_DO_NOT_USE_OR_YOU_WILL_BE_FIRED";
@@ -23,10 +23,10 @@ function stopDevmode() {
 // do i want to? no.
 async function refetchDevPlugin() {
   const fetched = await (await fetch(pluginUrl)).json();
-  if (typeof fetched.js !== "string" || typeof fetched.manifest === "object")
+  if (typeof fetched.js !== "string" || typeof fetched.manifest !== "object")
     throw new Error("object received from lune was not valid");
 
-  stopPlugin(devModeReservedId);
+  if (loadedPlugins()[devModeReservedId]) stopPlugin(devModeReservedId);
 
   // its probably safer to give the plugin a tick or so to sort itself out
   await new Promise((res) => setTimeout(res));

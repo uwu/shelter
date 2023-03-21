@@ -175,7 +175,7 @@ export const defaults = <T = any>(store: ShelterStore<T>, fallbacks: Record<stri
 export const signalOf = <T = any>(store: ShelterStore<T>): (() => Record<string, T>) => store[symSig];
 
 /** wraps a solid mutable to provide a global signal */
-export const solidMutWithSignal = <T extends object = any>(store: T) /*: [T, () => T]*/ => {
+export const solidMutWithSignal = <T extends object = any>(store: T) => {
   const [sig, setSig] = createSignal<T>();
   const update = () => setSig(() => ({ ...store }));
   return [
@@ -192,5 +192,5 @@ export const solidMutWithSignal = <T extends object = any>(store: T) /*: [T, () 
       },
     }),
     sig,
-  ];
+  ] as const;
 };

@@ -21,6 +21,7 @@
     "typescript": "^5.0.2"
   },
   "dependencies": {
+    "chokidar": "^3.5.3",
     "esbuild": "^0.17.12",
     "esbuild-plugin-solid": "^0.5.0",
     "esbuild-sass-plugin-ysink": "^2.3.3",
