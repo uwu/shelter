@@ -36,6 +36,10 @@ Check the githubs of uwu members or search for `shelter-plugins`.
 
 https://addons.mozilla.org/en-GB/firefox/addon/shelter-injector/
 
+### Microsoft Edge
+
+https://microsoftedge.microsoft.com/addons/detail/shelter-mv3-inj/okemjpeidkmhjpmdcpaibakdhnheblib
+
 ### Chromium based browser
 
 - Grab the latest MV2 release from this repo
