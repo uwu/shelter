@@ -16,10 +16,6 @@ export default () => {
 
   return (
     <div class={classes.open}>
-      <Header tag={HeaderTags.H3} class={classes.head}>
-        Developer Tools
-      </Header>
-
       <SwitchItem value={dbStore.logDispatch} onChange={(v) => (dbStore.logDispatch = v)}>
         Log FluxDispatcher events to the console
       </SwitchItem>

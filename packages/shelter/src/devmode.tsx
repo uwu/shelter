@@ -1,8 +1,9 @@
 import { devmodePrivateApis, installedPlugins, loadedPlugins, removePlugin, startPlugin, stopPlugin } from "./plugins";
 import { observe } from "./observer";
-import { injectCss } from "shelter-ui";
+import { injectCss, ModalBody, ModalHeader, ModalRoot, ModalSizes, openModal } from "shelter-ui";
 import { css, classes } from "./devmode.css";
 import { log } from "./util";
+import DevUI from "./components/DevUI";
 
 // any string would work here but this is funnier
 export const devModeReservedId = "__DEVMODE_PLUGIN_DO_NOT_USE_OR_YOU_WILL_BE_FIRED";
@@ -14,6 +15,20 @@ let websocket: WebSocket;
 
 const devModeIsOn = () => installedPlugins() && devModeReservedId in installedPlugins();
 
+let removeDevmodeModal;
+function openDevmodeModal() {
+  removeDevmodeModal?.();
+
+  removeDevmodeModal = openModal((props) => (
+    <ModalRoot size={ModalSizes.MEDIUM}>
+      <ModalHeader close={props.close}>Developer Tools</ModalHeader>
+      <ModalBody>
+        <DevUI />
+      </ModalBody>
+    </ModalRoot>
+  ));
+}
+
 // called on shelter reload
 export async function initDevmode() {
   const unstyle = injectCss(css);
@@ -24,8 +39,7 @@ export async function initDevmode() {
     if (devModeIsOn() && e.href === "https://support.discord.com/") {
       e.href = "#";
       e.target = "";
-      // TODO: Open modal with dev component
-      e.onclick = () => console.log("placeholder!");
+      e.onclick = openDevmodeModal;
       e.classList.add(classes.devicon);
       e.onmouseenter = () => (isDevButtonHovered = true);
       e.onmouseleave = () => (isDevButtonHovered = false);
