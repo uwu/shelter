@@ -8,6 +8,7 @@
   "dependencies": {
     "@cumjar/websmack": "^1.2.0",
     "@uwu/shelter-ui": "workspace:*",
+    "shelter-storage": "workspace:*",
     "fuse.js": "^7.0.0",
     "idb": "^7.1.0",
     "shelter-assets": "workspace:*",

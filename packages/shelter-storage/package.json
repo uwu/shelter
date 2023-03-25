@@ -1,0 +1,14 @@
+{
+  "name": "shelter-storage",
+  "description": "Discord components remade for Shelter",
+  "version": "1.0.0",
+  "author": "uwu.network",
+  "repository": "github:uwu/shelter",
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "dependencies": {
+    "idb": "^7.1.0",
+    "solid-js": "^1.5.7"
+  }
+}

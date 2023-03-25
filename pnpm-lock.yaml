@@ -90,6 +90,9 @@ importers:
       shelter-assets:
         specifier: workspace:*
         version: link:../shelter-assets
+      shelter-storage:
+        specifier: workspace:*
+        version: link:../shelter-storage
       solid-js:
         specifier: 1.6.16
         version: 1.6.16
@@ -144,26 +147,26 @@ importers:
     dependencies:
       '@vueuse/core':
         specifier: ^10.7.2
-        version: 10.8.0(vue@3.4.19)
+        version: 10.8.0(vue@3.4.19(typescript@5.3.3))
       '@vueuse/integrations':
         specifier: ^10.7.2
-        version: 10.8.0(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.19)
+        version: 10.8.0(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.19(typescript@5.3.3))
       fuse.js:
         specifier: ^7.0.0
         version: 7.0.0
       vue:
         specifier: ^3.4.15
-        version: 3.4.19(typescript@4.9.5)
+        version: 3.4.19(typescript@5.3.3)
     devDependencies:
       '@iconify-json/carbon':
         specifier: ^1.1.30
         version: 1.1.30
       unocss:
         specifier: ^0.58.5
-        version: 0.58.5(postcss@8.4.35)(vite@5.1.4)
+        version: 0.58.5(postcss@8.4.35)(rollup@4.12.0)(vite@5.1.4(@types/node@18.15.11)(sass@1.71.1))
       vitepress:
         specifier: 1.0.0-rc.44
-        version: 1.0.0-rc.44(@algolia/client-search@4.22.1)(fuse.js@7.0.0)(postcss@8.4.35)(search-insights@2.13.0)(typescript@4.9.5)
+        version: 1.0.0-rc.44(@algolia/client-search@4.22.1)(@types/node@18.15.11)(fuse.js@7.0.0)(postcss@8.4.35)(sass@1.71.1)(search-insights@2.13.0)(typescript@5.3.3)
 
   packages/shelter-index:
     dependencies:
@@ -180,6 +183,15 @@ importers:
       wrangler:
         specifier: ^3.0.0
         version: 3.26.0
+
+  packages/shelter-storage:
+    dependencies:
+      idb:
+        specifier: ^7.1.0
+        version: 7.1.1
+      solid-js:
+        specifier: ^1.5.7
+        version: 1.6.16
 
   packages/shelter-ui:
     devDependencies:
@@ -216,10 +228,10 @@ importers:
         version: 5.3.3
       vite:
         specifier: ^5.1.4
-        version: 5.1.4
+        version: 5.1.4(@types/node@18.15.11)(sass@1.71.1)
       vite-plugin-solid:
         specifier: ^2.10.1
-        version: 2.10.1(solid-js@1.6.16)(vite@5.1.4)
+        version: 2.10.1(solid-js@1.6.16)(vite@5.1.4(@types/node@18.15.11)(sass@1.71.1))
 
 packages:
 
@@ -4907,6 +4919,7 @@ snapshots:
       '@algolia/autocomplete-preset-algolia': 1.9.3(@algolia/client-search@4.22.1)(algoliasearch@4.22.1)
       '@docsearch/css': 3.5.2
       algoliasearch: 4.22.1
+    optionalDependencies:
       search-insights: 2.13.0
     transitivePeerDependencies:
       - '@algolia/client-search'
@@ -5314,11 +5327,13 @@ snapshots:
 
   '@polka/url@1.0.0-next.24': {}
 
-  '@rollup/pluginutils@5.1.0':
+  '@rollup/pluginutils@5.1.0(rollup@4.12.0)':
     dependencies:
       '@types/estree': 1.0.5
       estree-walker: 2.0.2
       picomatch: 2.3.1
+    optionalDependencies:
+      rollup: 4.12.0
 
   '@rollup/rollup-android-arm-eabi@4.12.0':
     optional: true
@@ -5448,19 +5463,20 @@ snapshots:
     dependencies:
       '@types/node': 18.15.11
 
-  '@unocss/astro@0.58.5(vite@5.1.4)':
+  '@unocss/astro@0.58.5(rollup@4.12.0)(vite@5.1.4(@types/node@18.15.11)(sass@1.71.1))':
     dependencies:
       '@unocss/core': 0.58.5
       '@unocss/reset': 0.58.5
-      '@unocss/vite': 0.58.5(vite@5.1.4)
-      vite: 5.1.4
+      '@unocss/vite': 0.58.5(rollup@4.12.0)(vite@5.1.4(@types/node@18.15.11)(sass@1.71.1))
+    optionalDependencies:
+      vite: 5.1.4(@types/node@18.15.11)(sass@1.71.1)
     transitivePeerDependencies:
       - rollup
 
-  '@unocss/cli@0.58.5':
+  '@unocss/cli@0.58.5(rollup@4.12.0)':
     dependencies:
       '@ampproject/remapping': 2.2.1
-      '@rollup/pluginutils': 5.1.0
+      '@rollup/pluginutils': 5.1.0(rollup@4.12.0)
       '@unocss/config': 0.58.5
       '@unocss/core': 0.58.5
       '@unocss/preset-uno': 0.58.5
@@ -5584,10 +5600,10 @@ snapshots:
     dependencies:
       '@unocss/core': 0.58.5
 
-  '@unocss/vite@0.58.5(vite@5.1.4)':
+  '@unocss/vite@0.58.5(rollup@4.12.0)(vite@5.1.4(@types/node@18.15.11)(sass@1.71.1))':
     dependencies:
       '@ampproject/remapping': 2.2.1
-      '@rollup/pluginutils': 5.1.0
+      '@rollup/pluginutils': 5.1.0(rollup@4.12.0)
       '@unocss/config': 0.58.5
       '@unocss/core': 0.58.5
       '@unocss/inspector': 0.58.5
@@ -5596,14 +5612,14 @@ snapshots:
       chokidar: 3.5.3
       fast-glob: 3.3.2
       magic-string: 0.30.7
-      vite: 5.1.4
+      vite: 5.1.4(@types/node@18.15.11)(sass@1.71.1)
     transitivePeerDependencies:
       - rollup
 
-  '@vitejs/plugin-vue@5.0.4(vite@5.1.4)(vue@3.4.19)':
+  '@vitejs/plugin-vue@5.0.4(vite@5.1.4(@types/node@18.15.11)(sass@1.71.1))(vue@3.4.19(typescript@5.3.3))':
     dependencies:
-      vite: 5.1.4
-      vue: 3.4.19(typescript@4.9.5)
+      vite: 5.1.4(@types/node@18.15.11)(sass@1.71.1)
+      vue: 3.4.19(typescript@5.3.3)
 
   '@vue/compiler-core@3.4.19':
     dependencies:
@@ -5635,20 +5651,20 @@ snapshots:
       '@vue/compiler-dom': 3.4.19
       '@vue/shared': 3.4.19
 
-  '@vue/devtools-api@7.0.15(vue@3.4.19)':
+  '@vue/devtools-api@7.0.15(vue@3.4.19(typescript@5.3.3))':
     dependencies:
-      '@vue/devtools-kit': 7.0.15(vue@3.4.19)
+      '@vue/devtools-kit': 7.0.15(vue@3.4.19(typescript@5.3.3))
     transitivePeerDependencies:
       - vue
 
-  '@vue/devtools-kit@7.0.15(vue@3.4.19)':
+  '@vue/devtools-kit@7.0.15(vue@3.4.19(typescript@5.3.3))':
     dependencies:
       '@vue/devtools-shared': 7.0.15
       hookable: 5.5.3
       mitt: 3.0.1
       perfect-debounce: 1.0.0
       speakingurl: 14.0.1
-      vue: 3.4.19(typescript@4.9.5)
+      vue: 3.4.19(typescript@5.3.3)
 
   '@vue/devtools-shared@7.0.15':
     dependencies:
@@ -5669,40 +5685,41 @@ snapshots:
       '@vue/shared': 3.4.19
       csstype: 3.1.3
 
-  '@vue/server-renderer@3.4.19(vue@3.4.19)':
+  '@vue/server-renderer@3.4.19(vue@3.4.19(typescript@5.3.3))':
     dependencies:
       '@vue/compiler-ssr': 3.4.19
       '@vue/shared': 3.4.19
-      vue: 3.4.19(typescript@4.9.5)
+      vue: 3.4.19(typescript@5.3.3)
 
   '@vue/shared@3.4.19': {}
 
-  '@vueuse/core@10.8.0(vue@3.4.19)':
+  '@vueuse/core@10.8.0(vue@3.4.19(typescript@5.3.3))':
     dependencies:
       '@types/web-bluetooth': 0.0.20
       '@vueuse/metadata': 10.8.0
-      '@vueuse/shared': 10.8.0(vue@3.4.19)
-      vue-demi: 0.14.7(vue@3.4.19)
+      '@vueuse/shared': 10.8.0(vue@3.4.19(typescript@5.3.3))
+      vue-demi: 0.14.7(vue@3.4.19(typescript@5.3.3))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
 
-  '@vueuse/integrations@10.8.0(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.19)':
+  '@vueuse/integrations@10.8.0(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.19(typescript@5.3.3))':
     dependencies:
-      '@vueuse/core': 10.8.0(vue@3.4.19)
-      '@vueuse/shared': 10.8.0(vue@3.4.19)
+      '@vueuse/core': 10.8.0(vue@3.4.19(typescript@5.3.3))
+      '@vueuse/shared': 10.8.0(vue@3.4.19(typescript@5.3.3))
+      vue-demi: 0.14.7(vue@3.4.19(typescript@5.3.3))
+    optionalDependencies:
       focus-trap: 7.5.4
       fuse.js: 7.0.0
-      vue-demi: 0.14.7(vue@3.4.19)
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
 
   '@vueuse/metadata@10.8.0': {}
 
-  '@vueuse/shared@10.8.0(vue@3.4.19)':
+  '@vueuse/shared@10.8.0(vue@3.4.19(typescript@5.3.3))':
     dependencies:
-      vue-demi: 0.14.7(vue@3.4.19)
+      vue-demi: 0.14.7(vue@3.4.19(typescript@5.3.3))
     transitivePeerDependencies:
       - '@vue/composition-api'
       - vue
@@ -5769,10 +5786,11 @@ snapshots:
       '@types/yauzl': 2.10.0
       common-tags: 1.8.2
       first-chunk-stream: 3.0.0
-      node-fetch: 3.3.1
       strip-bom-stream: 4.0.0
       upath: 2.0.1
       yauzl: 2.10.0
+    optionalDependencies:
+      node-fetch: 3.3.1
 
   adm-zip@0.5.10: {}
 
@@ -8153,10 +8171,10 @@ snapshots:
 
   universalify@2.0.0: {}
 
-  unocss@0.58.5(postcss@8.4.35)(vite@5.1.4):
+  unocss@0.58.5(postcss@8.4.35)(rollup@4.12.0)(vite@5.1.4(@types/node@18.15.11)(sass@1.71.1)):
     dependencies:
-      '@unocss/astro': 0.58.5(vite@5.1.4)
-      '@unocss/cli': 0.58.5
+      '@unocss/astro': 0.58.5(rollup@4.12.0)(vite@5.1.4(@types/node@18.15.11)(sass@1.71.1))
+      '@unocss/cli': 0.58.5(rollup@4.12.0)
       '@unocss/core': 0.58.5
       '@unocss/extractor-arbitrary-variants': 0.58.5
       '@unocss/postcss': 0.58.5(postcss@8.4.35)
@@ -8174,8 +8192,9 @@ snapshots:
       '@unocss/transformer-compile-class': 0.58.5
       '@unocss/transformer-directives': 0.58.5
       '@unocss/transformer-variant-group': 0.58.5
-      '@unocss/vite': 0.58.5(vite@5.1.4)
-      vite: 5.1.4
+      '@unocss/vite': 0.58.5(rollup@4.12.0)(vite@5.1.4(@types/node@18.15.11)(sass@1.71.1))
+    optionalDependencies:
+      vite: 5.1.4(@types/node@18.15.11)(sass@1.71.1)
     transitivePeerDependencies:
       - postcss
       - rollup
@@ -8230,7 +8249,7 @@ snapshots:
       core-util-is: 1.0.2
       extsprintf: 1.3.0
 
-  vite-plugin-solid@2.10.1(solid-js@1.6.16)(vite@5.1.4):
+  vite-plugin-solid@2.10.1(solid-js@1.6.16)(vite@5.1.4(@types/node@18.15.11)(sass@1.71.1)):
     dependencies:
       '@babel/core': 7.23.9
       '@types/babel__core': 7.20.5
@@ -8238,41 +8257,44 @@ snapshots:
       merge-anything: 5.1.7
       solid-js: 1.6.16
       solid-refresh: 0.6.3(solid-js@1.6.16)
-      vite: 5.1.4
-      vitefu: 0.2.5(vite@5.1.4)
+      vite: 5.1.4(@types/node@18.15.11)(sass@1.71.1)
+      vitefu: 0.2.5(vite@5.1.4(@types/node@18.15.11)(sass@1.71.1))
     transitivePeerDependencies:
       - supports-color
 
-  vite@5.1.4:
+  vite@5.1.4(@types/node@18.15.11)(sass@1.71.1):
     dependencies:
       esbuild: 0.19.12
       postcss: 8.4.35
       rollup: 4.12.0
     optionalDependencies:
+      '@types/node': 18.15.11
       fsevents: 2.3.3
+      sass: 1.71.1
 
-  vitefu@0.2.5(vite@5.1.4):
-    dependencies:
-      vite: 5.1.4
+  vitefu@0.2.5(vite@5.1.4(@types/node@18.15.11)(sass@1.71.1)):
+    optionalDependencies:
+      vite: 5.1.4(@types/node@18.15.11)(sass@1.71.1)
 
-  vitepress@1.0.0-rc.44(@algolia/client-search@4.22.1)(fuse.js@7.0.0)(postcss@8.4.35)(search-insights@2.13.0)(typescript@4.9.5):
+  vitepress@1.0.0-rc.44(@algolia/client-search@4.22.1)(@types/node@18.15.11)(fuse.js@7.0.0)(postcss@8.4.35)(sass@1.71.1)(search-insights@2.13.0)(typescript@5.3.3):
     dependencies:
       '@docsearch/css': 3.5.2
       '@docsearch/js': 3.5.2(@algolia/client-search@4.22.1)(search-insights@2.13.0)
       '@shikijs/core': 1.1.7
       '@shikijs/transformers': 1.1.7
       '@types/markdown-it': 13.0.7
-      '@vitejs/plugin-vue': 5.0.4(vite@5.1.4)(vue@3.4.19)
-      '@vue/devtools-api': 7.0.15(vue@3.4.19)
-      '@vueuse/core': 10.8.0(vue@3.4.19)
-      '@vueuse/integrations': 10.8.0(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.19)
+      '@vitejs/plugin-vue': 5.0.4(vite@5.1.4(@types/node@18.15.11)(sass@1.71.1))(vue@3.4.19(typescript@5.3.3))
+      '@vue/devtools-api': 7.0.15(vue@3.4.19(typescript@5.3.3))
+      '@vueuse/core': 10.8.0(vue@3.4.19(typescript@5.3.3))
+      '@vueuse/integrations': 10.8.0(focus-trap@7.5.4)(fuse.js@7.0.0)(vue@3.4.19(typescript@5.3.3))
       focus-trap: 7.5.4
       mark.js: 8.11.1
       minisearch: 6.3.0
-      postcss: 8.4.35
       shiki: 1.1.7
-      vite: 5.1.4
-      vue: 3.4.19(typescript@4.9.5)
+      vite: 5.1.4(@types/node@18.15.11)(sass@1.71.1)
+      vue: 3.4.19(typescript@5.3.3)
+    optionalDependencies:
+      postcss: 8.4.35
     transitivePeerDependencies:
       - '@algolia/client-search'
       - '@types/node'
@@ -8300,18 +8322,19 @@ snapshots:
       - typescript
       - universal-cookie
 
-  vue-demi@0.14.7(vue@3.4.19):
+  vue-demi@0.14.7(vue@3.4.19(typescript@5.3.3)):
     dependencies:
-      vue: 3.4.19(typescript@4.9.5)
+      vue: 3.4.19(typescript@5.3.3)
 
-  vue@3.4.19(typescript@4.9.5):
+  vue@3.4.19(typescript@5.3.3):
     dependencies:
       '@vue/compiler-dom': 3.4.19
       '@vue/compiler-sfc': 3.4.19
       '@vue/runtime-dom': 3.4.19
-      '@vue/server-renderer': 3.4.19(vue@3.4.19)
+      '@vue/server-renderer': 3.4.19(vue@3.4.19(typescript@5.3.3))
       '@vue/shared': 3.4.19
-      typescript: 4.9.5
+    optionalDependencies:
+      typescript: 5.3.3
 
   watchpack@2.4.0:
     dependencies:
