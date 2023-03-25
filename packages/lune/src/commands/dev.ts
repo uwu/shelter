@@ -27,13 +27,13 @@ function startWs() {
 
     sockets.on("close", () => {
       broadcastList.delete(broadcast);
-      console.log("shelter disconnected");
+      //console.log("shelter disconnected");
     });
 
     // initial broadcast
     broadcast();
 
-    console.log("new shelter instance tethered");
+    //console.log("new shelter instance tethered");
   });
 }
 
@@ -81,9 +81,12 @@ async function rebuildPlugin(cfg: LuneCfg, dir: string) {
 }
 
 export default {
-  helpText: `lune dev
+  helpText: `lune dev: Develop a plugin with hot reloading in the current directory
 
-Coming soon.`,
+lune dev <path>: Develop a plugin with hot reloading in the given path
+
+Options:
+  --cfg: Specifies the path to a lune cfg file (default: ./lune.config.js)`,
   argSchema: {
     cfg: "str",
   },
@@ -97,8 +100,7 @@ Coming soon.`,
     startWs();
     startHttp();
 
-    // TODO: test
-    watch(dir).on("all", async () => {
+    watch(dir, { ignoreInitial: true }).on("all", async () => {
       await rebuildPlugin(cfg, dir);
       await Promise.all([...broadcastList].map((broadcaster) => broadcaster()));
     });
