@@ -1,5 +1,6 @@
-import { Component, createSignal, JSX, Show } from "solid-js";
+import { Component, createSignal, JSX, Show, For } from "solid-js";
 import { getSettings, installedPlugins, removePlugin, startPlugin, stopPlugin, StoredPlugin } from "../plugins";
+import { devModeReservedId } from "../devmode";
 import { css, classes } from "./Plugins.tsx.scss";
 import {
   Header,
@@ -20,11 +21,18 @@ import PluginAddModal from "./PluginAddModal";
 
 let cssInjected = false;
 
-const PluginCard: Component<{
+export const PluginCard: Component<{
   id: string;
   plugin: StoredPlugin;
 }> = (props) => {
+  if (!cssInjected) {
+    injectCss(css);
+    cssInjected = true;
+  }
+
   const [on, setOn] = createSignal(props.plugin.on);
+
+  const isDev = () => props.id === devModeReservedId;
 
   return (
     <div class={classes.plugin}>
@@ -51,22 +59,24 @@ const PluginCard: Component<{
             <IconCog />
           </button>
         </Show>
-        <button
-          class={classes.btn}
-          onclick={() =>
-            openConfirmationModal({
-              body: () => `Are you sure you want to delete plugin ${props.plugin.manifest.name}?`,
-              header: () => "Confirm plugin deletion",
-              type: "danger",
-              confirmText: "Delete",
-            }).then(
-              () => removePlugin(props.id),
-              () => {},
-            )
-          }
-        >
-          <IconBin />
-        </button>
+        <Show keyed when={!isDev()}>
+          <button
+            class={classes.btn}
+            onclick={() =>
+              openConfirmationModal({
+                body: () => `Are you sure you want to delete plugin ${props.plugin.manifest.name}?`,
+                header: () => "Confirm plugin deletion",
+                type: "danger",
+                confirmText: "Delete",
+              }).then(
+                () => removePlugin(props.id),
+                () => {},
+              )
+            }
+          >
+            <IconBin />
+          </button>
+        </Show>
         <Switch
           checked={on()}
           onChange={(newVal) => {
@@ -83,27 +93,26 @@ const PluginCard: Component<{
   );
 };
 
-export default (): JSX.Element => {
-  if (!cssInjected) {
-    injectCss(css);
-    cssInjected = true;
-  }
+export default (): JSX.Element => (
+  <div class={classes.list}>
+    <Header tag={HeaderTags.H3}>
+      Plugins
+      <div
+        style={{ display: "inline", "margin-left": ".3rem", cursor: "pointer" }}
+        onclick={() => openModal((props) => <PluginAddModal close={props.close} />)}
+      >
+        <IconAdd />
+      </div>
+    </Header>
 
-  return (
-    <div class={classes.list}>
-      <Header tag={HeaderTags.H3}>
-        Plugins
-        <div
-          style={{ display: "inline", "margin-left": ".3rem", cursor: "pointer" }}
-          onclick={() => openModal((props) => <PluginAddModal close={props.close} />)}
-        >
-          <IconAdd />
-        </div>
-      </Header>
-
-      {Object.entries(installedPlugins()).map(([id, plugin]) => (
+    {/* IIRC not using a <For> here was very intentional due to keying -- sink
+     * the only way to do what we need cleanly in solid looks *like this*!:
+     * https://codesandbox.io/s/explicit-keys-4iyen?file=/Key.js
+     */}
+    {Object.entries(installedPlugins())
+      .filter(([id]) => id !== devModeReservedId)
+      .map(([id, plugin]) => (
         <PluginCard {...{ id, plugin }} />
       ))}
-    </div>
-  );
-};
+  </div>
+);

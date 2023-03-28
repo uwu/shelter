@@ -23,7 +23,13 @@ export function initToasts(mountPoint: HTMLElement) {
   };
 }
 
-export function showToast({ title, content, onClick = () => {}, class: _class, duration = 3000 }) {
+export function showToast({
+  title = undefined,
+  content = undefined,
+  onClick = () => {},
+  class: _class = undefined,
+  duration = 3000,
+}) {
   const toast = () => <Toast {...{ onClick, class: _class, title, content }} />;
 
   setToasts([...toasts(), toast]);

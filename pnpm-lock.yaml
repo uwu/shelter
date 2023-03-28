@@ -27,18 +27,24 @@ importers:
   packages/lune:
     specifiers:
       '@types/node': ^18.15.3
+      '@types/ws': ^8.5.4
+      chokidar: ^3.5.3
       esbuild: ^0.17.12
       esbuild-plugin-solid: ^0.5.0
       esbuild-sass-plugin-ysink: ^2.3.3
       postcss: ^8.4.21
       postcss-modules: ^6.0.0
       typescript: ^5.0.2
+      ws: ^8.13.0
     dependencies:
+      chokidar: 3.5.3
       esbuild: 0.17.12
       esbuild-plugin-solid: 0.5.0_esbuild@0.17.12
       esbuild-sass-plugin-ysink: 2.3.3
+      ws: 8.13.0
     devDependencies:
       '@types/node': 18.15.3
+      '@types/ws': 8.5.4
       postcss: 8.4.21
       postcss-modules: 6.0.0_postcss@8.4.21
       typescript: 5.0.2
@@ -1090,6 +1096,12 @@ packages:
 
   /@types/node/18.15.3:
     resolution: {integrity: sha512-p6ua9zBxz5otCmbpb5D3U4B5Nanw6Pk3PPyX05xnxbB/fRv71N7CPmORg7uAD5P70T0xmx1pzAx/FUfa5X+3cw==}
+    dev: true
+
+  /@types/ws/8.5.4:
+    resolution: {integrity: sha512-zdQDHKUgcX/zBc4GrwsE/7dVdAD8JR4EuiAXiiUhhfyIJXXb2+PrGshFyeXWQPMmmZ2XxgaqclgpIC7eTXc1mg==}
+    dependencies:
+      '@types/node': 18.15.3
     dev: true
 
   /@types/yauzl/2.10.0:
@@ -4965,6 +4977,19 @@ packages:
       signal-exit: 3.0.7
       typedarray-to-buffer: 3.1.5
     dev: true
+
+  /ws/8.13.0:
+    resolution: {integrity: sha512-x9vcZYTrFPC7aSIbj7sRCYo7L/Xb8Iy+pW0ng0wt2vCJv7M9HOMy0UoN3rr+IFC7hb7vXoqS+P9ktyLLLhO+LA==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+    dev: false
 
   /ws/8.9.0:
     resolution: {integrity: sha512-Ja7nszREasGaYUYCI2k4lCKIRTt+y7XuqVoHR44YpI49TtryyqbqvDMn5eqfW7e6HzTukDRIsXqzVHScqRcafg==}

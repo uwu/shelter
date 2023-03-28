@@ -12,6 +12,7 @@ import * as storage from "./storage";
 import { observe } from "./observer";
 
 function without<T extends Record<string, any>, TK extends string>(object: T, ...keys: TK[]) {
+  //return Object.fromEntries(Object.entries(object).filter(([k]) => !keys.includes(k as any))) as Omit<T, TK>;
   const cloned = { ...object };
   keys.forEach((k) => delete cloned[k]);
   return cloned as Omit<T, TK>;
@@ -33,7 +34,7 @@ const windowApi = async (unloads) => ({
   solidStore,
   solidWeb,
   util,
-  plugins: without(plugins, "startAllPlugins"),
+  plugins: without(plugins, "startAllPlugins", "devmodePrivateApis"),
   storage: without(storage, "dbStore"),
   observeDom: observe,
   ui: without(ui, "cleanupCss", "initToasts"),
