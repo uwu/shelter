@@ -7,7 +7,7 @@ build({
   bundle: true,
   outfile: "dist/shelter.js",
   sourcemap: "external",
-  minify: false,
+  minify: true,
   loader: {
     ".png": "dataurl",
     ".jpg": "dataurl",
