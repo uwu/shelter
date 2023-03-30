@@ -4,14 +4,16 @@ import { createServer } from "http";
 import { WebSocketServer } from "ws";
 import { resolve } from "path";
 import { mkdtemp, rm, readFile } from "fs/promises";
+import { tmpdir } from "os";
 import { watch } from "chokidar";
 import { buildPlugin, loadCfg, LuneCfg } from "../builder.js";
 import { hrtime } from "process";
 
+const mktempdir = () => mkdtemp(resolve(tmpdir(), "lune-"));
+
 let current: { manifest: any; js: string };
 
 const broadcastList = new Set<() => Promise<void>>();
-
 function startWs() {
   const wsServer = new WebSocketServer({ port: 1211 });
   wsServer.on("connection", (sockets) => {
@@ -62,7 +64,7 @@ Under the Developer Options header in shelter's settings, enable "Lune Dev Mode"
 }
 
 async function rebuildPlugin(cfg: LuneCfg, dir: string) {
-  const outDir = await mkdtemp("lune-dev-");
+  const outDir = await mktempdir();
 
   const timeBefore = hrtime.bigint();
 
