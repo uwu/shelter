@@ -10,7 +10,7 @@
     "idb": "^7.1.0",
     "shelter-assets": "workspace:*",
     "shelter-ui": "workspace:*",
-    "solid-js": "^1.5.7",
+    "solid-js": "1.6.16",
     "spitroast": "^1.4.2"
   },
   "devDependencies": {

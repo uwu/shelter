@@ -19,7 +19,7 @@
     "typescript": "^5.0.2"
   },
   "dependencies": {
-    "solid-js": "^1.5.7",
+    "solid-js": "1.6.16",
     "postcss": "^8.4.21",
     "postcss-modules": "^6.0.0",
     "chokidar": "^3.5.3",
