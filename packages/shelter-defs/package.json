@@ -1,12 +1,12 @@
 {
   "name": "@uwu/shelter-defs",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "author": "shelter team (Cain Atkinson)",
   "license": "CC-0-1.0",
   "repository": "github:uwu/shelter",
   "types": "./dist/shelter-defs/rootdefs.d.ts",
   "scripts": {
-    "prepare": "rm -rf dist && tsc"
+    "prepare": "rm -rf dist && tsc && node postprocess.mjs"
   },
   "devDependencies": {
     "shelter": "workspace:^",
