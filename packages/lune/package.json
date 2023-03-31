@@ -10,7 +10,7 @@
   "homepage": "https://github.com/uwu/shelter/tree/main/packages/lune",
   "repository": "github:uwu/shelter",
   "scripts": {
-    "prepare": "rm -rf dist && tsc"
+    "prepare": "rimraf dist && tsc"
   },
   "type": "module",
   "devDependencies": {
