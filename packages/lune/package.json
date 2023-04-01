@@ -27,12 +27,5 @@
     "esbuild-plugin-solid": "^0.5.0",
     "esbuild-sass-plugin-ysink": "^2.3.3",
     "ws": "^8.13.0"
-  },
-  "overrides": {
-    "babel-plugin-jsx-dom-expressions": "0.35.23"
-  },
-  "//": "couldn't get yarn to work but this should work; also read by pnpm so there's that!",
-  "resolutions": {
-    "babel-plugin-jsx-dom-expressions": "0.35.23"
   }
 }
