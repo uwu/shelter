@@ -11,7 +11,8 @@ The build tool for shelter.
 
 Lune is intended to work hand-in-hand with the repo template - you absolutely can use it separately, it'll work fine,
 but the repo template has Lune setup already,
-a [pnpm monorepo](https://pnpm.io/workspaces) to start you off, and a suitable tsconfig.
+[pnpm](https://pnpm.io/workspaces) and
+[npm](https://docs.npmjs.com/cli/v7/using-npm/workspaces/) monorepos to start you off, and a suitable tsconfig.
 
 ## What is Lune?
 
