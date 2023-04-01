@@ -4,10 +4,9 @@ import { readFile, writeFile } from "fs/promises";
 import { build } from "esbuild";
 
 await build({
-  entryPoints: ["dist/index.js"],
-  format: "esm",
+  entryPoints: ["dist/src/index.js"],
   bundle: true,
-  outfile: "dist/clibundle.mjs",
+  outfile: "dist/clibundle.cjs",
   external: [
     // literally everything except from esbuild-plugin-solid
     "chokidar",
@@ -23,5 +22,5 @@ await build({
   platform: "node",
 });
 
-for (const f of ["dist/index.js", "dist/clibundle.mjs"])
+for (const f of ["dist/src/index.js", "dist/clibundle.cjs"])
   await writeFile(f, "#!/usr/bin/env node\n" + (await readFile(f)).toString());

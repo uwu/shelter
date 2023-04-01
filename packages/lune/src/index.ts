@@ -1,9 +1,8 @@
-import { readFileSync } from "fs";
 import { exit } from "process";
-import { URL } from "url";
 import { argparse } from "./argparser.js";
 import { helptext } from "./help.js";
 import { commands } from "./commands/index.js";
+import pkg from "../package.json" assert { type: "json" };
 
 const topLevelParsed = argparse(
   {
@@ -14,8 +13,7 @@ const topLevelParsed = argparse(
 );
 
 if (topLevelParsed.version) {
-  const ver = JSON.parse(readFileSync(new URL("../package.json", import.meta.url).pathname).toString()).version;
-  console.log(`Lune ${ver} by uwu.network`);
+  console.log(`Lune ${pkg.version} by uwu.network`);
   exit(0);
 }
 

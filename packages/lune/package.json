@@ -1,10 +1,10 @@
 {
   "name": "@uwu/lune",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "The CLI build tool for shelter",
-  "bin": "dist/clibundle.mjs",
-  "main": "dist/mod.js",
-  "module": "dist/mod.js",
+  "bin": "dist/clibundle.cjs",
+  "main": "dist/src/mod.js",
+  "module": "dist/src/mod.js",
   "author": "uwu.network",
   "license": "CC0-1.0",
   "homepage": "https://github.com/uwu/shelter/tree/main/packages/lune",
@@ -27,11 +27,5 @@
     "esbuild": "^0.17.12",
     "esbuild-sass-plugin-ysink": "^2.3.3",
     "ws": "^8.13.0"
-  },
-  "overrides": {
-    "babel-plugin-jsx-dom-expressions": "0.35.23"
-  },
-  "resolutions": {
-    "babel-plugin-jsx-dom-expressions": "0.35.23"
   }
 }

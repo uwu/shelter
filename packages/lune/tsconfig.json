@@ -6,6 +6,7 @@
     "moduleResolution": "node",
     "declaration": true,
     "outDir": "dist",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true
   }
 }
