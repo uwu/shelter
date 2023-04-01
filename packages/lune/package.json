@@ -1,8 +1,8 @@
 {
   "name": "@uwu/lune",
-  "version": "1.1.4",
+  "version": "1.2.0",
   "description": "The CLI build tool for shelter",
-  "bin": "dist/index.js",
+  "bin": "dist/clibundle.mjs",
   "main": "dist/mod.js",
   "module": "dist/mod.js",
   "author": "uwu.network",
@@ -16,7 +16,8 @@
   "devDependencies": {
     "@types/node": "^18.15.3",
     "@types/ws": "^8.5.4",
-    "typescript": "^5.0.2"
+    "typescript": "^5.0.2",
+    "esbuild-plugin-solid": "^0.5.0"
   },
   "dependencies": {
     "solid-js": "1.6.16",
@@ -24,8 +25,13 @@
     "postcss-modules": "^6.0.0",
     "chokidar": "^3.5.3",
     "esbuild": "^0.17.12",
-    "esbuild-plugin-solid": "^0.5.0",
     "esbuild-sass-plugin-ysink": "^2.3.3",
     "ws": "^8.13.0"
+  },
+  "overrides": {
+    "babel-plugin-jsx-dom-expressions": "0.35.23"
+  },
+  "resolutions": {
+    "babel-plugin-jsx-dom-expressions": "0.35.23"
   }
 }

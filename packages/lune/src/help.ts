@@ -3,7 +3,7 @@ Lune - the build tool for shelter
 
 Commands:
   build: builds a plugin, based on current directory or on passed paths
-  dev:   coming soon!
+  dev:   develop a plugin with hot reloading
   ci:    builds all plugins in a monorepo (hint: use the template!)
   init:  creates a new plugin
 
