@@ -97,3 +97,19 @@ export function intercept(cb: Intercept) {
     intercepts = intercepts.filter((i) => i !== cb);
   };
 }
+
+export const storesFlat = new Proxy<Record<string, FluxStore>>(stores, {
+  get: (_, name: string) => stores[name]?.[0] ?? stores[name],
+  set() {
+    throw new Error("do not try to mutate flatStores");
+  },
+  deleteProperty() {
+    throw new Error("do not try to mutate flatStores");
+  },
+  defineProperty() {
+    throw new Error("do not try to mutate flatStores");
+  },
+  setPrototypeOf() {
+    throw new Error("do not try to mutate flatStores");
+  },
+});

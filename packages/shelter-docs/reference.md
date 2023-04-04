@@ -111,6 +111,20 @@ shelter.flux.stores.UserStore.getUser("1045796505535135855");
 >
 > I know that me writing this will draw it to malicious authors' attention that this is easily possible, but its worth the note before some dev someone inadvertently posts their own user object or something ;)
 
+### `shelter.flux.storesFlat`
+
+Sometimes, stores collide, it happens.
+
+`flux.stores` deals with this by grouping same-named stores into an array,
+which keeps all stores found available.
+
+This is annoying to handle for, and in many cases just using the first store found is fine.
+To deal with this case, the read only `flux.storesFlat` object is also exposed.
+
+It will ignore collisions and only expose the first store found by name.
+
+Example is same as above.
+
 ### `shelter.flux.intercept`
 
 ```ts
