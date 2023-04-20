@@ -75,6 +75,18 @@ export type FluxStore<T = Record<string, any>> = T & {
   _reactChangeCallbacks: FluxStoreChangeCallbacks;
 };
 
+export type FluxManager<T = unknown> = T & {
+  initializedCount: number;
+  actions: Record<string, Function>;
+  stores: Map<FluxStore, Function>;
+
+  initialize: () => void;
+  terminate: (force: boolean) => void;
+
+  _initialize: () => void;
+  _terminate: () => void;
+};
+
 // TODO: Test if these are all correct.
 export interface HTTPRequest {
   url: string;
