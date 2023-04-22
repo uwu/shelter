@@ -70,6 +70,7 @@ export const Switch: Component<{
   checked?: boolean;
   disabled?: boolean;
   onChange?(newVal: boolean): void;
+  "aria-label"?: string;
 }> = (props) => {
   if (!injectedCss) {
     injectCss(css);
@@ -95,6 +96,8 @@ export const Switch: Component<{
         tabindex="0"
         checked={props.checked}
         disabled={props.disabled}
+        aria-disabled={props.disabled}
+        aria-label={props["aria-label"]}
         onchange={() => props.onChange?.(!props.checked)}
       />
     </div>
@@ -108,6 +111,7 @@ export const SwitchItem: Component<{
   children: JSX.Element;
   note?: JSX.Element;
   hideBorder?: boolean;
+  "aria-label"?: string;
 }> = (props) => {
   const id = genId();
 
@@ -116,7 +120,13 @@ export const SwitchItem: Component<{
       <div class={classes.irow}>
         <label for={id}>{props.children}</label>
         <div>
-          <Switch id={id} checked={props.value} onChange={props.onChange} disabled={props.disabled} />
+          <Switch
+            id={id}
+            checked={props.value}
+            onChange={props.onChange}
+            disabled={props.disabled}
+            aria-label={props["aria-label"]}
+          />
         </div>
       </div>
 

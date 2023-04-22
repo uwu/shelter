@@ -28,6 +28,7 @@ export const CheckboxItem: Component<{
   children?: JSX.Element;
   onChange?(newVal: boolean): void;
   mt?: boolean;
+  "aria-label"?: string;
 }> = (props) => {
   if (!injectedCss) {
     injectCss(css);
@@ -50,6 +51,8 @@ export const CheckboxItem: Component<{
           tabindex="0"
           checked={props.checked}
           disabled={props.disabled}
+          aria-disabled={props.disabled}
+          aria-label={props["aria-label"]}
         />
       </div>
       <Show when={props.children} keyed={false}>

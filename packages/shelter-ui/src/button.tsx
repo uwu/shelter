@@ -94,6 +94,7 @@ export const Button: Component<{
       aria-label={props["aria-label"]}
       type={props.type}
       disabled={props.disabled}
+      aria-disabled={props.disabled}
       class={`${props.class} ${classes.button} ${props.look} ${props.size[2]} ${props.grow ? classes.grow : ""}`}
       style={{
         "--shltr-btn-w": props.size[0],

@@ -8,7 +8,8 @@ export const TextBox: Component<{
   value?: string;
   placeholder?: string;
   maxLength?: number;
-  labelledBy?: string;
+  id?: string;
+  "aria-label"?: string;
   onInput?(v: string): void;
 }> = (props) => {
   if (!injectedCss) {
@@ -23,7 +24,8 @@ export const TextBox: Component<{
       value={props.value}
       placeholder={props.placeholder}
       maxlength={props.maxLength ?? 999}
-      aria-labelledby={props.labelledBy}
+      id={props.id}
+      aria-labelledby={props["aria-label"]}
       onInput={(e) => props.onInput((e.target as HTMLInputElement).value)}
     />
   );
@@ -32,7 +34,8 @@ export const TextBox: Component<{
 export const TextArea: Component<{
   value?: string;
   placeholder?: string;
-  labelledBy?: string;
+  id?: string;
+  "aria-label"?: string;
   onInput?(v: string): void;
   width?: string;
   height?: string;
@@ -55,7 +58,8 @@ export const TextArea: Component<{
       }}
       value={props.value}
       placeholder={props.placeholder}
-      aria-labelledby={props.labelledBy}
+      id={props.id}
+      aria-labelledby={props["aria-label"]}
       onInput={(e) => props.onInput((e.target as HTMLTextAreaElement).value)}
     />
   );
