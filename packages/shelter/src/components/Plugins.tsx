@@ -16,8 +16,11 @@ import {
   openModal,
   Space,
   Switch,
+  focusring,
 } from "shelter-ui";
 import PluginAddModal from "./PluginAddModal";
+
+false && focusring;
 
 let cssInjected = false;
 
@@ -45,6 +48,7 @@ export const PluginCard: Component<{
         <div style="flex:1" />
         <Show keyed when={getSettings(props.id)}>
           <button
+            use:focusring
             class={classes.btn}
             style={on() ? "" : "opacity: 0"}
             onclick={() =>
@@ -61,6 +65,7 @@ export const PluginCard: Component<{
         </Show>
         <Show keyed when={!isDev()}>
           <button
+            use:focusring
             class={classes.btn}
             onclick={() =>
               openConfirmationModal({
@@ -98,6 +103,7 @@ export default (): JSX.Element => (
     <Header tag={HeaderTags.H3}>
       Plugins
       <div
+        use:focusring
         style={{ display: "inline", "margin-left": ".3rem", cursor: "pointer" }}
         onclick={() => openModal((props) => <PluginAddModal close={props.close} />)}
       >

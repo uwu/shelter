@@ -54,6 +54,6 @@ export function focusring(el: Element, rad: Accessor<number>) {
     el.removeEventListener("keyup", keyHandler);
     el.removeEventListener("blur", blurHandler);
 
-    focusRingEl.remove();
+    focusRingEl?.remove();
   });
 }

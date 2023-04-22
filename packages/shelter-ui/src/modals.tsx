@@ -4,6 +4,8 @@ import { Header, HeaderTags } from "./header";
 import { Button, ButtonColors, ButtonSizes } from "./button";
 import { openModal } from "./openModal";
 import { IconClose } from "./icons";
+import { focusring } from "./focusring";
+false && focusring;
 
 export const ModalSizes = {
   SMALL: classes.sm,
@@ -37,7 +39,7 @@ export const ModalHeader: Component<{
   <div class={classes.head}>
     <Header tag={HeaderTags.H1}>{props.children}</Header>
 
-    <button class={classes.cbtn} style={{ display: props.noClose ? "none" : "" }} onclick={props.close}>
+    <button use:focusring class={classes.cbtn} style={{ display: props.noClose ? "none" : "" }} onclick={props.close}>
       <IconClose />
     </button>
   </div>
