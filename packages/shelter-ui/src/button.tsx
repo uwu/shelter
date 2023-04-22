@@ -1,6 +1,8 @@
 import { Component, JSX, mergeProps } from "solid-js";
 import { injectCss } from "./util";
 import { classes, css } from "./button.tsx.scss";
+import { focusring } from "./focusring";
+false && focusring;
 
 let injectedCss = false;
 
@@ -89,6 +91,7 @@ export const Button: Component<{
 
   return (
     <button
+      use:focusring
       onClick={props.onClick}
       onDblClick={props.onDoubleClick}
       aria-label={props["aria-label"]}

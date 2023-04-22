@@ -2,6 +2,8 @@ import { Component, createEffect, JSX, on, Show } from "solid-js";
 import { genId, injectCss } from "./util";
 import { Divider } from "./index";
 import { css, classes } from "./switch.tsx.scss";
+import { focusring } from "./focusring";
+false && focusring;
 
 let injectedCss = false;
 
@@ -91,6 +93,7 @@ export const Switch: Component<{
       </div>
       {/* the actual input: useful for accesibility etc */}
       <input
+        use:focusring={12}
         id={props.id}
         type="checkbox"
         tabindex="0"
