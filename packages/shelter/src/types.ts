@@ -33,7 +33,7 @@ export interface Dispatcher {
   _dispatchWithLogging(payload: any): void;
 }
 
-interface FluxStoreChangeCallbacks {
+type FluxStoreChangeCallbacks = {
   add(cb: () => void): void;
 
   addConditional(cb: () => boolean): void;
@@ -47,9 +47,9 @@ interface FluxStoreChangeCallbacks {
   hasAny(): boolean;
 
   invokeAll(): void;
-}
+};
 
-export type FluxStore<T = any> = T & {
+export type FluxStore<T = unknown> = T & {
   addChangeListener(cb: () => void): void;
   removeChangeListener(cb: () => void): void;
   addReactChangeListener(cb: () => void): void;

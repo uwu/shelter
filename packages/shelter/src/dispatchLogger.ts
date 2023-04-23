@@ -9,7 +9,7 @@ export const initDispatchLogger = async () => {
   let backing = dispatcher._dispatch;
 
   // the patcher kept getting overwritten, so we're doing it this way!
-  Object.defineProperty(dispatcher.__proto__, "_dispatch", {
+  Object.defineProperty(Object.getPrototypeOf(dispatcher), "_dispatch", {
     // unpatching
     configurable: true,
     // this doesn't appear to ever get hit but i'll handle the case anyway
@@ -37,7 +37,7 @@ export const initDispatchLogger = async () => {
   });
 
   return () =>
-    Object.defineProperty(dispatcher.__proto__, "_dispatch", {
+    Object.defineProperty(Object.getPrototypeOf(dispatcher), "_dispatch", {
       configurable: true,
       writable: true,
       value: backing,

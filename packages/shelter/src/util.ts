@@ -73,7 +73,7 @@ export function createListener(type: string): () => any {
 }
 
 // gets the data from a flux store reactively
-export function createSubscription<TState, TStoreData = any>(
+export function createSubscription<TState, TStoreData = unknown>(
   store: FluxStore<TStoreData>,
   getStateFromStore: (store: FluxStore<TStoreData>) => TState,
 ): () => TState {

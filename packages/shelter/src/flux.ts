@@ -13,7 +13,7 @@ export async function getDispatcher() {
   if (dispatcher) return dispatcher;
 
   // Promises bubble up, this is fine.
-  return (dispatcher = exfiltrate("_dispatcher").then((fluxstore) => fluxstore._dispatcher));
+  return (dispatcher = exfiltrate("_dispatcher").then((fluxstore) => fluxstore._dispatcher as Dispatcher));
 }
 
 export const stores: Record<string, FluxStore | FluxStore[]> = {};
@@ -23,7 +23,7 @@ exfiltrate("_dispatchToken", (store) => {
   const name = store.getName();
   if (!stores[name]) stores[name] = store;
   else {
-    if (Array.isArray(stores[name])) stores[name].push(store);
+    if (Array.isArray(stores[name])) (stores[name] as FluxStore[]).push(store);
     else stores[name] = [stores[name], store];
   }
 
@@ -98,7 +98,7 @@ export function intercept(cb: Intercept) {
   };
 }
 
-export const storesFlat = new Proxy<Record<string, FluxStore>>(stores, {
+export const storesFlat = new Proxy<Record<string, FluxStore>>(stores as any, {
   get: (_, name: string) => stores[name]?.[0] ?? stores[name],
   set() {
     throw new Error("do not try to mutate flatStores");
