@@ -18,13 +18,10 @@ const remoteUrl =
   process.env.SHELTER_BUNDLE_URL || "https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js";
 const localBundle = process.env.SHELTER_DIST_PATH;
 
-const shelterBundle = new Promise((resolve, reject) => {
-  if (localBundle) {
-    let data = fs.readFileSync(path.join(localBundle, "shelter.js"), "utf8");
-    data += `\n//# sourceMappingURL=file:////${path.join(localBundle, "shelter.js.map")}`;
+let fetchPromise; // only fetch once
 
-    resolve(data);
-  } else {
+if (!localBundle)
+  fetchPromise = new Promise((resolve, reject) => {
     const req = https.get(remoteUrl);
 
     req.on("response", (res) => {
@@ -43,8 +40,15 @@ const shelterBundle = new Promise((resolve, reject) => {
     req.on("error", reject);
 
     req.end();
-  }
-});
+  });
+
+const getShelterBundle = () =>
+  !localBundle
+    ? fetchPromise
+    : Promise.resolve(
+        fs.readFileSync(path.join(localBundle, "shelter.js"), "utf8") +
+          `\n//# sourceMappingURL=file:////${path.join(localBundle, "shelter.js.map")}`,
+      );
 // #endregion
 
 // #region IPC
@@ -52,7 +56,7 @@ electron.ipcMain.on("SHELTER_ORIGINAL_PRELOAD", (event) => {
   event.returnValue = event.sender.originalPreload;
 });
 
-electron.ipcMain.handle("SHELTER_BUNDLE_FETCH", () => shelterBundle);
+electron.ipcMain.handle("SHELTER_BUNDLE_FETCH", getShelterBundle);
 // #endregion
 
 // #region CSP
