@@ -39,7 +39,13 @@ export const ModalHeader: Component<{
   <div class={classes.head}>
     <Header tag={HeaderTags.H1}>{props.children}</Header>
 
-    <button use:focusring class={classes.cbtn} style={{ display: props.noClose ? "none" : "" }} onclick={props.close}>
+    <button
+      use:focusring
+      aria-label="close modal"
+      class={classes.cbtn}
+      style={{ display: props.noClose ? "none" : "" }}
+      onclick={props.close}
+    >
       <IconClose />
     </button>
   </div>

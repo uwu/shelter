@@ -1,4 +1,4 @@
-import { Header, HeaderTags, injectCss, showToast, Space, SwitchItem } from "shelter-ui";
+import { injectCss, LinkButton, showToast, Space, SwitchItem } from "shelter-ui";
 import { dbStore } from "../storage";
 import { PluginCard } from "./Plugins";
 import { devModeReservedId, enableDevmode, stopDevmode } from "../devmode";
@@ -39,9 +39,7 @@ export default () => {
             <>
               shelter is currently tethered to
               <Space />
-              <a href="https://github.com/uwu/shelter/tree/main/packages/lune#readme" target="_blank">
-                Lune
-              </a>
+              <LinkButton href="https://github.com/uwu/shelter/tree/main/packages/lune#readme">Lune</LinkButton>
               <Space />
               via dev mode. To disable dev mode, close Lune. The following dev plugin is loaded:
             </>
@@ -49,9 +47,7 @@ export default () => {
             <>
               When in dev mode, shelter tethers to a running
               <Space />
-              <a href="https://github.com/uwu/shelter/tree/main/packages/lune#readme" target="_blank">
-                Lune
-              </a>
+              <LinkButton href="https://github.com/uwu/shelter/tree/main/packages/lune#readme">Lune</LinkButton>
               <Space />
               dev server, allowing hot reloading of a temporary dev plugin.
             </>

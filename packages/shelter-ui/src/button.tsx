@@ -97,7 +97,6 @@ export const Button: Component<{
       aria-label={props["aria-label"]}
       type={props.type}
       disabled={props.disabled}
-      aria-disabled={props.disabled}
       class={`${props.class} ${classes.button} ${props.look} ${props.size[2]} ${props.grow ? classes.grow : ""}`}
       style={{
         "--shltr-btn-w": props.size[0],
@@ -110,5 +109,31 @@ export const Button: Component<{
     >
       {props.children}
     </button>
+  );
+};
+
+export const LinkButton: Component<{
+  style?: JSX.CSSProperties;
+  class?: string;
+  href?: string;
+  "aria-label"?: string;
+  children?: JSX.Element;
+}> = (props) => {
+  if (!injectedCss) {
+    injectCss(css);
+    injectedCss = true;
+  }
+
+  return (
+    <a
+      use:focusring
+      style={props.style}
+      href={props.href}
+      aria-label={props["aria-label"]}
+      target="_blank"
+      class={props.class}
+    >
+      {props.children}
+    </a>
   );
 };

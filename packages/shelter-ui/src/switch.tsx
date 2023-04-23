@@ -96,7 +96,6 @@ export const Switch: Component<{
         use:focusring={12}
         id={props.id}
         type="checkbox"
-        tabindex="0"
         checked={props.checked}
         disabled={props.disabled}
         aria-disabled={props.disabled}

@@ -28,6 +28,7 @@ export const CheckboxItem: Component<{
   children?: JSX.Element;
   onChange?(newVal: boolean): void;
   mt?: boolean;
+  id?: string;
   "aria-label"?: string;
 }> = (props) => {
   if (!injectedCss) {
@@ -46,12 +47,10 @@ export const CheckboxItem: Component<{
       <div class={classes.checkbox}>
         <CheckIcon state={props.checked} />
         <input
-          id={props.children ? id : ""}
+          id={props.id ?? id}
           type="checkbox"
-          tabindex="0"
           checked={props.checked}
           disabled={props.disabled}
-          aria-disabled={props.disabled}
           aria-label={props["aria-label"]}
         />
       </div>
@@ -67,4 +66,6 @@ export const Checkbox: Component<{
   checked?: boolean;
   disabled?: boolean;
   onChange?(newVal: boolean): void;
+  id?: string;
+  "aria-label"?: string;
 }> = (props) => <CheckboxItem {...props} />; // lazy lmao but it works

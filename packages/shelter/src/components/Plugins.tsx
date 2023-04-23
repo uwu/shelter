@@ -1,4 +1,4 @@
-import { Component, createSignal, JSX, Show, For } from "solid-js";
+import { Component, createSignal, JSX, Show } from "solid-js";
 import { getSettings, installedPlugins, removePlugin, startPlugin, stopPlugin, StoredPlugin } from "../plugins";
 import { devModeReservedId } from "../devmode";
 import { css, classes } from "./Plugins.tsx.scss";
@@ -48,6 +48,7 @@ export const PluginCard: Component<{
         <div style="flex:1" />
         <Show keyed when={getSettings(props.id)}>
           <button
+            aria-label={`open settings for ${props.plugin.manifest.name}`}
             use:focusring
             class={classes.btn}
             style={on() ? "" : "opacity: 0"}
@@ -65,6 +66,7 @@ export const PluginCard: Component<{
         </Show>
         <Show keyed when={!isDev()}>
           <button
+            aria-label={`delete ${props.plugin.manifest.name}`}
             use:focusring
             class={classes.btn}
             onclick={() =>
@@ -83,6 +85,7 @@ export const PluginCard: Component<{
           </button>
         </Show>
         <Switch
+          aria-label={`${on() ? "disable" : "enable"} ${props.plugin.manifest.name}`}
           checked={on()}
           onChange={(newVal) => {
             if (props.plugin.on === newVal) return;
@@ -102,13 +105,14 @@ export default (): JSX.Element => (
   <div class={classes.list}>
     <Header tag={HeaderTags.H3}>
       Plugins
-      <div
+      <button
+        aria-label="add a plugin"
         use:focusring
-        style={{ display: "inline", "margin-left": ".3rem", cursor: "pointer" }}
+        class={classes.btn}
         onclick={() => openModal((props) => <PluginAddModal close={props.close} />)}
       >
         <IconAdd />
-      </div>
+      </button>
     </Header>
 
     {/* IIRC not using a <For> here was very intentional due to keying -- sink
