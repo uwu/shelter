@@ -1,6 +1,8 @@
 import { Component } from "solid-js";
 import { css, classes } from "./textbox.tsx.scss";
 import { injectCss } from "./util";
+import { focusring } from "./focusring";
+false && focusring;
 
 let injectedCss = false;
 
@@ -19,6 +21,7 @@ export const TextBox: Component<{
 
   return (
     <input
+      use:focusring
       class={classes.tbox}
       type="text"
       value={props.value}
@@ -50,6 +53,7 @@ export const TextArea: Component<{
 
   return (
     <textarea
+      use:focusring
       classList={{
         [classes.tarea]: true,
         [classes.rx]: props["resize-x"],

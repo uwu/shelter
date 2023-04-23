@@ -18,6 +18,7 @@ For use outside of Discord, a solution may or may not be implemented.
   - [`SolidInReactBridge`](#solidinreactbridge)
   - [`<ErrorBoundary />`](#errorboundary-)
   - [`niceScrollbarsClass`](#nicescrollbarsclass)
+  - [`use:focusring`](#usefocusring)
 - [Components](#components)
   - [`<Text>`](#text)
   - [`<Header>`](#header)
@@ -32,6 +33,18 @@ For use outside of Discord, a solution may or may not be implemented.
   - [`<TextBox />`](#textbox-)
   - [`<TextArea />`](#textarea-)
   - [`<Space />`](#space-)
+
+## Accessibility
+
+All efforts are taken to support users of
+[accessibility technologies](https://developer.mozilla.org/en-US/docs/Web/Accessibility),
+including screen readers and keyboard navigation.
+
+This entails a few blanket behaviours across shelter-ui:
+ - All interactive elements (button, link, switch, etc.) have a [focus ring](#usefocusring)
+ - All interactive elements take an `aria-label` prop to override the default label
+   * Labels are usually sensibly picked, eg the button and switchitem children prop
+ - Relevant interactive elements (checkboxes, switches, textboxes) take an id prop to use with a `<label>`.
 
 ## Utils
 
@@ -167,6 +180,27 @@ A getter that gets a class to add to an element to give it a nice scrollbar.
 <div class={`myclass myclass2 ${niceScrollbarsClass()}`} />
 ```
 
+### `use:focusring`
+
+Adds a visible ring around your element when focused via keyboard (tab key),
+to aid with accessibility.
+
+Optionally takes a border radius.
+
+!!! Be careful - some tooling incorrectly tree shakes this if imported using ESM.
+You can use `false && focusring` to prevent the tree shaking (it will be minified away).
+
+The focusring is included for you on interactive shelter-ui components,
+so if you are using those this is not necessary.
+
+`focusring` must be in scope, either via an import from shelter-ui,
+or otherwise (e.g. `const { focusring } = shelter.ui`).
+
+```jsx
+<button use:focusring>do a thing</button>
+<input use:focusring={6} type="checkbox" />
+```
+
 ## Components
 
 ### `<Text>`
@@ -219,8 +253,13 @@ Button is a, well, button, using Discord's styles. The props are as follows:
 - **class**: optionally some classes to apply
 - **onClick**: callback when button is clicked
 - **onDoubleClick**: callback when button is double-clicked
-- **aria-label**: accessibility helper
 - **children**: the button text
+
+### `<LinkButton>`
+
+A link (`<a>`) that fits with Discord's UI.
+
+It will open the href in a new tab / in your system browser.
 
 ### `<Switch />`
 
@@ -293,7 +332,7 @@ The footer of a discord-styled-modal, good for buttons!
 
 A discord style textbox.
 
-Takes value, placeholder, maxLength, labelledBy, and onInput.
+Takes value, placeholder, maxLength, and onInput.
 
 All optional. onInput called every keystroke and passed the full current value.
 
@@ -305,4 +344,4 @@ Also takes width, height, resize-x, resize-y, and mono.
 
 ### `<Space />`
 
-A spacebar character. Useful in flexboxes etc.
+A spacebar character that will never be collapsed. Useful in flexboxes etc.
