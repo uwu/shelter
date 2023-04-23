@@ -2,19 +2,24 @@
 
 $RADIUS: 4px;
 
-.bg {
-  background: rgba(0, 0, 0, 0.85);
-  transition: background 250ms;
-  align-self: stretch;
-}
-
 .mroot {
-  position: absolute;
   width: 100%;
   height: 100%;
-  z-index: 9999;
+  background: none;
+  border: none;
   display: grid;
   align-items: center;
+  padding: 0;
+
+  &::backdrop {
+    background: rgba(0, 0, 0, 0.85);
+    transition: opacity 250ms;
+    opacity: 0;
+  }
+
+  &.active::backdrop {
+    opacity: 1;
+  }
 
   & > * {
     grid-area: 1 / 1 / 2 / 2;
@@ -24,15 +29,10 @@ $RADIUS: 4px;
 .wrap {
   transition-property: opacity, transform;
   transition-duration: 250ms;
-  pointer-events: none;
 
   &:not(.active) {
     opacity: 0;
     transform: scale(0);
-  }
-
-  & > * {
-    pointer-events: initial;
   }
 }
 

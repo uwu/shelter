@@ -1,4 +1,4 @@
-import { Component, createEffect, createMemo, createSignal, For } from "solid-js";
+import { Component, createEffect, createSignal, For } from "solid-js";
 import { classes, css } from "./modals.tsx.scss";
 import { injectCss, ReactiveRoot } from "./util";
 
@@ -24,28 +24,49 @@ const ModalRoot: Component = () => {
     cssInjected = true;
   }
 
-  const modalCount = createMemo(() => currentModals().length);
+  let dialogEl;
 
-  // see line 18
-  setTimeout(() => setBgAnimPrePost(false));
+  createEffect(() => {
+    dialogEl.showModal();
+    setBgAnimPrePost(false);
+
+    dialogEl.addEventListener("cancel", (ev) => {
+      ev.preventDefault(); // not ideal but sure
+      popModal();
+    });
+
+    // stop discord layers closing
+    dialogEl.addEventListener("keydown", (ev) => ev.stopImmediatePropagation());
+
+    // click outside dialog handler
+    dialogEl.addEventListener("click", (ev) => {
+      if (ev.target === dialogEl || ev.target.parentElement === dialogEl) popModal();
+    });
+  });
 
   return (
-    <>
-      <div class={classes.bg} style={{ background: bgAnimPrePost() ? "transparent" : "" }} onclick={popModal} />
-
-      <For each={currentModals()}>
-        {(M, idx) => (
-          <div
-            classList={{
-              [classes.wrap]: true,
-              [classes.active]: idx() === modalCount() - (animationPrePost() ? 2 : 1),
-            }}
-          >
-            <M close={() => popSpecificModal(M)} />
-          </div>
-        )}
-      </For>
-    </>
+    <ReactiveRoot>
+      <dialog
+        ref={dialogEl}
+        classList={{
+          [classes.mroot]: true,
+          [classes.active]: !bgAnimPrePost(),
+        }}
+      >
+        <For each={currentModals()}>
+          {(M, idx) => (
+            <div
+              classList={{
+                [classes.wrap]: true,
+                [classes.active]: idx() === currentModals().length - (animationPrePost() ? 2 : 1),
+              }}
+            >
+              <M close={() => popSpecificModal(M)} />
+            </div>
+          )}
+        </For>
+      </dialog>
+    </ReactiveRoot>
   );
 };
 
@@ -55,13 +76,7 @@ createEffect(() => {
     dispose?.();
     dispose = undefined;
   } else if (!dispose) {
-    const root = (
-      <ReactiveRoot>
-        <div class={classes.mroot} aria-modal role="dialog">
-          <ModalRoot />
-        </div>
-      </ReactiveRoot>
-    ) as HTMLDivElement;
+    const root = (<ModalRoot />) as HTMLDialogElement;
 
     document.body.append(root);
     dispose = () => root.remove();
@@ -85,7 +100,6 @@ function popSpecificModal(comp: Component<ModalProps>) {
   // see line 13
   setAnimationPrePost(true);
 
-  // see line 18
   if (currentModals().length === 1) setBgAnimPrePost(true);
 
   setTimeout(() => {
