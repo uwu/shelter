@@ -8,6 +8,9 @@ declare module "solid-js" {
   }
 }
 
+// just using document.body is not enough with dialog.showModal(), we must find the specific layer's root
+const getRoot = (el) => (el.tagName === "DIALOG" || el == document.body ? el : getRoot(el.parentElement));
+
 const FocusRing: Component<{ x: number; y: number; width: number; height: number; rad: number }> = (props) => (
   <div
     style={{
@@ -38,7 +41,9 @@ export function focusring(el: Element, rad: Accessor<number>) {
     focusRingEl = (
       <FocusRing rad={typeof rad() === "number" ? rad() : 3} {...el.getBoundingClientRect()} />
     ) as HTMLDivElement;
-    document.body.append(focusRingEl);
+
+    debugger;
+    getRoot(el).append(focusRingEl);
   };
 
   const blurHandler = () => {
