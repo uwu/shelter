@@ -17,10 +17,12 @@ import {
   Space,
   Switch,
   focusring,
+  tooltip,
 } from "shelter-ui";
 import PluginAddModal from "./PluginAddModal";
 
 false && focusring;
+false && tooltip;
 
 let cssInjected = false;
 
@@ -48,6 +50,7 @@ export const PluginCard: Component<{
         <div style="flex:1" />
         <Show keyed when={getSettings(props.id)}>
           <button
+            use:tooltip={`Open settings for ${props.plugin.manifest.name}`}
             aria-label={`open settings for ${props.plugin.manifest.name}`}
             use:focusring
             class={classes.btn}
@@ -66,6 +69,7 @@ export const PluginCard: Component<{
         </Show>
         <Show keyed when={!isDev()}>
           <button
+            use:tooltip={`Delete ${props.plugin.manifest.name}`}
             aria-label={`delete ${props.plugin.manifest.name}`}
             use:focusring
             class={classes.btn}
@@ -106,6 +110,7 @@ export default (): JSX.Element => (
     <Header tag={HeaderTags.H3}>
       Plugins
       <button
+        use:tooltip="Add a plugin"
         aria-label="add a plugin"
         use:focusring
         class={classes.btn}

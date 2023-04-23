@@ -1,0 +1,26 @@
+.tooltip {
+  position: fixed;
+  background: var(--background-floating);
+  color: var(--text-normal);
+  pointer-events: none;
+  z-index: 9999999;
+  box-shadow: var(--elevation-high);
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 500;
+  max-width: 190px;
+  word-wrap: break-word;
+
+  transition-property: transform, opacity;
+  transition-duration: 100ms;
+
+  &:not(.active) {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+.content {
+  padding: 8px 12px;
+  overflow: hidden;
+}

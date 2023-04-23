@@ -1,4 +1,5 @@
 import { onCleanup, Component, Accessor } from "solid-js";
+import { getRoot } from "./util";
 
 declare module "solid-js" {
   namespace JSX {
@@ -7,9 +8,6 @@ declare module "solid-js" {
     }
   }
 }
-
-// just using document.body is not enough with dialog.showModal(), we must find the specific layer's root
-const getRoot = (el) => (el.tagName === "DIALOG" || el == document.body ? el : getRoot(el.parentElement));
 
 const FocusRing: Component<{ x: number; y: number; width: number; height: number; rad: number }> = (props) => (
   <div

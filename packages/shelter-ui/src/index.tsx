@@ -13,6 +13,7 @@ export * from "./bridges";
 export * from "./errorboundary";
 export * from "./toasts";
 export * from "./focusring";
+export * from "./tooltip";
 
 export const Text: Component<JSX.HTMLAttributes<HTMLSpanElement>> = (props) => (
   <span
