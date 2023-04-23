@@ -42,7 +42,6 @@ export function focusring(el: Element, rad: Accessor<number>) {
       <FocusRing rad={typeof rad() === "number" ? rad() : 3} {...el.getBoundingClientRect()} />
     ) as HTMLDivElement;
 
-    debugger;
     getRoot(el).append(focusRingEl);
   };
 
