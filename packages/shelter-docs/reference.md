@@ -211,7 +211,8 @@ reactFiberWalker(
   node: Fiber,
   filter: string | symbol | ((node: Fiber) => boolean),
   goUp = false,
-  ignoreStringType = false
+  ignoreStringType = false,
+  recursionLimit = 100
 ): undefined | null | Fiber;
 ```
 
@@ -228,6 +229,8 @@ For example, if you had a DOM element inside a message, and you wanted to get th
 ```ts
 const author = reactFiberWalker(getFiber(el), "message", true)?.message?.author;
 ```
+
+To prevent freezing the main thread, there is a recursion limit. To disable it, set it to any value < 0.
 
 ### `shelter.util.awaitDispatch`
 

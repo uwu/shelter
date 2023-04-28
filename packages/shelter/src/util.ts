@@ -15,7 +15,10 @@ export function reactFiberWalker(
   filter: string | symbol | ((node: Fiber) => boolean),
   goUp = false,
   ignoreStringType = false,
+  recursionLimit = 100,
 ): undefined | null | Fiber {
+  if (recursionLimit === 0) return;
+
   if (typeof filter !== "function") {
     const prop = filter;
     filter = (n) => n?.pendingProps?.[prop] !== undefined;
@@ -25,8 +28,8 @@ export function reactFiberWalker(
   if (filter(node) && (ignoreStringType ? typeof node.type !== "string" : true)) return node;
 
   return (
-    reactFiberWalker(goUp ? node.return : node.child, filter, goUp, ignoreStringType) ??
-    reactFiberWalker(node.sibling, filter, goUp, ignoreStringType)
+    reactFiberWalker(goUp ? node.return : node.child, filter, goUp, ignoreStringType, recursionLimit - 1) ??
+    reactFiberWalker(node.sibling, filter, goUp, ignoreStringType, recursionLimit - 1)
   );
 }
 
