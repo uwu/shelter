@@ -1,7 +1,7 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npm exec rome -- format --write .
+npm run format
 for file in $(git diff --name-only --cached); do
   git add "$file" || true
 done

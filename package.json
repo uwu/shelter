@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "format": "rome format --write ."
   },
   "devDependencies": {
     "husky": "^8.0.3",
