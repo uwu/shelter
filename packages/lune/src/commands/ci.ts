@@ -39,13 +39,24 @@ Options:
     const pluginsDir = resolve(repoRoot, cfg.repoSubDir ?? "plugins");
     const pluginDirs = await readdir(pluginsDir);
 
+    let successes = 0;
+    let errors = 0;
+
     for (const plug of pluginDirs) {
       const dir = resolve(pluginsDir, plug);
-      await buildPlugin(dir, resolve(distDir, plug), cfg, args.dev as boolean);
+      try {
+        await buildPlugin(dir, resolve(distDir, plug), cfg, args.dev as boolean);
+        successes++;
+      } catch (e) {
+        console.error(`Building ${plug} failed: ${e.message}`);
+        errors++;
+      }
     }
 
     const timeAfter = hrtime.bigint();
 
-    console.log(`Built ${pluginDirs.length} plugins successfully in ${(timeAfter - timeBefore) / 1000000n}ms`);
+    console.log(
+      `Built ${successes} plugins successfully (${errors} failed) in ${(timeAfter - timeBefore) / 1000000n}ms`,
+    );
   },
 } as Command;

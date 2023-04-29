@@ -1,6 +1,6 @@
 {
   "name": "@uwu/lune",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "The CLI build tool for shelter",
   "bin": "dist/clibundle.cjs",
   "main": "dist/src/mod.js",

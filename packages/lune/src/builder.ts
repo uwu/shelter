@@ -72,6 +72,8 @@ export async function buildPlugin(path: string, to: string, cfg: LuneCfg, dev = 
     }
   }
 
+  if (!entryPoint) throw new Error("failed to find entrypoint - check your working directory and config");
+
   await build({
     entryPoints: [entryPoint],
     outfile,
@@ -94,6 +96,7 @@ export async function buildPlugin(path: string, to: string, cfg: LuneCfg, dev = 
       ...(cfg.postPlugins ?? []),
     ],
     globalName: "__lune_temp_global",
+    logLevel: "silent", // we handle errors ourself
   });
 
   const finalDistJs = (await readFile(outfile)).toString().replace(/var __lune_temp_global\s*=\s*/, "");

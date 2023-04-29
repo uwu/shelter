@@ -97,14 +97,22 @@ Options:
 
     const cfg = await loadCfg((args.cfg as string) ?? resolve(dir, "lune.config.js"));
 
-    await rebuildPlugin(cfg, dir);
+    try {
+      await rebuildPlugin(cfg, dir);
+    } catch (e) {
+      throw new Error(`cannot start dev: ${e.message}`);
+    }
 
     startWs();
     startHttp();
 
     watch(dir, { ignoreInitial: true }).on("all", async () => {
-      await rebuildPlugin(cfg, dir);
-      await Promise.all([...broadcastList].map((broadcaster) => broadcaster()));
+      try {
+        await rebuildPlugin(cfg, dir);
+        await Promise.all([...broadcastList].map((broadcaster) => broadcaster()));
+      } catch (e) {
+        console.error(`rebuild failed: ${e.message}`);
+      }
     });
   },
 } as Command;
