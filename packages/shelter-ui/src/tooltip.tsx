@@ -22,7 +22,6 @@ const ToolTip: Component<{
   active: boolean;
   under: boolean;
 }> = (props) => {
-  debugger;
   let tooltipRef: HTMLDivElement;
 
   // default is just an estimate
