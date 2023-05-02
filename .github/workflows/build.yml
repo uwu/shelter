@@ -4,6 +4,8 @@ on:
     branches: [main]
     paths:
       - "packages/shelter/**"
+      - "packages/shelter-ui/**"
+      - "packages/shelter-assets/**"
   workflow_dispatch:
 
 jobs:
