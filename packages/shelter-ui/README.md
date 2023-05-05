@@ -19,6 +19,7 @@ For use outside of Discord, a solution may or may not be implemented.
   - [`<ErrorBoundary />`](#errorboundary-)
   - [`niceScrollbarsClass`](#nicescrollbarsclass)
   - [`use:focusring`](#usefocusring)
+  - [`use:tooltip`](#usetooltip)
 - [Components](#components)
   - [`<Text>`](#text)
   - [`<Header>`](#header)
@@ -201,6 +202,20 @@ or otherwise (e.g. `const { focusring } = shelter.ui`).
 <input use:focusring={6} type="checkbox" />
 ```
 
+### `use:tooltip`
+
+Shows a Discord-style tooltip when you hover over the element.
+
+Same scope rules apply as focusring.
+
+You can pass any JSX element type, including strings and elements.
+
+If you pass undefined, it will do nothing.
+
+```jsx
+<button use:tooltip="Delete"><DeleteIcon /></button>
+```
+
 ## Components
 
 ### `<Text>`
@@ -254,6 +269,7 @@ Button is a, well, button, using Discord's styles. The props are as follows:
 - **onClick**: callback when button is clicked
 - **onDoubleClick**: callback when button is double-clicked
 - **children**: the button text
+- **tooltip**: the tooltip text, if any
 
 ### `<LinkButton>`
 
@@ -268,6 +284,8 @@ A toggle switch.
 The `id` prop sets the id of the `<input>`.
 
 `checked`, `disabled`, `onChange` should be pretty self-explanatory.
+
+`tooltip`, if set, adds a tooltip.
 
 ```jsx
 const [switchState, setSwitchState] = createSignal(false);
@@ -286,9 +304,19 @@ Unless `hideBorder` is set, a `<Divider />` is rendered under the component.
 
 The child elements of the component is the title displayed next to the switch.
 
+`tooltip`, if set, adds a tooltip.
+
 ```jsx
 <SwitchItem note="Does cool things" value={/*...*/}>A cool option</SwitchItem>
 ```
+
+### `<Checkbox />`
+
+Like `<Switch />` but its a checkbox.
+
+### `<CheckboxItem>`
+
+Like `<SwitchItem>` but its a checkbox.
 
 ### `<ModalRoot>`
 

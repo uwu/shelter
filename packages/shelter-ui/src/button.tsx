@@ -2,7 +2,9 @@ import { Component, JSX, mergeProps } from "solid-js";
 import { injectCss } from "./util";
 import { classes, css } from "./button.tsx.scss";
 import { focusring } from "./focusring";
+import { tooltip } from "./tooltip";
 false && focusring;
+false && tooltip;
 
 let injectedCss = false;
 
@@ -69,6 +71,7 @@ export const Button: Component<{
   class?: string;
   onClick?: (e: Event) => void;
   onDoubleClick?: (e: Event) => void;
+  tooltip?: JSX.Element;
   "aria-label"?: string;
   children?: JSX.Element;
 }> = (rawProps) => {
@@ -92,6 +95,7 @@ export const Button: Component<{
   return (
     <button
       use:focusring
+      use:tooltip={props.tooltip}
       onClick={props.onClick}
       onDblClick={props.onDoubleClick}
       aria-label={props["aria-label"]}
@@ -117,6 +121,7 @@ export const LinkButton: Component<{
   class?: string;
   href?: string;
   "aria-label"?: string;
+  tooltip?: JSX.Element;
   children?: JSX.Element;
 }> = (props) => {
   if (!injectedCss) {
@@ -127,6 +132,7 @@ export const LinkButton: Component<{
   return (
     <a
       use:focusring
+      use:tooltip={props.tooltip}
       style={props.style}
       href={props.href}
       aria-label={props["aria-label"]}

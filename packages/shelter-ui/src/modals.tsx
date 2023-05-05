@@ -5,7 +5,9 @@ import { Button, ButtonColors, ButtonSizes } from "./button";
 import { openModal } from "./openModal";
 import { IconClose } from "./icons";
 import { focusring } from "./focusring";
+import { tooltip } from "./tooltip";
 false && focusring;
+false && tooltip;
 
 export const ModalSizes = {
   SMALL: classes.sm,
@@ -41,6 +43,7 @@ export const ModalHeader: Component<{
 
     <button
       use:focusring
+      use:tooltip="Close modal"
       aria-label="close modal"
       class={classes.cbtn}
       style={{ display: props.noClose ? "none" : "" }}

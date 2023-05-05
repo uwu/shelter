@@ -50,7 +50,7 @@ export const PluginCard: Component<{
         <div style="flex:1" />
         <Show keyed when={getSettings(props.id)}>
           <button
-            use:tooltip={`Open settings for ${props.plugin.manifest.name}`}
+            use:tooltip="Open settings"
             aria-label={`open settings for ${props.plugin.manifest.name}`}
             use:focusring
             class={classes.btn}
@@ -69,7 +69,7 @@ export const PluginCard: Component<{
         </Show>
         <Show keyed when={!isDev()}>
           <button
-            use:tooltip={`Delete ${props.plugin.manifest.name}`}
+            use:tooltip="Delete"
             aria-label={`delete ${props.plugin.manifest.name}`}
             use:focusring
             class={classes.btn}

@@ -3,7 +3,9 @@ import { genId, injectCss } from "./util";
 import { Divider } from "./index";
 import { css, classes } from "./switch.tsx.scss";
 import { focusring } from "./focusring";
+import { tooltip } from "./tooltip";
 false && focusring;
+false && tooltip;
 
 let injectedCss = false;
 
@@ -72,6 +74,7 @@ export const Switch: Component<{
   checked?: boolean;
   disabled?: boolean;
   onChange?(newVal: boolean): void;
+  tooltip?: JSX.Element;
   "aria-label"?: string;
 }> = (props) => {
   if (!injectedCss) {
@@ -91,9 +94,10 @@ export const Switch: Component<{
       <div class={classes.slider}>
         <ButtonIcon state={props.checked} />
       </div>
-      {/* the actual input: useful for accesibility etc */}
+      {/* the actual input: useful for accessibility etc */}
       <input
         use:focusring={12}
+        use:tooltip={props.tooltip}
         id={props.id}
         type="checkbox"
         checked={props.checked}
@@ -113,6 +117,7 @@ export const SwitchItem: Component<{
   children: JSX.Element;
   note?: JSX.Element;
   hideBorder?: boolean;
+  tooltip?: JSX.Element;
   "aria-label"?: string;
 }> = (props) => {
   const id = genId();
@@ -128,6 +133,7 @@ export const SwitchItem: Component<{
             onChange={props.onChange}
             disabled={props.disabled}
             aria-label={props["aria-label"]}
+            tooltip={props.tooltip}
           />
         </div>
       </div>

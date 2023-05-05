@@ -1,6 +1,10 @@
 import { Component, JSX, Show } from "solid-js";
 import { css, classes } from "./checkbox.tsx.scss";
 import { genId, injectCss } from "./util";
+import { focusring } from "./focusring";
+import { tooltip } from "./tooltip";
+false && focusring;
+false && tooltip;
 
 let injectedCss = false;
 
@@ -29,6 +33,7 @@ export const CheckboxItem: Component<{
   onChange?(newVal: boolean): void;
   mt?: boolean;
   id?: string;
+  tooltip?: JSX.Element;
   "aria-label"?: string;
 }> = (props) => {
   if (!injectedCss) {
@@ -47,6 +52,8 @@ export const CheckboxItem: Component<{
       <div class={classes.checkbox}>
         <CheckIcon state={props.checked} />
         <input
+          use:focusring
+          use:tooltip={props.tooltip}
           id={props.id ?? id}
           type="checkbox"
           checked={props.checked}
@@ -67,5 +74,6 @@ export const Checkbox: Component<{
   disabled?: boolean;
   onChange?(newVal: boolean): void;
   id?: string;
+  tooltip?: JSX.Element;
   "aria-label"?: string;
 }> = (props) => <CheckboxItem {...props} />; // lazy lmao but it works
