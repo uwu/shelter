@@ -59,7 +59,7 @@ async function getDb(store: string) {
 }
 
 export const idbStore = <T = any>(name: string) => {
-  const signals: Record<string, Signal<any>> = {};
+  const signals: Record<string, Signal<any>> = {}; // TODO: signal tree
   let db: IDBPDatabase<any>;
 
   // queues callbacks for when the db loads
