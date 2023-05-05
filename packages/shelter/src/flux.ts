@@ -1,5 +1,6 @@
 import { Dispatcher, FluxStore } from "./types";
 import exfiltrate from "./exfiltrate";
+import { onStoreFound } from "./util";
 
 declare global {
   interface Object {
