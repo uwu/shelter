@@ -59,8 +59,12 @@ export type FluxStore<T = unknown> = T & {
   callback(cb: () => void): void;
   throttledCallback(): unknown; // idk what the hell this does
 
+  getName(): string;
+
+  __getLocalVars?(): object;
+
   _changeCallbacks: FluxStoreChangeCallbacks;
-  _isInitialized: true;
+  _isInitialized: boolean;
   _version: number;
   _reactChangeCallbacks: FluxStoreChangeCallbacks;
 };
