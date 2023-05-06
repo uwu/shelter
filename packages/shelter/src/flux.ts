@@ -120,13 +120,14 @@ const storeInitPromises = new WeakMap<FluxStore, Promise<void>>();
 
 // awaits until the _isInitialized property of a store is true by overwritting it's setter
 function awaitStoreInit(store: FluxStore): Promise<void> {
+  if (store._isInitialized) return;
+
   if (storeInitPromises.has(store)) {
     return storeInitPromises.get(store);
   }
   const initPromise = new Promise<void>((resolve) => {
-    if (store._isInitialized) return resolve();
-
     let actualIsInitialized = false;
+
     Object.defineProperty(store, "_isInitialized", {
       get() {
         return actualIsInitialized;
@@ -135,6 +136,7 @@ function awaitStoreInit(store: FluxStore): Promise<void> {
         actualIsInitialized = value;
         if (value === true) {
           resolve();
+          storeInitPromises.delete(store);
         }
       },
     });
@@ -161,7 +163,7 @@ async function getStoreOnCallback(name: string) {
   });
 }
 
-export async function awaitStore(name: string, awaitInit: boolean = true): Promise<FluxStore> {
+export async function awaitStore(name: string, awaitInit = true): Promise<FluxStore> {
   const store: FluxStore = stores[name]?.[0] ?? stores[name] ?? (await getStoreOnCallback(name));
   if (awaitInit) await awaitStoreInit(store);
   return store;
