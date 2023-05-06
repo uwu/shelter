@@ -217,9 +217,6 @@ Next.js
 # TernJS port file
 .tern-port
 
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
-
 # yarn v2
 .yarn/cache
 .yarn/unplugged
@@ -245,3 +242,12 @@ https://www.toptal.com/developers/gitignore/api/jetbrains+all,node
 # web extension stuff
 web-ext-artifacts
 _metadata
+
+### Visual Studio Code ###
+.vscode/*
+
+# Local History for Visual Studio Code
+.history/
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
