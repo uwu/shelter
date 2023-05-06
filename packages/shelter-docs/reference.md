@@ -125,6 +125,17 @@ It will ignore collisions and only expose the first store found by name.
 
 Example is same as above.
 
+### `shelter.flux.awaitStore`
+
+```ts
+awaitStore(name: string, awaitInit = true): Promise<FluxStore> 
+```
+> Beware that `name` is cAsE sEnSitiVe
+
+While not likely, it *is possible* that a store you're trying to access has not been found/initialized by the time your plugin starts.
+
+Therefore **it is strongly recommended** to rely on this function (instead of `flux.stores`/`flux.storesFlat`) if you need to access a store as soon as possible.
+
 ### `shelter.flux.intercept`
 
 ```ts
