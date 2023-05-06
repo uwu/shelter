@@ -134,7 +134,7 @@ awaitStore(name: string, awaitInit = true): Promise<FluxStore>
 
 While not likely, it *is possible* that a store you're trying to access has not been found/initialized by the time your plugin starts.
 
-Therefore **it is strongly recommended** to rely on this function (instead of `flux.stores`/`flux.storesFlat`) if you need to access a store as soon as possible.
+Therefore **it is strongly recommended** to rely on this function (instead of `flux.stores`/`flux.storesFlat`) if you need to access a store as soon as possible, immediately at plugin load.
 
 ### `shelter.flux.intercept`
 
