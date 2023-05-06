@@ -89,65 +89,6 @@ export function createSubscription<TState, TStoreData = unknown>(
   return data;
 }
 
-
-const storeInitPromises = new WeakMap<FluxStore, Promise<void>>();
-
-// awaits until the _isInitialized property of a store is true by overwritting it's setter
-function awaitStoreInit(store: FluxStore): Promise<void> {
-  return storeInitPromises[store] ?? (storeInitPromises[store] = new Promise<void>(resolve => {
-    if (store._isInitialized) resolve();
-
-    let actualIsInitialized = false;
-
-    Object.defineProperty("_isInitialized", store, {
-      get() {
-        return actualIsInitialized;
-      },
-      set(value) {
-        actualIsInitialized = value;
-        if (value === true) {
-          resolve();
-        }
-      }
-    })
-  }))
-}
-
-type storeCb = (store: FluxStore | FluxStore[]) => void
-const storeCallbacks: {[storeName: string]: storeCb[]} = {}
-
-function addStoreCallback(name: string, cb: storeCb) {
-  if (!storeCallbacks[name]) {
-    storeCallbacks[name] = [cb]
-  } else {
-    storeCallbacks[name].push(cb)
-  }
-}
-
-export function onStoreFound(store: FluxStore | FluxStore[]) {
-  const name = store?.getName() ?? store?.[0].getName();
-  const callbacks = storeCallbacks[name];
-  callbacks && callbacks.forEach(c => c(store));
-  delete storeCallbacks[name];
-}
-
-export function awaitStore(name: string, awaitInit?: boolean, flat?: true): Promise<FluxStore>;
-export function awaitStore(name: string, awaitInit: boolean | undefined, flat: false): Promise<FluxStore[]>;
-export async function awaitStore(name: string, awaitInit = true, flat = true): Promise<FluxStore | FluxStore[]> {
-  let store = stores[name] ?? await new Promise(resolve => addStoreCallback(name, resolve));
-  if (flat && store?.[0]) {
-    store = store[0];
-  }
-  if (awaitInit) {
-    if (!flat && Array.isArray(store)) {
-      await Promise.all(store.map(s => awaitStoreInit(s)));
-    } else {
-      await awaitStoreInit(store);
-    }
-  }
-  return store;
-}
-
 export const storeAssign = <T>(store: T, toApply: T) => batch(() => Object.assign(store, toApply));
 
 export const sleep = (ms = 0) => new Promise((r) => setTimeout(r, ms));

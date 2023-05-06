@@ -1,6 +1,5 @@
 import { Dispatcher, FluxStore } from "./types";
 import exfiltrate from "./exfiltrate";
-import { onStoreFound } from "./util";
 
 declare global {
   interface Object {
@@ -22,7 +21,10 @@ export const stores: Record<string, FluxStore | FluxStore[]> = {};
 // noinspection JSIgnoredPromiseFromCall
 exfiltrate("_dispatchToken", (store) => {
   const name = store.getName();
-  if (!stores[name]) stores[name] = store;
+  if (!stores[name]) {
+    stores[name] = store;
+    onStoreFound(store);
+  }
   else {
     if (Array.isArray(stores[name])) (stores[name] as FluxStore[]).push(store);
     else stores[name] = [stores[name], store];
@@ -114,3 +116,68 @@ export const storesFlat = new Proxy<Record<string, FluxStore>>(stores as any, {
     throw new Error("do not try to mutate flatStores");
   },
 });
+
+
+const storeInitPromises = new WeakMap<FluxStore, Promise<void>>();
+
+// awaits until the _isInitialized property of a store is true by overwritting it's setter
+function awaitStoreInit(store: FluxStore): Promise<void> {
+  if (storeInitPromises.has(store)) {
+    return storeInitPromises.get(store)
+  }
+  const initPromise = new Promise<void>(resolve => {
+    if (store._isInitialized) return resolve();
+
+    let actualIsInitialized = false;
+
+    Object.defineProperty("_isInitialized", store, {
+      get() {
+        return actualIsInitialized;
+      },
+      set(value) {
+        actualIsInitialized = value;
+        if (value === true) {
+          resolve();
+        }
+      }
+    })
+  })
+  storeInitPromises.set(store, initPromise);
+  return initPromise
+}
+
+type StoreCb = (store: FluxStore | FluxStore[]) => void
+const storeCallbacks: Record<string, StoreCb[]> = {}
+
+function onStoreFound(store: FluxStore | FluxStore[]) {
+  const name = store?.getName() ?? store?.[0].getName();
+  storeCallbacks[name]?.forEach(c => c(store));
+  delete storeCallbacks[name];
+}
+
+async function getStore(name: string) {
+  return new Promise<StoreCb>(resolve => {
+    if (!storeCallbacks[name]) {
+      storeCallbacks[name] = [resolve]
+    } else {
+      storeCallbacks[name].push(resolve)
+    }
+  })
+}
+
+export async function awaitStore(name: string, awaitInit?: boolean, flat?: true): Promise<FluxStore>;
+export async function awaitStore(name: string, awaitInit: boolean | undefined, flat: false): Promise<FluxStore | FluxStore[]>;
+export async function awaitStore(name: string, awaitInit = true, flat = true) {
+  let store = stores[name] ?? await getStore(name);
+  if (flat && store?.[0]) {
+    store = store[0];
+  }
+  if (awaitInit) {
+    if (!flat && Array.isArray(store)) {
+      await Promise.all(store.map(s => awaitStoreInit(s)));
+    } else {
+      await awaitStoreInit(store);
+    }
+  }
+  return store;
+}
