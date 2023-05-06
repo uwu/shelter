@@ -76,7 +76,7 @@ export function createListener(type: string): () => any {
 }
 
 // gets the data from a flux store reactively
-export function createSubscription<TState, TStoreData = unknown>(
+export function createSubscription<TState, TStoreData = Record<string, any>>(
   store: FluxStore<TStoreData>,
   getStateFromStore: (store: FluxStore<TStoreData>) => TState,
 ): () => TState {

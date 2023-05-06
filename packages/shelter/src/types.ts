@@ -49,7 +49,10 @@ type FluxStoreChangeCallbacks = {
   invokeAll(): void;
 };
 
-export type FluxStore<T = unknown> = T & {
+// T = any has desired DX, but flattens FluxStore to any, killing IDE support
+// T = unknown retains the shape of the object, but has bad DX
+// T = Record<string, any> mimics behaviour of any, but doesn't flatten the type away to any.
+export type FluxStore<T = Record<string, any>> = T & {
   addChangeListener(cb: () => void): void;
   removeChangeListener(cb: () => void): void;
   addReactChangeListener(cb: () => void): void;
