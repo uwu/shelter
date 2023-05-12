@@ -51,9 +51,9 @@ This will not throw an error about MV2, however, there are a couple of caveats -
 
 ## How do I make a plugin?
 
-See the [docs](packages/shelter-docs/README.md)
+See the [docs](packages/shelter-docs/README.md).
 
-Also see [Lune's docs](https://github.com/uwu/shelter/tree/main/packages/lune#readme)
+Also see [Lune's docs](https://github.com/uwu/shelter/tree/main/packages/lune#readme).
 
 ## Is there a plugin repo / website / build tool / etc.?
 
