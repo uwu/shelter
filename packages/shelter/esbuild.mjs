@@ -11,7 +11,7 @@ build({
   loader: {
     ".png": "dataurl",
     ".jpg": "dataurl",
-    ".svg": "text",
+    ".svg": "dataurl",
   },
   plugins: [
     solidPlugin(),
