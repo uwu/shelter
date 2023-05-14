@@ -1,4 +1,4 @@
-import ShelterPng from "shelter-assets/banner/banner.png";
+import ShelterSvg from "shelter-assets/svg/banner.svg";
 
 interface ShelterLogoProps {
   width?: number;
@@ -8,7 +8,7 @@ interface ShelterLogoProps {
 export default (props: ShelterLogoProps) => (
   <img
     style={{ display: "inline", "border-radius": "0.725rem", "user-select": "none" }}
-    src={ShelterPng}
+    src={ShelterSvg}
     width={props.width || 225}
     height={props.height ?? 80.5}
     draggable={false}
