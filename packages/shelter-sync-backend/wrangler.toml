@@ -1,0 +1,10 @@
+name = "shelter-sync-backend"
+main = "src/index.ts"
+compatibility_date = "2023-05-15"
+
+kv_namespaces = [
+  { binding = "SYNC_KV", id = "5b2754a1d77840a09a74ff310b1c5893", preview_id = "00117f9e4c71479088ce9bc3fc6a38c4" }
+]
+
+[vars]
+REDIR_URL = "http://localhost:8787/api/oauth"
