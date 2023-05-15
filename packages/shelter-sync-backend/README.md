@@ -2,11 +2,9 @@
 
 This worker stores the data, and handles the role of intermediary for OAuth2.
 
-## Logging in
+## Are you a user?
 
-1. Go to the Discord auth page (opening the worker's URL directly in a browser redirects you automatically)
-2. Log in and authorize shelter sync
-3. You will be sent the Discord OAuth & refresh tokens, and token expiration time. It is the client's responsibility to refresh the token.
+Follow the instructions in the shelter UI to set this up as a user.
 
 ## Syncing
 
