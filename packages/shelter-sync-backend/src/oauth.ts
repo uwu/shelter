@@ -44,3 +44,22 @@ export async function handleAuthCallback(c: Ctxt) {
   // TODO: UI
   return c.text("Your token is!: " + tokStr);
 }
+
+export async function handleRefresh(c: Ctxt) {
+  const res = await fetch("https://discord.com/api/oauth2/token", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      client_id: c.env.clientid,
+      client_secret: c.env.clientsecret,
+      grant_type: "refresh_token",
+      refresh_token: c.req.query("tok")!,
+    }).toString(),
+  });
+
+  if (!res.ok) return c.newResponse(await res.text(), res.status as any);
+
+  return c.text(generateTokenString(await res.json()));
+}
