@@ -1,7 +1,7 @@
 import { Ctxt } from "./types";
 
 export async function writeState(ns: KVNamespace, state: undefined | string, tokenstr: string) {
-  if (!state) return;
+  if (!state || state === "undefined") return;
 
   // if one exists, this could give the wrong person access to your account
   // it would be a very unlikely timing attack but yeah just *not writing the token* is safer
