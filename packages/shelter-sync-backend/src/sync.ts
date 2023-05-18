@@ -1,4 +1,5 @@
 import { Ctxt } from "./types";
+import { delete_, upload } from "./storage";
 
 async function uidFromAuth(auth: undefined | string) {
   const token = auth?.split(" ")?.[1];
@@ -27,21 +28,16 @@ export async function handleUpload(c: Ctxt) {
 
   const bodyTxt = await c.req.text();
 
-  try {
-    JSON.parse(bodyTxt);
-  } catch (e) {
-    return c.newResponse(e + "", 400);
-  }
+  const err = await upload(c.env.SYNC_KV, uid, c.req.query("client"), bodyTxt);
 
-  await c.env.SYNC_KV.put(uid, bodyTxt);
-
-  return c.newResponse(null, 201);
+  return err ? c.newResponse(err.message, 400) : c.newResponse(null, 201);
 }
 
 export async function handleDelete(c: Ctxt) {
   const uid = await uidFromAuth(c.req.header("Authorization"));
   if (!uid) return c.newResponse(null, 401);
 
-  await c.env.SYNC_KV.delete(uid);
-  return c.newResponse(null, 204);
+  const err = await delete_(c.env.SYNC_KV, uid, c.req.query("client"), !!c.req.query("all"));
+
+  return err ? c.newResponse(err.message, 400) : c.newResponse(null, 204);
 }
