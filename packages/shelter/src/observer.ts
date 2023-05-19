@@ -2,7 +2,11 @@
 
 type MutationNode = HTMLElement | SVGElement;
 type ObserverCb = (e: MutationNode) => void;
-const observations = new Set<[string, ObserverCb]>();
+
+/** [selector, callback, insta-canceled */
+type Observation = [string, ObserverCb, boolean];
+
+const observations = new Set<Observation>();
 
 const observer = new MutationObserver((records) => {
   // de-dupe to be sure
@@ -16,9 +20,11 @@ const observer = new MutationObserver((records) => {
   }
 
   for (const elem of changedElems)
-    for (const [sel, cb] of observations) {
-      if (elem.matches(sel)) cb(elem);
-      elem.querySelectorAll(sel).forEach((e) => (e instanceof HTMLElement || e instanceof SVGElement) && cb(e));
+    for (const obs of observations) {
+      if (elem.matches(obs[0])) obs[1](elem);
+      elem
+        .querySelectorAll(obs[0])
+        .forEach((e) => !obs[2] && (e instanceof HTMLElement || e instanceof SVGElement) && obs[1](e));
     }
 });
 
@@ -34,13 +40,20 @@ const stopObserving = () => observer.disconnect();
 export function observe(sel: string, cb: ObserverCb) {
   if (observations.size === 0) startObserving();
 
-  const entry: [string, ObserverCb] = [sel, cb];
+  const entry: Observation = [sel, cb, false];
   observations.add(entry);
 
-  return () => {
+  const unobs = () => {
     observations.delete(entry);
     if (observations.size === 0) stopObserving();
   };
+
+  unobs.now = () => {
+    entry[2] = true;
+    unobs();
+  };
+
+  return unobs;
 }
 
 export function unobserve() {

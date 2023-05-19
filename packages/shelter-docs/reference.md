@@ -11,12 +11,18 @@ API functions will have their TypeScript signatures listed.
 ### `shelter.observeDom`
 
 ```ts
-observeDom(selector: string, cb: (node: DOMNode) => void): () => void
+observeDom(selector: string, cb: (node: DOMNode) => void): {(): void; now(): void}
 ```
 
 shelter provides a DOM observer, which is an abstraction over [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver). This allows you to efficiently listen for changes to the document.
 
 The returned function can be called to stop this observation. Calling it more than once is fine.
+
+All elements modified in the current batch will cause the observation to fire, even after unobserving.
+To instantly stop sending elements to your callback, replace `unobserve()` with `unobserve.now()`.
+
+This is intended behaviour so that you can use unobserve in your callback,
+even if you intend to listen for a whole list of elements.
 
 `selector` is a [CSS Selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors).
 
@@ -128,7 +134,7 @@ Example is same as above.
 ### `shelter.flux.awaitStore`
 
 ```ts
-awaitStore(name: string, awaitInit = true): Promise<FluxStore> 
+awaitStore(name: string, awaitInit = true): Promise<FluxStore>
 ```
 > Beware that `name` is cAsE sEnSitiVe
 
