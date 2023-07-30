@@ -142,6 +142,12 @@ While not likely, it *is possible* that a store you're trying to access has not 
 
 Therefore **it is strongly recommended** to rely on this function (instead of `flux.stores`/`flux.storesFlat`) if you need to access a store as soon as possible, immediately at plugin load.
 
+### `shelter.flux.managers`
+
+Managers are Discord's new way of handling side effects in Flux. They are lazily loaded through a dispatch interceptor.
+
+This contains a list of all managers.
+
 ### `shelter.flux.intercept`
 
 ```ts
