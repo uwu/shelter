@@ -1,13 +1,36 @@
 import { Component, JSX } from "solid-js";
 import { render } from "solid-js/web";
 import { css as sBarCss, classes as sBarClasses } from "./scrollbars.scss";
+import { log } from "../../shelter/src/util";
+
+class ReactiveRootElem extends HTMLElement {
+  // children
+  c: () => JSX.Element;
+  // dispose
+  d?: () => void;
+
+  constructor(children: () => JSX.Element) {
+    super();
+    this.c = children;
+  }
+
+  connectedCallback() {
+    this.style.display = "contents";
+    this.d?.();
+    this.d = render(() => <>{this.c()}</>, this);
+  }
+
+  disconnectedCallback() {
+    this.d?.();
+  }
+}
+
+customElements.define("shltr-rroot", ReactiveRootElem);
 
 export const ReactiveRoot: Component<{ children: JSX.Element }> = (props) => {
-  const root = (<div style="display:contents" />) as HTMLDivElement;
-
-  const dispose = render(() => <>{props.children}</>, root);
-  root.addEventListener("DOMNodeRemovedFromDocument", dispose);
-
+  // @ts-expect-error web components moment
+  const root = (<shltr-rroot></shltr-rroot>) as ReactiveRootElem;
+  root.c = () => props.children;
   return root;
 };
 
