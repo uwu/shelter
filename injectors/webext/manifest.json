@@ -11,6 +11,7 @@
     "webRequest",
     "webRequestBlocking",
     "https://discord.com/*",
+    "https://*.discord.com/*",
     "https://raw.githubusercontent.com/*"
   ],
 
@@ -20,7 +21,7 @@
 
   "content_scripts": [
     {
-      "matches": ["https://discord.com/*"],
+      "matches": ["https://discord.com/*", "https://*.discord.com/*"],
       "js": ["content.js"],
       "run_at": "document_start"
     }
