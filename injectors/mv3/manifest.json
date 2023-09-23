@@ -11,14 +11,14 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://discord.com/*"],
+      "matches": ["https://discord.com/*", "https://*.discord.com/*"],
       "js": ["content.js"],
       "run_at": "document_start"
     }
   ],
   "icons": {},
   "externally_connectable": {
-    "matches": ["https://discord.com/*"]
+    "matches": ["https://discord.com/*", "https://*.discord.com/*"]
   },
   "declarative_net_request": {
     "rule_resources": [
