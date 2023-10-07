@@ -11,7 +11,7 @@ shelter is a new generation client mod built to be essentially bulletproof.
 Its development was sparked by the death of many client mods and the blow
 to all others that was Discord's switch to SWC.
 
-You can read much more about this event [here](https://cumcord.com/an-exercise-in-futility).
+You can read much more about this event [here](https://web.archive.org/web/20230726025103/https://cumcord.com/an-exercise-in-futility).
 
 It is developed by ex-members of the old Cumcord Team, under uwu.network.
 
