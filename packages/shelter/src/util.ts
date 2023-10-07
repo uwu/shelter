@@ -1,6 +1,6 @@
 import { batch, createSignal, onCleanup } from "solid-js";
-import { getDispatcher } from "./flux";
-import { Fiber, FluxStore } from "./types";
+import { getDispatcher, intercept } from "./flux";
+import { Fiber, FluxStore, FiberOwner } from "./types";
 
 declare global {
   interface Element {
@@ -9,6 +9,11 @@ declare global {
 }
 
 export const getFiber = (n: Element): Fiber => n[Object.keys(n).find((key) => key.startsWith("__reactFiber$"))];
+
+export const getFiberOwner = (n: Element): undefined | null | FiberOwner => {
+  const filter = ({ stateNode }: Fiber) => stateNode && !(stateNode instanceof Element);
+  return reactFiberWalker(getFiber(n), filter, true)?.stateNode as undefined | null | FiberOwner;
+};
 
 export function reactFiberWalker(
   node: Fiber,
@@ -33,14 +38,15 @@ export function reactFiberWalker(
   );
 }
 
-export const awaitDispatch = (type: string) =>
+export const awaitDispatch = (filter: string | ((payload: any) => boolean)) =>
   new Promise<any>(async (res) => {
-    const dispatcher = await getDispatcher();
-    const cb = (d) => {
-      res(d);
-      dispatcher.unsubscribe(type, cb);
-    };
-    dispatcher.subscribe(type, cb);
+    const _filter = typeof filter === "string" ? (payload) => payload?.type === filter : filter;
+    const unintercept = intercept((p: any) => {
+      if (_filter(p)) {
+        res(p);
+        unintercept();
+      }
+    });
   });
 
 export function log(text: any, func?: "log" | "warn" | "error"): void;
