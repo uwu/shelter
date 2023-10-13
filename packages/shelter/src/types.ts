@@ -117,8 +117,6 @@ export interface FiberOwner {
   updater: object;
   _reactInternals: Fiber;
 
-  getDomElement: Element;
-
   setState(state: object, callback?: () => void): void;
   forceUpdate(callback?: () => void): void;
 
