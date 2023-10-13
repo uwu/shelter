@@ -60,7 +60,10 @@ export async function initSettings() {
     if (canceled) return;
 
     const sidebar = document.querySelector(`nav > [role=tablist]`);
-    if (!sidebar) return;
+    if (!sidebar) {
+      isFirst = true;
+      return;
+    }
 
     const f = reactFiberWalker(
       getFiber(sidebar),
@@ -68,7 +71,10 @@ export async function initSettings() {
       true,
     );
 
-    if (typeof f?.type !== "function") return;
+    if (typeof f?.type !== "function") {
+      isFirst = true;
+      return;
+    }
 
     unpatch = after("getPredicateSections", f.type.prototype, (args, ret: any[]) => {
       const changelogIdx = ret.findIndex((s) => s.section === "changelog");
