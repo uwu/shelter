@@ -47,8 +47,12 @@ export async function initSettings() {
   let canceled = false;
   let unobserve;
   let unpatch;
+  let isFirst = true;
 
   const cb = async () => {
+    if (!isFirst) return;
+    isFirst = false;
+
     // wait for lazy loading on initial user settings open
     await awaitDispatch((p) => p.type === "TRACK" && p.event === "settings_pane_viewed");
 
