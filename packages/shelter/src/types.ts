@@ -78,17 +78,7 @@ export interface Fiber {
   key: string | null;
   elementType: Function | string | null;
   type: Function | string | null;
-  stateNode:
-    | Element
-    | null
-    | {
-        context: object;
-        props: any;
-        refs: object;
-        state: object;
-        updater: object;
-        _reactInternals: Fiber;
-      };
+  stateNode: FiberOwner | Element | null;
 
   // Fiber
   return: Fiber | null;
@@ -116,4 +106,20 @@ export interface Fiber {
   childLanes: number;
 
   alternate: Fiber | null;
+}
+
+// reference: https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/react/index.d.ts
+export interface FiberOwner {
+  context: unknown;
+  props: any;
+  refs: object;
+  state: object;
+  updater: object;
+  _reactInternals: Fiber;
+
+  setState(state: object, callback?: () => void): void;
+  forceUpdate(callback?: () => void): void;
+
+  // returns ReactNode
+  render(): any;
 }

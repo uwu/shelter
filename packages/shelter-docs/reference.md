@@ -221,6 +221,14 @@ getFiber(node: DOMNode): Fiber
 
 Gets a React *fiber* from a DOM node. The fiber contains information about the state of the React element that Discord used to render the UI, and can be useful to extract, for example, message objects from the DOM.
 
+### `shelter.util.getFiberOwner`
+
+```ts
+getFiberOwner(node: DOMNode | Fiber): FiberOwner
+```
+
+Gets the next React *fiber owner instance* from a DOM node or Fiber. While owner instances only exist on React Class Components, it is pretty powerful as it provides the `forceUpdate` function that allows direct rerendering of it's component. This is typically used after patching or unpatching the component's `render` function to have the component rerender with the changes.
+
 ### `shelter.util.reactFiberWalker`
 
 ```ts
@@ -252,10 +260,10 @@ To prevent freezing the main thread, there is a recursion limit. To disable it, 
 ### `shelter.util.awaitDispatch`
 
 ```ts
-awaitDispatch(type: string): Promise<any>
+awaitDispatch(filter: string | ((payload: any) => boolean)): Promise<any>
 ```
 
-`awaitDispatch` returns a promise that will resolve when a dispatch of the given type occurs.
+`awaitDispatch` returns a promise that will resolve when a dispatch that matches the filter occurs.
 
 For example:
 

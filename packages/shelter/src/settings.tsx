@@ -1,7 +1,7 @@
 // Injects a section into user settings
 
 import { getDispatcher } from "./flux";
-import { awaitDispatch, getFiber, reactFiberWalker } from "./util";
+import { awaitDispatch, getFiber, getFiberOwner, reactFiberWalker } from "./util";
 import { Component } from "solid-js";
 import { SolidInReactBridge } from "shelter-ui";
 import Settings from "./components/Settings";
@@ -43,48 +43,49 @@ const generatePredicateSections = () =>
 export async function initSettings() {
   const FluxDispatcher = await getDispatcher();
 
-  let firstDispatch = true;
   let canceled = false;
   let unpatch;
+  let isFirst = true;
 
   const cb = async () => {
+    if (!isFirst) return;
+    isFirst = false;
+
     // wait for lazy loading on initial user settings open
-    if (firstDispatch) {
-      await awaitDispatch("USER_PROFILE_FETCH_SUCCESS");
-      firstDispatch = false;
-    }
+    await awaitDispatch((p) => p.type === "TRACK" && p.event === "settings_pane_viewed");
 
     // I <3 async
     if (canceled) return;
 
-    // microtask is necessary to allow react to finish rendering the ui before we run
-    queueMicrotask(() => {
-      const sidebar = document.querySelector("nav > [role=tablist]");
-      if (!sidebar) return;
+    const sidebar = document.querySelector(`nav > [role=tablist]`);
+    if (!sidebar) {
+      isFirst = true;
+      return;
+    }
 
-      const f = reactFiberWalker(
-        getFiber(sidebar),
-        (node) => typeof node?.type === "function" && node.type.prototype.getPredicateSections,
-        true,
-      );
+    const f = reactFiberWalker(
+      getFiber(sidebar),
+      (node) => typeof node?.type === "function" && node.type.prototype.getPredicateSections,
+      true,
+    );
 
-      if (typeof f?.type !== "function") return;
+    if (typeof f?.type !== "function") {
+      isFirst = true;
+      return;
+    }
 
-      unpatch = after("getPredicateSections", f.type.prototype, (args, ret: any[]) => {
-        const changelogIdx = ret.findIndex((s) => s.section === "changelog");
-        if (changelogIdx === -1) return;
+    unpatch = after("getPredicateSections", f.type.prototype, (args, ret: any[]) => {
+      const changelogIdx = ret.findIndex((s) => s.section === "changelog");
+      if (changelogIdx === -1) return;
 
-        // -1 to go ahead of the divider above it
-        ret.splice(changelogIdx - 1, 0, ...generatePredicateSections());
-      });
-
-      // trigger rerender for first load by clicking selected section
-      const sbarView = reactFiberWalker(getFiber(sidebar), (node) => typeof node.type === "string")?.stateNode;
-
-      if (sbarView instanceof Element) (sbarView.querySelector("[class*=selected]") as HTMLElement)?.click();
-
-      FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
+      // -1 to go ahead of the divider above it
+      ret.splice(changelogIdx - 1, 0, ...generatePredicateSections());
     });
+
+    // trigger rerender for first load
+    getFiberOwner(sidebar.parentElement)?.forceUpdate();
+
+    FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
   };
 
   FluxDispatcher.subscribe("USER_SETTINGS_MODAL_OPEN", cb);
