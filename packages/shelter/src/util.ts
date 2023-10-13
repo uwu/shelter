@@ -10,9 +10,12 @@ declare global {
 
 export const getFiber = (n: Element): Fiber => n[Object.keys(n).find((key) => key.startsWith("__reactFiber$"))];
 
-export const getFiberOwner = (n: Element): undefined | null | FiberOwner => {
+export const getFiberOwner = (n: Element | Fiber): undefined | null | FiberOwner => {
   const filter = ({ stateNode }: Fiber) => stateNode && !(stateNode instanceof Element);
-  return reactFiberWalker(getFiber(n), filter, true)?.stateNode as undefined | null | FiberOwner;
+  return reactFiberWalker(n instanceof Element ? getFiber(n) : n, filter, true)?.stateNode as
+    | undefined
+    | null
+    | FiberOwner;
 };
 
 export function reactFiberWalker(

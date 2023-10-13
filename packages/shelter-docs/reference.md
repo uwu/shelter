@@ -224,10 +224,10 @@ Gets a React *fiber* from a DOM node. The fiber contains information about the s
 ### `shelter.util.getFiberOwner`
 
 ```ts
-getFiberOwner(node: DOMNode): FiberOwner
+getFiberOwner(node: DOMNode | Fiber): FiberOwner
 ```
 
-Gets a React *fiber owner instance* from a DOM node. While owner instances only exist on React Class Components, it is pretty powerful as it provides the `forceUpdate` function that allows direct rerendering of the component. This is typically used after patching or unpatching the component's `render` function to have the component rerender with the changes.
+Gets the next React *fiber owner instance* from a DOM node or Fiber. While owner instances only exist on React Class Components, it is pretty powerful as it provides the `forceUpdate` function that allows direct rerendering of it's component. This is typically used after patching or unpatching the component's `render` function to have the component rerender with the changes.
 
 ### `shelter.util.reactFiberWalker`
 
