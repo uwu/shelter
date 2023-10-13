@@ -43,9 +43,9 @@ export function reactFiberWalker(
 
 export const awaitDispatch = (filter: string | ((payload: any) => boolean)) =>
   new Promise<any>(async (res) => {
-    const _filter = typeof filter === "string" ? (payload) => payload?.type === filter : filter;
+    const filterFunc = typeof filter === "string" ? (payload) => payload?.type === filter : filter;
     const unintercept = intercept((p: any) => {
-      if (_filter(p)) {
+      if (filterFunc(p)) {
         res(p);
         unintercept();
       }
