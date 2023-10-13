@@ -6,7 +6,6 @@ import { Component } from "solid-js";
 import { SolidInReactBridge } from "shelter-ui";
 import Settings from "./components/Settings";
 import { after } from "spitroast";
-import { observe } from "./observer";
 
 type SettingsSection =
   | ["divider"]
@@ -45,7 +44,6 @@ export async function initSettings() {
   const FluxDispatcher = await getDispatcher();
 
   let canceled = false;
-  let unobserve;
   let unpatch;
   let isFirst = true;
 
@@ -95,7 +93,6 @@ export async function initSettings() {
   return () => {
     FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
     canceled = true;
-    unobserve?.();
     unpatch?.();
   };
 }
