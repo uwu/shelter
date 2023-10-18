@@ -1,0 +1,9 @@
+[Trigger]
+Operation = Remove
+Type = Package
+Target = shelter
+
+[Action]
+Depends = shelter
+When = PreTransaction
+Exec = /usr/share/shelter/remove-auto.sh

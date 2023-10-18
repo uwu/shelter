@@ -1,0 +1,13 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Package
+Target = shelter
+Target = discord
+Target = discord-canary
+Target = discord-ptb
+
+[Action]
+Depends = shelter
+When = PostTransaction
+Exec = /usr/share/shelter/install-auto.sh

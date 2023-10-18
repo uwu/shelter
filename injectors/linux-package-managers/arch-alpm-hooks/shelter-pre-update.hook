@@ -1,0 +1,12 @@
+[Trigger]
+Operation = Upgrade
+Type = Package
+Target = shelter
+Target = discord
+Target = discord-canary
+Target = discord-ptb
+
+[Action]
+Depends = shelter
+When = PreTransaction
+Exec = /usr/share/shelter/remove-auto.sh
