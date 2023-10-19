@@ -1,7 +1,7 @@
 const electron = require("electron");
 const path = require("path");
 const Module = require("module");
-const fs = require("fs");
+const fs = require("original-fs"); // using electron's fs causes app.asar to be locked during host updates
 const https = require("https");
 
 const logger = new Proxy(console, {
@@ -75,6 +75,55 @@ electron.app.on("ready", () => {
 
   electron.session.defaultSession.webRequest.onHeadersReceived = () => {};
 });
+// #endregion
+
+// #region Windows host updates
+function isNewerDir(newDir, oldDir) {
+  const newParts = newDir.split("app-")[1].split(".");
+  const oldParts = oldDir.split("app-")[1].split(".");
+  for (let i = 0; i < newParts.length; i++) {
+    const a = parseInt(newParts[i]);
+    const b = parseInt(oldParts[i]);
+    if (a > b) return true;
+    if (a < b) return false;
+  }
+  return false;
+}
+
+function patchLatest() {
+  try {
+    const currentPath = path.join(__dirname, "..", "..");
+    const localPath = path.join(currentPath, "..");
+
+    const latestPath = path.join(
+      localPath,
+      fs
+        .readdirSync(localPath)
+        .filter((dir) => dir.startsWith("app-"))
+        .reduce((prev, curr) => (isNewerDir(curr, prev) ? curr : prev)),
+    );
+
+    if (latestPath === currentPath) return;
+
+    logger.log("Host update occured! Copying injector to new directory...");
+    const newResourcesPath = path.join(latestPath, "resources");
+    fs.cpSync(path.join(currentPath, "resources", "app"), path.join(newResourcesPath, "app"), { recursive: true });
+
+    const appAsar = path.join(newResourcesPath, "app.asar");
+    const originalAsar = path.join(newResourcesPath, "original.asar");
+    if (!fs.existsSync(appAsar)) return;
+
+    logger.log("Renaming app.asar -> original.asar...");
+    fs.renameSync(appAsar, originalAsar);
+  } catch (e) {
+    logger.error("Host update error:", e);
+  }
+}
+
+if (process.platform === "win32") {
+  electron.app.on("before-quit", patchLatest);
+}
+
 // #endregion
 
 // #region BrowserWindow
