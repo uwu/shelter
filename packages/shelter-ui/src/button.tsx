@@ -24,7 +24,7 @@ type ButtonColor = [string, string, string];
 export const ButtonColors: Record<string, ButtonColor> = {
   // COLOUR: [bg, fg, hover]
   BRAND: ["var(--brand-experiment)", "var(--interactive-active)", "var(--brand-experiment-560)"],
-  RED: ["var(--text-danger)", "var(--interactive-active)", "var(--button-danger-background-hover)"],
+  RED: ["var(--button-danger-background)", "var(--interactive-active)", "var(--button-danger-background-hover)"],
   GREEN: ["var(--button-positive-background)", "var(--interactive-active)", "var(--button-positive-background-hover)"],
   SECONDARY: [
     "var(--button-secondary-background)",
