@@ -8,6 +8,7 @@ import { unobserve } from "./observer";
 import windowApi from "./windowApi";
 import { sleep } from "./util";
 import { initDevmode } from "./devmode";
+import { unpatchHttpHandlers } from "./http";
 
 const start = performance.now();
 util.log("shelter is initializing...");
@@ -34,6 +35,7 @@ const waitForAppMount = async () => {
     patcher.unpatchAll,
     unobserve,
     removeAllSections,
+    unpatchHttpHandlers,
   ]);
 
   window["shelter"] = await windowApi(unloads);
