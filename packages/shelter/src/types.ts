@@ -1,3 +1,5 @@
+import type * as SuperAgent from "superagent";
+
 export interface Dispatcher {
   // not typing this lol
   _actionHandlers: unknown;
@@ -71,6 +73,103 @@ export type FluxStore<T = Record<string, any>> = T & {
   _version: number;
   _reactChangeCallbacks: FluxStoreChangeCallbacks;
 };
+
+// TODO: Test if these are all correct.
+export interface HTTPRequest {
+  url: string;
+  /**
+   * Supports arrays as well, see:
+   * https://github.com/ladjs/superagent/blob/1c8338b2e0a3b8f604d08acc7f3cbe305be1e571/src/client.js#L577
+   */
+  query?: string | object;
+
+  headers?: Record<string, string>;
+
+  /** X-Audit-Log-Reason */
+  reason?: string;
+  /** X-Context-Properties */
+  context?: any;
+
+  /** Number of times this request should be retried. */
+  retries?: number;
+
+  /** X-Failed-Requests */
+  retried?: number;
+  backoff?: unknown;
+
+  /**
+   * If this is an object, it's encoded as JSON,
+   * if it's a string, it's encoded as x-www-form-urlencoded data unless
+   * otherwise specified in the headers.
+   */
+  body?: string | object;
+  /** Cannot be used together with {@link body} */
+  attachments?: {
+    name: string;
+    file: Blob | File;
+    filename: string;
+  }[];
+  /**
+   * Sets the fields for "multipart/form-data" request bodies,
+   * cannot be used together with {@link body};
+   */
+  fields?: {
+    name: string;
+    value: string | Blob | File;
+  }[];
+
+  /** Timeout in milliseconds */
+  timeout?: number;
+
+  /** Parses the response as a {@link Blob} */
+  binary?: boolean;
+
+  oldFormErrors: boolean;
+
+  onRequestCreated?: (request: SuperAgent.Request) => void;
+  onRequestProgress?: (this: SuperAgent.Request, event: SuperAgent.ProgressEvent) => void;
+
+  // Not sure if this is right, we probably won't use this anyways.
+  interceptResponse?: (
+    this: SuperAgent.Request,
+    response: SuperAgent.Response,
+    redo: (newHeaders: Record<string, string>, newIntercept: HTTPRequest["interceptResponse"]) => void,
+    reject: (any) => void,
+  ) => void;
+}
+
+export interface HTTPResponse {
+  ok: boolean;
+  headers: Record<string, string>;
+  body: any;
+  text: string;
+  status: number;
+}
+
+export interface HTTPErrorCallback {
+  ok: false;
+  hasErr: true;
+  err: any;
+}
+
+export type HTTPSuccessCallback = {
+  hasErr: false;
+} & HTTPResponse;
+
+export type HTTPCallback = (response: HTTPErrorCallback | HTTPSuccessCallback) => void;
+
+export type HTTPFunction = (request: string | HTTPRequest, callback?: HTTPCallback) => Promise<HTTPResponse>;
+
+export interface DiscordHTTP {
+  get: HTTPFunction;
+  post: HTTPFunction;
+  put: HTTPFunction;
+  patch: HTTPFunction;
+  delete: HTTPFunction;
+  getAPIBaseURL: string;
+  V6OrEarlierAPIError: Error;
+  V8APIError: Error;
+}
 
 export interface Fiber {
   // Instance
