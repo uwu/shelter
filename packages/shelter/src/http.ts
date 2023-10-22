@@ -18,8 +18,8 @@ const unpatch = after("bind", Function.prototype, function (args, res) {
 export let unpatchHttpHandlers;
 function patchHttpHandlers() {
   if (unpatchHttpHandlers) return;
-  const patches = ["get", "post", "put", "patch", "delete"].map((f) =>
-    instead(f, discordHttp, async (args, original) => {
+  const patches = ["get", "post", "put", "patch", "delete"].map((fun) =>
+    instead(fun, discordHttp, async (args, original) => {
       let req = args[0];
       if (typeof req === "string") {
         req = { url: req };
@@ -31,8 +31,16 @@ function patchHttpHandlers() {
         const { value, done } = iterator.next();
         if (!done) {
           const [method, filter, intercept] = value as Intercept;
-          if (method !== f || !filter(req.url)) return send(req);
-          return intercept(req, send);
+          if (method.toLowerCase() !== fun || !filter(req.url)) return send(req);
+
+          let called = false;
+          function sendOnce(req: HTTPRequest): Promise<HTTPResponse> {
+            if (called) throw new Error("You cannot call 'send' more than once.");
+            called = true;
+            return send(req);
+          }
+
+          return intercept(req, sendOnce);
         }
         return original(req, args[1]);
       }
@@ -44,19 +52,29 @@ function patchHttpHandlers() {
   unpatchHttpHandlers = () => patches.forEach((p) => p());
 }
 
+type Method = "get" | "post" | "put" | "patch" | "delete";
 type FilterFn = (url: string) => boolean;
 type InterceptFn = (
   req: HTTPRequest,
   send: (req: HTTPRequest | undefined) => Promise<HTTPResponse>,
 ) => Promise<HTTPResponse>;
-type Intercept = [string, FilterFn, InterceptFn];
+type Intercept = [Method, FilterFn, InterceptFn];
 
 const intercepts: Intercept[] = [];
 
-export function intercept(method: string, filter: FilterFn, fun: InterceptFn) {
+export function intercept(method: Method, filter: string | RegExp | FilterFn, fun: InterceptFn) {
   patchHttpHandlers();
 
-  const pair: Intercept = [method, filter, fun];
+  let filterFn: FilterFn;
+  if (typeof filter === "string") {
+    filterFn = (url) => url === filter;
+  } else if (filter instanceof RegExp) {
+    filterFn = (url) => url.search(filter) !== -1;
+  } else {
+    filterFn = filter;
+  }
+
+  const pair: Intercept = [method, filterFn, fun];
   intercepts.push(pair);
   return () => void intercepts.splice(intercepts.indexOf(pair), 1);
 }

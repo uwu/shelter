@@ -102,7 +102,7 @@ export interface HTTPRequest {
    * if it's a string, it's encoded as x-www-form-urlencoded data unless
    * otherwise specified in the headers.
    */
-  body?: string | object;
+  body?: any;
   /** Cannot be used together with {@link body} */
   attachments?: {
     name: string;
