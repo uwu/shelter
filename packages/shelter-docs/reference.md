@@ -179,6 +179,64 @@ const unintercept = intercept((dispatch) => {
 });
 ```
 
+## `shelter.http`
+
+Shelter exposes Discord's internal HTTP functions, which may be used to commit authenticated requests,
+as well as powerful utilities to intercept and modify them.
+
+> [!NOTE]
+> None of the HTTP functions are guaranteed to exists when your plugin starts,
+> `shelter.http.ready` is a Promise that resolves as soon as they exist.
+
+The following methods are available: `get`, `post`, `put`, `patch` and `delete`. Reference the types if you wish to know what you can to define a request.
+
+### `shelter.http.intercept`
+```ts
+intercept(method: Method, filter: string | RegExp | FilterFn, fun: InterceptFn): () => void;
+```
+
+`intercept` allows you to intercept and modify all authenticated HTTP requests that Discord makes.
+
+The returned function, when called, will remove your interceptor (calling it multiple times is fine).
+
+Unlike the HTTP functions themselves `intercept` will **always** exist, you do not have to wait for `ready` to resolve.
+
+`method` should be one of the aboved listed HTTP methods, only requests of this method will be passed to your interceptor.
+
+`filter` is used to filter by the request's URL, this may be a string, a regular expression or a function, this function is passed the URL as a string and is expected to return a boolean that decides whether or not to intercept this request.
+
+Finally, the `fun` interceptor is specified, this is called for every request that passes the above criteria.
+
+`fun` is passed both the request `req` and a function `send`. Calling `send` executes the rest of the interceptor chain (or, if you're the last interceptor to run, executes the request) with the passed request, it returns a Promise that resolves to the response. Finally, your interceptor function should return a response.
+
+You **may** simply omit calling `send` and return a fake response, you **may not** call `send` more than once.
+
+Here are some examples:
+```ts
+// String filter, pass all matching requests through unmodified
+shelter.http.intercept("get", "/users/@me", (req, send) => {
+  return send(req);
+});
+
+// Regex filter, modify all sent message to end in the specified prefix
+shelter.http.intercept("post", /\/channels\/\d+\/messages/, (req, send) => {
+  req.body.content += " modified by shelter!";
+  return send(req);
+});
+
+// Function filter, modify the response
+shelter.http.intercept("get", (url) => url === "/users/@me", async (req, send) => {
+  const res = await send(req);
+
+  res.body.id = "123";
+
+  return res;
+});
+```
+
+### `shelter.http._raw`
+This property exposes the raw export of the Discord HTTP module, you may use it to directly patch a function, note that in almost all cases, the interception API should be used instead. Just as the request functions themselves, this is only available once `ready` resolves.
+
 ## `shelter.patcher`
 
 The patcher lets you patch functions on objects. It is not particularly oft-used in shelter, but it is here!

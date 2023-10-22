@@ -1,10 +1,10 @@
 import { after, instead } from "spitroast";
-import { DiscordHttp, HTTPRequest, HTTPResponse } from "./types";
+import { DiscordHTTP, HTTPRequest, HTTPResponse } from "./types";
 
 let resolve: () => void;
 export let ready = new Promise<void>((res) => (resolve = res));
 
-export let discordHttp: DiscordHttp;
+export let discordHttp: DiscordHTTP;
 const unpatch = after("bind", Function.prototype, function (args, res) {
   if (args.length !== 2 || args[0] !== null || args[1] !== "get") return;
   unpatch();
@@ -80,5 +80,8 @@ export function intercept(method: Method, filter: string | RegExp | FilterFn, fu
 
   const pair: Intercept = [method, filterFn, fun];
   intercepts.push(pair);
-  return () => void intercepts.splice(intercepts.indexOf(pair), 1);
+  return () => {
+    const index = intercepts.indexOf(pair);
+    if (index !== -1) intercepts.splice(index, 1);
+  };
 }
