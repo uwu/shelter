@@ -184,11 +184,11 @@ const unintercept = intercept((dispatch) => {
 Shelter exposes Discord's internal HTTP functions, which may be used to commit authenticated requests,
 as well as powerful utilities to intercept and modify them.
 
-> [!NOTE]
-> None of the HTTP functions are guaranteed to exists when your plugin starts,
-> `shelter.http.ready` is a Promise that resolves as soon as they exist.
+The following methods are available: `get`, `post`, `put`, `patch` and `delete`. These functions may simply be passed an URL or a request object, which is extensively described in the shelter typings.
 
-The following methods are available: `get`, `post`, `put`, `patch` and `delete`. Reference the types if you wish to know what you can to define a request.
+### `shelter.http.ready`
+`ready` is a Promise that resolves as soon as the HTTP functions are available,
+which is not necessarily the case when your plugin is loaded.
 
 ### `shelter.http.intercept`
 ```ts
