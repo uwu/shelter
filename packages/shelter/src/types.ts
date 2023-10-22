@@ -1,4 +1,5 @@
 import type * as SuperAgent from "superagent";
+import { intercept } from "./http";
 
 export interface Dispatcher {
   // not typing this lol
@@ -170,6 +171,12 @@ export interface DiscordHTTP {
   V6OrEarlierAPIError: Error;
   V8APIError: Error;
 }
+
+export type HTTPApi = {
+  intercept: typeof intercept;
+  ready: Promise<void>;
+  _raw?: DiscordHTTP;
+} & Partial<DiscordHTTP>;
 
 export interface Fiber {
   // Instance

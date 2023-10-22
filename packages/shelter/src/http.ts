@@ -1,7 +1,10 @@
 import { after, instead } from "spitroast";
-import { DiscordHTTP, HTTPRequest, HTTPResponse } from "./types";
+import { DiscordHttp, HTTPRequest, HTTPResponse } from "./types";
 
-export let discordHttp: DiscordHTTP;
+let resolve: () => void;
+export let ready = new Promise<void>((res) => (resolve = res));
+
+export let discordHttp: DiscordHttp;
 const unpatch = after("bind", Function.prototype, function (args, res) {
   if (args.length !== 2 || args[0] !== null || args[1] !== "get") return;
   unpatch();
@@ -9,6 +12,7 @@ const unpatch = after("bind", Function.prototype, function (args, res) {
     // I don't know why, but for the first call `this` is Window
     if (this !== window) {
       discordHttp = this;
+      resolve();
       this.get = res;
     }
     return res(args);

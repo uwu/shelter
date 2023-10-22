@@ -10,7 +10,8 @@ import * as plugins from "./plugins";
 import { registerSection } from "./settings";
 import * as storage from "./storage";
 import { observe } from "./observer";
-import { discordHttp, intercept } from "./http";
+import { discordHttp, intercept, ready } from "./http";
+import { HTTPApi } from "./types";
 
 function without<T extends Record<string, any>, TK extends string>(object: T, ...keys: TK[]) {
   //return Object.fromEntries(Object.entries(object).filter(([k]) => !keys.includes(k as any))) as Omit<T, TK>;
@@ -19,6 +20,7 @@ function without<T extends Record<string, any>, TK extends string>(object: T, ..
   return cloned as Omit<T, TK>;
 }
 
+let http;
 const windowApi = async (unloads) => ({
   flux: without(
     {
@@ -30,11 +32,18 @@ const windowApi = async (unloads) => ({
     "blockedSym",
     "modifiedSym",
   ),
-  get http() {
-    // This isn't final, just to see if things work.
-    return discordHttp;
+  get http(): HTTPApi {
+    if (discordHttp === undefined) {
+      return { intercept, ready };
+    }
+
+    return (http ??= {
+      ...discordHttp,
+      _raw: discordHttp,
+      intercept,
+      ready,
+    });
   },
-  interceptHttp: intercept,
   patcher: without(patcher, "unpatchAll"),
   solid,
   solidStore,
