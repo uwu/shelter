@@ -94,10 +94,6 @@ export interface HTTPRequest {
   /** Number of times this request should be retried. */
   retries?: number;
 
-  /** X-Failed-Requests */
-  retried?: number;
-  backoff?: unknown;
-
   /**
    * If this is an object, it's encoded as JSON,
    * if it's a string, it's encoded as x-www-form-urlencoded data unless
@@ -129,14 +125,6 @@ export interface HTTPRequest {
 
   onRequestCreated?: (request: SuperAgent.Request) => void;
   onRequestProgress?: (this: SuperAgent.Request, event: SuperAgent.ProgressEvent) => void;
-
-  // Not sure if this is right, we probably won't use this anyways.
-  interceptResponse?: (
-    this: SuperAgent.Request,
-    response: SuperAgent.Response,
-    redo: (newHeaders: Record<string, string>, newIntercept: HTTPRequest["interceptResponse"]) => void,
-    reject: (any) => void,
-  ) => void;
 }
 
 export interface HTTPResponse {
