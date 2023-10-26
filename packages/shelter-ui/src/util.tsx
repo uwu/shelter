@@ -43,7 +43,7 @@ export const cleanupCss = () => {
 
 export const injectCss = (css: string) => {
   const e = (<style>{css}</style>) as HTMLStyleElement;
-  document.head.append(e);
+  document.body.append(e);
   injectedStyles.push(e);
 
   return (css?: string) => {
