@@ -1,9 +1,6 @@
 import { Component, JSX } from "solid-js";
-import { css, classes } from "./Slider.tsx.scss";
-
-const {
-  ui: { injectCss },
-} = shelter;
+import { css, classes } from "./slider.tsx.scss";
+import { injectCss } from "./util";
 
 let injectedCss = false;
 
@@ -12,10 +9,10 @@ export const Slider: Component<{
   max: number;
   // These are the little labelled ticks on the slider
   steps?: string[];
-  step?: number;
+  step?: number | "any";
   class?: string;
   style?: JSX.CSSProperties;
-  onInput?(e): void;
+  onInput?(e: number): void;
   value?: number;
 }> = (props) => {
   if (!injectedCss) {
@@ -29,7 +26,7 @@ export const Slider: Component<{
         type="range"
         min={props.min}
         max={props.max}
-        step={props.step}
+        step={props.step ?? "any"}
         class={classes.srange}
         value={props.value ? props.value : props.min}
         style={
@@ -38,7 +35,7 @@ export const Slider: Component<{
             "--upper-half": `${((props.value - props.min) / (props.max - props.min)) * 100}%`,
           } as JSX.CSSProperties
         }
-        onInput={(e) => props.onInput?.((e.target as HTMLInputElement).value)}
+        onInput={(e) => props.onInput?.(parseFloat((e.target as HTMLInputElement).value))}
       />
       <div class={classes.sticks}>
         {props.steps?.map((t) => (
