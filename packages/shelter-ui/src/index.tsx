@@ -14,6 +14,7 @@ export * from "./errorboundary";
 export * from "./toasts";
 export * from "./focusring";
 export * from "./tooltip";
+export * from "./slider";
 
 export const Text: Component<JSX.HTMLAttributes<HTMLSpanElement>> = (props) => (
   <span
