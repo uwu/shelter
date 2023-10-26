@@ -33,6 +33,7 @@ For use outside of Discord, a solution may or may not be implemented.
   - [`<ModalFooter>`](#modalfooter)
   - [`<TextBox />`](#textbox-)
   - [`<TextArea />`](#textarea-)
+  - [`<Slider />`](#slider-)
   - [`<Space />`](#space-)
 
 ## Accessibility
@@ -369,6 +370,15 @@ All optional. onInput called every keystroke and passed the full current value.
 Like `<TextBox />` but its a textarea.
 
 Also takes width, height, resize-x, resize-y, and mono.
+
+### `<Slider />`
+
+A discord-style slider.
+Takes `value` and returns in `onInput` as number,
+
+Set `min` and `max` as needed.
+
+`step` controls the stepping of the folder and `steps` (plural) controls the text ticks that show.
 
 ### `<Space />`
 
