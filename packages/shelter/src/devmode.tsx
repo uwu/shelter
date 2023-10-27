@@ -35,7 +35,7 @@ export async function initDevmode() {
 
   let isDevButtonHovered = false;
 
-  const unobs1 = observe(`[class*="anchor-"]`, (e: HTMLAnchorElement) => {
+  const unobs1 = observe(`[class*="anchor"]`, (e: HTMLAnchorElement) => {
     if (devModeIsOn() && e.href === "https://support.discord.com/") {
       e.href = "#";
       e.target = "";
@@ -47,7 +47,7 @@ export async function initDevmode() {
   });
 
   const unobs2 = observe(
-    `[class*="layerContainer-"] > div > [class*="tooltip-"] > [class*="tooltipContent-"]`,
+    `[class*="layerContainer"] > div > [class*="tooltip"] > [class*="tooltipContent"]`,
     (e: HTMLElement) => {
       if (devModeIsOn() && isDevButtonHovered && e.innerText !== "Dev") {
         e.innerText = "Dev";
