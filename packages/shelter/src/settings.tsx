@@ -83,7 +83,7 @@ export async function initSettings() {
     });
 
     // trigger rerender for first load
-    getFiberOwner(sidebar.parentElement)?.forceUpdate();
+    rerenderSidebar();
 
     FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
   };
@@ -97,12 +97,21 @@ export async function initSettings() {
   };
 }
 
+function rerenderSidebar() {
+  const sidebarParent = document.querySelector(`nav[class^="sidebar"]`);
+  getFiberOwner(sidebarParent)?.forceUpdate();
+}
+
 export function registerSection(...sec: SettingsSection) {
   externalSections.push(sec);
+  rerenderSidebar();
 
   return () => {
     const idx = externalSections.indexOf(sec);
-    if (idx !== -1) externalSections.splice(idx, 1);
+    if (idx === -1) return;
+
+    externalSections.splice(idx, 1);
+    rerenderSidebar();
   };
 }
 
