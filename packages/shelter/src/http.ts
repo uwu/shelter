@@ -15,7 +15,7 @@ const unpatch = after("bind", Function.prototype, function (args, res) {
       resolve();
       this.get = res;
     }
-    return res(args);
+    return res(...args);
   };
 });
 
