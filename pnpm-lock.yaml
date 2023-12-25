@@ -24,13 +24,13 @@ importers:
         specifier: ^4.9.5
         version: 4.9.5
 
-  injectors/mv3:
+  injectors/mv2:
     devDependencies:
       web-ext:
         specifier: ^7.3.1
         version: 7.6.0
 
-  injectors/webext:
+  injectors/mv3:
     devDependencies:
       web-ext:
         specifier: ^7.3.1
