@@ -77,7 +77,7 @@ export default (props: { close(): void }) => {
               mono
               resize-y
               placeholder={`{
-  onload() {
+  onLoad() {
     const { name } = shelter.plugin.manifest;
     console.log(\`Hello from $\u200C{name}!\`);
   },
