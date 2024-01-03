@@ -30,11 +30,6 @@ export const PluginCard: Component<{
   id: string;
   plugin: StoredPlugin;
 }> = (props) => {
-  if (!cssInjected) {
-    injectCss(css);
-    cssInjected = true;
-  }
-
   const [on, setOn] = createSignal(props.plugin.on);
 
   const isDev = () => props.id === devModeReservedId;
@@ -105,29 +100,36 @@ export const PluginCard: Component<{
   );
 };
 
-export default (): JSX.Element => (
-  <div class={classes.list}>
-    <Header tag={HeaderTags.H3}>
-      Plugins
-      <button
-        use:tooltip="Add a plugin"
-        aria-label="add a plugin"
-        use:focusring
-        class={classes.btn}
-        onclick={() => openModal((props) => <PluginAddModal close={props.close} />)}
-      >
-        <IconAdd />
-      </button>
-    </Header>
+export default (): JSX.Element => {
+  if (!cssInjected) {
+    injectCss(css);
+    cssInjected = true;
+  }
 
-    {/* IIRC not using a <For> here was very intentional due to keying -- sink
-     * the only way to do what we need cleanly in solid looks *like this*!:
-     * https://codesandbox.io/s/explicit-keys-4iyen?file=/Key.js
-     */}
-    {Object.entries(installedPlugins())
-      .filter(([id]) => id !== devModeReservedId)
-      .map(([id, plugin]) => (
-        <PluginCard {...{ id, plugin }} />
-      ))}
-  </div>
-);
+  return (
+    <div class={classes.list}>
+      <Header tag={HeaderTags.H3}>
+        Plugins
+        <button
+          use:tooltip="Add a plugin"
+          aria-label="add a plugin"
+          use:focusring
+          class={classes.btn}
+          onclick={() => openModal((props) => <PluginAddModal close={props.close} />)}
+        >
+          <IconAdd />
+        </button>
+      </Header>
+
+      {/* IIRC not using a <For> here was very intentional due to keying -- sink
+       * the only way to do what we need cleanly in solid looks *like this*!:
+       * https://codesandbox.io/s/explicit-keys-4iyen?file=/Key.js
+       */}
+      {Object.entries(installedPlugins())
+        .filter(([id]) => id !== devModeReservedId)
+        .map(([id, plugin]) => (
+          <PluginCard {...{ id, plugin }} />
+        ))}
+    </div>
+  );
+};
