@@ -541,6 +541,20 @@ registerSection("button", id: string, label: string, action: () => void): () => 
 
 The returned function, when called, removes the section you injected.
 
+A `section` can optionally be passed in extra properties, such as a `badgeCount` (or whatever else you find that works):
+
+```ts
+registerSection(
+  "section",
+  "alerts",
+  "Alerts",
+  AlertList,
+  {
+    badgeCount: 5
+  }
+);
+```
+
 ## `shelter.plugin`
 
 These APIs are exposed only to plugins, and are specific to plugins.
