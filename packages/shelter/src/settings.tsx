@@ -10,7 +10,7 @@ import { after } from "spitroast";
 type SettingsSection =
   | ["divider"]
   | ["header", string]
-  | ["section", string, string, Component]
+  | ["section", string, string, Component, object?]
   | ["button", string, string, () => void];
 
 const injectedSections: SettingsSection[] = [
@@ -36,6 +36,7 @@ const generatePredicateSections = () =>
           section: s[1],
           label: s[2],
           element: () => <SolidInReactBridge comp={s[3]} />,
+          ...(s[4] ?? {}),
         };
     }
   });
