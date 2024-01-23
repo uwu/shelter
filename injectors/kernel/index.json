@@ -1,0 +1,6 @@
+{
+    "name": "Shelter Loader",
+    "id": "kernel-shelter",
+    "dependencies": [],
+    "description": "Injects https://github.com/uwu/shelter with Kernel"
+}
