@@ -67,7 +67,7 @@ type Intercept = [Method, FilterFn, InterceptFn];
 const intercepts: Intercept[] = [];
 
 export function intercept(method: Method, filter: string | RegExp | FilterFn, fun: InterceptFn) {
-  patchHttpHandlers();
+  ready.then(patchHttpHandlers);
 
   let filterFn: FilterFn;
   if (typeof filter === "string") {
