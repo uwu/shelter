@@ -1,9 +1,10 @@
+import type { LuneCfg } from "./config";
+
 import { createHash } from "crypto";
 import { readFile, writeFile } from "fs/promises";
 import { resolve } from "path";
 import { existsSync } from "fs";
-import { pathToFileURL } from "url";
-import { build, Plugin } from "esbuild";
+import { build } from "esbuild";
 import { solidPlugin } from "esbuild-plugin-solid";
 import { sassPlugin, postcssModules } from "esbuild-sass-plugin-ysink";
 
@@ -34,30 +35,7 @@ const shelterEsbuildResolver = () => ({
   },
 });
 
-export interface LuneCfg {
-  /**
-   * The subdir containing plugins in a monorepo
-   * @default "plugins"
-   */
-  repoSubDir?: string;
-  /**
-   * If CSS Modules should be enabled (for sass/scss files only currently)
-   * @default false
-   */
-  cssModules?: boolean;
-
-  /** esbuild plugins that run before Lune's transforms */
-  prePlugins?: Plugin[];
-  /** esbuild plugins that run after Lune's transforms */
-  postPlugins?: Plugin[];
-}
-
 const MD5 = (data) => createHash("md5").update(data).digest("hex").toString();
-
-export const loadCfg = async (path = "lune.config.js") =>
-  existsSync(resolve(".", path))
-    ? (((await import(pathToFileURL(resolve(".", path)).href))?.default ?? {}) as LuneCfg)
-    : {};
 
 export async function buildPlugin(path: string, to: string, cfg: LuneCfg, dev = false) {
   const outfile = resolve(to, "plugin.js");

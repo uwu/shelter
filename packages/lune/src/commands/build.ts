@@ -1,7 +1,8 @@
 import type { Command } from ".";
+
 import { hrtime } from "process";
-import { resolve } from "path";
-import { buildPlugin, loadCfg } from "../builder.js";
+import { buildPlugin } from "../builder";
+import { loadCfg, loadNearestCfgOrDefault } from "../config";
 
 export default {
   helpText: `lune build: Build the plugin in the current directory
@@ -22,11 +23,11 @@ Options:
     cfg: "str",
   },
   async exec(args) {
-    const dir = args[0] ?? ".";
+    const dir = args[0] ?? process.cwd();
 
     const timeBefore = hrtime.bigint();
 
-    const cfg = await loadCfg((args.cfg as string) ?? resolve(dir, "lune.config.js"));
+    const cfg = (await loadCfg(args.cfg as string)) ?? (await loadNearestCfgOrDefault(dir));
     await buildPlugin(dir, (args.to as string) ?? "./dist", cfg, args.dev as boolean);
 
     const timeAfter = hrtime.bigint();

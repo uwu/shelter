@@ -6,8 +6,9 @@ import { resolve } from "path";
 import { mkdtemp, rm, readFile } from "fs/promises";
 import { tmpdir } from "os";
 import { watch } from "chokidar";
-import { buildPlugin, loadCfg, LuneCfg } from "../builder.js";
+import { buildPlugin } from "../builder";
 import { hrtime } from "process";
+import { loadNearestCfgOrDefault, loadCfg, LuneCfg } from "../config";
 
 const mktempdir = () => mkdtemp(resolve(tmpdir(), "lune-"));
 
@@ -93,9 +94,9 @@ Options:
     cfg: "str",
   },
   async exec(args) {
-    const dir = args[0] ?? ".";
+    const dir = args[0] ?? process.cwd();
 
-    const cfg = await loadCfg((args.cfg as string) ?? resolve(dir, "lune.config.js"));
+    const cfg = (await loadCfg(args.cfg as string)) ?? (await loadNearestCfgOrDefault(dir));
 
     try {
       await rebuildPlugin(cfg, dir);
