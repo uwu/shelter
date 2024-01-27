@@ -25,12 +25,20 @@ Object.defineProperty(session, "defaultSession", {
     // this means it's safe to patch CSP now without doing any further waiting
 
     if (!cspIsPatched) {
-      dsess.webRequest.onHeadersReceived(({ responseHeaders }, done) => {
+      dsess.webRequest.onHeadersReceived(({ responseHeaders, resourceType }, done) => {
         const cspHeaders = Object.keys(responseHeaders).filter(
           (name) =>
             name.toLowerCase().startsWith("content-security-policy") ||
             name.toLowerCase().startsWith("access-control-allow-origin"),
         );
+
+        // what the hell is wrong with vencord
+        // oh well we'll just implement their weird choices so as to maintain compatibility because
+        // the #1 priority of this shelter injection method is vencord compatibility.
+        if (resourceType === "stylesheet") {
+          const header = Object.keys(responseHeaders).find((h) => h.toLowerCase() === "content-type") ?? "content-type";
+          responseHeaders[header] = "text/css";
+        }
 
         for (const header of cspHeaders) delete responseHeaders[header];
 
