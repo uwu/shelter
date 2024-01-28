@@ -1,4 +1,4 @@
-import { Dispatcher, FluxStore } from "./types";
+import { Dispatcher, FluxManager, FluxStore } from "./types";
 import exfiltrate from "./exfiltrate";
 
 declare global {
@@ -31,6 +31,12 @@ exfiltrate("_dispatchToken", (store: FluxStore) => {
 
   // abusing the "filter" to just steal all the stores
   // but why not?
+  return false;
+});
+
+export const managers: Array<FluxManager> = [];
+exfiltrate("initializedCount", (manager) => {
+  managers.push(manager);
   return false;
 });
 
