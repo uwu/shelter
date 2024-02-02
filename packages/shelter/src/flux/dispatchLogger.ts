@@ -1,6 +1,6 @@
-import { blockedSym, getDispatcher, modifiedSym } from "./flux";
-import { log } from "./util";
-import { dbStore, defaults } from "./storage";
+import { blockedSym, getDispatcher, modifiedSym } from ".";
+import { log } from "../util";
+import { dbStore, defaults } from "../storage";
 
 defaults(dbStore, { logDispatch: false });
 

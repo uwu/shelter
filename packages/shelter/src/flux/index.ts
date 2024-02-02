@@ -1,5 +1,5 @@
-import { Dispatcher, FluxStore } from "./types";
-import exfiltrate from "./exfiltrate";
+import { Dispatcher, FluxStore } from "../types";
+import exfiltrate from "../exfiltrate";
 
 declare global {
   interface Object {
@@ -168,3 +168,5 @@ export async function awaitStore(name: string, awaitInit = true): Promise<FluxSt
   if (awaitInit) await awaitStoreInit(store);
   return store;
 }
+
+export * from "./dispatchLogger";

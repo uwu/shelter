@@ -1,6 +1,6 @@
 import { batch, createSignal, onCleanup } from "solid-js";
-import { getDispatcher, intercept } from "./flux";
-import { Fiber, FluxStore, FiberOwner } from "./types";
+import { getDispatcher, intercept } from "../flux";
+import { Fiber, FluxStore, FiberOwner } from "../types";
 
 declare global {
   interface Element {
@@ -101,3 +101,5 @@ export function createSubscription<TState, TStoreData = Record<string, any>>(
 export const storeAssign = <T>(store: T, toApply: T) => batch(() => Object.assign(store, toApply));
 
 export const sleep = (ms = 0) => new Promise((r) => setTimeout(r, ms));
+
+export * from "./scopedApi";

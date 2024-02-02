@@ -31,6 +31,7 @@ const windowApi = async (unloads) => ({
     "getDispatcher",
     "blockedSym",
     "modifiedSym",
+    "initDispatchLogger",
   ),
   get http(): HTTPApi {
     if (discordHttp === undefined) {

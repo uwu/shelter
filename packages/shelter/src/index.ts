@@ -3,7 +3,7 @@ import * as ui from "shelter-ui";
 import * as util from "./util";
 import * as plugins from "./plugins";
 import { initSettings, removeAllSections } from "./settings";
-import { initDispatchLogger } from "./dispatchLogger";
+import { initDispatchLogger } from "./flux";
 import { unobserve } from "./observer";
 import windowApi from "./windowApi";
 import { sleep } from "./util";
