@@ -1,7 +1,7 @@
 import { isInited, signalOf, solidMutWithSignal, storage, waitInit } from "./storage";
 import { Component } from "solid-js";
 import { createMutable } from "solid-js/store";
-import { log } from "./util";
+import { createScopedApi, log } from "./util";
 import { ModalBody, ModalHeader, ModalRoot, openModal } from "shelter-ui";
 import { devModeReservedId } from "./devmode";
 
@@ -17,8 +17,10 @@ export type StoredPlugin = {
 
 export type EvaledPlugin = {
   onLoad?(): void;
-  onUnload(): void;
+  onUnload?(): void;
   settings?: Component;
+  // technically not on an evaled plugin but we add it to the plugin literally as soon as we eval it
+  scopedDispose(): void;
 };
 
 const internalData = storage<StoredPlugin>("plugins-internal");
@@ -59,6 +61,8 @@ export function startPlugin(pluginId: string) {
 
   const [store, flushStore] = createStorage(pluginId);
 
+  const scoped = createScopedApi(window["shelter"].flux.dispatcher); // this feels not nice but i guess its ok?
+
   const shelterPluginEdition = {
     ...window["shelter"],
     plugin: {
@@ -72,6 +76,7 @@ export function startPlugin(pluginId: string) {
             <ModalBody>{getSettings(pluginId)({})}</ModalBody>
           </ModalRoot>
         )),
+      scoped,
     },
   };
 
@@ -81,7 +86,7 @@ export function startPlugin(pluginId: string) {
     // noinspection CommaExpressionJS
     const rawPlugin: EvaledPlugin = (0, eval)(pluginString)(shelterPluginEdition);
     // clone this because the way some bundlers defineProperty does not play nice with the solid store
-    const plugin = { ...rawPlugin };
+    const plugin = { ...rawPlugin, scopedDispose: scoped.disposeAllNow };
     internalLoaded[pluginId] = plugin;
 
     plugin.onLoad?.();
@@ -108,9 +113,14 @@ export function stopPlugin(pluginId: string) {
   if (!loadedData) throw new Error(`attempted to unload a non-loaded plugin: ${pluginId}`);
 
   try {
-    loadedData.onUnload();
+    loadedData.onUnload?.();
   } catch (e) {
     log(`plugin ${pluginId} errored while unloading: ${e}`, "error");
+  }
+  try {
+    loadedData.scopedDispose();
+  } catch (e) {
+    log(`plugin ${pluginId} errored while unloading scoped APIs: ${e}`, "error");
   }
 
   delete internalLoaded[pluginId];

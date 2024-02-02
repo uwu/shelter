@@ -15,7 +15,7 @@ let websocket: WebSocket;
 
 const devModeIsOn = () => installedPlugins() && devModeReservedId in installedPlugins();
 
-let removeDevmodeModal;
+let removeDevmodeModal: () => void;
 function openDevmodeModal() {
   removeDevmodeModal?.();
 
