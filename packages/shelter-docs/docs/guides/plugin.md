@@ -1,4 +1,9 @@
-# shelter docs: Getting started guide
+# Your first plugin
+
+::: warning
+This guide was written prior to a docs rewrite, and is awaiting tweaking and rewriting itself.
+It is not guaranteed to be up to date and up to the standard of other pages here *YET*.
+:::
 
 This guide will walk you through getting started making a shelter plugin from scratch.
 

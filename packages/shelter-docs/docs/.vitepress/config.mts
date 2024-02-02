@@ -19,14 +19,19 @@ export default defineConfig({
       {
         text: "Guides",
         items: [
-          { text: "Intro", link: "/guides/" },
+          { text: "Getting Started", link: "/guides/" },
           { text: "Lune", link: "/guides/lune" },
           { text: "Your First Plugin", link: "/guides/plugin" },
           { text: "Patterns", link: "/guides/patterns" },
+          { text: "Ideals", link: "/guides/ideals" },
+          { text: "Background", link: "/guides/background" },
         ],
       },
       {
         items: [{ text: "API Reference", link: "/reference" }],
+      },
+      {
+        items: [{ text: "shelter UI", link: "/ui" }],
       },
     ],
 
