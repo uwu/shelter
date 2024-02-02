@@ -40,7 +40,9 @@ export function createScopedApi(dispatcher: Dispatcher) {
     flux: {
       subscribe(type: string, cb: (payload: any) => void) {
         dispatcher.subscribe(type, cb);
-        disposes.push(() => dispatcher.unsubscribe(type, cb));
+        const dispose = () => dispatcher.unsubscribe(type, cb);
+        disposes.push(dispose);
+        return dispose;
       },
       intercept: shimDisposableFn(disposes, fluxIntercept),
     },

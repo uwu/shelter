@@ -21,46 +21,53 @@ function without<T extends Record<string, any>, TK extends string>(object: T, ..
 }
 
 let http;
-const windowApi = async (unloads) => ({
-  flux: without(
-    {
-      ...flux,
-      dispatcher: await flux.getDispatcher(),
-    },
-    "injectIntercept",
-    "getDispatcher",
-    "blockedSym",
-    "modifiedSym",
-    "initDispatchLogger",
-  ),
-  get http(): HTTPApi {
-    if (discordHttp === undefined) {
-      return { intercept, ready };
-    }
+const windowApi = async (unloads) => {
+  const dispatcher = await flux.getDispatcher();
 
-    return (http ??= {
-      ...discordHttp,
-      _raw: discordHttp,
-      intercept,
-      ready,
-    });
-  },
-  patcher: without(patcher, "unpatchAll"),
-  solid,
-  solidStore,
-  solidWeb,
-  util,
-  plugins: without(plugins, "startAllPlugins", "devmodePrivateApis"),
-  storage: without(storage, "dbStore"),
-  observeDom: observe,
-  ui: without(ui, "cleanupCss", "initToasts"),
-  settings: {
-    registerSection,
-  },
-  unload: () => unloads.forEach((p) => p?.()),
-  // as much as it pains me to do this...
-  ...reacts,
-});
+  return {
+    flux: without(
+      {
+        ...flux,
+        dispatcher: dispatcher,
+      },
+      "injectIntercept",
+      "getDispatcher",
+      "blockedSym",
+      "modifiedSym",
+      "initDispatchLogger",
+    ),
+    get http(): HTTPApi {
+      if (discordHttp === undefined) {
+        return { intercept, ready };
+      }
+
+      return (http ??= {
+        ...discordHttp,
+        _raw: discordHttp,
+        intercept,
+        ready,
+      });
+    },
+    patcher: without(patcher, "unpatchAll"),
+    solid,
+    solidStore,
+    solidWeb,
+    util: {
+      ...util,
+      createScopedApi: util.createScopedApi.bind(undefined, dispatcher),
+    },
+    plugins: without(plugins, "startAllPlugins", "devmodePrivateApis"),
+    storage: without(storage, "dbStore"),
+    observeDom: observe,
+    ui: without(ui, "cleanupCss", "initToasts"),
+    settings: {
+      registerSection,
+    },
+    unload: () => unloads.forEach((p) => p?.()),
+    // as much as it pains me to do this...
+    ...reacts,
+  };
+};
 
 export default windowApi;
 
