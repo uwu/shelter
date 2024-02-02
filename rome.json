@@ -8,7 +8,8 @@
   },
   "files": {
     "ignore": [
-      "dist"
+      "dist",
+        ".vitepress/cache"
     ]
   }
 }

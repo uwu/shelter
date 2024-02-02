@@ -1,0 +1,114 @@
+# Lune
+
+[Lune](https://github.com/uwu/shelter/tree/main/packages/lune) is the custom build tool for shelter plugins.
+
+::: tip
+As well as the documentation here, the help for the lune command line interface is built into the tool itself.
+Try running `lune build --help` or similar to learn how to use Lune's commands.
+:::
+
+## What is lune?
+
+Lune is an all-in-one tool for managing and building plugins for shelter.
+It provides a fairly robust and friendly command line tool.
+
+It can create new plugins interactively, build plugins, and build monorepos.
+It also has a hot-reload "dev mode", which is useful for plugin development.
+
+It is currently based on esbuild, which means builds are lightning quick, at the expense of ecosystem size.
+
+## Getting up to speed with monorepos
+
+A monorepo is a project structure where you place all the components of your software into a single repository.
+This applies to shelter plugins by using one repo to contain the source code of multiple plugins.
+
+The shelter developers strongly encourage use of monorepos, and the template gives you one by default.
+
+Lune natively supports monorepos via the `ci` command which will all of your plugins all at once, automatically.
+
+All plugins in a monorepo share a single dependency lock file, and will install faster.
+To take advantage of this you can use a supported package manager:
+ - [pnpm](https://pnpm.io) (recommended) - no extra setup is needed, `pnpm i` just works.
+ - [Yarn](https://yarnpkg.com) - you should probably run `yarn set version stable` inside your monorepo.
+ - [npm (workspaces)](https://docs.npmjs.com/cli/v7/using-npm/workspaces) - no special setup, `npm i` just works.
+
+## Styling and Sass
+
+You can import `css` files in your code, and the default export will be their content as a string, ready to inject.
+
+Lune supports [Sass and SCSS](https://sass-lang.com) out-of-the-box, and will compile them to CSS at build time.
+
+Generally you would use [`shelter.ui.injectCss`](/ui#injectCss) to inject this onto the page
+
+Example:
+```js
+import styles from "./styles.css";
+import sassStyles from "./moreStyles.sass";
+import scssStyles from "./yetMore.scss";
+
+const remove = shelter.ui.injectCss(styles);
+
+console.log(styles);
+// ".my-button { color: red; }" etc.
+```
+
+### CSS Modules
+
+Lune optionally supports a slightly modified form of [CSS Modules](https://css-tricks.com/css-modules-part-1-need/).
+
+To enable it, you just turn it on in the [configuration file](#configuring-lune).
+
+You should then change your imports:
+```js
+// from
+import css from "./styles.css";
+// to
+import { css, classes } from "./styles.css";
+```
+
+When your CSS is compiled, it will have its classes suffixed with a random string to prevent conflicts.
+The map of original class names to randomized class names is given in the `classes` object:
+```css
+/* styles.css */
+.btn { margin: 1rem; }
+```
+```js
+/* plugin JS */
+import { css, classes } from "./styles.css";
+css == ".btn_8gljn_1 { margin: 1rem; }"
+classes == { btn: 'btn_8gljn_1' }
+```
+
+## Configuring Lune
+
+Lune is configured using either a `lune.config.js` or `lune.config.json` file.
+If a JS file, it should be an ES Module and should `export default` an object.
+
+All options, and the file itself, are not required.
+
+In order, Lune will search the following places for this file:
+ - The file path passed directly with `--cfg`, if any
+ - Within the folder passed by the user to the relevant command, if any
+ - Within the current working directory
+
+### `repoSubDir: string`
+
+This is the subdirectory to use when building a monorepo with `lune ci`.
+
+This can be passed as an option to `lune ci`, however having it specified in a config file is generally nicer for this
+use case.
+
+By default this is `"plugins"`.
+
+### `cssModules: boolean`
+
+Enabling this turns on [CSS Modules](#css-modules). By default this is `false`.
+
+### `prePlugins: Plugin[]`
+
+This can only be set from a JS config file.
+This is a list of [esbuild](https://esbuild.github.io) plugins to run before Lune's transforms.
+
+### `postPlugins: Plugin[]`
+
+As above, after Lune's transforms.
