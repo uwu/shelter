@@ -1,0 +1,8 @@
+:root {
+    /* shelter gradient goes from #2a3b4b to #2a7267
+     * these colours are that lightened by 17 in GIMP brightness-contrast
+     * so that they are more appropriate for use as foreground text colours, for the title.
+     */
+    --vp-home-hero-name-color: transparent;
+    --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #387b71, #384857);
+}

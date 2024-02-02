@@ -129,12 +129,12 @@ function handleDispatch(payload) {
     if (payload.type === "MESSAGE_CREATE" &&
 		payload.channelId !== SelectedChannelStore.getChannelId())
         return;
-    
+
     const unObserve = observeDom("[id^=message-username-]", (elem) => {
         handleElement(elem);
         unObserve();
     });
-    
+
     setTimeout(unObserve, 500);
 }
 ```
