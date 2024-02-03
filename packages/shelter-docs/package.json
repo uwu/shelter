@@ -6,5 +6,10 @@
   },
   "devDependencies": {
     "vitepress": "1.0.0-rc.41"
+  },
+  "dependencies": {
+    "@vueuse/integrations": "^10.7.2",
+    "fuse.js": "^7.0.0",
+    "vue": "^3.4.15"
   }
 }

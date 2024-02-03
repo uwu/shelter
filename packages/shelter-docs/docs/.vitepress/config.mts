@@ -10,30 +10,27 @@ export default defineConfig({
     siteTitle: "docs",
     nav: [
       { text: "Home", link: "/" },
+      { text: "Plugins", link: "/plugins" },
       { text: "Guides", link: "/guides/" },
       { text: "API Reference", link: "/reference" },
       { text: "shelter UI", link: "/ui" },
     ],
 
-    sidebar: [
-      {
-        text: "Guides",
-        items: [
-          { text: "Getting Started", link: "/guides/" },
-          { text: "Lune", link: "/guides/lune" },
-          { text: "Your First Plugin", link: "/guides/plugin" },
-          { text: "Patterns", link: "/guides/patterns" },
-          { text: "Ideals", link: "/guides/ideals" },
-          { text: "Background", link: "/guides/background" },
-        ],
-      },
-      {
-        items: [{ text: "API Reference", link: "/reference" }],
-      },
-      {
-        items: [{ text: "shelter UI", link: "/ui" }],
-      },
-    ],
+    sidebar: {
+      "/guides/": [
+        {
+          text: "Guides",
+          items: [
+            { text: "Getting Started", link: "/guides/" },
+            { text: "Lune", link: "/guides/lune" },
+            { text: "Your First Plugin", link: "/guides/plugin" },
+            { text: "Patterns", link: "/guides/patterns" },
+            { text: "Ideals", link: "/guides/ideals" },
+            { text: "Background", link: "/guides/background" },
+          ],
+        },
+      ],
+    },
 
     socialLinks: [
       { icon: "github", link: "https://github.com/uwu/shelter" },
