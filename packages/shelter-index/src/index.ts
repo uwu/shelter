@@ -62,6 +62,8 @@ const handler: ExportedHandler<Env> = {
       return new Response(null, { status: 404 });
     }
 
+    response.headers.set("Access-Control-Allow-Origin", "*");
+
     await caches.default.put(request, response.clone());
     return response;
   },
