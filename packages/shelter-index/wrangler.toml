@@ -1,0 +1,10 @@
+name = "shelter-index"
+main = "src/index.ts"
+compatibility_date = "2024-01-29"
+
+[[kv_namespaces]]
+binding = "REPO"
+id = "648ec2e863644b98a32aa51ce436bff5"
+
+[triggers]
+crons = ["0 0/2 * * *"]
