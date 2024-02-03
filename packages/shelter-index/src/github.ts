@@ -13,7 +13,16 @@ type RepositoryObject = {
 };
 type RepositoryObjectEntry = {
   name: string;
-  type: "tree" | string;
+  type: "tree";
+  object: {
+    entries: {
+      name: string;
+      type: "blob";
+      object: {
+        text: string;
+      };
+    }[];
+  };
 };
 type PageInfo = {
   hasNextPage: boolean;
@@ -34,40 +43,68 @@ type ResultType = {
 
 const gql = String.raw;
 const query = gql`query {
-	search(query: "shelter-plugins", type: REPOSITORY, first: 100) {
-		nodes {
-			... on Repository {
-				nameWithOwner
-				deployments(first: 10, orderBy: {field: CREATED_AT, direction: DESC}) {
-					nodes {
-						state
-						latestStatus {
-							state
-							environmentUrl
-						}
-					}
-				}
-				object(expression: "HEAD:plugins") {
-					... on Tree {
-						entries {
-							name
-							type
-						}
-					}
-				}
-			}
-		}
-		pageInfo {
-			hasNextPage
-			endCursor
-		}
-	}
+  search(query: "shelter-plugins", type: REPOSITORY, first: 100) {
+    nodes {
+      ... on Repository {
+        nameWithOwner
+        deployments(first: 10, orderBy: {field: CREATED_AT, direction: DESC}) {
+          nodes {
+            state
+            latestStatus {
+              state
+              environmentUrl
+            }
+          }
+        }
+        object(expression: "HEAD:plugins") {
+          ... on Tree {
+            entries {
+              name
+              type
+              object {
+                ... on Tree {
+                  entries {
+                    name
+                    type
+                    object {
+                      ... on Blob {
+                        text
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
+    }
+  }
 }`;
 
 const getEnvironmentUrl = (deployments: RepositoryDeployments) =>
   deployments.nodes.find((d) => d.state === "ACTIVE")?.latestStatus.environmentUrl;
 
-const getPlugins = (object: RepositoryObject) => object.entries.filter((e) => e.type === "tree").map((t) => t.name);
+const getPlugins = (object: RepositoryObject) =>
+  object.entries
+    .filter((e) => e.type === "tree")
+    .map((t) => {
+      const name = t.name;
+      const manifest: string | undefined = t.object.entries.filter(
+        (c) => c.name === "plugin.json" && c.type === "blob",
+      )[0].object.text;
+      if (!manifest) return;
+      try {
+        return [name, JSON.parse(manifest)];
+      } catch {
+        return;
+      }
+    })
+    .filter((e) => e !== undefined) as [string, PluginManifest][];
 
 async function searchRepositories(token: string) {
   const req = await fetch("https://api.github.com/graphql", {
@@ -93,31 +130,22 @@ export type RepositoryData = {
   url: string;
   plugins: PluginManifest[];
 };
-export type RepositoryMap = Map<string, RepositoryData>;
-export async function fetchPluginMap(token: string): Promise<RepositoryMap> {
-  const result: RepositoryMap = new Map();
+export async function fetchSources(token: string): Promise<RepositoryData[]> {
+  const result: RepositoryData[] = [];
   const search = await searchRepositories(token);
   for (const repository of search.data.search.nodes) {
     const url = getEnvironmentUrl(repository.deployments);
     if (!url || repository.object == null) continue;
     const plugins = getPlugins(repository.object);
+    if (plugins.length < 1) continue;
 
-    let manifests: PluginManifest[];
-    try {
-      const promises = plugins.map((plugin) =>
-        fetch(`${url}${plugin}/plugin.json`).then((r) => r.json() as Promise<PluginManifest>),
-      );
-      manifests = await Promise.all(promises);
-    } catch {
-      continue;
-    }
-
-    if (manifests.length < 1) continue;
-
-    result.set(repository.nameWithOwner, {
+    result.push({
       name: repository.nameWithOwner,
       url,
-      plugins: manifests,
+      plugins: plugins.map(([name, manifest]) => ({
+        ...manifest,
+        url: new URL(name, url),
+      })),
     });
   }
   return result;
