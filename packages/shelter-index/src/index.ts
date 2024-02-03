@@ -39,6 +39,8 @@ const handler: ExportedHandler<Env> = {
         data!.flatMap((r) => r.plugins),
         {
           keys: ["name", "description"],
+          threshold: 0.5,
+          useExtendedSearch: true,
         },
         index ? Fuse.parseIndex(index) : undefined,
       );

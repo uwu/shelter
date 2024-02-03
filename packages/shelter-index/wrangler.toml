@@ -7,4 +7,4 @@ binding = "REPO"
 id = "648ec2e863644b98a32aa51ce436bff5"
 
 [triggers]
-crons = ["0 0/1 * * *"]
+crons = ["0/15 * * * *"]
