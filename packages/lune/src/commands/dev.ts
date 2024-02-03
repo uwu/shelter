@@ -69,7 +69,7 @@ async function rebuildPlugin(cfg: LuneCfg, dir: string) {
 
   const timeBefore = hrtime.bigint();
 
-  await buildPlugin(dir, outDir, cfg, true);
+  await buildPlugin(dir, outDir, cfg, false);
 
   const timeAfter = hrtime.bigint();
 
@@ -89,7 +89,7 @@ export default {
 lune dev <path>: Develop a plugin with hot reloading in the given path
 
 Options:
-  --cfg: Specifies the path to a lune cfg file (default: ./lune.config.js)`,
+  --cfg: Specifies the path to a lune cfg file (default: nearest lune.config.js to the plugin)`,
   argSchema: {
     cfg: "str",
   },

@@ -6,15 +6,15 @@ import { pathToFileURL } from "url";
 
 export interface LuneCfg {
   /**
-   * The subdir containing plugins in a monorepo
-   * @default "plugins"
-   */
-  repoSubDir?: string;
-  /**
    * If CSS Modules should be enabled (for sass/scss files only currently)
    * @default false
    */
   cssModules?: boolean;
+  /**
+   * If the output should be minified
+   * @default true
+   */
+  minify?: boolean;
 
   /** esbuild plugins that run before Lune's transforms */
   prePlugins?: Plugin[];
@@ -22,7 +22,7 @@ export interface LuneCfg {
   postPlugins?: Plugin[];
 }
 
-export async function loadCfg(path: string) {
+export async function loadCfg(path?: string) {
   if (!path || !existsSync(resolve(path))) return null;
 
   const isJson = path.toLowerCase().endsWith(".json");
@@ -42,13 +42,14 @@ async function loadCfgByDir(path: string) {
 }
 
 export async function loadNearestCfgOrDefault(path?: string) {
-  let currDir = path ?? process.cwd();
+  let currDir = resolve(path) ?? process.cwd();
   const rootDir = parse(currDir).root;
 
   while (currDir !== rootDir) {
     const cfg = await loadCfgByDir(currDir);
     if (cfg) return cfg;
 
+    // go to parent directory
     currDir = parse(currDir).dir;
   }
   return {} as LuneCfg;

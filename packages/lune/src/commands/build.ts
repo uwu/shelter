@@ -14,9 +14,9 @@ Please see the docs section on configuring Lune for more info.
 If you are trying to use this in a script to build all plugins in a repo, you probably want lune ci.
 
 Options:
-  --to: The directory to build the plugin into
   --dev: Disables minification
-  --cfg: Specifies the path to a lune cfg file (default: ./lune.config.js)`,
+  --to: The directory to build the plugin into (default: "./dist")
+  --cfg: Specifies the path to a lune cfg file (default: nearest lune.config.js to the plugin)`,
   argSchema: {
     dev: "bool",
     to: "str",
@@ -28,7 +28,7 @@ Options:
     const timeBefore = hrtime.bigint();
 
     const cfg = (await loadCfg(args.cfg as string)) ?? (await loadNearestCfgOrDefault(dir));
-    await buildPlugin(dir, (args.to as string) ?? "./dist", cfg, args.dev as boolean);
+    await buildPlugin(dir, (args.to as string) ?? "dist", cfg, (args.dev as boolean) ?? cfg.minify);
 
     const timeAfter = hrtime.bigint();
 
