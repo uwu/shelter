@@ -4,8 +4,8 @@ import { hrtime } from "process";
 import { resolve } from "path";
 import { existsSync } from "fs";
 import { readdir, rm } from "fs/promises";
-import { buildPlugin } from "../builder";
-import { loadCfg, loadNearestCfgOrDefault } from "../config";
+import { buildPlugin } from "../builder.js";
+import { loadCfg, loadNearestCfgOrDefault } from "../config.js";
 
 export default {
   helpText: `ci: Build all plugins in the current monorepo

@@ -1,7 +1,7 @@
-import dev from "./dev";
-import init from "./init";
-import build from "./build";
-import ci from "./ci";
+import dev from "./dev.js";
+import init from "./init.js";
+import build from "./build.js";
+import ci from "./ci.js";
 
 export interface Command {
   argSchema: Record<string, "bool" | "str">;

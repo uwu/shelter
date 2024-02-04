@@ -1,7 +1,7 @@
 import { exit } from "process";
-import { argparse } from "./argparser";
-import { helptext } from "./help";
-import { commands } from "./commands/index";
+import { argparse } from "./argparser.js";
+import { helptext } from "./help.js";
+import { commands } from "./commands/index.js";
 import pkg from "../package.json" assert { type: "json" };
 
 const topLevelParsed = argparse(
