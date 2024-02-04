@@ -32,23 +32,33 @@ Check the githubs of uwu members or search for `shelter-plugins`.
 - rename `app.asar` to `original.asar`
 - fully close and restart discord
 
+#### Kernel
+
+An alternative desktop installation method is [Kernel](https://kernel.fish).
+The kernel package is in `injectors/kernel`, if you use this method I expect you to know how to install Kernel yourself.
+This is nice because you can run multiple mods at once.
+
 ### Firefox
 
 https://addons.mozilla.org/en-GB/firefox/addon/shelter-injector/
 
 ### Microsoft Edge
 
-https://microsoftedge.microsoft.com/addons/detail/shelter-mv3-inj/okemjpeidkmhjpmdcpaibakdhnheblib
+~~https://microsoftedge.microsoft.com/addons/detail/shelter-mv3-inj/okemjpeidkmhjpmdcpaibakdhnheblib~~
+
+Use below instructions on Edge too.
 
 ### Chromium based browser
 
 - Grab the latest MV2 release from this repo
 - Drag and drop the zip file onto the Chromium extensions page.
-- Ignore the MV2 error (see CHROME.md for more details)
+- Ignore the MV2 error
 
-You can also do the same with the MV3 release.
-This will not throw an error about MV2 however there are a couple of
-caveats - more jank and less thorough CSP removal.
+Alternatively: ~~https://chrome.google.com/webstore/detail/shelter-mv3-inj/ghdambgjhkmpeaogmikdkaemplkfeaod~~
+
+> [!IMPORTANT]
+> At the minute the MV3 version is broken due to permissions and stuff.
+> Use the MV2 version.
 
 ## How do I make a plugin?
 
@@ -56,14 +66,13 @@ See [the docs](packages/shelter-docs/README.md)
 
 Also see [Lune's docs](https://github.com/uwu/shelter/tree/main/packages/lune#readme)
 
-## Is there a plugin repo / website / build tool / etc.?
+## Is there a plugin repo / website / etc.?
 
 Possibly not.
 
-This is a much smaller project right now than Cumcord was at the time of its death.
+This is a somewhat smaller project right now than Cumcord was at the time of its death.
 
-Please do not expect a huge ecosystem,
-but we do want to have a comfortable dev and user experience.
+We are working on improving the ecosystem slowly but surely, much is in the works.
 
 Keep an eye on the uwu gh org or [our Discord server](https://discord.gg/FhHQQrVs7U)
 to see what we _are_ working on, inside and outside of the client modding space. :)
