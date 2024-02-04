@@ -14,7 +14,8 @@ API functions will have their TypeScript signatures listed.
 observeDom(selector: string, cb: (node: DOMNode) => void): {(): void; now(): void}
 ```
 
-shelter provides a DOM observer, which is an abstraction over [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver). This allows you to efficiently listen for changes to the document.
+shelter provides a DOM observer, which is an abstraction over [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver).
+This allows you to efficiently listen for changes to the document.
 
 The returned function can be called to stop this observation. Calling it more than once is fine.
 
@@ -27,6 +28,7 @@ This is intended behaviour so that you can use unobserve in your callback,
 even if you intend to listen for a whole list of elements.
 
 `selector` is a [CSS Selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors).
+This selector applies to elements that change, and all of their children.
 
 Generally, you would use this to wait for React to render something you are interested in, after you know its about to.
 
