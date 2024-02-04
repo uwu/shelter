@@ -127,6 +127,11 @@ export default (): JSX.Element => {
        */}
       {Object.entries(installedPlugins())
         .filter(([id]) => id !== devModeReservedId)
+        .sort(([, pluginA], [, pluginB]) => {
+          const nameA = pluginA.manifest.name?.toLowerCase();
+          const nameB = pluginB.manifest.name?.toLowerCase();
+          return nameA < nameB ? -1 : nameA > nameB ? 1 : 0;
+        })
         .map(([id, plugin]) => (
           <PluginCard {...{ id, plugin }} />
         ))}
