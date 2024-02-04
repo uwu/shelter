@@ -45,8 +45,8 @@ importers:
         specifier: ^0.17.12
         version: 0.17.14
       esbuild-sass-plugin-ysink:
-        specifier: ^2.3.3
-        version: 2.3.3
+        specifier: ^2.3.4
+        version: 2.3.4
       postcss:
         specifier: ^8.4.21
         version: 8.4.21
@@ -2429,6 +2429,15 @@ packages:
       esbuild: 0.14.54
       resolve: 1.22.1
       sass: 1.60.0
+    dev: true
+
+  /esbuild-sass-plugin-ysink@2.3.4:
+    resolution: {integrity: sha512-tppwB+lzJ0hFocW4GSazcz+cvOTC2X3mU/H+lcVBlUwn+7OpgPkDNSYm3epizeMrfS+uoj8zROxOdQV2IkGjQw==}
+    dependencies:
+      esbuild: 0.14.54
+      resolve: 1.22.1
+      sass: 1.60.0
+    dev: false
 
   /esbuild-sunos-64@0.14.54:
     resolution: {integrity: sha512-28GZ24KmMSeKi5ueWzMcco6EBHStL3B6ubM7M51RmPwXQGLe0teBGJocmWhgwccA1GeFXqxzILIxXpHbl9Q/Kw==}

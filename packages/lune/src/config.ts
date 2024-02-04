@@ -6,10 +6,10 @@ import { pathToFileURL } from "url";
 
 export interface LuneCfg {
   /**
-   * If CSS Modules should be enabled (for sass/scss files only currently)
+   * If CSS Modules should be enabled
    * @default false
    */
-  cssModules?: boolean;
+  cssModules?: boolean | "legacy";
   /**
    * If the output should be minified
    * @default true

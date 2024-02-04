@@ -66,7 +66,7 @@ export async function buildPlugin(path: string, to: string, cfg: LuneCfg, minify
             sourceMap: false,
             transform: postcssModules({
               localsConvention: "camelCaseOnly",
-              inject: false,
+              inject: cfg.cssModules === "legacy" ? false : "shelter",
             } as any),
           })
         : sassPlugin({ style: "compressed", sourceMap: false, type: "css-text" })) as any, // bad but version conflicts suck
