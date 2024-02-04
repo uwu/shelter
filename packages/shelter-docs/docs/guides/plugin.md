@@ -1,130 +1,114 @@
 # Your first plugin
 
-::: warning
-This guide was written prior to a docs rewrite, and is awaiting tweaking and rewriting itself.
-It is not guaranteed to be up to date and up to the standard of other pages here *YET*.
+This guide will walk through writing a simple but functional plugin from start to finish.
+It assumes you have shelter installed, Lune setup, and your monorepo setup.
+
+## Taking a quick look around
+
+Assuming you have a fresh template plugin repo setup, you'll have a folder `plugins/hello-world`.
+Inside here is the scaffold for an empty shelter plugin.
+
+The `plugin.json` file contains all the user-facing metadata for your plugin: the name, author, description, etc.
+This isn't code but is still important.
+
+The `index.jsx` file is the entry-point of your plugin, the main file.
+This file can be renamed to have any extension of `js`, `jsx`, `ts`, or `tsx`, to your tastes.
+
+Notice the three main things in this file: a destructure of [the shelter global](/reference), this is where you'll be getting your
+APIs from, the `onLoad` function, which is ran when your plugin is enabled, after all the top level code finishes,
+and the `onUnload` function, which is ran when your plugin unloads.
+
+You can also add a `settings` export, to add a GUI settings menu to your plugin.
+All of these exports are optional, shelter will use what you provide but will not complain if you don't provide them.
+
+## Let's get writing then
+
+We're going to build `show-username` from scratch, which displays the username of people with nicknames in chat.
+
+So, `lune init show-username` and open it in your text editor of choice.
+
+The way we'll approach this is the same as most shelter plugins:
+ - listen for a reason to suspect the document is about to change: Flux
+ - wait for the document to change: the DOM Observer
+ - pull helpful information out of [_react fibers_](background)
+ - modify the document manually
+
+::: tip
+You can read more about common patterns [here](patterns).
 :::
 
-This guide will walk you through getting started making a shelter plugin from scratch.
-
-shelter is a client mod that avoids touching Discord's internals as much as possible, instead focusing on modifying the document directly, and using Discord's [Flux](https://facebookarchive.github.io/flux/) storage.
-
-This guide assumes that you already know some level of Javascript, and have a JS development environment set up (node + a package manager of your choice (npm), a code editor, git, etc.)
-
-## 1) Setting up the dev tool
-
-While shelter plugins can be written by hand, if that is your preference, it is easier to use a development tool to bundle your files, let you use JSX, bundle dependencies, etc.
-
-The `lune` tool provides a:
-
-- plugin build system
-- new plugin scaffold
-- dev server with hot reload
-- monorepo build tool
-
-(see [the lune docs](../lune/README.md) for more info)
-
-You may install it globally with your package manager of choice:
-
-```sh
-npm i -g @uwu/lune
-pnpm i -g @uwu/lune
-yarn global add @uwu/lune
-```
-
-Then invoke as `lune` from the command line.
-
-You *may* skip this step if you install it as a dev dependency in your repository (like the template does), however due to [an ongoing issue with pnpm](https://github.com/pnpm/pnpm/issues/5068), this can be less useful.
-
-## 2) Setting up your plugin repository
-
-Either create a repository from the [template](https://github.com/uwu/shelter-template) on GitHub, or create it from the command line with
-
-```sh
-npx degit uwu/shelter-template my-plugins-repo-name
-```
-
-You now have a fresh plugins repo, let's take a look around.
-
-- package.json - pretty standard stuff here, the file that manages your repo's dependencies
-- pnpm-workspace.yaml - if you choose to use pnpm, this sets up a [workspace](https://pnpm.io/workspaces) (npm and yarn workspaces are configured in package.json)
-- lune.config.js - here is where you configure lune! It is optional, but if you choose to use it, allows you to customise the build behaviour.
-- plugins/hello-world - here's your first ever plugin! Let's look at each file indidivually here
-
-## 3) plugins/hello-world
-
-First up, plugin.json, this file contains all the info about your plugin that isn't code, but might be useful to a user, e.g. name, developer, description.
-
-If you open it up you can see places to put this info.
-
-Now, index.jsx. Any file named index.js, index.jsx, index.ts, or index.tsx will be picked up by lune as the main file of your plugin. You should export an `onUnload` hook, and can optionally export an `onLoad` hook and a `settings` component - more on that later.
-
-Also notice that the `shelter` global is available at the top. This contains all of shelter's global APIs, which you can play with in your console, plus special plugin specific APIs. [Read more about this here](reference.md).
-
-## 4) Writing a new plugin
-
-Let's break down writing a show-username plugin, which will show the message author's username in brackets after their nickname, if they have one.
-
-First create a plugin with `lune init`, and open the new index file in your text editor of choice.
-
-So the way we're going to approach this is to modify the document, using information we can find in the react fiber. We will then listen for Flux events to know when we need to update the document again.
-
-First, we'll import some shelter APIs we will need:
-
+So let's import the APIs we're going to need, which isn't particularly interesting on its own, just object destructures:
 ```js
 const {
-	flux: {
-		dispatcher,
-		stores: {
-			GuildMemberStore,
-			ChannelStore,
-			SelectedChannelStore,
-			RelationshipStore,
-		},
-	},
-	util: { getFiber, reactFiberWalker },
-	observeDom,
+  GuildMemberStore,
+  ChannelStore,
+  SelectedChannelStore,
+  RelationshipStore
+} = shelter.flux.storesFlat;
+const {
+  util: { getFiber, reactFiberWalker },
+  observeDom
 } = shelter;
+const { subscribe } = shelter.plugin.scoped.flux;
 ```
 
-The dispatcher lets us listen for events, the stores give us info we will need, the fiber utils will help us pull information out of the document, and the observer tells us which elements to look for - I'll explain in a minute.
+The flux stores let us easily query information from Discord, that is helpful to us.
+The fiber utils are what we'll use to pull more info off of the page.
+The observer lets us wait until the document is ready to be modified,
+but also run immediately when it is so that users see no flash / jank.
 
-## The flux & observe pattern: flux
+The scoped subscribe function lets us listen for flux dispatches, and automatically cleans up on unload for us.
 
-The pattern looks a little like this:
+## Listening for Flux dispatches
 
+We're going to listen for a list of flux event types that are of interest to us,
+which signal that the document _might_ be about to change.
+
+When something needs to change the page, React, the UI Framework Discord uses, does something called a
+[rerender](https://www.joshwcomeau.com/react/why-react-re-renders/).
+This will wipe all our modifications off the page in the majority of cases.
+
+Luckily, almost all of these rerenders come following a flux dispatch, so we can listen for these same dispatches too,
+and then swoop in after React is done to apply our changes.
+
+We'll start with just our simple listener:
 ```js
-function handleDispatch(payload) { }
+function handleDispatch(payload) {
+}
 
 const triggers = ["MESSAGE_CREATE", "CHANNEL_SELECT", "LOAD_MESSAGES_SUCCESS", "UPDATE_CHANNEL_DIMENSIONS"];
-
-export function onLoad() {
-    for (const t of triggers) dispatcher.subscribe(t, handleDispatch);
-}
-
-export function onUnload() {
-    for (const t of triggers) dispatcher.unsubscribe(t, handleDispatch);
-}
+for (const t of triggers)
+  // the subscribe function we imported earlier
+  subscribe(t, handleDispatch);
 ```
 
-Each of those trigger types is a kind of flux event that signals to us that we may need to handle newly rendered elements, so when any of them happen, we will receive it in `handleDispatch`.
-
-Note however, that `MESSAGE_CREATE` is a very noisy event type, so let's filter it down a little:
+Before we work too hard on implementing our logic, we want to refine our subscriptions.
+In particular, `MESSAGE_CREATE` is very noisy, so we'll ignore any that aren't for our current channel.
 
 ```js
 function handleDispatch(payload) {
     // only listen for message_create in the current channel
     if (payload.type === "MESSAGE_CREATE" &&
-		payload.channelId !== SelectedChannelStore.getChannelId())
+		    payload.channelId !== SelectedChannelStore.getChannelId()
+    )
         return;
+
+    console.log("We might need to do some work here!");
 }
 ```
 
-Now, the flux events tell us when a change is likely to happen, but they don't tell us that the change has definitely happened, how much, or where. For example `UPDATE_CHANNEL_DIMENSIONS` tells us that the user has scrolled some amount, but not which messages have been rerendered.
+Now we have the ability to know when the change is likely to happen shortly, but we don't know at what point it has
+definitely happened, how much changed, what changed, or where it changed, and that it won't be changed further yet.
 
-## The flux & observe pattern: observing
+For example, `UPDATE_CHANNEL_DIMENSIONS` generally just means the window has been scrolled or resized,
+which in many cases means we have new messages displaying, but not necessarily!
 
-So now we will use a document observer to see what elements change:
+## DOM Observation
+
+Now we need to wait for the page to actually be updated. This can be done using a few different methods,
+but the one in shelter is the `observeDom` API.
+You provide it with a CSS selector, and it will run a callback you pass for every element which either changes,
+or is the child of an element that changes.
 
 ```js
 function handleElement(elem) { }
@@ -132,7 +116,8 @@ function handleElement(elem) { }
 function handleDispatch(payload) {
     // only listen for message_create in the current channel
     if (payload.type === "MESSAGE_CREATE" &&
-		payload.channelId !== SelectedChannelStore.getChannelId())
+		    payload.channelId !== SelectedChannelStore.getChannelId()
+    )
         return;
 
     const unObserve = observeDom("[id^=message-username-]", (elem) => {
@@ -144,97 +129,223 @@ function handleDispatch(payload) {
 }
 ```
 
-So! Let's break this down! First of all, we call `observeDom` with a [CSS selector](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors), which tells shelter that we're interested in elements with an `id` beginning with `message-username-`.
+So, a lot more is going on here than it might look like.
+We start watching the document for any element that changes that has an ID starting with `message-username-`.
+Document changes _come in batches_, and when the next batch of changes come in which a matching element is found,
+we pass every match to the callback you pass. You only get one element at once.
 
-When one of these elements is modified, shelter will pass it to the callback, in which we process the element, and then remove the observation.
+We pass the element off to a function to do later work, fine, but the behaviour of this `unObserve` function is notable.
+You may assume that once its called here, that's it, and your callback will never get called.
+Actually, this isn't quite true - it makes plugins a lot more comfy to write generally if this function will only stop
+AFTER the current batch has been processed.
 
-And just in case a dispatch doesn't cause any modifications to the document, we remove the observation after 500ms to avoid slowly degrading Discord's performance over time.
+So we can call `unObserve` inside our callback to clean the observer up as soon as its finished doing its job,
+but still getting all of the element we want, not just one.
 
-## Pulling data off of the DOM
+Finally, we use a `setTimeout`, because we are assuming that the change we want is going to happen within half a second,
+and if a change _isn't_ going to happen, we don't want to leave loads of observations dangling for performance reasons:
+ - It can cause way lots of duplicate work
+ - It slowly builds up callbacks over time so performance slowly decreases and memory usage increases.
+ - It forces shelter to watch the document 24/7, which is slow, instead of only bothering watching when requested to
 
-Now that we get given elements that need changing every time that they are updated, we can go about actually inserting the usernames into the document - but to do that we need to know what user we're concerned with.
+So now, we have access to every message element _immediately_ after React updates it on the page.
 
-Discord use [React](https://react.dev) as their UI library, and this means there are *three* document trees at work:
+## Pulling data off of the page
 
-- elements ("virtual DOM"), which is the tree Discord's code constructs to describe their UI
-- the DOM / the document, which is what we're interacting with, and what the user actually sees
-- the fibers, which are used by React internals to help speed up its vdom implementation, and contains pretty much all of the information from the elements with extra detail, including
-  - the type of the element (be it nothing, a React built-in element, a DOM element, or a React component)
-  - the props passed to that element (the same kind of objects you'll find in Flux stores)
-  - the corresponding DOM element
-  - the parent, child, and siblings
-  - etc.
+So, we need to know what user we're working with before we can go about inserting their nickname onto the page.
 
-While the elements tree is a powerful thing to be able to modify, and is how classic client mods worked [before September 2022](https://cumcord.com/an-exercise-in-futility), it is volatile and, since the death of webpack searching, difficult.
+If you want to read more about fibers, I suggest reading the [background](background) guide, but to TL;DR the relevant
+part, Discord are using React, and that means there are _three_ trees of elements at work that make up the page:
+ - The _DOM_, or just document, which is the raw JavaScript interface to the page, which is what we are working with
+   mostly in shelter, exposed on `window.document`. This reflects precisely what the user is actually seeing.
+ - _React elements_ (a.k.a "The Virtual DOM"), which is the tree that Discord's code builds directly via JSX syntax.
+   This exists because modifying it is much cheaper than modifying the real DOM. (The extent to which this is
+   advantageous is arguable, but it allows React to throw away and reconstruct the entire tree every time (lol)).
+ - _React Fibers_, which are much more obscure, and are internally used by React to speed up the Virtual DOM.
+   They basically contain all of the information of the elements, but with extra internal info, including:
+   * the type of the element (be it nothing, a React built in element, DOM element, or React component)
+   * the props passed to that element (the same kind of objects you'll find in Flux stores)
+   * the corresponding DOM element, if there is one
+   * the parent, child, and siblings
+   * etc.
 
-The document is the easiest and safest thing to modify, however contains missing information that might be useful to us.
+The elements tree is very powerful to modify, and is in fact how client mods used to do their work
+[before September 2022](https://web.archive.org/web/20230121083343/https://cumcord.com/an-exercise-in-futility),
+(and how some - less sustainable - client mods still do!).
+Unfortunately, it is volatile and, since the death of webpack searching, difficult.
 
-We can't really modify the fiber tree ourselves (or at least, nobody's figured out a way to make it work!), however since it does contain information from the element tree, and we can get into it relatively easily from the document, close(-ish) to where we need to be, it is useful for extracting extra information that didn't make it as far as the document.
+If you need any convincing, webpack searching came _back again_ recently (late October 2023), and every plugin and mod
+that used webpack searching (or regex patching, an alternate means to get to element tree patching) broke instantly
+due to the change.
+shelter didn't. ;)
 
-This includes full message, channel, guild objects etc, functions that we may want to try calling, strings before processing, etc.
+The document is the easiest and safest thing to modify, but contains missing information. It's purely what the user
+needs to see, and in this case, that is not the username of the user!
 
-So, let's leave the world of document nodes we can see and drop into the world of the highly detailed fiber tree!:
+We cannot really modify the fiber tree ourself (or rather, nobody has figured out how to do it yet...),
+but it does contain information from the element tree that can really help us.
+We can also easily get onto it from the document, so it's really good for getting extra context once we have a document
+element.
+
+This includes things like full message, channel, and guild objects, functions we could try calling, etc etc.
+
+Let's temporarily leave behind the world of elements and dive into the (highly detailed) fiber tree:
 
 ```js
 function handleElement(elem) {
-    const f = getFiber(elem);
+  const fiber = getFiber(elem);
 }
 ```
 
-And, because its good not to lose sight of the goal, what we are looking for here is the author's username, and if they have a nickname in this server - so we need:
+And we want to dig for the author ID, channel ID (so we can find the guild ID, to check the server nickname),
+and the message type (DM or channel).
 
-- the author ID
-- the channel ID so we can look up the guild ID
-  - then we can lookup the nickname
-- the message type so we know if we should look for DM nicks or server nicks
+If you look at this fiber, you'll notice we don't have any of this in the fiber! What gives!
 
-and all of this lies in the message object, or behind some data we can get from it.
+Well, the fiber we're currently holding corresponds directly to a DOM element, but we actually want the one that
+corresponds to a React component, which has the useful info. We need a different, but related fiber.
 
-You may notice, however, that the message object isn't in the props of our fiber - `f.pendingProps.message // undefined`, what gives!
+See:
+```jsx
+function MyReactComponent(props) { // -- and we want the fiber right at the top, the one for the component
+  // stuff in here
+  return (
+    <AnotherComponent> // -- but this is also a fiber, and who knows how many inside this component
+      <div> // -- we might be holding this fiber, which corresponds to the DOM node
+        hi!
+      </div>
+    </AnotherComponent>
+  );
+}
+```
 
-Well, we have the fiber for some element related to the username element, since that is what the dom node is, but the message object lies further up the tree, where the whole message is rendered, so we need to move around the tree to find it.
+So we need to walk up the tree until we find what we want.
 
-shelter provides tools to make this easier: the fiber walker, so let's walk our fiber, to find a prop called message, and tell it to go up the tree, not down (thats the `true` prop):
+shelter provides the fiber walker to make moving up and down the tree much easier.
+We will move _up_ the tree to find a fiber with a prop named `message`, and get that object:
 
 ```js
 function handleElement(elem) {
-    const message = reactFiberWalker(getFiber(elem), "message", true)?.pendingProps?.message;
-    if (!message) return;
-```
-
-Now, we should have either a message object, or we've somehow missed and walked up the tree forever, hit the top of the tree, and given up.
-
-## Looking up extra data with Flux
-
-Our message object is quite big, but the things we care about look like: `message: { author: { id, username }, channel_id }`.
-
-Now let's look up the channel type and guild ID by asking the Flux store for the information - since we have access to Flux in shelter we can simply grab any information we need right out of the same data stores Discord itself uses:
-
-```js
-	const { type, guild_id } = ChannelStore.getChannel(message.channel_id);
-```
-
-And now we need to get the nickname - which lies in `RelationshipStore` for DMs, and `GuildMemberStore` for servers, and stop if the user has no nickname:
-
-```js
-    // type = 0: Guild, 1: DM
-    const nick = type
-        ? RelationshipStore.getNickname(message.author.id)
-        : GuildMemberStore.getNick(guild_id, message.author.id);
-
-    if (!nick) return;
-```
-
-## Endgame
-
-Finally, remember we asked the observer for the element that contains the user's username or nickname display, so this means we can leave fiber land and simply add it onto the relevant document node:
-
-```js
-	elem.firstElementChild.textContent += ` (${message.author.username})`;
+  const fiber = getFiber(elem);
+  //                                /- fiber        /- filter  /- go up, not down
+  const message = reactFiberWalker(getFiber(elem), "message", true)?.pendingProps?.message;
+  if (!message) return;
 }
 ```
 
-And there we go!
+If message is undefined, we've somehow missed, and walked up so far we've hit the very very top of the tree.
+We'll just check to be sure.
+
+## Context from Flux stores
+
+The message object is pretty big, but the bits of it we care about look like this:
+```js
+{
+  author: { id, username },
+  channel_id
+}
+```
+
+We are going to look up the channel type and guild ID by asking the Flux store for info, and the nickname.
+This comes direct out of the same sources of truth Discord itself uses.
+
+```js
+const { type, guild_id } = ChannelStore.getChannel(message.channel_id);
+// type = 0 -> guild, type = 1 -> DM
+const nick = type
+  ? RelationshipStore.getNickname(message.author_id)
+  : GuildMemberStore.getNick(guild_id, message.author_id);
+
+if (!nick) return;
+```
+
+If the user has no nickname, we know now we can stop. The user's real username is already on display.
+
+## Committing our changes to the page
+
+Now, we can insert into the UI - note we're using [Solid](https://www.solidjs.com/)
+JSX here, so we're working with real document elements, not React elements or anything:
+```jsx
+elem.firstElementChild.textContent += ` (${message.author.username})`;
+```
+
+## Mutexing
+
+You may have noticed that you get duplicates of our changes appear. This is because we may detect a change that doesn't
+actually wipe our modifications. To handle this, we place something on the element that, if React were to reset our
+changes, it would also remove.
+This is usually a [dataset attribute](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset).
+
+So right at the very start of our handleElement call, we add a check, and add an element:
+```js
+function handleElement(elem) {
+  if (elem.dataset.showuname) return;
+  elem.dataset.showuname = 1;
+
+  // ...rest of function
+```
+
+
+And let's put it all together!:
+
+```js
+const {
+  GuildMemberStore,
+  ChannelStore,
+  SelectedChannelStore,
+  RelationshipStore
+} = shelter.flux.storesFlat;
+const {
+  util: { getFiber, reactFiberWalker },
+  observeDom
+} = shelter;
+const { subscribe } = shelter.plugin.scoped.flux;
+
+function handleElement(elem) {
+  if (elem.dataset.showuname) return;
+  elem.dataset.showuname = 1;
+
+  const fiber = getFiber(elem);
+  const message = reactFiberWalker(getFiber(elem), "message", true)?.pendingProps?.message;
+  if (!message) return;
+
+  const { type, guild_id } = ChannelStore.getChannel(message.channel_id);
+  // type = 0 -> guild, type = 1 -> DM
+  const nick = type
+    ? RelationshipStore.getNickname(message.author_id)
+    : GuildMemberStore.getNick(guild_id, message.author_id);
+
+  if (!nick) return;
+
+  elem.firstElementChild.textContent += ` (${message.author.username})`;
+}
+
+function handleDispatch(payload) {
+    // only listen for message_create in the current channel
+    if (payload.type === "MESSAGE_CREATE" &&
+		    payload.channelId !== SelectedChannelStore.getChannelId()
+    )
+        return;
+
+    const unObserve = observeDom("[id^=message-username-]", (elem) => {
+        handleElement(elem);
+        unObserve();
+    });
+
+    setTimeout(unObserve, 500);
+}
+
+const triggers = ["MESSAGE_CREATE", "CHANNEL_SELECT", "LOAD_MESSAGES_SUCCESS", "UPDATE_CHANNEL_DIMENSIONS"];
+for (const t of triggers)
+  subscribe(t, handleDispatch);
+```
+
+## Adding user changeable settings to our plugin
+
+// TODO.
+
+---
+below this line unchanged from the original guide in the old docs.
 
 ## Modification instead of interception
 

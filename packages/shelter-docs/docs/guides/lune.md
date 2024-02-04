@@ -17,6 +17,9 @@ It also has a hot-reload "dev mode", which is useful for plugin development.
 
 It is currently based on esbuild, which means builds are lightning quick, at the expense of ecosystem size.
 
+It is totally feasible to write shelter plugins by hand, and nothing stops you from doing so, but Lune generally makes
+the whole experience much more streamlined and comfortable.
+
 ## Getting up to speed with monorepos
 
 A monorepo is a project structure where you place all the components of your software into a single repository.
@@ -54,16 +57,19 @@ console.log(styles);
 
 ### CSS Modules
 
-Lune optionally supports a slightly modified form of [CSS Modules](https://css-tricks.com/css-modules-part-1-need/).
+Lune optionally supports [CSS Modules](https://css-tricks.com/css-modules-part-1-need/).
 
 To enable it, you just turn it on in the [configuration file](#configuring-lune).
+
+This has two upshots: one, your classes will not conflict with anything else,
+two, your CSS automatically injects when you import it and uninjects on unload without any other setup.
 
 You should then change your imports:
 ```js
 // from
 import css from "./styles.css";
 // to
-import { css, classes } from "./styles.css";
+import classes from "./styles.css";
 ```
 
 When your CSS is compiled, it will have its classes suffixed with a random string to prevent conflicts.
@@ -74,8 +80,8 @@ The map of original class names to randomized class names is given in the `class
 ```
 ```js
 /* plugin JS */
-import { css, classes } from "./styles.css";
-css == ".btn_8gljn_1 { margin: 1rem; }"
+import classes from "./styles.css";
+// .btn_8gljn_1 { margin: 1rem; } is injected onto the page at plugin load automatically.
 classes == { btn: 'btn_8gljn_1' }
 ```
 
@@ -91,18 +97,20 @@ In order, Lune will search the following places for this file:
  - Within the folder passed by the user to the relevant command, if any
  - Within the current working directory
 
-### `repoSubDir: string`
+### `minify: boolean`
 
-This is the subdirectory to use when building a monorepo with `lune ci`.
+By default true, when this is on plugins will be compressed for size.
+Makes debugging harder, but lune dev by default does not anyway.
 
-This can be passed as an option to `lune ci`, however having it specified in a config file is generally nicer for this
-use case.
-
-By default this is `"plugins"`.
-
-### `cssModules: boolean`
+### `cssModules: boolean | "legacy"`
 
 Enabling this turns on [CSS Modules](#css-modules). By default this is `false`.
+
+When set to legacy (or just true pre-`1.4.0`), instead of automatically injecting and uninjecting CSS for you,
+it will export the css and classes, like:
+```js
+import { css, classes } from "./styles.css";
+```
 
 ### `prePlugins: Plugin[]`
 
