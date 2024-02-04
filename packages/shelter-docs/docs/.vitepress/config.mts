@@ -24,6 +24,7 @@ export default defineConfig({
             { text: "Getting Started", link: "/guides/" },
             { text: "Lune", link: "/guides/lune" },
             { text: "Your First Plugin", link: "/guides/plugin" },
+            { text: "Settings, Storage & UI", link: "/guides/settings" },
             { text: "Patterns", link: "/guides/patterns" },
             { text: "Ideals", link: "/guides/ideals" },
             { text: "Background", link: "/guides/background" },

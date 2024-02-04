@@ -419,6 +419,9 @@ await sleep();
 await sleep(5000);
 ```
 
+### `shelter.util.createScopedApi`
+// TODO
+
 ## `shelter.storage`
 
 Shelter implements a storage API backed by [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API). The stores behave as if they were just objects:tm:, and have interoperability with Solid for reactivity.
@@ -736,9 +739,11 @@ you may find it easier to do your initialization at the top level instead of wit
 
 ### `onUnload`
 
-`onUnload` is a *REQUIRED* export of the form `function onUnload(): void`.
+`onUnload` is an optional export of the form `function onUnload(): void`.
 It is called when your plugin is unloaded. You should cleanup any effects of your plugin here.
 This includes removing patches, subscriptions, flux and http intercepts, DOM observations, etc.
+
+You should usually only omit this if you're using Scoped APIs.
 
 ### `settings`
 

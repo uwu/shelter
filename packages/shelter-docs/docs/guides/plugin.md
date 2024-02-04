@@ -3,7 +3,7 @@
 This guide will walk through writing a simple but functional plugin from start to finish.
 It assumes you have shelter installed, Lune setup, and your monorepo setup.
 
-## Taking a quick look around
+## Orientation
 
 Assuming you have a fresh template plugin repo setup, you'll have a folder `plugins/hello-world`.
 Inside here is the scaffold for an empty shelter plugin.
@@ -239,7 +239,7 @@ We'll just check to be sure.
 ## Context from Flux stores
 
 The message object is pretty big, but the bits of it we care about look like this:
-```js
+```json5
 {
   author: { id, username },
   channel_id
@@ -261,7 +261,7 @@ if (!nick) return;
 
 If the user has no nickname, we know now we can stop. The user's real username is already on display.
 
-## Committing our changes to the page
+## Changing the page
 
 Now, we can insert into the UI - note we're using [Solid](https://www.solidjs.com/)
 JSX here, so we're working with real document elements, not React elements or anything:
@@ -275,6 +275,9 @@ You may have noticed that you get duplicates of our changes appear. This is beca
 actually wipe our modifications. To handle this, we place something on the element that, if React were to reset our
 changes, it would also remove.
 This is usually a [dataset attribute](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset).
+
+This is a side effect of how we are doing things - we don't intercept the UI rendering, we modify after it.
+This inherently means we are out of sync with React. This can cause many issues, and this is one of them.
 
 So right at the very start of our handleElement call, we add a check, and add an element:
 ```js
@@ -340,50 +343,38 @@ for (const t of triggers)
   subscribe(t, handleDispatch);
 ```
 
-## Adding user changeable settings to our plugin
-
-// TODO.
-
----
-below this line unchanged from the original guide in the old docs.
-
-## Modification instead of interception
-
-This method of modifying the UI treats our changes as modifications to be done, instead of an interception of Discord rendering their UI.
-
-While that is more robust, and easier to do, it does come with the problem that our changes put React out of sync with the document.
-
-This can cause many issues, but one you may have noticed here is that we get multiple copies of the username sometimes, that's not good! This happens because React doesn't know about our modification, so doesn't reset it, but a change higher up still triggers our observer.
-
-To deal with this, we can add an attribute to the element - whenever React would remove our modification, it would also notice our attribute and remove it, but if it leaves it alone it lets us detect that. We'll use a [`data-` attribute](https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/dataset) for this.:
-
-```js
-function handleElement(elem) {
-    if (elem.dataset.showuname_injected) return;
-    elem.dataset.showuname_injected = true;
-```
-
-And that is it, but actually this time! You should now see that it works as intended, and you may also notice that your code now looks about the same as [the actual show-username plugin](https://github.com/yellowsink/shelter-plugins/blob/master/plugins/show-username/index.js).
+You'll notice, this is about the same as [the actual show-username plugin](https://github.com/yellowsink/shelter-plugins/blob/master/plugins/show-username/index.js)!
 
 ## Finishing up
 
-This is a basic plugin, but it shows you a common pattern used to build shelter plugins, and gives you a taste of the general approach used. If there are more advanced guides available later, they'll be in shelter-docs, but as I write this there aren't.
+This is a basic plugin, but it shows you a common pattern used to build shelter plugins,
+and gives you a taste of the general approach used. I suggest heavily you keep reading the other guides,
+which will help your general understanding of shelter development.
 
-Feel free to have a look at [what plugin developers are doing in their plugins](https://github.com/search?o=desc&q=shelter+plugins&s=updated&type=Repositories), and try your hand at bigger things.
+Feel free to have a look at
+[what plugin devs are doing in their plugins](https://github.com/search?o=desc&q=shelter+plugins&s=updated&type=Repositories),
+and try your hand at bigger things.
 
-Another thing you may wanna play with is that you have all of [Solid](https://www.solidjs.com/) at your fingertips to build reactive apps easily, or even just to replace the annoying process of creating DOM structures by hand with `document.createElement` with something like the following:
+Another thing you may wanna play with is that you have all of [Solid](https://www.solidjs.com/) at your fingertips
+to build reactive apps easily, or even just to replace the annoying process of creating DOM structures by hand with
+`document.createElement` with something like the following:
 
 ```jsx
 someElement.appendChild(
-	<div style={{ margin: "5rem" }}>
-        <span>Hi guys</span>
-        <button onClick={() => console.log("ping!")}>click here!</button>
-    </div>
+  <div style={{ margin: "5rem" }}>
+    <span>Hi guys</span>
+    <button onClick={() => console.log("ping!")}>click here!</button>
+  </div>
 );
 ```
 
-And because Solid is reactive, if you use a signal in that UI, then updating the signal will automatically update your injected UI on the document, both making building reactive UIs easy, and making, say, injecting an element now and adding content later really easy!
+And because Solid is reactive, if you use a signal in that UI,
+then updating the signal will automatically update your injected UI on the document,
+both making building reactive UIs easy, and making, injecting an element _now_ and adding content _later_ really easy!
 
-But enough about Solid, go forth and improve Discord, and hopefully enjoy doing it!
+Oh, and if you're doing anything complicated with Solid, and just manually placing it onto the document
+(not passing it to shelter settings or modals), then you should probably use a shelter UI `<ReactiveRoot>`! ;)
+
+But enough about Solid, go forth and improve Discord, and I hope you enjoy developing for our mod!
 
 -- Yellowsink
