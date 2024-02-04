@@ -18,8 +18,10 @@ import {
   Switch,
   focusring,
   tooltip,
+  TextBox,
 } from "shelter-ui";
 import PluginAddModal from "./PluginAddModal";
+import Fuse from "fuse.js";
 
 false && focusring;
 false && tooltip;
@@ -100,11 +102,24 @@ export const PluginCard: Component<{
   );
 };
 
+const fuzzy = (plugins: [string, StoredPlugin][], searchTerm: string) =>
+  !searchTerm || searchTerm === ""
+    ? plugins
+    : new Fuse(plugins, {
+        threshold: 0.5,
+        useExtendedSearch: true,
+        keys: ["1.manifest.name", "1.manifest.author", "1.manifest.description"],
+      })
+        .search(searchTerm)
+        .map((res) => res.item);
+
 export default (): JSX.Element => {
   if (!cssInjected) {
     injectCss(css);
     cssInjected = true;
   }
+
+  const [searchTerm, setSearchTerm] = createSignal("");
 
   return (
     <div class={classes.list}>
@@ -121,11 +136,13 @@ export default (): JSX.Element => {
         </button>
       </Header>
 
+      <TextBox value={searchTerm()} onInput={setSearchTerm} placeholder="Search plugins..." />
+
       {/* IIRC not using a <For> here was very intentional due to keying -- sink
        * the only way to do what we need cleanly in solid looks *like this*!:
        * https://codesandbox.io/s/explicit-keys-4iyen?file=/Key.js
        */}
-      {Object.entries(installedPlugins())
+      {fuzzy(Object.entries(installedPlugins()), searchTerm())
         .filter(([id]) => id !== devModeReservedId)
         .sort(([, pluginA], [, pluginB]) => {
           const nameA = pluginA.manifest.name?.toLowerCase();

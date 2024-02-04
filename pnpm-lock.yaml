@@ -78,6 +78,9 @@ importers:
       '@cumjar/websmack':
         specifier: ^1.2.0
         version: 1.2.0
+      fuse.js:
+        specifier: ^7.0.0
+        version: 7.0.0
       idb:
         specifier: ^7.1.0
         version: 7.1.1
