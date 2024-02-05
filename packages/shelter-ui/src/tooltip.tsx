@@ -48,7 +48,7 @@ const ToolTip: Component<{
   );
 };
 
-// TODO: set these up in existing components, document
+// TODO: set these up in existing components
 export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean, JSX.Element]>) {
   const propsIsArr = () => Array.isArray(props()) && typeof props()[0] === "boolean";
   const content = () => (propsIsArr() ? props()[1] : props());
