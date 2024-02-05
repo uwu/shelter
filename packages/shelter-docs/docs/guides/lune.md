@@ -41,7 +41,7 @@ You can import `css` files in your code, and the default export will be their co
 
 Lune supports [Sass and SCSS](https://sass-lang.com) out-of-the-box, and will compile them to CSS at build time.
 
-Generally you would use [`shelter.ui.injectCss`](/ui#injectCss) to inject this onto the page
+Generally you would use [`shelter.ui.injectCss`](/ui#injectcss) to inject this onto the page
 
 Example:
 ```js

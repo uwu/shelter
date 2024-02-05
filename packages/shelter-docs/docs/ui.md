@@ -10,6 +10,7 @@ The API signatures are _not_ identical to Discord's React components.
 
 These components are only expected to work inside Discord.
 Use outside of Discord is viable but not currently implemented.
+(when it is, expect interactive examples here!)
 
 ## Accessibility
 
@@ -29,7 +30,11 @@ Not components, but UI utils used in shelter.
 
 ### `<ReactiveRoot>`
 
-Type: `solid.Component<{ children: JSX.Element }>`
+::: details Type Signature
+```ts
+solid.Component<{ children: JSX.Element }>
+```
+:::
 
 `ReactiveRoot` creates a solid reactive root, to ensure that `onCleanup` works, and fix some reactivity bugs.
 
@@ -39,7 +44,11 @@ elem.append(<ReactiveRoot>{/* ... */}</ReactiveRoot>);
 
 ### `injectCss`
 
-Type: `(string) => (string?) => void`
+::: details Type Signature
+```ts
+(string) => (string?) => void
+```
+:::
 
 `injectCss`, as the name says, injects CSS.
 
@@ -58,7 +67,11 @@ modify(" .myClass { color: blue } "); // no-op
 
 ### `genId`
 
-Type: `() => string`
+::: details Type Signature
+```ts
+() => string
+```
+:::
 
 `genId` generates a random ID.
 
@@ -80,7 +93,13 @@ export default () => {
 
 ### `openModal`
 
-Type: `(solid.Component<{ close: () => void }>) => () => void`
+::: details Type Signature
+```ts
+(
+  (() => void) => JSX.Element
+) => () => void
+```
+:::
 
 `openModal` opens the given component in a fullscreen popup modal.
 
@@ -105,7 +124,11 @@ You can listen for your modal being closed using [onCleanup](https://www.solidjs
 
 ### `<ReactInSolidBridge />`
 
-Type: `solid.Component<{ comp: React.ComponentType<TProps>, props: TProps }>`
+::: details Type Signature
+```ts
+solid.Component<{ comp: React.ComponentType<TProps>, props: TProps }>
+```
+:::
 
 Renders a React component in Solid.
 
@@ -117,7 +140,11 @@ const ComponentFromDiscord = webpack.findByProps("...").default;
 
 ### `SolidInReactBridge`
 
-Type: `React.ComponentType<{ comp: solid.Component<TProps>, props: TProps }>`
+::: details Type Signature
+```ts
+React.ComponentType<{ comp: solid.Component<TProps>, props: TProps }>
+```
+:::
 
 Renders a Solid component in React.
 Using this directly is not recommended as you will need to provide your own React instance.
@@ -137,7 +164,11 @@ React.createElement(SolidInReactBridge, {
 
 ### `renderSolidInReact`
 
-Type: `(solid.Component<TProps>, TProps) => React.ElementType`
+::: details Type Signature
+```ts
+(solid.Component<TProps>, TProps) => React.ElementType
+````
+:::
 
 Just a wrapper to `React.createElement(SolidInReactBridge, {comp, props})`
 
@@ -154,13 +185,27 @@ component.render = () => renderSolidInReact(Component, { className: "solidelem" 
 
 ### `<ErrorBoundary />`
 
-Type `solid.Component<{ children: JSX.Element }>`
+::: details Type Signature
+```ts
+solid.Component<{ children: JSX.Element }>
+```
+:::
 
 Safely catches any errors that occur during rendering, displays the error, and has a button to retry.
 
 ### `showToast`
 
-Type: `({ title?: string, content?: string, onClick?(): void, class?: string, duration?: number }) => () => void`
+::: details Type Signature
+```ts
+({
+  title?: string,
+  content?: string,
+  onClick?(): void,
+  class?: string,
+  duration?: number
+}) => () => void
+```
+:::
 
 Shows a toast notification.
 Returns a function to remove it instantly.
@@ -180,7 +225,11 @@ showToast({
 
 ### `niceScrollbarsClass`
 
-Type: `() => string`
+::: details Type Signature
+```ts
+() => string
+```
+:::
 
 A getter that gets a class to add to an element to give it a Discord-style scrollbar.
 
@@ -231,7 +280,11 @@ You can pass an of the form `[true, JSX.Element]` to render it underneath instea
 
 ### `<Space />`
 
-Type: `solid.Component`
+::: details Type Signature
+```ts
+solid.Component
+```
+:::
 
 A spacebar character that will never be collapsed out of your JSX. Useful in flexboxes etc.
 
@@ -240,7 +293,11 @@ A spacebar character that will never be collapsed out of your JSX. Useful in fle
 
 ### `<Text>`
 
-`solid.Component<{ children: JSX.Element }>`
+::: details Type Signature
+```ts
+solid.Component<{ children: JSX.Element }>
+```
+:::
 
 Text just renders some text, _using Discord's current text colour_, instead of just black or whatever.
 
@@ -250,7 +307,16 @@ Text just renders some text, _using Discord's current text colour_, instead of j
 
 ### `<Header>`
 
-Type: `solid.Component<{ tag: string, children: JSX.Element, class?: string, id?: string }>`
+::: details Type Signature
+```ts
+solid.Component<{
+  tag: string,
+  children: JSX.Element,
+  class?: string,
+  id?: string
+}>
+```
+:::
 
 Header is, well, a header. It has a few styles, chosen by the `tag` prop.
 
@@ -260,8 +326,6 @@ Header is, well, a header. It has a few styles, chosen by the `tag` prop.
 
 #### `HeaderTags`
 
-Type: `Record<string, string>`
-
 - `HeaderTags.H1`: A nice big header - like the ones at the top of user settings sections.
 - `HeaderTags.H2`: A slightly smaller header, with allcaps text.
 - `HeaderTags.H3`: A smaller again header - like "Gifts you purchased" in settings.
@@ -270,7 +334,11 @@ Type: `Record<string, string>`
 
 ### `<Divider />`
 
-Type: `solid.Component<{ mt?: true | string, mb?: true | string }>`
+::: details Type Signature
+```ts
+solid.Component<{ mt?: true | string, mb?: true | string }>
+```
+:::
 
 Divider renders a grey horizontal divider line.
 
@@ -286,7 +354,7 @@ When set true, `20px` is used.
 
 ### `<Button>`
 
-Type:
+::: details Type Signature
 ```ts
 solid.Component<{
   look?: string,       // default ButtonLooks.FILLED
@@ -303,6 +371,7 @@ solid.Component<{
   tooltip?: string
 }>
 ```
+:::
 
 Button is a, well, button, using Discord's styles.
 
@@ -344,7 +413,7 @@ Type: `Record<string, ButtonSize>`
 
 ### `<LinkButton>`
 
-Type:
+::: details Type Signature
 ```ts
 solid.Component<{
   style?: JSX.CSSProperties,
@@ -355,6 +424,7 @@ solid.Component<{
   children?: JSX.Element
 }>
 ```
+:::
 
 A link (`<a>`) that fits with Discord's UI.
 
@@ -362,7 +432,7 @@ It will open the href in a new tab / in your system browser.
 
 ### `<Switch />`
 
-Type:
+::: details Type Signature
 ```ts
 solid.Component<{
   id?: string,
@@ -373,6 +443,7 @@ solid.Component<{
   "aria-label"?: string
 }>
 ```
+:::
 
 A toggle switch.
 
@@ -389,7 +460,7 @@ const [switchState, setSwitchState] = createSignal(false);
 
 ### `<SwitchItem>`
 
-Type:
+::: details Type Signature
 ```ts
 solid.Component<{
   value: boolean,
@@ -402,6 +473,7 @@ solid.Component<{
   "aria-label"?: string
 }>
 ```
+:::
 
 An item with an option name, a switch, and optionally some extra info.
 
@@ -421,7 +493,7 @@ The child elements of the component is the title displayed next to the switch.
 
 ### `<Checkbox />`
 
-Type:
+::: details Type Signature
 ```ts
 solid.Component<{
   id?: string,
@@ -432,12 +504,13 @@ solid.Component<{
   "aria-label"?: string
 }>
 ```
+:::
 
 Like `<Switch />` but its a checkbox.
 
 ### `<CheckboxItem>`
 
-Type:
+::: details Type Signature
 ```ts
 solid.Component<{
   checked: boolean,
@@ -449,6 +522,7 @@ solid.Component<{
   "aria-label"?: string
 }>
 ```
+:::
 
 Like `<SwitchItem>` but its a checkbox.
 Takes an extra `mt` prop which enables a top margin. No note or divider.
@@ -468,7 +542,16 @@ Also see [`openModal()`](#openmodal)
 
 #### `<ModalRoot>`
 
-Type: `solid.Component<{ size?: string, children?: JSX.Element, class?: string, style?: JSX.CSSProperties | string }>`
+::: details Type Signature
+```ts
+solid.Component<{
+  size?: string,
+  children?: JSX.Element,
+  class?: string,
+  style?: JSX.CSSProperties | string
+}>
+```
+:::
 
 The root component of a discord-styled modal.
 
@@ -511,7 +594,7 @@ The footer of a Discord-styled modal, good for buttons!
 
 #### `<ModalConfirmFooter />`
 
-Type:
+::: details Type Signature
 ```ts
 solid.Component<{
   close(): void,
@@ -524,6 +607,7 @@ solid.Component<{
   cancelDisabled?: boolean
 }>
 ```
+:::
 
 A modal footer with configurable confirm and cancel buttons, the most common type of modal footer.
 
@@ -533,7 +617,7 @@ The `disabled` prop affects the confirm button, and the `cancelDisabled` prop af
 
 ### `<TextBox />`
 
-Type:
+::: details Type Signature
 ```ts
 solid.Component<{
   value?: string,
@@ -544,6 +628,7 @@ solid.Component<{
   onInput?(string): void
 }>
 ```
+:::
 
 A discord style textbox.
 
@@ -553,7 +638,7 @@ All optional. onInput called every keystroke and passed the full current value.
 
 ### `<TextArea />`
 
-Type:
+::: details Type Signature
 ```ts
 solid.Component<{
   value?: string,
@@ -569,6 +654,7 @@ solid.Component<{
   mono?: boolean
 }>
 ```
+:::
 
 Like `<TextBox />` but its a textarea.
 
@@ -576,7 +662,7 @@ The size can be set, user resizing can be toggled, and you can apply a monospace
 
 ### `<Slider />`
 
-Type:
+::: details Type Signature
 ```ts
 solid.Component<{
   min: number,
@@ -589,6 +675,7 @@ solid.Component<{
   value?: number
 }>
 ```
+:::
 
 A discord-style slider.
 Takes `value` and returns in `onInput` as number,
