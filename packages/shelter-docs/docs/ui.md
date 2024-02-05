@@ -96,7 +96,7 @@ remove();
 ```
 
 ::: tip
-You can use the [modal components](#modalroot) to style your modals like Discord easily.
+You can use the [modal components](#modal-components) to style your modals like Discord easily.
 :::
 
 ::: tip
@@ -229,6 +229,13 @@ You can pass an of the form `[true, JSX.Element]` to render it underneath instea
 <button use:tooltip={[true, "Delete but underneath"]}><DeleteIcon /></button>
 ```
 
+### `<Space />`
+
+Type: `solid.Component`
+
+A spacebar character that will never be collapsed out of your JSX. Useful in flexboxes etc.
+
+
 ## Components
 
 ### `<Text>`
@@ -326,15 +333,46 @@ Type: `Record<string, ButtonColor>`
 Type: `Record<string, ButtonSize>`
 
 - `ButtonSizes.NONE`: does not attempt to set sizing on the button
-- // TODO
+- `ButtonSizes.TINY`: 53x24
+- `ButtonSizes.SMALL`: 50x32
+- `ButtonSizes.MEDIUM`: 96x38
+- `ButtonSizes.LARGE`: 130x44
+- `ButtonSizes.XLARGE`: 148x50, increases font size & padding
+- `ButtonSizes.MIN`: as small as the content allows, increases padding, `display: inline`
+- `ButtonSizes.MAX`: as large as the container allows, increases font size
+- `ButtonSizes.ICON`: unset width, as high as the container allows, increases padding
 
 ### `<LinkButton>`
+
+Type:
+```ts
+solid.Component<{
+  style?: JSX.CSSProperties,
+  class?: string,
+  href?: string,
+  "aria-label"?: string,
+  tooltip?: string,
+  children?: JSX.Element
+}>
+```
 
 A link (`<a>`) that fits with Discord's UI.
 
 It will open the href in a new tab / in your system browser.
 
 ### `<Switch />`
+
+Type:
+```ts
+solid.Component<{
+  id?: string,
+  checked?: boolean,
+  disabled?: boolean,
+  onChange?(boolean): void,
+  tooltip?: JSX.Element,
+  "aria-label"?: string
+}>
+```
 
 A toggle switch.
 
@@ -350,6 +388,20 @@ const [switchState, setSwitchState] = createSignal(false);
 ```
 
 ### `<SwitchItem>`
+
+Type:
+```ts
+solid.Component<{
+  value: boolean,
+  disabled?: boolean,
+  onChange?(boolean): void,
+  children: JSX.Element,
+  note?: JSX.Element,
+  hideBorder?: boolean,
+  tooltip?: JSX.Element,
+  "aria-label"?: string
+}>
+```
 
 An item with an option name, a switch, and optionally some extra info.
 
@@ -369,21 +421,42 @@ The child elements of the component is the title displayed next to the switch.
 
 ### `<Checkbox />`
 
+Type:
+```ts
+solid.Component<{
+  id?: string,
+  checked?: boolean,
+  disabled?: boolean,
+  onChange?(boolean): void,
+  tooltip?: JSX.Element,
+  "aria-label"?: string
+}>
+```
+
 Like `<Switch />` but its a checkbox.
 
 ### `<CheckboxItem>`
 
+Type:
+```ts
+solid.Component<{
+  checked: boolean,
+  disabled?: boolean,
+  onChange?(boolean): void,
+  children: JSX.Element,
+  mt?: boolean,
+  tooltip?: JSX.Element,
+  "aria-label"?: string
+}>
+```
+
 Like `<SwitchItem>` but its a checkbox.
+Takes an extra `mt` prop which enables a top margin. No note or divider.
 
-### `<ModalRoot>`
+### Modal Components
 
-The root component of a discord-styled modal.
-
-Takes a `size` from `ModalSizes` and some child elements.
-
-`size` defaults to `ModalSizes.SMALL`.
-
-All provided child parts of the modal (header, body, footer) are optional.
+Components for Discord-styled modals.
+Also see [`openModal()`](#openmodal)
 
 ```jsx
 <ModalRoot size={ModalSizes.SMALL}>
@@ -393,7 +466,28 @@ All provided child parts of the modal (header, body, footer) are optional.
 </ModalRoot>
 ```
 
-### `<ModalHeader>`
+#### `<ModalRoot>`
+
+Type: `solid.Component<{ size?: string, children?: JSX.Element, class?: string, style?: JSX.CSSProperties | string }>`
+
+The root component of a discord-styled modal.
+
+Takes a `size` from `ModalSizes` and some child elements.
+
+`size` defaults to `ModalSizes.SMALL`.
+
+All provided child parts of the modal (header, body, footer) are optional.
+
+#### `ModalSizes`
+
+Type: `Record<string, string>`
+
+- `ModalSizes.SMALL`: 440 wide, 200~720 tall
+- `ModalSizes.MEDIUM`: 600 wide, 400~800 tall
+
+#### `<ModalHeader>`
+
+Type: `solid.Component<{ noClose?: boolean, close(): void, children?: JSX.Element }>`
 
 The header of a discord-styled modal.
 
@@ -401,19 +495,55 @@ Takes a prop, `close`, which is the function that closes the modal.
 
 Also has an optional boolean prop `noClose` which hides the close button.
 
-### `<ModalBody>`
+#### `<ModalBody>`
+
+Type: `solid.Component<{ children?: JSX.Element }>`
 
 The body of a discord-styled modal.
 
 Has nice discord scrollbars and plays well with the header and footer when overflowed.
 
-### `<ModalFooter>`
+#### `<ModalFooter>`
 
-Takes no props.
+Type: `solid.Component<{ children: JSX.Element }>`
 
-The footer of a discord-styled-modal, good for buttons!
+The footer of a Discord-styled modal, good for buttons!
+
+#### `<ModalConfirmFooter />`
+
+Type:
+```ts
+solid.Component<{
+  close(): void,
+  confirmText?: string,                    // default "Confirm"
+  cancelText?: string,                     // default "Cancel"
+  type?: "neutral" | "danger" | "confirm", // default "neutral"
+  onConfirm?(): void,
+  onCancel?(): void,
+  disabled?: boolean,
+  cancelDisabled?: boolean
+}>
+```
+
+A modal footer with configurable confirm and cancel buttons, the most common type of modal footer.
+
+The `type` prop controls the colour of the confirm button.
+
+The `disabled` prop affects the confirm button, and the `cancelDisabled` prop affects the cancel button.
 
 ### `<TextBox />`
+
+Type:
+```ts
+solid.Component<{
+  value?: string,
+  placeholder?: string,
+  maxLength?: number,
+  id?: string,
+  "aria-label"?: string,
+  onInput?(string): void
+}>
+```
 
 A discord style textbox.
 
@@ -423,19 +553,51 @@ All optional. onInput called every keystroke and passed the full current value.
 
 ### `<TextArea />`
 
+Type:
+```ts
+solid.Component<{
+  value?: string,
+  placeholder?: string,
+  maxLength?: number,
+  id?: string,
+  "aria-label"?: string,
+  onInput?(string): void
+  width?: string,
+  height?: string,
+  "resize-x"?: boolean,
+  "resize-y"?: boolean,
+  mono?: boolean
+}>
+```
+
 Like `<TextBox />` but its a textarea.
 
-Also takes width, height, resize-x, resize-y, and mono.
+The size can be set, user resizing can be toggled, and you can apply a monospace font.
 
 ### `<Slider />`
+
+Type:
+```ts
+solid.Component<{
+  min: number,
+  max: number,
+  steps?: string[],
+  step?: number | "any",
+  class?: string,
+  style?: JSX.CSSProperties,
+  onInput?(number): void,
+  value?: number
+}>
+```
 
 A discord-style slider.
 Takes `value` and returns in `onInput` as number,
 
 Set `min` and `max` as needed.
 
-`step` controls the stepping of the folder and `steps` (plural) controls the text ticks that show.
+`step` controls the size of the actual steps the slider is locked to,
+and `steps` (plural) controls the text ticks that show.
 
-### `<Space />`
+If no `steps` are passed, no ticks show.
 
-A spacebar character that will never be collapsed. Useful in flexboxes etc.
+`step` is any by default.
