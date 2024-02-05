@@ -107,7 +107,7 @@ It passes your component one prop, `close`, which is a function that closes the 
 
 It returns a function that removes your modal.
 
-You can open multiple modals, and focus trapping as well as using esc and clicking outside to close are automatic.
+You can open multiple modals, and focus trapping as well as clicking outside to close are automatic.
 
 ```js
 const remove = openModal((p) => <button onclick={p}>Hi!</button>);
@@ -121,6 +121,8 @@ You can use the [modal components](#modal-components) to style your modals like 
 ::: tip
 You can listen for your modal being closed using [onCleanup](https://www.solidjs.com/tutorial/lifecycles_oncleanup).
 :::
+
+<video src="/public/ui/openModal.webm" loop autoplay controls></video>
 
 ### `<ReactInSolidBridge />`
 
@@ -223,6 +225,8 @@ showToast({
 });
 ```
 
+![](/public/ui/showToast.webp)
+
 ### `niceScrollbarsClass`
 
 ::: details Type Signature
@@ -236,6 +240,8 @@ A getter that gets a class to add to an element to give it a Discord-style scrol
 ```jsx
 <div class={`myclass myclass2 ${niceScrollbarsClass()}`} />
 ```
+
+![](/public/ui/niceScrollbarsClass.webp)
 
 ### `use:focusring`
 
@@ -261,6 +267,8 @@ so if you are using those, this is not necessary.
 <input use:focusring={6} type="checkbox" />
 ```
 
+![](/public/ui/focusring.webp)
+
 ### `use:tooltip`
 
 Shows a Discord-style tooltip when you hover over the element.
@@ -278,6 +286,8 @@ You can pass an of the form `[true, JSX.Element]` to render it underneath instea
 <button use:tooltip={[true, "Delete but underneath"]}><DeleteIcon /></button>
 ```
 
+![](/public/ui/tooltip.webp)
+
 ### `<Space />`
 
 ::: details Type Signature
@@ -288,6 +298,39 @@ solid.Component
 
 A spacebar character that will never be collapsed out of your JSX. Useful in flexboxes etc.
 
+### `openConfirmationModal`
+
+::: details Type Signature
+```ts
+({
+  body: solid.Component,
+  header: solid.Component,
+  confirmText?: string,
+  cancelText?: string,
+  type?: ModalTypes,
+  size?: string,
+}) => Promise<void>
+```
+:::
+
+`openConfirmationModal` shows a premade modal with a header, body, and confirm and cancel buttons.
+
+It returns a promise that resolves on confirm, and rejects on cancel or close.
+
+```js
+openConfirmationModal({
+  header: () => "Are you sure????",
+  body: () => "Really destroy your entire hard disk? You sure? What?",
+  type: "danger",
+  confirmText: "Yes, really.",
+  cancelText: "Oh shoot!"
+}).then(
+  () => console.log("let's delete!"),
+  () => console.log("chicken.")
+);
+```
+
+![](/public/ui/confirmmodal.webp)
 
 ## Components
 
@@ -324,6 +367,8 @@ Header is, well, a header. It has a few styles, chosen by the `tag` prop.
 <Header tag={HeaderTags.H1}>My cool page</Header>
 ```
 
+![](/public/ui/headers.webp)
+
 #### `HeaderTags`
 
 - `HeaderTags.H1`: A nice big header - like the ones at the top of user settings sections.
@@ -352,6 +397,8 @@ When set true, `20px` is used.
 <Divider mt mb="30px" /> // 20px on top, 30px on bottom.
 ```
 
+![](/public/ui/divider.webp)
+
 ### `<Button>`
 
 ::: details Type Signature
@@ -374,6 +421,10 @@ solid.Component<{
 :::
 
 Button is a, well, button, using Discord's styles.
+
+![](/public/ui/buttoncolors.webp)
+![](/public/ui/buttonlooks.webp)
+![](/public/ui/buttonsizes.webp)
 
 #### `ButtonLooks`
 
@@ -430,6 +481,8 @@ A link (`<a>`) that fits with Discord's UI.
 
 It will open the href in a new tab / in your system browser.
 
+![](/public/ui/linkbutton.webp)
+
 ### `<Switch />`
 
 ::: details Type Signature
@@ -457,6 +510,8 @@ The `id` prop sets the id of the `<input>`.
 const [switchState, setSwitchState] = createSignal(false);
 <Switch checked={switchState} onChange={setSwitchState} />;
 ```
+
+<video src="/public/ui/switch.webm" loop autoplay></video>
 
 ### `<SwitchItem>`
 
@@ -491,6 +546,8 @@ The child elements of the component is the title displayed next to the switch.
 <SwitchItem note="Does cool things" value={/*...*/}>A cool option</SwitchItem>
 ```
 
+![](/public/ui/switchitem.webp)
+
 ### `<Checkbox />`
 
 ::: details Type Signature
@@ -507,6 +564,8 @@ solid.Component<{
 :::
 
 Like `<Switch />` but its a checkbox.
+
+[//]: # (TODO: once the styles are fixed, add an img)
 
 ### `<CheckboxItem>`
 
@@ -527,6 +586,8 @@ solid.Component<{
 Like `<SwitchItem>` but its a checkbox.
 Takes an extra `mt` prop which enables a top margin. No note or divider.
 
+[//]: # (TODO: as above)
+
 ### Modal Components
 
 Components for Discord-styled modals.
@@ -539,6 +600,8 @@ Also see [`openModal()`](#openmodal)
   <ModalFooter>Uhhhhh idk this is the footer ig, its a good place for buttons!</ModalFooter>
 </ModalRoot>
 ```
+
+![](/public/ui/modal.webp)
 
 #### `<ModalRoot>`
 
@@ -615,6 +678,8 @@ The `type` prop controls the colour of the confirm button.
 
 The `disabled` prop affects the confirm button, and the `cancelDisabled` prop affects the cancel button.
 
+![](/public/ui/confirmfooter.webp)
+
 ### `<TextBox />`
 
 ::: details Type Signature
@@ -635,6 +700,8 @@ A discord style textbox.
 Takes value, placeholder, maxLength, and onInput.
 
 All optional. onInput called every keystroke and passed the full current value.
+
+![](/public/ui/textbox.webp)
 
 ### `<TextArea />`
 
@@ -659,6 +726,8 @@ solid.Component<{
 Like `<TextBox />` but its a textarea.
 
 The size can be set, user resizing can be toggled, and you can apply a monospace font.
+
+![](/public/ui/textarea.webp)
 
 ### `<Slider />`
 
@@ -688,3 +757,12 @@ and `steps` (plural) controls the text ticks that show.
 If no `steps` are passed, no ticks show.
 
 `step` is any by default.
+
+```jsx
+<Slider value={val()} onChange={setVal}
+        min={0} max={10}
+        step={2} steps={[0, 2, 4, 6, 8, 10]}
+/>
+```
+
+![](/public/ui/slider.webp)
