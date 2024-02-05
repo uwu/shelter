@@ -38,7 +38,7 @@ You can read more about common patterns [here](patterns).
 :::
 
 So let's import the APIs we're going to need, which isn't particularly interesting on its own, just object destructures:
-```js
+```js:line-numbers
 const {
   GuildMemberStore,
   ChannelStore,
@@ -72,7 +72,7 @@ Luckily, almost all of these rerenders come following a flux dispatch, so we can
 and then swoop in after React is done to apply our changes.
 
 We'll start with just our simple listener:
-```js
+```js:line-numbers=13
 function handleDispatch(payload) {
 }
 
@@ -85,15 +85,15 @@ for (const t of triggers)
 Before we work too hard on implementing our logic, we want to refine our subscriptions.
 In particular, `MESSAGE_CREATE` is very noisy, so we'll ignore any that aren't for our current channel.
 
-```js
+```js:line-numbers=13
 function handleDispatch(payload) {
-    // only listen for message_create in the current channel
-    if (payload.type === "MESSAGE_CREATE" &&
-		    payload.channelId !== SelectedChannelStore.getChannelId()
-    )
-        return;
+  // only listen for message_create in the current channel
+  if (payload.type === "MESSAGE_CREATE" &&
+    payload.channelId !== SelectedChannelStore.getChannelId()
+  )
+    return;
 
-    console.log("We might need to do some work here!");
+  console.log("We might need to do some work here!");
 }
 ```
 
@@ -110,22 +110,22 @@ but the one in shelter is the `observeDom` API.
 You provide it with a CSS selector, and it will run a callback you pass for every element which either changes,
 or is the child of an element that changes.
 
-```js
+```js:line-numbers=13
 function handleElement(elem) { }
 
 function handleDispatch(payload) {
-    // only listen for message_create in the current channel
-    if (payload.type === "MESSAGE_CREATE" &&
-		    payload.channelId !== SelectedChannelStore.getChannelId()
-    )
-        return;
+  // only listen for message_create in the current channel
+  if (payload.type === "MESSAGE_CREATE" &&
+    payload.channelId !== SelectedChannelStore.getChannelId()
+  )
+    return;
 
-    const unObserve = observeDom("[id^=message-username-]", (elem) => {
-        handleElement(elem);
-        unObserve();
-    });
+  const unObserve = observeDom("[id^=message-username-]", (elem) => {
+    handleElement(elem);
+    unObserve();
+  });
 
-    setTimeout(unObserve, 500);
+  setTimeout(unObserve, 500);
 }
 ```
 
@@ -191,7 +191,7 @@ This includes things like full message, channel, and guild objects, functions we
 
 Let's temporarily leave behind the world of elements and dive into the (highly detailed) fiber tree:
 
-```js
+```js:line-numbers=13
 function handleElement(elem) {
   const fiber = getFiber(elem);
 }
@@ -224,7 +224,7 @@ So we need to walk up the tree until we find what we want.
 shelter provides the fiber walker to make moving up and down the tree much easier.
 We will move _up_ the tree to find a fiber with a prop named `message`, and get that object:
 
-```js
+```js:line-numbers=13
 function handleElement(elem) {
   const fiber = getFiber(elem);
   //                                /- fiber        /- filter  /- go up, not down
@@ -249,7 +249,7 @@ The message object is pretty big, but the bits of it we care about look like thi
 We are going to look up the channel type and guild ID by asking the Flux store for info, and the nickname.
 This comes direct out of the same sources of truth Discord itself uses.
 
-```js
+```js:line-numbers=19
 const { type, guild_id } = ChannelStore.getChannel(message.channel_id);
 // type = 0 -> guild, type = 1 -> DM
 const nick = type
@@ -265,7 +265,7 @@ If the user has no nickname, we know now we can stop. The user's real username i
 
 Now, we can insert into the UI - note we're using [Solid](https://www.solidjs.com/)
 JSX here, so we're working with real document elements, not React elements or anything:
-```jsx
+```jsx:line-numbers=27
 elem.firstElementChild.textContent += ` (${message.author.username})`;
 ```
 
@@ -280,7 +280,7 @@ This is a side effect of how we are doing things - we don't intercept the UI ren
 This inherently means we are out of sync with React. This can cause many issues, and this is one of them.
 
 So right at the very start of our handleElement call, we add a check, and add an element:
-```js
+```js:line-numbers=13
 function handleElement(elem) {
   if (elem.dataset.showuname) return;
   elem.dataset.showuname = 1;
@@ -291,7 +291,7 @@ function handleElement(elem) {
 
 And let's put it all together!:
 
-```js
+```js:line-numbers
 const {
   GuildMemberStore,
   ChannelStore,
