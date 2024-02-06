@@ -8,21 +8,29 @@ type RepositoryDeploymentNode = {
     environmentUrl: string | null;
   };
 };
-type RepositoryObject = {
-  entries: RepositoryObjectEntry[];
+type RepositoryWorkflowsObject = {
+  entries: {
+    name: string;
+    type: "blob";
+    object: {
+      text: string;
+    };
+  }[];
 };
-type RepositoryObjectEntry = {
-  name: string;
-  type: "tree";
-  object: {
-    entries: {
-      name: string;
-      type: "blob";
-      object: {
-        text: string;
-      };
-    }[];
-  };
+type RepositoryPluginsObject = {
+  entries: {
+    name: string;
+    type: "tree";
+    object: {
+      entries: {
+        name: string;
+        type: "blob";
+        object: {
+          text: string;
+        };
+      }[];
+    };
+  }[];
 };
 type PageInfo = {
   hasNextPage: boolean;
@@ -34,7 +42,8 @@ type ResultType = {
       nodes: {
         nameWithOwner: string;
         deployments: RepositoryDeployments;
-        object: RepositoryObject | null;
+        workflows: RepositoryWorkflowsObject | null;
+        plugins: RepositoryPluginsObject | null;
       }[];
       pageInfo: PageInfo;
     };
@@ -56,7 +65,20 @@ const query = gql`query {
             }
           }
         }
-        object(expression: "HEAD:plugins") {
+        workflows: object(expression: "HEAD:.github/workflows") {
+          ... on Tree {
+            entries {
+              name
+              type
+              object {
+                ... on Blob {
+                  text
+                }
+              }
+            }
+          }
+        }
+        plugins: object(expression: "HEAD:plugins") {
           ... on Tree {
             entries {
               name
@@ -86,10 +108,13 @@ const query = gql`query {
   }
 }`;
 
+const hopefullyUsesLune = (object: RepositoryWorkflowsObject) =>
+  object.entries.some((e) => e.type === "blob" && e.object.text.includes("lune"));
+
 const getEnvironmentUrl = (deployments: RepositoryDeployments) =>
   deployments.nodes.find((d) => d.state === "ACTIVE")?.latestStatus.environmentUrl;
 
-const getPlugins = (object: RepositoryObject) =>
+const getPlugins = (object: RepositoryPluginsObject) =>
   object.entries
     .filter((e) => e.type === "tree")
     .map((t) => {
@@ -134,9 +159,10 @@ export async function fetchSources(token: string): Promise<RepositoryData[]> {
   const result: RepositoryData[] = [];
   const search = await searchRepositories(token);
   for (const repository of search.data.search.nodes) {
+    if (!repository.workflows || !hopefullyUsesLune(repository.workflows)) continue;
     const url = getEnvironmentUrl(repository.deployments);
-    if (!url || repository.object == null) continue;
-    const plugins = getPlugins(repository.object);
+    if (!url || repository.plugins == null) continue;
+    const plugins = getPlugins(repository.plugins);
     if (plugins.length < 1) continue;
 
     result.push({
