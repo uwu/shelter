@@ -12,7 +12,7 @@ import * as storage from "./storage";
 import { observe } from "./observer";
 import { discordHttp, intercept, ready } from "./http";
 import { HTTPApi } from "./types";
-import { constants as constantsPromise } from "./constants";
+import { constants } from "./constants";
 
 function without<T extends Record<string, any>, TK extends string>(object: T, ...keys: TK[]) {
   //return Object.fromEntries(Object.entries(object).filter(([k]) => !keys.includes(k as any))) as Omit<T, TK>;
@@ -24,7 +24,6 @@ function without<T extends Record<string, any>, TK extends string>(object: T, ..
 let http;
 const windowApi = async (unloads) => {
   const dispatcher = await flux.getDispatcher();
-  const constants = await constantsPromise;
 
   return {
     flux: without(
