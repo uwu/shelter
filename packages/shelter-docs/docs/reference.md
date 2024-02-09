@@ -11,7 +11,7 @@ API functions will have their TypeScript signatures listed.
 ### `shelter.observeDom`
 
 ```ts
-observeDom(selector: string, cb: (node: DOMNode) => void): {(): void; now(): void}
+function observeDom(selector: string, cb: (node: DOMNode) => void): {(): void; now(): void}
 ```
 
 shelter provides a DOM observer, which is an abstraction over [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver).
@@ -48,7 +48,7 @@ setTimeout(unObserve, 1000);
 ### `shelter.unload`
 
 ```ts
-unload(): void
+function unload(): void
 ```
 
 Unloads all plugins, and then shelter itself.
@@ -137,7 +137,7 @@ Example is same as above.
 ### `shelter.flux.awaitStore`
 
 ```ts
-awaitStore(name: string, awaitInit = true): Promise<FluxStore>
+function awaitStore(name: string, awaitInit = true): Promise<FluxStore>
 ```
 ::: warning
 `name` is cAsE sEnSitiVe
@@ -150,7 +150,7 @@ Therefore **it is strongly recommended** to rely on this function (instead of `f
 ### `shelter.flux.intercept`
 
 ```ts
-intercept(cb: (dispatch: object) => void | any | false): () => void
+function intercept(cb: (dispatch: object) => void | any | false): () => void
 ```
 
 `intercept` allows you to listen to, modify, and block Flux dispatches.
@@ -204,7 +204,7 @@ You need not await this to use `intercept`.
 
 ### `shelter.http.intercept`
 ```ts
-intercept(method: Method, filter: string | RegExp | FilterFn, callback: InterceptFn): () => void;
+function intercept(method: Method, filter: string | RegExp | FilterFn, callback: InterceptFn): () => void;
 ```
 
 `intercept` allows you to intercept and modify all authenticated HTTP requests that Discord makes.
@@ -287,7 +287,7 @@ Contains various utility functions that may be useful to you.
 ### `shelter.util.getFiber`
 
 ```ts
-getFiber(node: DOMNode): Fiber
+function getFiber(node: DOMNode): Fiber
 ```
 
 Gets a React *fiber* from a DOM node.
@@ -297,7 +297,7 @@ and can be useful to extract, for example, message objects from the DOM.
 ### `shelter.util.getFiberOwner`
 
 ```ts
-getFiberOwner(node: DOMNode | Fiber): FiberOwner
+function getFiberOwner(node: DOMNode | Fiber): FiberOwner
 ```
 
 Gets the next React *fiber owner instance* from a DOM node or Fiber.
@@ -309,7 +309,7 @@ to have the component rerender with the changes.
 ### `shelter.util.reactFiberWalker`
 
 ```ts
-reactFiberWalker(
+function reactFiberWalker(
   node: Fiber,
   filter: string | symbol | ((node: Fiber) => boolean),
   goUp = false,
@@ -337,7 +337,7 @@ To prevent freezing the main thread, there is a recursion limit. To disable it, 
 ### `shelter.util.awaitDispatch`
 
 ```ts
-awaitDispatch(filter: string | ((payload: any) => boolean)): Promise<any>
+function awaitDispatch(filter: string | ((payload: any) => boolean)): Promise<any>
 ```
 
 `awaitDispatch` returns a promise that will resolve when a dispatch that matches the filter occurs.
@@ -351,7 +351,7 @@ await awaitDispatch("LAYER_POP");
 ### `shelter.util.log`
 
 ```ts
-log(text: any | any[], func: "log" | "warn" | "error" = "log"): void;
+function log(text: any | any[], func: "log" | "warn" | "error" = "log"): void;
 ```
 
 `log` is shelter's log function. It prints a pretty shelter logo before your logs!
@@ -361,7 +361,7 @@ You may choose to use this to make your plugin's logs more identifiable.
 ### `shelter.util.createListener`
 
 ```ts
-createListener(type: string): solid.Accesssor<any>
+function createListener(type: string): solid.Accesssor<any>
 ```
 
 This creates a Solid signal that contains the most recent dispatch object of the given type.
@@ -373,7 +373,7 @@ The signal will contain `undefined` initially, until a relevant dispatch happens
 ### `shelter.util.createSubscription`
 
 ```ts
-createSubscription<TState, TStoreData = any>(
+function createSubscription<TState, TStoreData = any>(
   store: FluxStore<TStoreData>,
   getStateFromStore: (store: FluxStore<TStoreData>) => TState
 ): solid.Accessor<TState>
@@ -398,7 +398,7 @@ const userObj = createSubscription(
 ### `shelter.util.storeAssign`
 
 ```ts
-storeAssign<T>(store: T, toApply: T): T
+function storeAssign<T>(store: T, toApply: T): T
 ```
 
 `storeAssign` works precisely like `Object.assign`, but it is useful for using [Solid reactive stores](https://www.solidjs.com/docs/latest/api#stores), as it will reduce extraneous reactive updates.
@@ -406,7 +406,7 @@ storeAssign<T>(store: T, toApply: T): T
 ### `shelter.util.sleep`
 
 ```ts
-sleep(ms = 0): Promise<void>
+function sleep(ms = 0): Promise<void>
 ```
 
 `sleep` allows you to easily wait either a given amount of time, or for the next tick (`setTimeout`)
@@ -420,7 +420,47 @@ await sleep(5000);
 ```
 
 ### `shelter.util.createScopedApi`
-// TODO
+```ts
+function createScopedApi(): ScopedApi
+```
+
+`createScopedApi` creates a copy of all reversible shelter APIs, that can be all undone at once.
+The returned object contains some but not all of the main shelter APIs, untouched.
+
+The APIs returned are:
+- [`shelter.flux.intercept`](#shelter-flux-intercept)
+- [`shelter.http.intercept`](#shelter-http-intercept)
+- [`shelter.observeDom`](#shelter-observedom)
+- [`shelter.patcher.*`](#shelter-patcher)
+- [`shelter.settings.registerSection`](#shelter-settings-registersection)
+- [`shelter.ui.injectCss`](/ui#injectcss)
+
+In addition, these new APIs are returned.
+```ts
+interface {
+  disposeAllNow(): void;
+  disposes: (() => void)[];
+  onDispose(callback: () => void): void;
+  flux: {
+    subscribe(type: string, cb: (payload: any) => void): () => void;
+  }
+}
+```
+
+When any API on this object is called, its undo will be added automatically to the disposes array to be cleaned up.
+
+`subscribe` matches `shelter.flux.dispatcher.subscribe`, but returns the unsubscribe function.
+
+`disposes` is the array used to keep track of dispose callbacks.
+
+`onDispose` allows you to easily register your own callback to be disposed.
+
+`disposeAllNow` will call all dispose callbacks and clear the array.
+
+::: tip
+Inside shelter plugins, you have a scoped API instance pre-provided under
+[`shelter.plugin.scoped`](#shelter-plugin-scoped).
+:::
 
 ## `shelter.storage`
 
@@ -448,7 +488,7 @@ That is: `store.foo = {}` will save but `store.foo.bar = {}` will not save.
 ### `shelter.storage.storage`
 
 ```ts
-storage<T = any>(name: string): ShelterStore<T>
+function storage<T = any>(name: string): ShelterStore<T>
 ```
 
 `storage` constructs a shelter store with string keys and values of type `T`. It will be backed by the IDB store given by `name`, and thus will persist across reloads of Discord (and thus shelter).
@@ -464,7 +504,7 @@ You may start writing to the store safely, and shelter will try its absolute bes
 ### `shelter.storage.isInited`
 
 ```ts
-isInited(store: ShelterStore<unknown>): boolean
+function isInited(store: ShelterStore<unknown>): boolean
 ```
 
 `isInited` checks if a shelter store is connected to IndexedDB.
@@ -474,7 +514,7 @@ As noted in the docs for `storage()`, you must make sure the store has connected
 ### `shelter.storage.whenInited`
 
 ```ts
-whenInited(store: ShelterStore<unknown>, cb: () => void): void
+function whenInited(store: ShelterStore<unknown>, cb: () => void): void
 ```
 
 `whenInited` waits for IndexedDB to connect to the store, and then runs the passed callback.
@@ -484,7 +524,7 @@ If the store is *already* connected to IDB, the callback will be run immediately
 ### `shelter.storage.waitInit`
 
 ```ts
-waitInit(store: ShelterStore<unknown>): Promise<void>
+function waitInit(store: ShelterStore<unknown>): Promise<void>
 ```
 
 `waitInit` returns a promise that will resolve when IDB connects to the store, or instantly if it is already connected.
@@ -502,7 +542,7 @@ store.foo // "bar"
 ### `shelter.storage.defaults`
 
 ```ts
-defaults<T = any>(store: ShelterStore<T>, fallbacks: Record<string, T>): void
+function defaults<T = any>(store: ShelterStore<T>, fallbacks: Record<string, T>): void
 ```
 
 `defaults` is useful to set default fallbacks on your store - it checks each key in fallbacks, and if it does not exist in the store, sets it.
@@ -517,7 +557,7 @@ you can just use `??=`.
 ### `shelter.storage.signalOf`
 
 ```ts
-signalOf<T = any>(store: ShelterStore<T>): solid.Accessor<Record<string, T>>
+function signalOf<T = any>(store: ShelterStore<T>): solid.Accessor<Record<string, T>>
 ```
 
 `signalOf` creates a Solid signal that always contains the most up to date value of the shelter store as a flat object.
@@ -536,7 +576,7 @@ delete myStore.foo; // {baz: "test"}
 ### `shelter.storage.solidMutWithSignal`
 
 ```ts
-solidMutWithSignal<T extends object = any>(store: T): [T, solid.Accessor<T>]
+function solidMutWithSignal<T extends object = any>(store: T): [T, solid.Accessor<T>]
 ```
 
 `solidMutWithSignal` does not actually apply to shelter stores at all, instead it is a utility for `solid-js/store/mutable`.
@@ -558,10 +598,10 @@ It can inject a divider, a header, a section with a component, or a button with 
 ### `shelter.settings.registerSection`
 
 ```ts
-registerSection("divider"): () => void
-registerSection("header", text: string): () => void
-registerSection("section", id: string, label: string, comp: solid.Component, extras?: any): () => void
-registerSection("button", id: string, label: string, action: () => void): () => void
+function registerSection("divider"): () => void
+function registerSection("header",  text: string): () => void
+function registerSection("section", id: string, label: string, comp: solid.Component, extras?: any): () => void
+function registerSection("button",  id: string, label: string, action: () => void): () => void
 ```
 
 `registerSection` adds a setting to the user settings.
@@ -605,7 +645,7 @@ store.foo // 5
 ### `shelter.plugin.flushStore`
 
 ```ts
-flushStore(): void
+function flushStore(): void
 ```
 
 If you deeply modify something in the store, where it will not be automatically picked up (e.g. `store.foo.bar = "baz"`), you may call `flushStore()` to force a save.
@@ -627,10 +667,14 @@ plugin.manifest === {
 ### `shelter.plugin.showSettings`
 
 ```ts
-showSettings(): void
+function showSettings(): void
 ```
 
 `showSettings` imperatively shows the settings modal for your plugin, assuming you have settings.
+
+### `shelter.plugin.scoped`
+
+A [scoped API](#shelter-util-createscopedapi) instance that cleans up automatically on unload.
 
 ## `shelter.plugins`
 
@@ -670,7 +714,7 @@ This generally consists of `onUnload`, and optionally `settings` and `onLoad`.
 ### `shelter.plugins.startPlugin`
 
 ```ts
-startPlugin(id: string): void
+function startPlugin(id: string): void
 ```
 
 `startPlugin` starts an installed but unloaded plugin.
@@ -678,7 +722,7 @@ startPlugin(id: string): void
 ### `shelter.plugin.stopPlugin`
 
 ```ts
-stopPlugin(id: string): void
+function stopPlugin(id: string): void
 ```
 
 `stopPlugin` stops an installed and loaded plugin.
@@ -686,7 +730,7 @@ stopPlugin(id: string): void
 ### `shelter.plugins.addLocalPlugin`
 
 ```ts
-addLocalPlugin(id: string, plugin: {
+function addLocalPlugin(id: string, plugin: {
   js: string,
   update: boolean,
   src?: string,
@@ -699,7 +743,7 @@ addLocalPlugin(id: string, plugin: {
 ### `shelter.plugins.addRemotePlugin`
 
 ```ts
-addRemotePlugin(id: string, src: string, update = true): Promise<void>
+function addRemotePlugin(id: string, src: string, update = true): Promise<void>
 ```
 
 `addRemotePlugin` installs a plugin from a URL.
@@ -707,7 +751,7 @@ addRemotePlugin(id: string, src: string, update = true): Promise<void>
 ### `shelter.plugins.removePlugin`
 
 ```ts
-removePlugin(id: string): void
+function removePlugin(id: string): void
 ```
 
 `removePlugin` removes a plugin.
@@ -717,7 +761,7 @@ hmm yes, the floor here is made out of floor.
 ### `shelter.plugins.getSettings`
 
 ```ts
-getSettings(id: string): solid.Component | undefined
+function getSettings(id: string): solid.Component | undefined
 ```
 
 `getSettings` grabs the Solid settings component for the plugin, if the plugin has settings.
