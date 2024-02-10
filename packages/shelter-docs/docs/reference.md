@@ -280,6 +280,12 @@ Discord's instance of [React](https://react.dev/) (`react`).
 
 As above (`react-dom`).
 
+## `shelter.constants`
+
+Discord has a large constants object containing many helpful values. shelter exports it here.
+
+For reference the file looks [like this](https://cdn.hyrule.pics/39e8a4e13.json) as of 2024-02-10.
+
 ## `shelter.util`
 
 Contains various utility functions that may be useful to you.
