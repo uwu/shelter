@@ -76,7 +76,7 @@ console.log(`[kernel-shelter] Loading shelter from ${sourceType} "${sourcePath}"
 
 // fetch shelter
 let bundle;
-if (sourceType === "remote") {
+if (sourceType === "remote")
   bundle = new Promise((resolve, reject) => {
     const req = https.get(sourcePath);
 
@@ -98,10 +98,10 @@ if (sourceType === "remote") {
     req.on("error", reject);
     req.end();
   });
-} else {
-  const resolved = path.resolve(sourcePath);
-  bundle = fs.readFile(resolved, "utf8").then((v) => v + `\n//# sourceMappingURL=file://${resolved}.map`);
-}
 
 // handle injecting shelter
-ipcMain.handle("_shelter_getBundle", () => bundle);
+ipcMain.handle("_shelter_getBundle", () => {
+  if (sourceType === "remote") return bundle;
+  const resolved = path.resolve(sourcePath);
+  return fs.readFile(resolved, "utf8").then((v) => v + `\n//# sourceMappingURL=file://${resolved}.map`);
+});
