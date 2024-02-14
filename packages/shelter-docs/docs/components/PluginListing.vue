@@ -10,10 +10,31 @@ interface PluginManifest {
   url: string;
 }
 
-const data: PluginManifest[] = reactive([]);
+interface PluginsData {
+  name: string;
+  plugins: PluginManifest[];
+}
+
+const data: PluginsData[] = reactive([]);
+let isLoading = ref(true);
+
 fetch("https://shindex.uwu.network/data")
   .then((r) => r.json())
-  .then((j) => data.push(...j.flatMap((r) => r.plugins)));
+  .then((items) => {
+    items.forEach((item) => {
+      data.push({
+        name: item.name,
+        plugins: item.plugins.map((plugin: PluginManifest) => ({
+          name: plugin.name,
+          description: plugin.description,
+          author: plugin.author,
+          url: plugin.url,
+        })),
+      });
+    });
+  })
+  .then(() => (isLoading.value = false));
+
 const search = ref("");
 
 const { results } = useFuse(search, data, {
@@ -37,31 +58,39 @@ const plugins = computed(() => (results.value.length ? results.value.map((i) => 
   </div>
   <div h="1px" bg="$vp-c-divider" m="b-4" />
 
-  <div flex="~ wrap" items-center gap-3>
-    <div v-for="plugin in plugins" :key="plugin" w-20rem h-42 px-4 py-3 border="1 solid $vp-c-divider" rounded-md
-      important-transition-all duration-400 hover="shadow-md bg-$vp-c-bg-soft" flex="~ col" justify-between>
-      <div font-semibold dark="text-gray-200" text-gray-900 text-16px>
-        {{ plugin.name }}
-      </div>
+  <div text-center v-if="isLoading">Loading plugins...</div>
+  <template v-else v-for="(repo, index) in plugins" :key="index">
+    <div flex="~ wrap" items-center gap-3>
+      <div v-for="(item, idx) in repo.plugins" :key="idx" w-20rem h-42 px-4 py-3 border="1 solid $vp-c-divider" rounded-md
+        important-transition-all duration-400 hover="shadow-md bg-$vp-c-bg-soft" flex="~ col" justify-between>
+        <div font-semibold dark="text-gray-200" text-gray-900 text-16px>
+          {{ item.name }}
+        </div>
 
-      <div dark="text-gray-400" text-gray-500 text-14px>by {{ plugin.author }}</div>
+        <div dark="text-gray-400" text-gray-500 text-14px>by {{ item.author }}</div>
 
-      <div text-gray-500 dark="text-gray-400" flex-auto mt-2 text-14px>
-        <span line-clamp-2>
-          {{ plugin.description }}
-        </span>
-      </div>
+        <div text-gray-500 dark="text-gray-400" flex-auto mt-2 text-14px>
+          <span line-clamp-2>
+            {{ item.description }}
+          </span>
+        </div>
 
-      <div flex gap-5>
-        <div flex items-center gap-1>
-          <button @click="copy(plugin.url)" inline-flex justify-center whitespace-nowrap text-sm font-medium
-            cursor-pointer bg="$vp-badge-tip-bg" text="$vp-badge-tip-text" px2 py2 rounded-md block mt2 flex items-center
-            gap2>
-            <span v-if="!copied">Copy Plugin Link</span>
-            <span v-else>Copied!</span>
-          </button>
+        <div flex gap-5>
+          <div flex items-center gap-1>
+            <button @click="copy(item.url)" inline-flex justify-center whitespace-nowrap text-sm font-medium
+              cursor-pointer bg="$vp-badge-tip-bg" text="$vp-badge-tip-text" px2 py2 rounded-md block mt2 flex
+              items-center gap2>
+              <span v-if="!copied">Copy Plugin Link</span>
+              <span v-else>Copied!</span>
+            </button>
+          </div>
+          <div flex items-center gap-1>
+            <a :href="`https://github.com/` + repo.name" i-carbon-logo-github w-8 h-8 bg-dark dark:bg-light right-a
+              justify-right px2 ml-28 mt-2 flex items-center>
+            </a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </template>
 </template>
