@@ -76,23 +76,10 @@ const plugins = computed(() => (results.value.length ? results.value.map((i) => 
   <div h="1px" bg="$vp-c-divider" m="b-4" />
 
   <div text-center v-if="isLoading">Loading plugins...</div>
-  <template v-else v-for="(repo, index) in plugins" :key="index">
-    <div flex="~ wrap" items-center gap-3>
-      <div
-        v-for="(item, idx) in repo.plugins"
-        :key="idx"
-        w-20rem
-        h-42
-        px-4
-        py-3
-        border="1 solid $vp-c-divider"
-        rounded-md
-        important-transition-all
-        duration-400
-        hover="shadow-md bg-$vp-c-bg-soft"
-        flex="~ col"
-        justify-between
-      >
+  <div v-else flex="~ wrap" gap-3 items-center>
+    <template v-for="(repo, index) in plugins" :key="index">
+      <div v-for="(item, idx) in repo.plugins" :key="idx" w-20rem h-42 px-4 py-3 border="1 solid $vp-c-divider" rounded-md
+        important-transition-all duration-400 hover="shadow-md bg-$vp-c-bg-soft" flex="~ col" justify-between>
         <div font-semibold dark="text-gray-200" text-gray-900 text-16px>
           {{ item.name }}
         </div>
@@ -105,51 +92,22 @@ const plugins = computed(() => (results.value.length ? results.value.map((i) => 
           </span>
         </div>
 
-        <div flex gap-5 justify-between items-end>
+        <div flex gap-5 items-end>
           <div flex items-center gap-1>
-            <button
-              @click="copyUrl(item.url, idx)"
-              inline-flex
-              justify-center
-              whitespace-nowrap
-              text-sm
-              font-medium
-              cursor-pointer
-              bg="$vp-badge-tip-bg"
-              text="$vp-badge-tip-text"
-              px2
-              py2
-              rounded-md
-              block
-              mt2
-              flex
-              items-center
-              gap2
-            >
+            <button @click="copyUrl(item.url, idx)" w-32 inline-flex justify-center whitespace-nowrap text-sm font-medium
+              cursor-pointer bg="$vp-badge-tip-bg" text="$vp-badge-tip-text" px2 py2 rounded-md block mt2 flex
+              items-center gap2>
               <span v-if="!isCopied[idx]">Copy Plugin Link</span>
               <span v-else>Copied!</span>
             </button>
           </div>
-          <div flex items-center gap-1>
-            <a
-              :href="`https://github.com/` + repo.name"
-              i-carbon-logo-github
-              w-8
-              h-8
-              bg-dark
-              dark:bg-light
-              right-a
-              justify-right
-              px2
-              ml-28
-              mt-2
-              flex
-              items-center
-            >
+          <div flex items-center gap-6 justify-right>
+            <a :href="`https://github.com/` + repo.name" i-carbon-logo-github w-8 h-8 bg-dark dark:bg-light right-a
+              justify-right px2 ml-28 mt-2 flex items-center>
             </a>
           </div>
         </div>
       </div>
-    </div>
-  </template>
+    </template>
+  </div>
 </template>
