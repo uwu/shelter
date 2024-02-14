@@ -75,7 +75,7 @@ const plugins = computed(() => (results.value.length ? results.value.map((i) => 
           </span>
         </div>
 
-        <div flex p-6 justify-between items-end>
+        <div flex gap-5>
           <div flex items-center gap-1>
             <button @click="copy(item.url)" inline-flex justify-center whitespace-nowrap text-sm font-medium
               cursor-pointer bg="$vp-badge-tip-bg" text="$vp-badge-tip-text" px2 py2 rounded-md block mt2 flex
