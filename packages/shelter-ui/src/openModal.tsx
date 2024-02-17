@@ -77,6 +77,7 @@ createEffect(() => {
     dispose = undefined;
   } else if (!dispose) {
     const root = (<ModalRoot />) as HTMLDialogElement;
+    root.classList.add("shltr-modal-rroot");
 
     document.body.append(root);
     dispose = () => root.remove();

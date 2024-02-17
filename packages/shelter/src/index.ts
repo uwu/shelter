@@ -9,6 +9,7 @@ import windowApi from "./windowApi";
 import { sleep } from "./util";
 import { initDevmode } from "./devmode";
 import { unpatchHttpHandlers } from "./http";
+import initModalFix from "./modalFix";
 
 const start = performance.now();
 util.log("shelter is initializing...");
@@ -30,6 +31,7 @@ const waitForAppMount = async () => {
   const unloads = await Promise.all([
     initSettings(),
     initDispatchLogger(),
+    initModalFix(),
     ui.cleanupCss,
     waitForAppMount().then(ui.initToasts),
     patcher.unpatchAll,
