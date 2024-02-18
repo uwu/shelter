@@ -8,7 +8,7 @@
   "dependencies": {
     "@cumjar/websmack": "^1.2.0",
     "fuse.js": "^7.0.0",
-    "idb": "^7.1.0",
+    "idb": "^8.0.0",
     "shelter-assets": "workspace:*",
     "shelter-ui": "workspace:*",
     "solid-js": "1.6.16",
