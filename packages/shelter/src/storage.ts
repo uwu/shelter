@@ -65,10 +65,11 @@ async function getDb(store: string) {
 export const storage = <T = any>(name: string) => {
   const signals: Record<string, Signal<any>> = {};
   let db: IDBPDatabase<any>;
+  let init = false;
 
   // queues callbacks for when the db loads
   const waitQueue: (() => void)[] = [];
-  const waitInit = (cb: () => void) => (db ? cb() : waitQueue.push(cb));
+  const waitInit = (cb: () => void) => (init ? cb() : waitQueue.push(cb));
 
   const [mainSignal, setMainSignal] = createSignal({});
   const updateMainSignal = () => {
@@ -90,6 +91,7 @@ export const storage = <T = any>(name: string) => {
       updateMainSignal();
     });
 
+    init = true;
     waitQueue.forEach((cb) => cb());
   });
 
