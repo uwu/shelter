@@ -42,23 +42,24 @@ This is nice because you can run multiple mods at once.
 
 https://addons.mozilla.org/en-GB/firefox/addon/shelter-injector/
 
-### Microsoft Edge
-
-~~https://microsoftedge.microsoft.com/addons/detail/shelter-mv3-inj/okemjpeidkmhjpmdcpaibakdhnheblib~~
-
-Use below instructions on Edge too.
-
 ### Chromium based browser
 
 - Grab the latest MV2 release from this repo
 - Drag and drop the zip file onto the Chromium extensions page.
 - Ignore the MV2 error
 
-Alternatively: ~~https://chrome.google.com/webstore/detail/shelter-mv3-inj/ghdambgjhkmpeaogmikdkaemplkfeaod~~
+Also: 
+- ~~https://microsoftedge.microsoft.com/addons/detail/shelter-mv3-inj/okemjpeidkmhjpmdcpaibakdhnheblib~~
+- ~~https://chrome.google.com/webstore/detail/shelter-mv3-inj/ghdambgjhkmpeaogmikdkaemplkfeaod~~
 
 > [!IMPORTANT]
-> At the minute the MV3 version is broken due to permissions and stuff.
-> Use the MV2 version.
+> Support for Chromium has been dropped.
+> 
+> The MV3-based injector does not work. Google have tried their absolute best to make an unusably bad
+> extensions API and they have succeeded! I have [tried](https://github.com/uwu/shelter/commit/524f4af)
+> over and over again to make this work and I officially give the hell up.
+> Use the MV2 injection and deal with chrome being angy, and if they indeed remove MV2 support,
+> as they claim they will in June 2024, then just [get a better browser](https://lnk.yellows.ink/502816#:~:text=retains%20WebRequest%20blocking).
 
 ## How do I make a plugin?
 
