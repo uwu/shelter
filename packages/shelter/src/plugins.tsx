@@ -36,7 +36,9 @@ function createStorage(pluginId: string): [Record<string, any>, () => void] {
 
   const data = createMutable((pluginStorages[pluginId] ?? {}) as Record<string, any>);
 
-  const flush = () => (pluginStorages[pluginId] = { ...data });
+  const flush = () => {
+    pluginStorages[pluginId] = { ...data };
+  };
 
   return [
     new Proxy(data, {
