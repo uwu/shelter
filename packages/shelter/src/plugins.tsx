@@ -53,31 +53,38 @@ function createStorage(pluginId: string): [Record<string, any>, () => void] {
   ];
 }
 
+function createPluginApi(pluginId: string, { manifest }: StoredPlugin) {
+  const [store, flushStore] = createStorage(pluginId);
+  const scoped = createScopedApi(window["shelter"].flux.dispatcher); // this feels not nice but i guess its ok?
+
+  return {
+    store,
+    flushStore,
+    manifest,
+    showSettings: () =>
+      openModal((mprops) => (
+        <ModalRoot>
+          <ModalHeader close={mprops.close}>Settings - {manifest.name}</ModalHeader>
+          <ModalBody>{getSettings(pluginId)({})}</ModalBody>
+        </ModalRoot>
+      )),
+    scoped,
+  };
+}
+
+export type ShelterPluginApi = ReturnType<typeof createPluginApi>;
+
 export function startPlugin(pluginId: string) {
   const data = internalData[pluginId];
   if (!data) throw new Error(`attempted to load a non-existent plugin: ${pluginId}`);
 
   if (internalLoaded[pluginId]) throw new Error("attempted to load an already loaded plugin");
 
-  const [store, flushStore] = createStorage(pluginId);
-
-  const scoped = createScopedApi(window["shelter"].flux.dispatcher); // this feels not nice but i guess its ok?
+  const pluginApi = createPluginApi(pluginId, data);
 
   const shelterPluginEdition = {
     ...window["shelter"],
-    plugin: {
-      store,
-      flushStore,
-      manifest: data.manifest,
-      showSettings: () =>
-        openModal((mprops) => (
-          <ModalRoot>
-            <ModalHeader close={mprops.close}>Settings - {data.manifest.name}</ModalHeader>
-            <ModalBody>{getSettings(pluginId)({})}</ModalBody>
-          </ModalRoot>
-        )),
-      scoped,
-    },
+    plugin: pluginApi,
   };
 
   const pluginString = `shelter=>{return ${data.js}}${atob("Ci8v")}# sourceURL=s://!SHELTER/${pluginId}`;
@@ -86,7 +93,7 @@ export function startPlugin(pluginId: string) {
     // noinspection CommaExpressionJS
     const rawPlugin: EvaledPlugin = (0, eval)(pluginString)(shelterPluginEdition);
     // clone this because the way some bundlers defineProperty does not play nice with the solid store
-    const plugin = { ...rawPlugin, scopedDispose: scoped.disposeAllNow };
+    const plugin = { ...rawPlugin, scopedDispose: pluginApi.scoped.disposeAllNow };
     internalLoaded[pluginId] = plugin;
 
     plugin.onLoad?.();
