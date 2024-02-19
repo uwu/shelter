@@ -161,10 +161,8 @@ shelter.plugin.scoped.observeDom("whatever:not([data-my-plugin-name])", handleEl
 
 ::: warning
 This pattern simplifies the development process and increases reliability, _however_ it means shelter has to watch the
-page constantly for as long as your plugin is running, which may in theory decrease performance.
-In my testing on a relatively modern machine it has an unnoticeable impact, and from prior testing in another (slightly
-better optimized already) app (Kaiheila), this was not a problem at all, but we do discourage the technique if
-the [sub-observe](#sub-observe) pattern is viable and reliable.
+page constantly for as long as your plugin is running, which could in theory decrease performance.
+In my testing (on a reasonably modern system, in Firefox) it has an impact too small to measure in practice.
 :::
 
 ### Some plugins with this pattern:
