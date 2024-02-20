@@ -92,9 +92,9 @@ async function refetchDevPlugin() {
 
   devmodePrivateApis.replacePlugin(fetched);
 
-  startPlugin(devModeReservedId);
+  log("Reloading dev mode plugin");
 
-  log("Reloaded dev mode plugin");
+  startPlugin(devModeReservedId);
 }
 
 // expects the dev mode plugin to already exist, but dev mode to not be inited.

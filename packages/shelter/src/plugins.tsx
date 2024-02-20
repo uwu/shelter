@@ -230,6 +230,7 @@ export async function addRemotePlugin(id: string, src: string, update = true) {
 export function removePlugin(id: string) {
   if (!internalData[id]) throw new Error(`attempted to remove non-existent plugin ${id}`);
   if (id in internalLoaded) stopPlugin(id);
+  if (id === devModeReservedId) delete pluginStorages[id];
   delete internalData[id];
 }
 
