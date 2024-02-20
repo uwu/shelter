@@ -1,4 +1,4 @@
-import { batch, createSignal, Signal } from "solid-js";
+import { batch, createSignal, Signal, untrack } from "solid-js";
 import { IDBPDatabase, openDB } from "idb";
 import { log } from "./util";
 
@@ -65,33 +65,36 @@ async function getDb(store: string) {
 export const storage = <T = any>(name: string) => {
   const signals: Record<string, Signal<any>> = {};
   let db: IDBPDatabase<any>;
-  let init = false;
+  let modifiedKeys = new Set<string>();
 
   // queues callbacks for when the db loads
   const waitQueue: (() => void)[] = [];
-  const waitInit = (cb: () => void) => (init ? cb() : waitQueue.push(cb));
+  const waitInit = (cb: () => void) => (db ? cb() : waitQueue.push(cb));
 
   const [mainSignal, setMainSignal] = createSignal({});
   const updateMainSignal = () => {
     const o = {};
-    for (const k in signals) o[k] = signals[k][0]();
+    for (const k in signals) o[k] = untrack(() => signals[k][0]());
     setMainSignal(o);
   };
 
   getDb(name).then(async (d) => {
-    db = d;
-
-    const keys = await db.getAllKeys(name);
-    await Promise.all(keys.map(async (k) => [k, await db.get(name, k)])).then((vals) => {
+    const keys = await d.getAllKeys(name);
+    await Promise.all(keys.map(async (k) => [k, await d.get(name, k)])).then((vals) => {
+      // if a signal exists but wasn't modified (get), set it from db
+      // if a signal exists and was modified, (set, delete) leave it be
+      // if a signal does not exist, create it from db
       for (const [k, v] of vals) {
-        if (!signals.hasOwnProperty(k)) {
-          signals[k] = createSignal(v);
-        }
+        if (k in signals) {
+          if (!modifiedKeys.has(k)) signals[k][1](v);
+        } else signals[k] = createSignal(v);
       }
+
       updateMainSignal();
     });
 
-    init = true;
+    db = d;
+
     waitQueue.forEach((cb) => cb());
   });
 
@@ -102,27 +105,17 @@ export const storage = <T = any>(name: string) => {
       if (p === symDb) return db;
       if (p === symSig) return mainSignal;
 
-      // etc
       if (typeof p === "symbol") throw new Error("cannot index db store with a symbol");
 
-      if (signals[p]) return signals[p][0]();
-
-      const [sig, setsig] = (signals[p] = createSignal());
-      waitInit(() =>
-        db.get(name, p).then((v) => {
-          setsig(() => v);
-          updateMainSignal();
-        }),
-      );
-      return sig();
+      return (signals[p] ??= createSignal())[0]();
     },
 
     set(_, p, v) {
       if (typeof p === "symbol") throw new Error("cannot index db store with a symbol");
 
-      if (!signals[p]) signals[p] = createSignal();
-      const [, setsig] = signals[p];
-      setsig(() => v);
+      modifiedKeys.add(p);
+      const [, setSig] = (signals[p] ??= createSignal());
+      setSig(() => v);
       updateMainSignal();
 
       waitInit(() => db.put(name, cloneRec(v), p));
@@ -133,8 +126,10 @@ export const storage = <T = any>(name: string) => {
     deleteProperty(_, p) {
       if (typeof p === "symbol") throw new Error("cannot index db store with a symbol");
 
+      modifiedKeys.add(p);
       delete signals[p];
       updateMainSignal();
+
       waitInit(() => db.delete(name, p));
 
       return true;
