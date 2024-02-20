@@ -4,6 +4,7 @@ import { injectCss, ModalBody, ModalHeader, ModalRoot, ModalSizes, openModal } f
 import { css, classes } from "./devmode.css";
 import { log } from "../util";
 import DevUI from "../components/DevUI";
+import { createEffect } from "solid-js";
 
 // any string would work here but this is funnier
 export const devModeReservedId = "__DEVMODE_PLUGIN_DO_NOT_USE_OR_YOU_WILL_BE_FIRED";
@@ -35,25 +36,34 @@ export async function initDevmode() {
 
   let isDevButtonHovered = false;
 
-  const unobs1 = observe(`[class*="anchor"]`, (e: HTMLAnchorElement) => {
-    if (devModeIsOn() && e.href === "https://support.discord.com/") {
-      e.href = "#";
-      e.target = "";
-      e.onclick = openDevmodeModal;
-      e.classList.add(classes.devicon);
-      e.onmouseenter = () => (isDevButtonHovered = true);
-      e.onmouseleave = () => (isDevButtonHovered = false);
+  let unobs1: () => void, unobs2: () => void;
+
+  createEffect(() => {
+    unobs1?.();
+    unobs2?.();
+
+    if (devModeIsOn()) {
+      unobs1 = observe(`[class*="anchor"]`, (e: HTMLAnchorElement) => {
+        if (e.href === "https://support.discord.com/") {
+          e.href = "#";
+          e.target = "";
+          e.onclick = openDevmodeModal;
+          e.classList.add(classes.devicon);
+          e.onmouseenter = () => (isDevButtonHovered = true);
+          e.onmouseleave = () => (isDevButtonHovered = false);
+        }
+      });
+
+      unobs2 = observe(
+        `[class*="layerContainer"] > div > [class*="tooltip"] > [class*="tooltipContent"]`,
+        (e: HTMLElement) => {
+          if (isDevButtonHovered && e.innerText !== "Dev") {
+            e.innerText = "Dev";
+          }
+        },
+      );
     }
   });
-
-  const unobs2 = observe(
-    `[class*="layerContainer"] > div > [class*="tooltip"] > [class*="tooltipContent"]`,
-    (e: HTMLElement) => {
-      if (devModeIsOn() && isDevButtonHovered && e.innerText !== "Dev") {
-        e.innerText = "Dev";
-      }
-    },
-  );
 
   if (devModeIsOn())
     await enableDevmodeUnchecked().catch((err) => {
@@ -63,8 +73,8 @@ export async function initDevmode() {
 
   return () => {
     unstyle();
-    unobs1();
-    unobs2();
+    unobs1?.();
+    unobs2?.();
   };
 }
 
