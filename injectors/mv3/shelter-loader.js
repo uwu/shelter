@@ -14,7 +14,7 @@ async function initShelter() {
   if (localShelter) {
     const script = document.createElement("script");
     script.innerText = localShelter;
-    document.head.append(script);
+    document.documentElement.append(script);
   }
 
   const remoteShelter = await fetchShelter();
