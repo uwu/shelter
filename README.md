@@ -32,7 +32,7 @@ Check the githubs of uwu members or search for `shelter-plugins`.
 - rename `app.asar` to `original.asar`
 - fully close and restart discord
 
-#### Kernel
+### Kernel
 
 An alternative desktop installation method is [Kernel](https://kernel.fish).
 The kernel package is in `injectors/kernel`, if you use this method I expect you to know how to install Kernel yourself.
@@ -40,26 +40,15 @@ This is nice because you can run multiple mods at once.
 
 ### Firefox
 
-https://addons.mozilla.org/en-GB/firefox/addon/shelter-injector/
+https://addons.mozilla.org/firefox/addon/shelter-injector/
 
-### Chromium based browser
+### Chrome (Opera, Brave etc.)
 
-- Grab the latest MV2 release from this repo
-- Drag and drop the zip file onto the Chromium extensions page.
-- Ignore the MV2 error
+https://chromewebstore.google.com/detail/shelter-mv3-inj/ghdambgjhkmpeaogmikdkaemplkfeaod
 
-Also: 
-- ~~https://microsoftedge.microsoft.com/addons/detail/shelter-mv3-inj/okemjpeidkmhjpmdcpaibakdhnheblib~~
-- ~~https://chrome.google.com/webstore/detail/shelter-mv3-inj/ghdambgjhkmpeaogmikdkaemplkfeaod~~
+### Microsoft Edge
 
-> [!IMPORTANT]
-> Support for Chromium has been dropped.
-> 
-> The MV3-based injector does not work. Google have tried their absolute best to make an unusably bad
-> extensions API and they have succeeded! I have [tried](https://github.com/uwu/shelter/commit/524f4af)
-> over and over again to make this work and I officially give the hell up.
-> Use the MV2 injection and deal with chrome being angy, and if they indeed remove MV2 support,
-> as they claim they will in June 2024, then just [get a better browser](https://lnk.yellows.ink/502816#:~:text=retains%20WebRequest%20blocking).
+https://microsoftedge.microsoft.com/addons/detail/shelter-mv3-inj/okemjpeidkmhjpmdcpaibakdhnheblib
 
 ## How do I make a plugin?
 
