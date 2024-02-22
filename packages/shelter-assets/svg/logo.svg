@@ -1,1 +1,133 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="302" height="322" fill="none" viewBox="0 0 302 322"><rect width="302" height="322" fill="url(#paint0_linear_201_2)"/><g filter="url(#filter0_d_201_2)"><path fill="#CCFFED" d="M93.252 196.812C96.619 223.748 122.778 234.885 151.268 234.885C184.938 234.885 207.989 220.122 207.989 191.632C207.989 174.279 196.852 160.034 174.06 155.113L143.239 148.379C133.138 146.048 131.584 141.645 131.584 137.501C131.584 131.544 135.469 124.81 149.196 124.81C163.441 124.81 172.506 132.321 173.801 142.681L206.435 136.206C202.032 113.673 180.794 97.874 150.232 97.874C117.598 97.874 97.396 115.745 97.396 140.609C97.396 159.257 110.605 172.466 133.915 177.387L160.333 182.826C171.47 185.157 174.578 189.819 174.578 194.481C174.578 201.733 167.067 207.431 154.376 207.431C140.908 207.431 129.512 203.028 127.699 189.819L93.252 196.812Z"/></g><defs><filter id="filter0_d_201_2" width="114.737" height="144.011" x="93.252" y="97.874" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" result="hardAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"/><feOffset dy="7"/><feComposite in2="hardAlpha" operator="out"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/><feBlend in2="BackgroundImageFix" mode="normal" result="effect1_dropShadow_201_2"/><feBlend in="SourceGraphic" in2="effect1_dropShadow_201_2" mode="normal" result="shape"/></filter><linearGradient id="paint0_linear_201_2" x1="151" x2="151" y1="0" y2="1105" gradientUnits="userSpaceOnUse"><stop stop-color="#2A3B4B"/><stop offset="1" stop-color="#2BFAAC"/><stop offset="1" stop-color="#2BFAAC"/></linearGradient></defs></svg>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="302"
+   height="302"
+   fill="none"
+   viewBox="0 0 302 302"
+   version="1.1"
+   id="svg5"
+   sodipodi:docname="logo.svg"
+   inkscape:version="1.3.2 (091e20ef0f, 2023-11-25, custom)"
+   inkscape:export-filename="../png/logo.png"
+   inkscape:export-xdpi="325.50995"
+   inkscape:export-ydpi="325.50995"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview5"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showguides="true"
+     inkscape:zoom="1.9214858"
+     inkscape:cx="106.16784"
+     inkscape:cy="157.43025"
+     inkscape:window-width="1390"
+     inkscape:window-height="1040"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg5">
+    <sodipodi:guide
+       position="-28.103252,161"
+       orientation="0,1"
+       id="guide5"
+       inkscape:locked="false"
+       inkscape:label=""
+       inkscape:color="rgb(0,134,229)" />
+    <sodipodi:guide
+       position="151,296.4989"
+       orientation="-1,0"
+       id="guide6"
+       inkscape:locked="false"
+       inkscape:label=""
+       inkscape:color="rgb(0,134,229)" />
+  </sodipodi:namedview>
+  <rect
+     width="302"
+     height="322"
+     fill="url(#paint0_linear_201_2)"
+     id="rect1"
+     style="fill:url(#paint0_linear_201_2)"
+     x="0"
+     y="-10" />
+  <g
+     filter="url(#filter0_d_201_2)"
+     id="g1"
+     transform="translate(0,-10)">
+    <path
+       fill="#ccffed"
+       d="m 93.252,196.812 c 3.367,26.936 29.526,38.073 58.016,38.073 33.67,0 56.721,-14.763 56.721,-43.253 0,-17.353 -11.137,-31.598 -33.929,-36.519 l -30.821,-6.734 c -10.101,-2.331 -11.655,-6.734 -11.655,-10.878 0,-5.957 3.885,-12.691 17.612,-12.691 14.245,0 23.31,7.511 24.605,17.871 l 32.634,-6.475 c -4.403,-22.533 -25.641,-38.332 -56.203,-38.332 -32.634,0 -52.836,17.871 -52.836,42.735 0,18.648 13.209,31.857 36.519,36.778 l 26.418,5.439 c 11.137,2.331 14.245,6.993 14.245,11.655 0,7.252 -7.511,12.95 -20.202,12.95 -13.468,0 -24.864,-4.403 -26.677,-17.612 z"
+       id="path1" />
+  </g>
+  <defs
+     id="defs5">
+    <filter
+       id="filter0_d_201_2"
+       width="114.737"
+       height="144.011"
+       x="93.251999"
+       y="97.874001"
+       color-interpolation-filters="sRGB"
+       filterUnits="userSpaceOnUse">
+      <feFlood
+         flood-opacity="0"
+         result="BackgroundImageFix"
+         id="feFlood1" />
+      <feColorMatrix
+         in="SourceAlpha"
+         result="hardAlpha"
+         type="matrix"
+         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+         id="feColorMatrix1" />
+      <feOffset
+         dy="7"
+         id="feOffset1" />
+      <feComposite
+         in2="hardAlpha"
+         operator="out"
+         id="feComposite1" />
+      <feColorMatrix
+         type="matrix"
+         values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
+         id="feColorMatrix2" />
+      <feBlend
+         in2="BackgroundImageFix"
+         mode="normal"
+         result="effect1_dropShadow_201_2"
+         id="feBlend2" />
+      <feBlend
+         in="SourceGraphic"
+         in2="effect1_dropShadow_201_2"
+         mode="normal"
+         result="shape"
+         id="feBlend3" />
+    </filter>
+    <linearGradient
+       id="paint0_linear_201_2"
+       x1="151"
+       x2="151"
+       y1="0"
+       y2="1105"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0,-10)">
+      <stop
+         stop-color="#2A3B4B"
+         id="stop3" />
+      <stop
+         offset="1"
+         stop-color="#2BFAAC"
+         id="stop4" />
+      <stop
+         offset="1"
+         stop-color="#2BFAAC"
+         id="stop5" />
+    </linearGradient>
+  </defs>
+</svg>
