@@ -38,6 +38,7 @@ body {
   /* computed --background-primary */
   background: rgb(49, 51, 56);
   color: var(--text-normal);
+  font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 /* discord general compat */
@@ -45,10 +46,180 @@ body {
   font-family: var(--text-normal);
 }
 
-h1, h2, h3, h4, h5 {
+/*h1, h2, h3, h4, h5 {
   margin: 0;
   padding: 0;
+}*/
+
+/* discord fonts */
+@font-face {
+  font-family: "ABC Ginto Nord";
+  font-style: normal;
+  font-weight: 800;
+  src: url(https://discord.com/assets/fad1e8f9791cde986c61.woff2)format("woff2")
 }
+
+@font-face {
+  font-family: "ABC Ginto Nord";
+  font-style: italic;
+  font-weight: 800;
+  src: url(https://discord.com/assets/1dae98f83a4f199a9aee.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "gg sans";
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://discord.com/assets/b9811218b3a54ad59fb2.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "gg sans";
+  font-style: italic;
+  font-weight: 400;
+  src: url(https://discord.com/assets/15551c6c9d4d1a96ba76.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "gg sans";
+  font-style: normal;
+  font-weight: 500;
+  src: url(https://discord.com/assets/f84e3e81b8d0718cd917.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "gg sans";
+  font-style: italic;
+  font-weight: 500;
+  src: url(https://discord.com/assets/099b34f1948afe9d15e4.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "gg sans";
+  font-style: normal;
+  font-weight: 600;
+  src: url(https://discord.com/assets/20ac37ed2576dd48d7dc.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "gg sans";
+  font-style: italic;
+  font-weight: 600;
+  src: url(https://discord.com/assets/36a7c3603a9c96bce18d.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "gg sans";
+  font-style: normal;
+  font-weight: 700;
+  src: url(https://discord.com/assets/3f46bbecb4287c0a829f.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "gg sans";
+  font-style: italic;
+  font-weight: 700;
+  src: url(https://discord.com/assets/6191b2ecd48873bed773.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "gg sans";
+  font-style: normal;
+  font-weight: 800;
+  src: url(https://discord.com/assets/f65e087dae83a0fdc637.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "gg sans";
+  font-style: italic;
+  font-weight: 800;
+  src: url(https://discord.com/assets/d5c9d3b86fab5ccc8ef2.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://discord.com/assets/25f1e66664a140ac84c9.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  font-style: italic;
+  font-weight: 400;
+  src: url(https://discord.com/assets/9f0adc4ecabddcd298dc.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 500;
+  src: url(https://discord.com/assets/e0ece3c23b33d18f4d00.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  font-style: italic;
+  font-weight: 500;
+  src: url(https://discord.com/assets/818e8d4d506064aa57a3.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 600;
+  src: url(https://discord.com/assets/9a02726c2f8410020238.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  font-style: italic;
+  font-weight: 600;
+  src: url(https://discord.com/assets/08b2e52c725dc0d1a24a.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 700;
+  src: url(https://discord.com/assets/ee6b51adb64f6365352c.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  font-style: italic;
+  font-weight: 700;
+  src: url(https://discord.com/assets/4167dc814806444a69a5.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  font-style: normal;
+  font-weight: 800;
+  src: url(https://discord.com/assets/2850dd7b145576e8d7c7.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  font-style: italic;
+  font-weight: 800;
+  src: url(https://discord.com/assets/8318c9f278405382203e.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "Source Code Pro";
+  font-style: normal;
+  font-weight: 400;
+  src: url(https://discord.com/assets/7645cb75533b9a614c7a.woff2)format("woff2")
+}
+
+@font-face {
+  font-family: "Source Code Pro";
+  font-style: normal;
+  font-weight: 600;
+  src: url(https://discord.com/assets/cbb17c40dc4d56e70d10.woff2)format("woff2")
+}
+
 
 /*
 :root {

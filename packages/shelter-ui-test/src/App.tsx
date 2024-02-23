@@ -25,6 +25,7 @@ function Thrower(_props: {}) {
 export default function App() {
   const [toggle, setToggle] = createSignal(false);
   const [slide, setSlide] = createSignal(40);
+  const [tbox, setTbox] = createSignal("");
 
   return (
     <>
@@ -197,6 +198,13 @@ export default function App() {
       <SU.SwitchItem value={toggle()} onChange={setToggle} note="This is the note!">
         This is a <code>SwitchItem</code>!
       </SU.SwitchItem>
+
+      <h2>Textbox</h2>
+      <p>Value: {tbox()}</p>
+      <SU.TextBox value={tbox()} onInput={setTbox} placeholder="text box" />
+      <br />
+      <br />
+      <SU.TextArea value={tbox()} onInput={setTbox} placeholder="text area" resize-x resize-y mono />
     </>
   );
 }
