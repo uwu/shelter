@@ -12,7 +12,7 @@ declare module "solid-js" {
 const FocusRing: Component<{ x: number; y: number; width: number; height: number; rad: number }> = (props) => (
   <div
     style={{
-      position: "absolute",
+      position: "fixed",
       left: props.x + "px",
       top: props.y + "px",
       width: props.width + "px",
