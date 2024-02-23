@@ -736,7 +736,7 @@ The size can be set, user resizing can be toggled, and you can apply a monospace
 solid.Component<{
   min: number,
   max: number,
-  steps?: string[],
+  tick?: boolean | number,
   step?: number | "any",
   class?: string,
   style?: JSX.CSSProperties,
@@ -751,17 +751,19 @@ Takes `value` and returns in `onInput` as number,
 
 Set `min` and `max` as needed.
 
-`step` controls the size of the actual steps the slider is locked to,
-and `steps` (plural) controls the text ticks that show.
+`step` controls the size of the actual steps the slider is locked to.
 
-If no `steps` are passed, no ticks show.
+`tick` controls the spacing between ticks to show. This must be an even divisor of (min - max), but plans are to fix this
+in the future.
+
+If `tick` is not passed, no ticks show.
 
 `step` is any by default.
 
 ```jsx
 <Slider value={val()} onChange={setVal}
         min={0} max={10}
-        step={2} steps={[0, 2, 4, 6, 8, 10]}
+        step={2} tick
 />
 ```
 

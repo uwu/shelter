@@ -159,8 +159,8 @@ importers:
         specifier: ^0.58.5
         version: 0.58.5(postcss@8.4.35)(vite@5.1.4)
       vitepress:
-        specifier: 1.0.0-rc.41
-        version: 1.0.0-rc.41(@algolia/client-search@4.22.1)(fuse.js@7.0.0)(postcss@8.4.35)(search-insights@2.13.0)(typescript@4.9.5)
+        specifier: 1.0.0-rc.44
+        version: 1.0.0-rc.44(@algolia/client-search@4.22.1)(fuse.js@7.0.0)(postcss@8.4.35)(search-insights@2.13.0)(typescript@4.9.5)
 
   packages/shelter-index:
     dependencies:
@@ -7183,12 +7183,12 @@ packages:
       vite: 5.1.4
     dev: true
 
-  /vitepress@1.0.0-rc.41(@algolia/client-search@4.22.1)(fuse.js@7.0.0)(postcss@8.4.35)(search-insights@2.13.0)(typescript@4.9.5):
-    resolution: {integrity: sha512-PAEoIIc9J//k/Wg39C6k86hZpXPmLZjRiTBwieDNeYGdevD7xr5Ve8o1W/w+e9dtyQMkuvzgianEamXDX3aj7g==}
+  /vitepress@1.0.0-rc.44(@algolia/client-search@4.22.1)(fuse.js@7.0.0)(postcss@8.4.35)(search-insights@2.13.0)(typescript@4.9.5):
+    resolution: {integrity: sha512-tO5taxGI7fSpBK1D8zrZTyJJERlyU9nnt0jHSt3fywfq3VKn977Hg0wUuTkEmwXlFYwuW26+6+3xorf4nD3XvA==}
     hasBin: true
     peerDependencies:
       markdown-it-mathjax3: ^4.3.2
-      postcss: ^8.4.33
+      postcss: ^8.4.35
     peerDependenciesMeta:
       markdown-it-mathjax3:
         optional: true

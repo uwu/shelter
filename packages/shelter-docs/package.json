@@ -7,7 +7,7 @@
   "devDependencies": {
     "@iconify-json/carbon": "^1.1.30",
     "unocss": "^0.58.5",
-    "vitepress": "1.0.0-rc.41"
+    "vitepress": "1.0.0-rc.44"
   },
   "dependencies": {
     "@vueuse/core": "^10.7.2",
