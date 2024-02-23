@@ -122,7 +122,7 @@ You can use the [modal components](#modal-components) to style your modals like 
 You can listen for your modal being closed using [onCleanup](https://www.solidjs.com/tutorial/lifecycles_oncleanup).
 :::
 
-<video src="/public/ui/openModal.webm" loop autoplay controls></video>
+<video src="/ui/openModal.webm" loop autoplay controls></video>
 
 ### `<ReactInSolidBridge />`
 
@@ -225,7 +225,7 @@ showToast({
 });
 ```
 
-![](/public/ui/showToast.webp)
+![](/ui/showToast.webp)
 
 ### `niceScrollbarsClass`
 
@@ -241,7 +241,7 @@ A getter that gets a class to add to an element to give it a Discord-style scrol
 <div class={`myclass myclass2 ${niceScrollbarsClass()}`} />
 ```
 
-![](/public/ui/niceScrollbarsClass.webp)
+![](/ui/niceScrollbarsClass.webp)
 
 ### `use:focusring`
 
@@ -267,7 +267,7 @@ so if you are using those, this is not necessary.
 <input use:focusring={6} type="checkbox" />
 ```
 
-![](/public/ui/focusring.webp)
+![](/ui/focusring.webp)
 
 ### `use:tooltip`
 
@@ -286,7 +286,7 @@ You can pass an of the form `[true, JSX.Element]` to render it underneath instea
 <button use:tooltip={[true, "Delete but underneath"]}><DeleteIcon /></button>
 ```
 
-![](/public/ui/tooltip.webp)
+![](/ui/tooltip.webp)
 
 ### `<Space />`
 
@@ -330,7 +330,7 @@ openConfirmationModal({
 );
 ```
 
-![](/public/ui/confirmmodal.webp)
+![](/ui/confirmmodal.webp)
 
 ## Components
 
@@ -367,7 +367,7 @@ Header is, well, a header. It has a few styles, chosen by the `tag` prop.
 <Header tag={HeaderTags.H1}>My cool page</Header>
 ```
 
-![](/public/ui/headers.webp)
+![](/ui/headers.webp)
 
 #### `HeaderTags`
 
@@ -397,7 +397,7 @@ When set true, `20px` is used.
 <Divider mt mb="30px" /> // 20px on top, 30px on bottom.
 ```
 
-![](/public/ui/divider.webp)
+![](/ui/divider.webp)
 
 ### `<Button>`
 
@@ -422,9 +422,9 @@ solid.Component<{
 
 Button is a, well, button, using Discord's styles.
 
-![](/public/ui/buttoncolors.webp)
-![](/public/ui/buttonlooks.webp)
-![](/public/ui/buttonsizes.webp)
+![](/ui/buttoncolors.webp)
+![](/ui/buttonlooks.webp)
+![](/ui/buttonsizes.webp)
 
 #### `ButtonLooks`
 
@@ -481,7 +481,7 @@ A link (`<a>`) that fits with Discord's UI.
 
 It will open the href in a new tab / in your system browser.
 
-![](/public/ui/linkbutton.webp)
+![](/ui/linkbutton.webp)
 
 ### `<Switch />`
 
@@ -511,7 +511,7 @@ const [switchState, setSwitchState] = createSignal(false);
 <Switch checked={switchState} onChange={setSwitchState} />;
 ```
 
-<video src="/public/ui/switch.webm" loop autoplay></video>
+<video src="/ui/switch.webm" loop autoplay></video>
 
 ### `<SwitchItem>`
 
@@ -546,7 +546,7 @@ The child elements of the component is the title displayed next to the switch.
 <SwitchItem note="Does cool things" value={/*...*/}>A cool option</SwitchItem>
 ```
 
-![](/public/ui/switchitem.webp)
+![](/ui/switchitem.webp)
 
 ### `<Checkbox />`
 
@@ -601,7 +601,7 @@ Also see [`openModal()`](#openmodal)
 </ModalRoot>
 ```
 
-![](/public/ui/modal.webp)
+![](/ui/modal.webp)
 
 #### `<ModalRoot>`
 
@@ -678,7 +678,7 @@ The `type` prop controls the colour of the confirm button.
 
 The `disabled` prop affects the confirm button, and the `cancelDisabled` prop affects the cancel button.
 
-![](/public/ui/confirmfooter.webp)
+![](/ui/confirmfooter.webp)
 
 ### `<TextBox />`
 
@@ -701,7 +701,7 @@ Takes value, placeholder, maxLength, and onInput.
 
 All optional. onInput called every keystroke and passed the full current value.
 
-![](/public/ui/textbox.webp)
+![](/ui/textbox.webp)
 
 ### `<TextArea />`
 
@@ -727,7 +727,7 @@ Like `<TextBox />` but its a textarea.
 
 The size can be set, user resizing can be toggled, and you can apply a monospace font.
 
-![](/public/ui/textarea.webp)
+![](/ui/textarea.webp)
 
 ### `<Slider />`
 
@@ -767,4 +767,4 @@ If `tick` is not passed, no ticks show.
 />
 ```
 
-![](/public/ui/slider.webp)
+![](/ui/slider.webp)
