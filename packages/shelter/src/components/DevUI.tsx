@@ -1,4 +1,4 @@
-import { injectCss, LinkButton, showToast, Space, SwitchItem } from "shelter-ui";
+import { injectCss, LinkButton, showToast, Space, SwitchItem } from "@uwu/shelter-ui";
 import { dbStore } from "../storage";
 import { PluginCard } from "./Plugins";
 import { devModeReservedId, enableDevmode, stopDevmode } from "../devmode";

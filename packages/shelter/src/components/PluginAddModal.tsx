@@ -9,7 +9,7 @@ import {
   TextArea,
   TextBox,
   Space,
-} from "shelter-ui";
+} from "@uwu/shelter-ui";
 import { createSignal, Match, Switch } from "solid-js";
 import { addLocalPlugin, addRemotePlugin, installedPlugins } from "../plugins";
 

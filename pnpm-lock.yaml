@@ -78,6 +78,9 @@ importers:
       '@cumjar/websmack':
         specifier: ^1.2.0
         version: 1.2.0
+      '@uwu/shelter-ui':
+        specifier: workspace:*
+        version: link:../shelter-ui
       fuse.js:
         specifier: ^7.0.0
         version: 7.0.0
@@ -87,9 +90,6 @@ importers:
       shelter-assets:
         specifier: workspace:*
         version: link:../shelter-assets
-      shelter-ui:
-        specifier: workspace:*
-        version: link:../shelter-ui
       solid-js:
         specifier: 1.6.16
         version: 1.6.16
@@ -170,7 +170,7 @@ importers:
 
   packages/shelter-ui-test:
     dependencies:
-      shelter-ui:
+      '@uwu/shelter-ui':
         specifier: workspace:*
         version: link:../shelter-ui
       solid-js:

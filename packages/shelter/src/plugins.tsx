@@ -2,7 +2,7 @@ import { isInited, signalOf, solidMutWithSignal, storage, waitInit } from "./sto
 import { Component } from "solid-js";
 import { createMutable } from "solid-js/store";
 import { createScopedApi, log } from "./util";
-import { ModalBody, ModalHeader, ModalRoot, openModal } from "shelter-ui";
+import { ModalBody, ModalHeader, ModalRoot, openModal } from "@uwu/shelter-ui";
 import { devModeReservedId } from "./devmode";
 
 // a lot of this is adapted from cumcord, but some of it is new, and hopefully the code should be a lot less messy :)

@@ -4,7 +4,7 @@ import { intercept as httpIntercept } from "../http";
 import { observe as observeDom } from "../observer";
 import * as patcher from "spitroast";
 import { registerSection } from "../settings";
-import { injectCss } from "shelter-ui";
+import { injectCss } from "@uwu/shelter-ui";
 import { Dispatcher } from "../types";
 
 export type DisposableFn = (...props: unknown[]) => () => void;

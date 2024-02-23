@@ -1,6 +1,6 @@
 import { devmodePrivateApis, installedPlugins, loadedPlugins, removePlugin, startPlugin, stopPlugin } from "../plugins";
 import { observe } from "../observer";
-import { injectCss, ModalBody, ModalHeader, ModalRoot, ModalSizes, openModal } from "shelter-ui";
+import { injectCss, ModalBody, ModalHeader, ModalRoot, ModalSizes, openModal } from "@uwu/shelter-ui";
 import { css, classes } from "./devmode.css";
 import { log } from "../util";
 import DevUI from "../components/DevUI";

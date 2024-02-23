@@ -19,7 +19,7 @@ import {
   focusring,
   tooltip,
   TextBox,
-} from "shelter-ui";
+} from "@uwu/shelter-ui";
 import PluginAddModal from "./PluginAddModal";
 import Fuse from "fuse.js";
 

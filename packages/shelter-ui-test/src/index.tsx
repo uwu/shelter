@@ -1,7 +1,7 @@
 /* @refresh reload */
 import { render } from "solid-js/web";
 
-import { initToasts } from "shelter-ui";
+import { initToasts } from "@uwu/shelter-ui";
 
 import "shelter-ui/compat.css";
 import "./index.css";

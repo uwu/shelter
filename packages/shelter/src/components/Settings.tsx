@@ -1,4 +1,4 @@
-import { injectCss, Header, HeaderTags, Divider } from "shelter-ui";
+import { injectCss, Header, HeaderTags, Divider } from "@uwu/shelter-ui";
 import { classes, css } from "./Settings.tsx.scss";
 import ShelterLogo from "./ShelterLogo";
 import Plugins from "./Plugins";

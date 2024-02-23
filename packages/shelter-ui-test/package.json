@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "solid-js": "1.6.16",
-    "shelter-ui": "workspace:*"
+    "@uwu/shelter-ui": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.2.2",

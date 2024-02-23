@@ -3,7 +3,7 @@ import * as patcher from "spitroast";
 import * as solid from "solid-js";
 import * as solidStore from "solid-js/store";
 import * as solidWeb from "solid-js/web";
-import * as ui from "shelter-ui";
+import * as ui from "@uwu/shelter-ui";
 import * as reacts from "./react";
 import * as bridges from "./bridges";
 import * as util from "./util";

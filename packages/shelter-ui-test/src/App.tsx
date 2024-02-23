@@ -1,7 +1,7 @@
 import { createSignal, For, JSX } from "solid-js";
 
-import * as SU from "shelter-ui";
-import { focusring, tooltip } from "shelter-ui";
+import * as SU from "@uwu/shelter-ui";
+import { focusring, tooltip } from "@uwu/shelter-ui";
 
 false && focusring;
 false && tooltip;
