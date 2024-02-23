@@ -3,6 +3,7 @@ import { render } from "solid-js/web";
 
 import { initToasts } from "shelter-ui";
 
+import "shelter-ui/compat.css";
 import "./index.css";
 import App from "./App";
 

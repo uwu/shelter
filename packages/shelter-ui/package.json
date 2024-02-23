@@ -19,5 +19,9 @@
   },
   "peerDependencies": {
     "solid-js": "^1.6.16"
+  },
+  "exports": {
+    ".": "./dist/index.jsx",
+    "./compat.css": "./compat.css"
   }
 }
