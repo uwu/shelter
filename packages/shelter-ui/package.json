@@ -5,12 +5,19 @@
   "author": "uwu.network",
   "repository": "github:uwu/shelter",
   "type": "module",
-  "main": "src/index.tsx",
-  "module": "src/index.tsx",
+  "main": "dist/index.jsx",
+  "module": "dist/index.jsx",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "prepare": "tsc && node esbuild.mjs"
+  },
   "devDependencies": {
-    "solid-js": "1.6.16"
+    "esbuild": "^0.20.1",
+    "esbuild-sass-plugin-ysink": "^2.3.3",
+    "solid-js": "^1.6.16",
+    "typescript": "^5.3.3"
   },
   "peerDependencies": {
-    "solid-js": "1.6.16"
+    "solid-js": "^1.6.16"
   }
 }

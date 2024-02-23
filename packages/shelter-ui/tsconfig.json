@@ -1,11 +1,14 @@
 {
-  "include": ["packages/**/*.ts", "packages/**/*.tsx"],
+  "include": ["./src/*", "../../globals.d.ts"],
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
     "declaration": true,
     "jsx": "preserve",
-    "jsxImportSource": "solid-js"
+    "jsxImportSource": "solid-js",
+
+    "outDir": "dist",
+    "emitDeclarationOnly": true
   }
 }

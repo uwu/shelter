@@ -1,7 +1,6 @@
 import { Component, JSX } from "solid-js";
 import { render } from "solid-js/web";
 import { css as sBarCss, classes as sBarClasses } from "./scrollbars.scss";
-import { log } from "../../shelter/src/util";
 
 class ReactiveRootElem extends HTMLElement {
   // children

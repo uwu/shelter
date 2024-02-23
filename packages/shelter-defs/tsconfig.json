@@ -1,5 +1,5 @@
 {
-  "include": ["*.ts", "../*/*.d.ts", "../shelter/src/index.ts", "../shelter-ui/src/index.tsx"],
+  "include": ["*.ts", "../*/*.d.ts", "../shelter/src/index.ts", "../shelter-ui/src/index.tsx", "../../globals.d.ts"],
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",

@@ -3,7 +3,7 @@
 import { getDispatcher } from "./flux";
 import { awaitDispatch, getFiber, getFiberOwner, reactFiberWalker } from "./util";
 import { Component } from "solid-js";
-import { SolidInReactBridge } from "shelter-ui";
+import { SolidInReactBridge } from "./bridges";
 import Settings from "./components/Settings";
 import { after } from "spitroast";
 
