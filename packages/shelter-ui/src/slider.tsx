@@ -1,5 +1,5 @@
 import { Component, JSX } from "solid-js";
-import { css, classes } from "./slider.tsx.scss";
+import { classes, css } from "./slider.tsx.scss";
 import { injectCss } from "./util";
 
 let injectedCss = false;
@@ -7,8 +7,7 @@ let injectedCss = false;
 export const Slider: Component<{
   min: number;
   max: number;
-  // These are the little labelled ticks on the slider
-  steps?: string[];
+  tick?: boolean | number;
   step?: number | "any";
   class?: string;
   style?: JSX.CSSProperties;
@@ -19,6 +18,13 @@ export const Slider: Component<{
     injectedCss = true;
     injectCss(css);
   }
+
+  const ticks = () => {
+    if (!props.tick || typeof props.step !== "number") return [];
+
+    const spacing = props.tick === true ? props.step : props.tick;
+    return Object.keys(Array(~~((props.max - props.min) / spacing) + 1).fill(0)).map((v) => parseInt(v) * spacing);
+  };
 
   return (
     <div class={classes.scontainer}>
@@ -38,7 +44,7 @@ export const Slider: Component<{
         onInput={(e) => props.onInput?.(parseFloat((e.target as HTMLInputElement).value))}
       />
       <div class={classes.sticks}>
-        {props.steps?.map((t) => (
+        {ticks().map((t) => (
           <div class={classes.stick}>
             <span>{t}</span>
             <div class={classes.stickline}></div>
