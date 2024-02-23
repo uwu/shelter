@@ -1,5 +1,5 @@
 import { Component, createEffect, createSignal, onCleanup } from "solid-js";
-import { ReactiveRoot } from "./util";
+import { ReactiveRoot } from "shelter-ui";
 import { React, ReactDOM } from "./react";
 
 export const ReactInSolidBridge: Component<{

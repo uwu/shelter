@@ -1,7 +1,5 @@
-// this is nonideal :(
-import exfiltrate from "../../shelter/src/exfiltrate";
+import exfiltrate from "./exfiltrate";
 
-// exfiltrate react
 export let React, ReactDOM;
 
 exfiltrate("useRef").then((v) => (React = v));

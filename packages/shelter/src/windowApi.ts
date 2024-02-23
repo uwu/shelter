@@ -4,7 +4,8 @@ import * as solid from "solid-js";
 import * as solidStore from "solid-js/store";
 import * as solidWeb from "solid-js/web";
 import * as ui from "shelter-ui";
-import * as reacts from "shelter-ui/src/react";
+import * as reacts from "./react";
+import * as bridges from "./bridges";
 import * as util from "./util";
 import * as plugins from "./plugins";
 import { registerSection } from "./settings";
@@ -61,7 +62,10 @@ const windowApi = async (unloads) => {
     plugins: without(plugins, "startAllPlugins", "devmodePrivateApis"),
     storage,
     observeDom: observe,
-    ui: without(ui, "cleanupCss", "initToasts"),
+    ui: {
+      ...without(ui, "cleanupCss", "initToasts"),
+      ...bridges,
+    },
     settings: {
       registerSection,
     },

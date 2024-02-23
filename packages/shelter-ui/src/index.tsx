@@ -9,7 +9,6 @@ export * from "./openModal";
 export * from "./modals";
 export * from "./icons";
 export * from "./textbox";
-export * from "./bridges";
 export * from "./errorboundary";
 export * from "./toasts";
 export * from "./focusring";
