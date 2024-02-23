@@ -1,0 +1,88 @@
+:root {
+  --saturation-factor: 1;
+  --text-normal: #dbdee1;
+  --text-link: #00a8fc;
+  --brand-experiment-400: #7983f5;
+  --brand-experiment-500: #5865f2;
+  --brand-experiment-560: #4752c4;
+  --brand-experiment: var(--brand-experiment-500);
+  --interactive-active: var(--white-500);
+  --interactive-normal: #b5bac1;
+  --interactive-hover: #dbdee1;
+  --font-display: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-code: Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Liberation Mono', 'Nimbus Mono L', Monaco, 'Courier New', Courier, monospace;
+  --background-secondary: #2b2d31;
+  --background-floating: #111214;
+  --background-modifier-accent: #4e5058;
+  --input-background: #1e1f22;
+  --modal-background: #313338;
+  --modal-footer-background: var(--background-secondary);
+  --header-primary: #f2f3f5;
+  --header-secondary: var(--interactive-normal);
+  --scrollbar-thin-thumb: #1a1b1e;
+  --scrollbar-thin-track: hsl(var(--black-500-hsl) / 0);
+  --elevation-high: 0 8px 16px hsl(var(--black-500-hsl) / 0.24);
+  --button-danger-background: #da373c;
+  --button-danger-background-hover: #8f2022;
+  --button-positive-background: #248046;
+  --button-positive-background-hover: #1a6334;
+  --button-secondary-background: var(--primary-500);
+  --button-secondary-background-hover: #6d6f78;
+  --primary-500: #4e5058;
+  --primary-200: #e3e5e8;
+  --white-500: #ffffff;
+  --black-500-hsl: 0 0% 0%
+}
+
+body {
+  /* computed --background-primary */
+  background: rgb(49, 51, 56);
+  color: var(--text-normal);
+}
+
+/* discord general compat */
+:root {
+  font-family: var(--text-normal);
+}
+
+h1, h2, h3, h4, h5 {
+  margin: 0;
+  padding: 0;
+}
+
+/*
+:root {
+  --saturation-factor: 1;
+  --text-normal: hsl(210 9.1% 87.1% / 1);
+  --text-link: hsl(200 100% 49.4% / 1);
+  --brand-experiment-400: hsl(235 86.1% 71.8% / 1);
+  --brand-experiment-500: hsl(235 85.6% 64.7% / 1);
+  --brand-experiment-560: hsl(235 51.4% 52.4% / 1);
+  --brand-experiment: var(--brand-experiment-500);
+  --interactive-active: var(--white-500);
+  --interactive-normal: hsl(215 8.8% 73.3% / 1);
+  --interactive-hover: hsl(210 9.1% 87.1% / 1);
+  --font-display: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  --font-code: Consolas, 'Andale Mono WT', 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Liberation Mono', 'Nimbus Mono L', Monaco, 'Courier New', Courier, monospace;
+  --background-secondary: hsl(220 6.5% 18% / 1);
+  --background-floating: hsl(220 8.1% 7.3% / 1);
+  --background-modifier-accent: hsl(228 6% 32.5% / 0.48);
+  --input-background: hsl(225 6.3% 12.5% / 1);
+  --modal-background: hsl(223 6.7% 20.6% / 1);
+  --modal-footer-background: var(--background-secondary);
+  --header-primary: hsl(220 13% 95.5% / 1);
+  --header-secondary: var(--interactive-normal);
+  --scrollbar-thin-thumb: hsl(225 7.1% 11% / 1);
+  --scrollbar-thin-track: hsl(var(--black-500-hsl) / 0);
+  --elevation-high: 0 8px 16px hsl(var(--black-500-hsl) / 0.24);
+  --button-danger-background: hsl(358 68.8% 53.5% / 1);
+  --button-danger-background-hover: hsl(359 63.4% 34.3% / 1);
+  --button-positive-background: hsl(142 56.1% 32.2% / 1);
+  --button-positive-background-hover: hsl(141 58.4% 24.5% / 1);
+  --button-secondary-background: var(--primary-500);
+  --button-secondary-background-hover: hsl(229 4.8% 44.9% / 1);
+  --primary-500: hsl(228 6% 32.5% / 1);
+  --primary-200: hsl(216 9.8% 90% / 1);
+  --white-500: hsl(0 0% 100% / 1);
+  --black-500-hsl: 0 0% 0%
+}*/
