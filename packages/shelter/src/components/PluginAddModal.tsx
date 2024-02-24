@@ -113,7 +113,7 @@ export default (props: { close(): void }) => {
             } catch (e) {}
           } else {
             try {
-              await addRemotePlugin(newId(), rSrc());
+              await addRemotePlugin(newId(), rSrc(), rUpdate());
             } catch (e) {}
           }
         }}

@@ -141,7 +141,7 @@ async function updatePlugin(pluginId: string) {
   if (!data) throw new Error(`attempted to update a non-existent plugin: ${pluginId}`);
   if (internalLoaded[pluginId]) throw new Error(`attempted to update a loaded plugin: ${pluginId}`);
 
-  if (data.update && data.src) {
+  if (data.src) {
     try {
       const newPluginManifest = await (await fetch(new URL("plugin.json", data.src), { cache: "no-store" })).json();
 
@@ -173,7 +173,7 @@ export async function startAllPlugins() {
   const allPlugins = Object.keys(internalData);
 
   // update in parallel
-  const results = await Promise.allSettled(allPlugins.map(updatePlugin));
+  const results = await Promise.allSettled(allPlugins.filter((id) => internalData[id].update).map(updatePlugin));
 
   for (const res of results) if (res.status === "rejected") log(res.reason, "error");
 
