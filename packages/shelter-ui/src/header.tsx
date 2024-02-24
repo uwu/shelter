@@ -1,9 +1,7 @@
 import { Component, JSX } from "solid-js";
-import { injectCss } from "./util";
 import { css, classes } from "./header.tsx.scss";
 import { Dynamic } from "solid-js/web";
-
-let injectedCss = false;
+import { ensureInternalStyle } from "./internalstyles";
 
 export const HeaderTags: Record<string, string> = {
   H1: classes.h1,
@@ -14,10 +12,7 @@ export const HeaderTags: Record<string, string> = {
 };
 
 export const Header: Component<{ tag: string; children: JSX.Element; class?: string; id?: string }> = (props) => {
-  if (!injectedCss) {
-    injectCss(css);
-    injectedCss = true;
-  }
+  ensureInternalStyle(css);
 
   return (
     <Dynamic

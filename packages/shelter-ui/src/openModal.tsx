@@ -1,13 +1,12 @@
 import { Component, createEffect, createSignal, For } from "solid-js";
 import { classes, css } from "./modals.tsx.scss";
-import { injectCss, ReactiveRoot } from "./util";
+import { ReactiveRoot } from "./util";
+import { ensureInternalStyle } from "./internalstyles";
 
 type ModalProps = { close(): void };
 
 const [currentModals, setCurrentModals] = createSignal<Component<ModalProps>[]>([]);
 let dispose: () => void;
-
-let cssInjected = false;
 
 // dont show modals for one tick after mounting ("pre") to trigger transition
 // and hide them 250ms before hiding them ("post") to allow the transition to play out
@@ -19,10 +18,7 @@ const [animationPrePost, setAnimationPrePost] = createSignal(true);
 const [bgAnimPrePost, setBgAnimPrePost] = createSignal(true);
 
 const ModalRoot: Component = () => {
-  if (!cssInjected) {
-    injectCss(css);
-    cssInjected = true;
-  }
+  ensureInternalStyle(css);
 
   let dialogEl;
 

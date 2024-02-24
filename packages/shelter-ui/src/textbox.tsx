@@ -1,10 +1,8 @@
 import { Component } from "solid-js";
 import { css, classes } from "./textbox.tsx.scss";
-import { injectCss } from "./util";
 import { focusring } from "./focusring";
+import { ensureInternalStyle } from "./internalstyles";
 false && focusring;
-
-let injectedCss = false;
 
 export const TextBox: Component<{
   value?: string;
@@ -14,10 +12,7 @@ export const TextBox: Component<{
   "aria-label"?: string;
   onInput?(v: string): void;
 }> = (props) => {
-  if (!injectedCss) {
-    injectedCss = true;
-    injectCss(css);
-  }
+  ensureInternalStyle(css);
 
   return (
     <input
@@ -46,10 +41,7 @@ export const TextArea: Component<{
   "resize-y"?: boolean;
   mono?: boolean;
 }> = (props) => {
-  if (!injectedCss) {
-    injectedCss = true;
-    injectCss(css);
-  }
+  ensureInternalStyle(css);
 
   return (
     <textarea

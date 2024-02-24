@@ -1,6 +1,7 @@
 import { Component, JSX } from "solid-js";
 import { render } from "solid-js/web";
 import { css as sBarCss, classes as sBarClasses } from "./scrollbars.scss";
+import { ensureInternalStyle } from "./internalstyles";
 
 class ReactiveRootElem extends HTMLElement {
   // children
@@ -57,13 +58,8 @@ export const injectCss = (css: string) => {
 // such as accessibility or <label for={ID}>
 export const genId = () => "shltr-ui-" + Math.random().toString(36).slice(2);
 
-let sbarInjected = false;
 export const niceScrollbarsClass = () => {
-  if (!sbarInjected) {
-    injectCss(sBarCss);
-    sbarInjected = true;
-  }
-
+  ensureInternalStyle(sBarCss);
   return sBarClasses.scrollbar;
 };
 

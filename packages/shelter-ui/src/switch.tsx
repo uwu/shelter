@@ -1,13 +1,12 @@
 import { Component, createEffect, JSX, on, Show } from "solid-js";
-import { genId, injectCss } from "./util";
+import { genId } from "./util";
 import { Divider } from "./index";
 import { css, classes } from "./switch.tsx.scss";
 import { focusring } from "./focusring";
 import { tooltip } from "./tooltip";
+import { ensureInternalStyle } from "./internalstyles";
 false && focusring;
 false && tooltip;
-
-let injectedCss = false;
 
 // good luck editing these by hand AND making them look good in animation :D --sink
 
@@ -77,10 +76,7 @@ export const Switch: Component<{
   tooltip?: JSX.Element;
   "aria-label"?: string;
 }> = (props) => {
-  if (!injectedCss) {
-    injectCss(css);
-    injectedCss = true;
-  }
+  ensureInternalStyle(css);
 
   return (
     <div

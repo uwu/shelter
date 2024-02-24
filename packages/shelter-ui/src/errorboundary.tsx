@@ -1,15 +1,10 @@
 import { ErrorBoundary as SEB } from "solid-js";
 import { Button, ButtonColors, ButtonLooks, ButtonSizes } from "./button";
 import { css, classes } from "./errorboundary.tsx.scss";
-import { injectCss } from "./util";
-
-let injectedCss = false;
+import { ensureInternalStyle } from "./internalstyles";
 
 const ErrBoundFallback = (err, reset) => {
-  if (!injectedCss) {
-    injectCss(css);
-    injectedCss = true;
-  }
+  ensureInternalStyle(css);
 
   return (
     <div class={classes.errbound}>

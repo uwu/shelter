@@ -40,6 +40,8 @@ const waitForAppMount = async () => {
     unpatchHttpHandlers,
   ]);
 
+  ui.injectInternalStyles();
+
   window["shelter"] = await windowApi(unloads);
 
   // once everything is fully inited, start plugins

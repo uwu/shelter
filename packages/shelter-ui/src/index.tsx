@@ -14,6 +14,7 @@ export * from "./toasts";
 export * from "./focusring";
 export * from "./tooltip";
 export * from "./slider";
+export { InternalStyles, injectInternalStyles } from "./internalstyles";
 
 export const Text: Component<JSX.HTMLAttributes<HTMLSpanElement>> = (props) => (
   <span

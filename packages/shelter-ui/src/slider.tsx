@@ -1,8 +1,6 @@
 import { Component, JSX } from "solid-js";
 import { classes, css } from "./slider.tsx.scss";
-import { injectCss } from "./util";
-
-let injectedCss = false;
+import { ensureInternalStyle } from "./internalstyles";
 
 export const Slider: Component<{
   min: number;
@@ -14,10 +12,7 @@ export const Slider: Component<{
   onInput?(e: number): void;
   value?: number;
 }> = (props) => {
-  if (!injectedCss) {
-    injectedCss = true;
-    injectCss(css);
-  }
+  ensureInternalStyle(css);
 
   const ticks = () => {
     if (!props.tick || typeof props.step !== "number") return [];

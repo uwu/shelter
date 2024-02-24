@@ -1,12 +1,10 @@
 import { Component, JSX, mergeProps } from "solid-js";
-import { injectCss } from "./util";
 import { classes, css } from "./button.tsx.scss";
 import { focusring } from "./focusring";
 import { tooltip } from "./tooltip";
+import { ensureInternalStyle } from "./internalstyles";
 false && focusring;
 false && tooltip;
-
-let injectedCss = false;
 
 export const ButtonLooks = {
   FILLED: classes.filled,
@@ -87,10 +85,7 @@ export const Button: Component<{
     rawProps,
   );
 
-  if (!injectedCss) {
-    injectCss(css);
-    injectedCss = true;
-  }
+  ensureInternalStyle(css);
 
   return (
     <button
@@ -124,10 +119,7 @@ export const LinkButton: Component<{
   tooltip?: JSX.Element;
   children?: JSX.Element;
 }> = (props) => {
-  if (!injectedCss) {
-    injectCss(css);
-    injectedCss = true;
-  }
+  ensureInternalStyle(css);
 
   return (
     <a

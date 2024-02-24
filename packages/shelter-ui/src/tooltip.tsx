@@ -1,9 +1,8 @@
 import type { JSX } from "solid-js"; // esbuild bug?
 import { onCleanup, Component, Accessor, createSignal, createEffect, on } from "solid-js";
-import { getRoot, injectCss } from "./util";
+import { getRoot } from "./util";
 import { classes, css } from "./tooltip.tsx.scss";
-
-let cssInjected = false;
+import { ensureInternalStyle } from "./internalstyles";
 
 declare module "solid-js" {
   namespace JSX {
@@ -64,10 +63,7 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
     // so optimizing away the undefined case is good.
     if (content() === undefined) return;
 
-    if (!cssInjected) {
-      injectCss(css);
-      cssInjected = true;
-    }
+    ensureInternalStyle(css);
 
     toolTipElem?.remove();
     toolTipElem = (

@@ -1,12 +1,11 @@
 import { Component, JSX, Show } from "solid-js";
 import { css, classes } from "./checkbox.tsx.scss";
-import { genId, injectCss } from "./util";
+import { genId } from "./util";
 import { focusring } from "./focusring";
 import { tooltip } from "./tooltip";
+import { ensureInternalStyle } from "./internalstyles";
 false && focusring;
 false && tooltip;
-
-let injectedCss = false;
 
 const CheckIcon: Component<{
   state: boolean;
@@ -36,10 +35,7 @@ export const CheckboxItem: Component<{
   tooltip?: JSX.Element;
   "aria-label"?: string;
 }> = (props) => {
-  if (!injectedCss) {
-    injectCss(css);
-    injectedCss = true;
-  }
+  ensureInternalStyle(css);
 
   const id = genId();
 
