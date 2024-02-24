@@ -4,6 +4,7 @@ import {Button, ButtonColors, ButtonLooks, ButtonSizes} from "@uwu/shelter-ui";
 import {watchEffect, reactive} from "vue";
 import {createSignal} from "solid-js";
 import Codeblock from "../Codeblock.vue";
+import Picker from "../Picker.vue";
 
 // prevent unwrapping refs when passed to codeblock
 const ref = (value) => reactive({ value });
@@ -64,6 +65,6 @@ function comp() {
       ['select', selectedSize, Object.keys(ButtonSizes), 'ButtonSizes.'],
       ['select', selectedGrow, [false, true], ''],
       ['text', content]
-    ]" />
+    ]"/>
   </MountBox>
 </template>
