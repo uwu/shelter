@@ -1,15 +1,28 @@
 <script setup lang="ts">
 import {defineProps, onMounted, ref} from "vue";
 import {JSX} from "solid-js";
+import h from "solid-js/h";
 import {render} from "solid-js/web";
+import {InternalStyles} from "@uwu/shelter-ui"
+// @ts-expect-error vite feature
+import compatCss from "@uwu/shelter-ui/compat.css?inline";
 
 const props = defineProps<{
   component: () => JSX.Element;
+  isolate?: boolean;
 }>();
 
-const divref = ref(null);
+const divref = ref<HTMLDivElement>(null);
 onMounted(() => {
-  render(props.component, divref.value);
+  const root = props.isolate ? divref.value.attachShadow({mode: "open"}) : divref.value;
+
+  render(() => [
+    h(props.component)(),
+    props.isolate ? [
+      h(InternalStyles)(),
+      h("style", {}, compatCss)()
+    ] : undefined
+  ], root);
 });
 
 </script>

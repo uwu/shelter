@@ -40,7 +40,7 @@ export async function getHighlight() {
     },
   ];
 
-  return (str: string, lang: string, _attrs: string, enrichments: unknown[] = []) => {
+  return (str: string, lang: string, _attrs: string, enrichments: unknown[] = [], tag?: string) => {
     console.assert(["js", "jsx", "ts", "tsx"].indexOf(lang) !== -1);
 
     const highlighted = highlighter.codeToHtml(str, {
@@ -70,6 +70,7 @@ export async function getHighlight() {
 
       const replacement = document.createElement("div");
       replacement.dataset.shdocsEnrichment = k + "";
+      replacement.dataset.shdocsTag = tag;
       replacement.style.display = "contents";
       hole.replaceWith(replacement);
     }

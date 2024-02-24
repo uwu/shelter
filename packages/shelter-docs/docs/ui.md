@@ -4,7 +4,11 @@ outline: [2, 3]
 
 <script setup>
   import "@uwu/shelter-ui/compat.css";
-  import ButtonDemo from "./components/shelter-ui-demos/ButtonDemo.vue"
+  import { injectInternalStyles } from "@uwu/shelter-ui";
+  injectInternalStyles();
+
+  import ButtonDemo from "./components/shelter-ui-demos/ButtonDemo.vue";
+  import HeaderDemo from "./components/shelter-ui-demos/HeaderDemo.vue";
 </script>
 
 # shelter UI Documentation
@@ -51,7 +55,7 @@ elem.append(<ReactiveRoot>{/* ... */}</ReactiveRoot>);
 
 ::: details Type Signature
 ```ts
-(string) => (string?) => void
+(string, Node?) => (string?) => void
 ```
 :::
 
@@ -373,6 +377,10 @@ Header is, well, a header. It has a few styles, chosen by the `tag` prop.
 ```
 
 ![](/ui/headers.webp)
+
+::: details Demo
+<HeaderDemo />
+:::
 
 #### `HeaderTags`
 

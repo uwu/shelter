@@ -2,6 +2,9 @@
 import {Ref, ref} from "vue";
 import {getHighlight} from "../util/shiki";
 import Picker from "./Picker.vue";
+import {genId} from "@uwu/shelter-ui";
+
+const tag = genId();
 
 const divref = ref(null);
 const renderEnrichments = ref(false);
@@ -16,7 +19,7 @@ const props = defineProps<{
 }>();
 
 getHighlight().then(highlighter => {
-  divref.value.replaceChildren(highlighter(props.code, "jsx", "", props.enrichments));
+  divref.value.replaceChildren(highlighter(props.code, "jsx", "", props.enrichments, tag));
   renderEnrichments.value = true;
 });
 
@@ -34,7 +37,7 @@ const enrichmentStyle = {
   <div class="language-tsx vp-adaptive-theme" ref="divref"/>
 
   <template v-if="renderEnrichments">
-    <Teleport v-for="(en, idx) in props.enrichments" :to="`[data-shdocs-enrichment='${idx}']`">
+    <Teleport v-for="(en, idx) in props.enrichments" :to="`[data-shdocs-tag='${tag}'][data-shdocs-enrichment='${idx}']`">
 
       <input :style="enrichmentStyle" v-if="en[0] === 'text'" v-model="en[1].value" />
 
