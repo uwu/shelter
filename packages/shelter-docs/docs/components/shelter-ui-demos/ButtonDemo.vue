@@ -1,9 +1,12 @@
-<script setup lang="tsx">
-import MountBox from "./MountBox.vue";
-import Picker from "./Picker.vue";
+<script setup lang="jsx">
+import MountBox from "../MountBox.vue";
 import {Button, ButtonColors, ButtonLooks, ButtonSizes} from "@uwu/shelter-ui";
-import {ref, watchEffect} from "vue";
+import {watchEffect, reactive} from "vue";
 import {createSignal} from "solid-js";
+import Codeblock from "../Codeblock.vue";
+
+// prevent unwrapping refs when passed to codeblock
+const ref = (value) => reactive({ value });
 
 const selectedLook = ref("FILLED");
 const selectedSize = ref("SMALL");
@@ -43,17 +46,24 @@ function comp() {
 
 <template>
   <MountBox :component="comp">
-    <pre class="shui-code"><code>const [count, setCount] = createSignal(0);
+    <Codeblock code="const [count, setCount] = createSignal(0);
 
-&lt;Button
-  look={<Picker :options="Object.keys(ButtonLooks)" prefix="ButtonLooks." v-model="selectedLook" />}
-  color={<Picker :options="Object.keys(ButtonColors)" prefix="ButtonColors." v-model="selectedColor" />}
-  size={<Picker :options="Object.keys(ButtonSizes)" prefix="ButtonSizes." v-model="selectedSize" />}
-  grow={<Picker :options="[false, true]" prefix="" v-model="selectedGrow" />}
+<Button
+  look={/*$$SHDOCS-1*/}
+  color={/*$$SHDOCS-2*/}
+  size={/*$$SHDOCS-3*/}
+  grow={/*$$SHDOCS-4*/}
   onClick={() => setCount(count() + 1)}
 >
-  <input v-model="content" style="background: rgb(43, 42, 51)" />
-&lt;/Button>
-&lt;p>button clicked {count()} times!&lt;/p></code></pre>
+  /*$$SHDOCS-5*/
+</Button>
+<p>button clicked {count()} times!</p>"
+    :enrichments="[
+      ['select', selectedLook, Object.keys(ButtonLooks), 'ButtonLooks.'],
+      ['select', selectedColor, Object.keys(ButtonColors), 'ButtonColors.'],
+      ['select', selectedSize, Object.keys(ButtonSizes), 'ButtonSizes.'],
+      ['select', selectedGrow, [false, true], ''],
+      ['text', content]
+    ]" />
   </MountBox>
 </template>

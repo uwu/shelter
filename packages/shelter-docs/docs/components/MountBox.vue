@@ -15,11 +15,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div style="display: grid; grid-template-columns: 1fr 1fr">
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: .75rem">
     <div>
       <slot />
     </div>
-    <div style="background: var(--background-primary); color: var(--text-normal); font-family: var(--font-primary); margin: 1rem 0; padding: 1rem">
+    <div style="background: var(--background-primary); color: var(--text-normal); font-family: var(--font-primary); margin: .5rem 0; padding: 1rem; border-radius: 8px">
       <div ref="divref" />
     </div>
   </div>
