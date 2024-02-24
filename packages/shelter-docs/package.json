@@ -7,12 +7,15 @@
   "devDependencies": {
     "@iconify-json/carbon": "^1.1.30",
     "unocss": "^0.58.5",
+    "vite-plugin-solid": "^2.10.1",
     "vitepress": "1.0.0-rc.44"
   },
   "dependencies": {
+    "@uwu/shelter-ui": "workspace:^",
     "@vueuse/core": "^10.7.2",
     "@vueuse/integrations": "^10.7.2",
     "fuse.js": "^7.0.0",
+    "solid-js": "^1.8.15",
     "vue": "^3.4.15"
   }
 }

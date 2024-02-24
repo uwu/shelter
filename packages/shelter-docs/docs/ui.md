@@ -2,6 +2,11 @@
 outline: [2, 3]
 ---
 
+<script setup>
+  import "@uwu/shelter-ui/compat.css";
+  import ButtonDemo from "./components/shelter-ui-demos/ButtonDemo.vue"
+</script>
+
 # shelter UI Documentation
 
 shelter UI is a set of UI components designed to look identical to Discord's, built entirely in Solid.
@@ -425,6 +430,10 @@ Button is a, well, button, using Discord's styles.
 ![](/ui/buttoncolors.webp)
 ![](/ui/buttonlooks.webp)
 ![](/ui/buttonsizes.webp)
+
+::: details Demo
+<ButtonDemo />
+:::
 
 #### `ButtonLooks`
 
