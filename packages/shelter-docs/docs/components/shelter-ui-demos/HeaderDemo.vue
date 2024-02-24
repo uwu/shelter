@@ -28,7 +28,7 @@ function comp() {
 </script>
 
 <template>
-  <MountBox :component="comp" isolate>
+  <MountBox :component="comp">
     <Codeblock code="<Header tag={/*$$SHDOCS-1*/}>
   /*$$SHDOCS-2*/
 </Header>

@@ -9,6 +9,8 @@ outline: [2, 3]
 
   import ButtonDemo from "./components/shelter-ui-demos/ButtonDemo.vue";
   import HeaderDemo from "./components/shelter-ui-demos/HeaderDemo.vue";
+  import SwitchDemo from "./components/shelter-ui-demos/SwitchDemo.vue";
+  import SwitchItemDemo from "./components/shelter-ui-demos/SwitchItemDemo.vue"
 </script>
 
 # shelter UI Documentation
@@ -378,7 +380,7 @@ Header is, well, a header. It has a few styles, chosen by the `tag` prop.
 
 ![](/ui/headers.webp)
 
-::: details Demo
+::: info Demo
 <HeaderDemo />
 :::
 
@@ -439,7 +441,7 @@ Button is a, well, button, using Discord's styles.
 ![](/ui/buttonlooks.webp)
 ![](/ui/buttonsizes.webp)
 
-::: details Demo
+::: info Demo
 <ButtonDemo />
 :::
 
@@ -528,7 +530,9 @@ const [switchState, setSwitchState] = createSignal(false);
 <Switch checked={switchState} onChange={setSwitchState} />;
 ```
 
-<video src="/ui/switch.webm" loop autoplay></video>
+::: info Demo
+<SwitchDemo />
+:::
 
 ### `<SwitchItem>`
 
@@ -563,7 +567,9 @@ The child elements of the component is the title displayed next to the switch.
 <SwitchItem note="Does cool things" value={/*...*/}>A cool option</SwitchItem>
 ```
 
-![](/ui/switchitem.webp)
+::: info Demo
+<SwitchItemDemo />
+:::
 
 ### `<Checkbox />`
 

@@ -45,7 +45,7 @@ function comp() {
 </script>
 
 <template>
-  <MountBox :component="comp" isolate>
+  <MountBox :component="comp">
     <Codeblock code="const [count, setCount] = createSignal(0);
 
 <Button
