@@ -19,7 +19,29 @@ const selModel = computed({
 </script>
 
 <template>
-  <select v-model="selModel">
-    <option v-for="(k, idx) in options" :value="idx">{{props.prefix + k}}</option>
-  </select>
+  <div class="wrap">
+    <select v-model="selModel">
+      <option v-for="(k, idx) in options" :value="idx">{{props.prefix + k}}</option>
+    </select>
+    <div class="icon"></div>
+  </div>
 </template>
+
+<style scoped>
+  select { background: none; font: unset; }
+
+  .wrap {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .icon {
+    width: .3rem;
+    height: .3rem;
+    border: 1px solid white;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg) translateY(-.15rem);
+    margin: .25rem;
+  }
+</style>
