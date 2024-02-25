@@ -7,6 +7,8 @@ outline: [2, 3]
   import { injectInternalStyles } from "@uwu/shelter-ui";
   injectInternalStyles();
 
+  import Pill from "./components/Pill.vue";
+
   import ButtonDemo from "./components/shelter-ui-demos/ButtonDemo.vue";
   import HeaderDemo from "./components/shelter-ui-demos/HeaderDemo.vue";
   import SwitchDemo from "./components/shelter-ui-demos/SwitchDemo.vue";
@@ -19,9 +21,8 @@ shelter UI is a set of UI components designed to look identical to Discord's, bu
 
 The API signatures are _not_ identical to Discord's React components.
 
-These components are only expected to work inside Discord.
-Use outside of Discord is viable but not currently implemented.
-(when it is, expect interactive examples here!)
+If you are using shelter, these are exposed to you on `shelter.ui`, and if not, you can get it at
+[`@uwu/shelter-ui`](https://npm.im/@uwu/shelter-ui), and please read the [relevant docs](#standalone-usage).
 
 ## Accessibility
 
@@ -74,7 +75,17 @@ modify(); // removes the css
 modify(" .myClass { color: blue } "); // no-op
 ```
 
-`cleanupCss` is also exported, which removes all injected css. You are not given this export in shelter.
+### `cleanupCss`
+
+<Pill col="red">standalone only</Pill>
+
+::: details Type Signature
+```ts
+() => void
+```
+:::
+
+Removes all injected css.
 
 ### `genId`
 
@@ -137,6 +148,8 @@ You can listen for your modal being closed using [onCleanup](https://www.solidjs
 
 ### `<ReactInSolidBridge />`
 
+<Pill col="shelter">shelter only</Pill>
+
 ::: details Type Signature
 ```ts
 solid.Component<{ comp: React.ComponentType<TProps>, props: TProps }>
@@ -152,6 +165,8 @@ const ComponentFromDiscord = webpack.findByProps("...").default;
 ```
 
 ### `SolidInReactBridge`
+
+<Pill col="shelter">shelter only</Pill>
 
 ::: details Type Signature
 ```ts
@@ -176,6 +191,8 @@ React.createElement(SolidInReactBridge, {
 ```
 
 ### `renderSolidInReact`
+
+<Pill col="shelter">shelter only</Pill>
 
 ::: details Type Signature
 ```ts
@@ -237,6 +254,18 @@ showToast({
 ```
 
 ![](/ui/showToast.webp)
+
+### `initToasts`
+
+<Pill col="red">standalone only</Pill>
+
+::: details Type Signature
+```ts
+() => void
+```
+:::
+
+Sets up necessary things for toasts to work. You must call this if you are using toasts and are not using shelter.
 
 ### `niceScrollbarsClass`
 
@@ -791,3 +820,45 @@ If `tick` is not passed, no ticks show.
 ```
 
 ![](/ui/slider.webp)
+
+## Standalone usage
+
+shelter UI can be used outside of Discord. There are a few things that must be taken into consideration for this:
+ - components may be affected by lack of Discord's stylesheets (css reset, etc.)
+ - components may be affected by your own stylesheets
+ - you must use the compatibility stylesheet
+ - you must inject the shelter UI internal styles
+ - you must be using Solid, or have some way of using Solid components in your page
+ - some APIs available on `shelter.ui` are not available in `@uwu/shelter-ui`, and vice versa.
+
+To get started in your Solid app/site, install `@uwu/shelter-ui`. It is a rolling release package, not semver, the
+version numbers simply increment each release. This is because shelter itself is rolling release and has no versioning.
+
+You must inject `@uwu/shelter-ui/compat.css` somewhere in your app.
+This does two things. First, it sets CSS variables
+on `:root` that the components rely on to look correct. The reason we use these variables at all instead of hardcoding
+their values is so that themes apply to shelter UI inside of Discord.
+Second, it adds `@font-face` rules for the custom fonts used by Discord, so that relevant fonts (gg sans, etc) load
+correctly.
+
+If you are using shelter UI within your main page, you should then import and call `injectInternalStyles()`.
+This will add a style tag to your page to make the components look correct.
+If you want to use toasts, you must call `initToasts()`.
+
+If you are using shelter UI within a shadow root or some other isolated context where this won't work, you should import
+and render `<InternalStyles />` somewhere within the relevant context.
+
+APIs that are only available in shelter will have this badge next to them in these
+docs: <Pill col="shelter">shelter only</Pill>,
+and the APIs only available standalone will have this one: <Pill col="red">standalone only</Pill>
+
+They are also listed here:
+
+shelter-only:
+ - `ReactInSolidBridge`
+ - `SolidInReactBridge`
+ - `renderSolidInReact`
+
+standalone-only:
+ - `cleanupCss`
+ - `initToasts`
