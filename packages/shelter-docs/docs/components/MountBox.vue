@@ -28,11 +28,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: .75rem">
+  <div class="grid grid-cols-[1fr_1fr] gap-3">
     <div v-if="$slots.default">
       <slot />
     </div>
-    <div style="background: var(--background-primary); color: var(--text-normal); font-family: var(--font-primary); margin: .5rem 0; padding: 1rem; border-radius: 8px">
+    <div class="my-2 p-4 rounded-8px bg-[var(--background-primary)] text-[var(--text-normal)] font-[var(--font-primary)]">
       <div ref="divref" />
     </div>
   </div>
