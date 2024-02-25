@@ -113,6 +113,10 @@ attempt to mimic that.
 Do not use Discord's developer docs as a resource as some of the endpoints are bot-only, and are different for users.
 :::
 
+::: warning
+These are specifically for Discord endpoints only, not for anything else. Do not try to use these for general fetching.
+:::
+
 You can make a request yourself, such as muting a guild:
 ```js
 shelter.http.patch({

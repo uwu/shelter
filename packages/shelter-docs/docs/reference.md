@@ -193,6 +193,10 @@ These functions may simply be passed an URL or a request object, which is extens
 Be careful directly making requests, as this carries the highest risk of selfbot related bans,
 though this is already lowered by doing it via Discord HTTP compared to doing it manually.
 
+::: warning
+These are specifically for Discord endpoints only, not for anything else. Do not try to use these for general fetching.
+:::
+
 ### `shelter.http.ready`
 `ready` is a Promise that resolves as soon as the HTTP functions are available,
 which is not necessarily the case when your plugin is loaded.
@@ -472,7 +476,9 @@ Inside shelter plugins, you have a scoped API instance pre-provided under
 
 Shelter implements a storage API backed by [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API). The stores behave as if they were just objects:tm:, and have interoperability with Solid for reactivity.
 
-You may store anything as long as it is [cloneable](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#supported_types) (basically, no circular references and no functions).
+You may store anything as long as it is serializable.
+The list of types allowed can be found [here](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#supported_types),
+circular references are not allowed. Notably, functions are not allowed.
 
 ::: tip
 Possible confusion:
@@ -637,6 +643,10 @@ These APIs are exposed only to plugins, and are specific to the plugin they are 
 `store` is a solid mutable store, which you can use to store persistent data. You may treat it just like an object.
 
 Whenever you modify a property on the store, it will be saved. (note this applies to only top level properties, not objects inside objects)
+
+You may store anything as long as it is serializable.
+The list of types allowed can be found [here](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#supported_types),
+circular references are not allowed. Notably, functions are not allowed.
 
 For example:
 

@@ -35,6 +35,10 @@ it will automatically update when changed.
 
 This makes them work to an almost "magical" (but predictable) degree within your UI code - you'll see later. :)
 
+You may store anything as long as it is serializable.
+The list of types allowed can be found [here](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Structured_clone_algorithm#supported_types),
+circular references are not allowed. Notably, functions are not allowed.
+
 ## Writing the actual feature
 
 So let's go to our `handleElem` function, specifically this part:
