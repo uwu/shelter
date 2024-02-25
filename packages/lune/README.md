@@ -37,7 +37,7 @@ and the template repo will give you a monorepo by default.
 Lune supports monorepos natively via the `ci` command - instead of building each plugin separately in a script,
 just put all of your plugins in `./plugins/plugin-1`, `./plugins/plugin-2`, etc., and Lune will build them all.
 
-You can configure a different subdirectory than `plugins` - see _Configuring Lune_.
+You can use a different subdirectory with `--repoSubDir <directory>`
 
 All plugins in a monorepo share a single dependency lock file, and your installs should be faster.
 To take advantage of this, you can use a supported package manager such as
@@ -54,7 +54,7 @@ Lune also optionally supports [CSS Modules](https://css-tricks.com/css-modules-p
 
 To use CSS Modules, you simply need to set `cssModules` in the config file - see _Configuring Lune_.
 
-Then, you need to change your import from `import css from "./mystyles.scss"` to `import {css, classes} from "./mystyles.scss"`.
+Then, you need to change your import from `import css from "./mystyles.scss"` to `import classes from "./mystyles.scss"`.
 This _is_ an unorthodox way of doing CSS Modules, and it means existing IDE support won't work
 (due to this, this is under review), but other tools generally have another way to inject the css string!
 
@@ -85,9 +85,8 @@ export const MyComponent = () => <button class="button" />;
 
 ```js
 // with css modules
-import { css, classes } from "./styles.css";
-// make sure to call uninj() in your onUnload handler
-const uninj = shelter.ui.injectCss(css);
+import classes from "./styles.css";
+// shelter injects and uninjects your css automatically
 
 export const MyComponent = () => <button class={classes.button} />;
 ```
@@ -101,14 +100,14 @@ export const MyComponent = () => <button class={classes.button} />;
 
 ## Configuring Lune
 
-Lune is configured with a `lune.config.js` file in the root of your repo.
-Both the `lune build` and `lune ci` commands will expect it to be in the working path unless passed otherwise.
+Lune can optionally be configured with a `lune.config.js` file. You typically want to place it in the root directory of your project.
+All lune commands search for the `lune.config.js` in the following order: `--cfg <path>`, `pluginToBuild/lune.config.js`, the first config above `pluginToBuild/`
 
 It is an ES module JS file which should `export default` an object containing the options. All options are optional.
 
 The options are:
 
-- `repoSubDir: string` - the subdir to use for monorepos - see above for details, by default `"plugins"`
-- `cssModules: boolean` - if CSS Modules are enabled, by default `false`
+- `cssModules: boolean | "legacy"` - if CSS Modules are enabled, by default `false`
+- `minify: boolean` - by default false, dev mode plugins are always unminified
 - `prePlugins: Plugin[]` - [esbuild](https://esbuild.github.io/) plugins to run before Lune's transforms
 - `postPlugins: Plugin[]` - esbuild plugins to run after Lune's transforms
