@@ -56,18 +56,25 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
   // used for animation
   const [active, setActive] = createSignal(false);
 
+  // used for positioning
+  const [rect, setRect] = createSignal(el.getBoundingClientRect());
+  const updateRect = () => {
+    setRect(el.getBoundingClientRect());
+  }
+
   let toolTipElem: HTMLDivElement;
 
   const enterHandler = () => {
     // use:tooltip is intended to be used a lot - on every shelter-ui element behind a prop
     // so optimizing away the undefined case is good.
     if (content() === undefined) return;
+    updateRect();
 
     ensureInternalStyle(css);
 
     toolTipElem?.remove();
     toolTipElem = (
-      <ToolTip active={active()} under={underneath()} {...el.getBoundingClientRect()}>
+      <ToolTip active={active()} under={underneath()} {...rect()}>
         {content()}
       </ToolTip>
     ) as HTMLDivElement;
@@ -87,12 +94,53 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
     }, 100);
   };
 
-  el.addEventListener("mouseenter", enterHandler);
-  el.addEventListener("mouseleave", exitHandler);
+  const [isInside, setIsInside] = createSignal(false);
+
+  const moveHandler = (clientX: number, clientY: number) => {
+    const bounding = el.getBoundingClientRect();
+    if (!bounding) {
+      setActive(false);
+      return;
+    }
+
+    // if inside the bounding box
+    if (
+      clientX > bounding.left &&
+      clientX < bounding.right &&
+      clientY > bounding.top &&
+      clientY < bounding.bottom
+    ) {
+      if (!isInside()) {
+        setIsInside(true);
+        enterHandler();
+      }
+    } else {
+      exitHandler();
+      setIsInside(false);
+    }
+  }
+
+  const mouseMoveHandler = (e: MouseEvent) => {
+    moveHandler(e.clientX, e.clientY);
+  }
+
+  const wheelHandler = (e: WheelEvent) => {
+    moveHandler(e.clientX, e.clientY);
+    exitHandler();
+    setTimeout(() => moveHandler(e.clientX, e.clientY), 100);
+  }
+
+  window.addEventListener("wheel", wheelHandler);
+  window.addEventListener("resize", updateRect);  
+
+  window.addEventListener("mousemove", mouseMoveHandler);
 
   onCleanup(() => {
-    el.removeEventListener("mouseenter", enterHandler);
-    el.removeEventListener("mouseleave", exitHandler);
+
+    window.removeEventListener("wheel", wheelHandler);
+    window.removeEventListener("resize", updateRect);
+
+    window.removeEventListener("mousemove", mouseMoveHandler);
 
     toolTipElem?.remove();
   });
