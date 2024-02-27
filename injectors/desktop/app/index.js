@@ -46,9 +46,9 @@ const getShelterBundle = () =>
   !localBundle
     ? fetchPromise
     : Promise.resolve(
-      fs.readFileSync(path.join(localBundle, "shelter.js"), "utf8") +
-      `\n//# sourceMappingURL=file:////${path.join(localBundle, "shelter.js.map")}`,
-    );
+        fs.readFileSync(path.join(localBundle, "shelter.js"), "utf8") +
+          `\n//# sourceMappingURL=file:////${path.join(localBundle, "shelter.js.map")}`,
+      );
 // #endregion
 
 // #region IPC
