@@ -73,7 +73,7 @@ electron.app.on("ready", () => {
     done({ responseHeaders });
   });
 
-  electron.session.defaultSession.webRequest.onHeadersReceived = () => { };
+  electron.session.defaultSession.webRequest.onHeadersReceived = () => {};
 });
 // #endregion
 
