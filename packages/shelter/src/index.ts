@@ -1,5 +1,5 @@
 import * as patcher from "spitroast";
-import * as ui from "../../shelter-ui";
+import * as ui from "@uwu/shelter-ui";
 import * as util from "./util";
 import * as plugins from "./plugins";
 import { initSettings, removeAllSections } from "./settings";
