@@ -94,7 +94,7 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
     }, 100);
   };
 
-  const [isInside, setIsInside] = createSignal(false);
+  let isInside;
 
   const moveHandler = (clientX: number, clientY: number) => {
     const bounding = el.getBoundingClientRect();
@@ -110,13 +110,13 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
       clientY > bounding.top &&
       clientY < bounding.bottom
     ) {
-      if (!isInside()) {
-        setIsInside(true);
+      if (!isInside) {
+        isInside = true;
         enterHandler();
       }
     } else {
+      isInside = false;
       exitHandler();
-      setIsInside(false);
     }
   }
 
