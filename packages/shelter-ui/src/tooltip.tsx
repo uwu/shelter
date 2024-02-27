@@ -127,7 +127,6 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
   const wheelHandler = (e: WheelEvent) => {
     moveHandler(e.clientX, e.clientY);
     exitHandler();
-    setTimeout(() => moveHandler(e.clientX, e.clientY), 100);
   }
 
   window.addEventListener("wheel", wheelHandler);
