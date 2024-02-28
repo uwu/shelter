@@ -60,7 +60,7 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
   const [rect, setRect] = createSignal(el.getBoundingClientRect());
   const updateRect = () => {
     setRect(el.getBoundingClientRect());
-  }
+  };
 
   let toolTipElem: HTMLDivElement;
 
@@ -104,12 +104,7 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
     }
 
     // if inside the bounding box
-    if (
-      clientX > bounding.left &&
-      clientX < bounding.right &&
-      clientY > bounding.top &&
-      clientY < bounding.bottom
-    ) {
+    if (clientX > bounding.left && clientX < bounding.right && clientY > bounding.top && clientY < bounding.bottom) {
       if (!isInside) {
         isInside = true;
         enterHandler();
@@ -118,24 +113,23 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
       isInside = false;
       exitHandler();
     }
-  }
+  };
 
   const mouseMoveHandler = (e: MouseEvent) => {
     moveHandler(e.clientX, e.clientY);
-  }
+  };
 
   const wheelHandler = (e: WheelEvent) => {
     moveHandler(e.clientX, e.clientY);
     exitHandler();
-  }
+  };
 
   window.addEventListener("wheel", wheelHandler);
-  window.addEventListener("resize", updateRect);  
+  window.addEventListener("resize", updateRect);
 
   window.addEventListener("mousemove", mouseMoveHandler);
 
   onCleanup(() => {
-
     window.removeEventListener("wheel", wheelHandler);
     window.removeEventListener("resize", updateRect);
 
