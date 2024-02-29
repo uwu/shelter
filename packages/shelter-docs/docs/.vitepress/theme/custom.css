@@ -6,13 +6,3 @@
     --vp-home-hero-name-color: transparent;
     --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #387b71, #384857);
 }
-
-.shui-code {
-  line-height: 1.3;
-  background: var(--vp-custom-block-details-code-bg);
-  margin: 1rem
-}
-
-.shui-code code {
-  background: none !important;
-}

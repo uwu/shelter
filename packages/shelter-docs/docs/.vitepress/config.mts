@@ -1,14 +1,13 @@
 import { defineConfig } from "vitepress";
 import { fileURLToPath } from "node:url";
 import UnoCSS from "unocss/vite";
-import solidPlugin from "vite-plugin-solid";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "shelter docs",
   description: "Documentation for the shelter client mod",
   vite: {
-    plugins: [UnoCSS(fileURLToPath(new URL("./unocss.config.ts", import.meta.url))), solidPlugin()],
+    plugins: [UnoCSS(fileURLToPath(new URL("./unocss.config.ts", import.meta.url)))],
     optimizeDeps: { exclude: ["@vueuse/integrations"] },
   },
   themeConfig: {
