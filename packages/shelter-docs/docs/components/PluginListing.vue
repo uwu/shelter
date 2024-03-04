@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, reactive, computed, onMounted} from "vue";
+import {ref, reactive, computed} from "vue";
 import { useFuse } from "@vueuse/integrations/useFuse";
 import { useClipboard } from "@vueuse/core";
 
@@ -11,7 +11,9 @@ interface PluginManifest {
   repoName: string;
 }
 
-const data: PluginManifest[] = reactive([]);
+type PluginItem = PluginManifest & { isCopied: boolean };
+
+const data: PluginItem[] = reactive([]);
 let isLoading = ref(true);
 
 fetch("https://shindex.uwu.network/data")
@@ -23,7 +25,8 @@ fetch("https://shindex.uwu.network/data")
         description: plugin.description,
         author: plugin.author,
         url: plugin.url,
-        repoName: item.name
+        repoName: item.name,
+        isCopied: false
       }))
     });
   })
@@ -40,25 +43,18 @@ const { results } = useFuse(search, data, {
 });
 
 const { copy } = useClipboard();
-const isCopied = ref(new Array(data.length).fill(false));
 
-const copyUrl = (url: string, idx: number) => {
-  copy(url);
-  isCopied.value[idx] = true;
-  setTimeout(() => {
-    resetCopyState();
-  }, 1500);
+const copyUrl = (plugin: PluginItem) => {
+  copy(plugin.url);
+  plugin.isCopied = true;
+
+  setTimeout(() => plugin.isCopied = false, 1500);
 };
 
-const resetCopyState = () => {
-  isCopied.value.fill(false);
-};
+// fuse returns an empty array when the search query is empty
+// so use data instead to show all plugins
+const plugins = computed(() => (search.value ? results.value.map((i) => i.item) : data));
 
-onMounted(() => {
-  resetCopyState();
-});
-
-const plugins = computed(() => (results.value.length ? results.value.map((i) => i.item) : data));
 </script>
 
 <template>
@@ -70,32 +66,33 @@ const plugins = computed(() => (results.value.length ? results.value.map((i) => 
   <div h="1px" bg="$vp-c-divider" m="b-4" />
 
   <div text-center v-if="isLoading">Loading plugins...</div>
+  <div text-center v-if="plugins.length === 0">No plugins found.. <span font-mono tracking-tight ml-2>( • ᴖ • ｡)</span></div>
   <div v-else flex="~ wrap" gap-3 items-center>
-    <div v-for="(item, idx) in plugins" :key="idx" w-20rem h-42 px-4 py-3 border="1 solid $vp-c-divider" rounded-md
+    <div v-for="(plugin) in plugins"  w-20rem h-42 px-4 py-3 border="1 solid $vp-c-divider" rounded-md
       important-transition-all duration-400 hover="shadow-md bg-$vp-c-bg-soft" flex="~ col" justify-between>
       <div font-semibold dark="text-gray-200" text-gray-900 text-16px>
-        {{ item.name }}
+        {{ plugin.name }}
       </div>
 
-      <div dark="text-gray-400" text-gray-500 text-14px>by {{ item.author }}</div>
+      <div dark="text-gray-400" text-gray-500 text-14px>by {{ plugin.author }}</div>
 
       <div text-gray-500 dark="text-gray-400" flex-auto mt-2 text-14px>
         <span line-clamp-2>
-          {{ item.description }}
+          {{ plugin.description }}
         </span>
       </div>
 
       <div flex gap-5 items-end>
         <div flex items-center gap-1>
-          <button @click="copyUrl(item.url, idx)" w-32 inline-flex justify-center whitespace-nowrap text-sm font-medium
+          <button @click="copyUrl(plugin)" w-32 inline-flex justify-center whitespace-nowrap text-sm font-medium
             cursor-pointer bg="$vp-badge-tip-bg" text="$vp-badge-tip-text" px2 py2 rounded-md block mt2 flex
             items-center gap2>
-            <span v-if="!isCopied[idx]">Copy Plugin Link</span>
+            <span v-if="!plugin.isCopied">Copy Plugin Link</span>
             <span v-else>Copied!</span>
           </button>
         </div>
         <div flex items-center gap-6 justify-right>
-          <a :href="`https://github.com/` + item.repoName" i-carbon-logo-github w-8 h-8 bg-dark dark:bg-light right-a
+          <a :href="`https://github.com/` + plugin.repoName" i-carbon-logo-github w-8 h-8 bg-dark dark:bg-light right-a
             justify-right px2 ml-28 mt-2 flex items-center>
           </a>
         </div>
