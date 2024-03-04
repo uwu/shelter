@@ -3,7 +3,7 @@ import { Component, JSX } from "solid-js";
 export * from "./util";
 export * from "./button";
 export * from "./checkbox";
-export * from "./switch";
+export * from "./switch_new";
 export * from "./header";
 export * from "./openModal";
 export * from "./modals";
