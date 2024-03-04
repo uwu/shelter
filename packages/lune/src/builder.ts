@@ -37,7 +37,7 @@ const shelterEsbuildResolver = () => ({
 
 const MD5 = (data) => createHash("md5").update(data).digest("hex").toString();
 
-export async function buildPlugin(path: string, to: string, cfg: LuneCfg, minify = true) {
+export async function buildPlugin(path: string, to: string, cfg: LuneCfg, minify = false) {
   const outfile = resolve(to, "plugin.js");
   const outmanifest = resolve(to, "plugin.json");
 

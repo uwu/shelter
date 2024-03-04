@@ -12,7 +12,7 @@ export interface LuneCfg {
   cssModules?: boolean | "legacy";
   /**
    * If the output should be minified
-   * @default true
+   * @default false
    */
   minify?: boolean;
 
