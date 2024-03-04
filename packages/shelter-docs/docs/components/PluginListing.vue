@@ -66,7 +66,7 @@ const plugins = computed(() => (search.value ? results.value.map((i) => i.item) 
   <div h="1px" bg="$vp-c-divider" m="b-4" />
 
   <div text-center v-if="isLoading">Loading plugins...</div>
-  <div text-center v-if="plugins.length === 0">No plugins found.. <span font-mono tracking-tight ml-2>( • ᴖ • ｡)</span></div>
+  <div text-center v-else-if="plugins.length === 0">No plugins found.. <span font-mono tracking-tight ml-2>( • ᴖ • ｡)</span></div>
   <div v-else flex="~ wrap" gap-3 items-center>
     <div v-for="(plugin) in plugins"  w-20rem h-42 px-4 py-3 border="1 solid $vp-c-divider" rounded-md
       important-transition-all duration-400 hover="shadow-md bg-$vp-c-bg-soft" flex="~ col" justify-between>
