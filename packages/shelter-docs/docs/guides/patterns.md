@@ -44,9 +44,8 @@ The fiber gives us a lot of useful context and information we can use to help fe
 If you've read the [Your First Plugin](plugin) guide, this should look quite familiar to you!
 
 ### Some plugins with this pattern:
- - [Invidivizer, Yellowsink](https://github.com/yellowsink/shelter-plugins/blob/master/plugins/invidivizer/index.jsx)
- - [Channel Typing Indicators, ioj4](https://github.com/ioj4/shelter-plugins/blob/master/plugins/channel-typing-indicators/index.jsx)
- - [Open Profile Images, ioj4](https://github.com/ioj4/shelter-plugins/blob/master/plugins/open-profile-images/index.jsx)
+ - [Invidivizer, Yellowsink](https://github.com/yellowsink/shelter-plugins/blob/0fe8bf062cae0e9ce7688d091f8953ff0934a301/plugins/invidivizer/index.jsx)
+ - [Channel Typing Indicators, ioj4](https://github.com/ioj4/shelter-plugins/blob/8e80fc012a5b39b33ef30203f9684afc599e1801/plugins/channel-typing-indicators/index.jsx)
 
 ## Dispatch Interception
 
@@ -65,9 +64,9 @@ shelter.plugin.scoped.flux.intercept(dispatch => {
 The form this takes varies, be it modifying a detail of an action or intercepting the results of a data fetch.
 
 ### Some plugins with this pattern:
- - [No Reply Mention, SpikeHD](https://github.com/SpikeHD/shelter-plugins/blob/main/plugins/no-reply-mention/index.ts)
- - [Timestamp File Names, ioj4](https://github.com/ioj4/shelter-plugins/blob/master/plugins/timestamp-file-names/index.js)
- - [Free Profile Colours, maisy](https://github.com/maisymoe/furniture/blob/master/plugins/FreeProfileColors/index.ts)
+ - [No Reply Mention, SpikeHD](https://github.com/SpikeHD/shelter-plugins/blob/2621b32a1cb9c968a6e35d5febf279accf75a790/plugins/no-reply-mention/index.ts)
+ - [Timestamp File Names, ioj4](https://github.com/ioj4/shelter-plugins/blob/f290f7c8e19bdc50aef976be22824ee954c99943/plugins/timestamp-file-names/index.js)
+ - [Free Profile Colours, maisy](https://github.com/maisymoe/furniture/blob/a4545acc9b9dae198007708eff1bddf78ae6661f/plugins/FreeProfileColors/index.ts)
 
 ## Store Patching
 
@@ -98,7 +97,7 @@ const unpatch2 = shelter.patcher.after(
 ```
 
 ### Some plugins with this pattern:
- - [Prevent Spotify Pause, ioj4](https://github.com/ioj4/shelter-plugins/blob/master/plugins/prevent-spotify-pause/index.js)
+ - [Prevent Spotify Pause, ioj4](https://github.com/ioj4/shelter-plugins/blob/dd74f51d8bb39f6513139041e4752bf45b4bc91a/plugins/prevent-spotify-pause/index.js)
 
 ## HTTP Requests
 
@@ -141,8 +140,9 @@ shelter.http.intercept("POST", "/science", () => {});
 ```
 
 ### Some plugins with this pattern:
- - [Mute New Guilds, taskylizard](https://github.com/taskylizard/shelter-plugins/blob/master/plugins/mutenewguild/index.ts)
- - [Text Replacements, Yellowsink](https://github.com/yellowsink/shelter-plugins/blob/master/plugins/text-replacements/index.ts)
+ - [Antitrack, Yellowsink](https://github.com/yellowsink/shelter-plugins/blob/91efdf57385794d4b189748431b89fb4deebe9c8/plugins/antitrack/index.js)
+ - [Mute New Guilds, taskylizard](https://github.com/taskylizard/shelter-plugins/blob/259b1d09ed8d0b349d35cc3e95e3f2dbb3e9e9b4/plugins/mutenewguild/index.ts)
+ - [Text Replacements, Yellowsink](https://github.com/yellowsink/shelter-plugins/blob/91efdf57385794d4b189748431b89fb4deebe9c8/plugins/text-replacements/index.ts)
 
 ## Long Lived Observers
 
@@ -170,5 +170,6 @@ In my testing (on a reasonably modern system, in Firefox) it has an impact too s
 :::
 
 ### Some plugins with this pattern:
-- [Freemoji, Yellowsink](https://github.com/yellowsink/shelter-plugins/blob/master/plugins/freemoji/index.js)
-- [GPT, edde746](https://github.com/edde746/shelter-plugins/blob/master/plugins/gpt/index.jsx)
+- [Open Profile Images, ioj4](https://github.com/ioj4/shelter-plugins/blob/cabec08563b8639b3a62ec067672eaa0b6ddd17c/plugins/open-profile-images/index.jsx)
+- [Freemoji, Yellowsink](https://github.com/yellowsink/shelter-plugins/blob/91efdf57385794d4b189748431b89fb4deebe9c8/plugins/freemoji/index.js)
+- [GPT, edde746](https://github.com/edde746/shelter-plugins/blob/0bcee4af88163442ee514ac390cb35953e881ce6/plugins/gpt/index.jsx)
