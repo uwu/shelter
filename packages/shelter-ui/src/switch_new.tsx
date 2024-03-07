@@ -1,4 +1,4 @@
-import { Component, createEffect, JSX, on, Show } from "solid-js";
+import { Component, createEffect, JSX, on, onMount, Show } from "solid-js";
 import { genId } from "./util";
 import { Divider } from "./index";
 import { css, classes } from "./switch_new.tsx.scss";
@@ -20,7 +20,7 @@ const PATHS_2_CHECK = "M4.08643 11.0903L5.67742 9.49929L9.4485 13.2704L7.85751 1
 
 const TIMING_POINTS = [0, 0.3, 0.7, 1];
 const SPLINES = ["0.46 0.33 0.61 0.65", "0.26 0.45 0.65 0.88", "0.19 0.43 0.42 0.82"];
-const DURATION = 200;
+const DURATION = 225;
 const COL_GRAY = "#80848e";
 const COL_GREEN = "#23a55a";
 const PATHS_1 = [PATHS_1_X, PATHS_1_BAR, PATHS_1_BAR, PATHS_1_CHECK];
@@ -49,6 +49,13 @@ const Slider: Component<{ state: boolean }> = (props) => {
         );
         animatePath1.setAttribute("values", s ? PATHS_1.join(";") : PATHS_1.slice().reverse().join(";"));
         animatePath2.setAttribute("values", s ? PATHS_2.join(";") : PATHS_2.slice().reverse().join(";"));
+
+        // if values are set on render then goofy stuff happens, we need to assign them after the fact,
+        // even tho they're static.
+        animateRectWidth.setAttribute("values", "20; 28; 28; 20");
+        animateRectHeight.setAttribute("values", "20; 18; 18; 20");
+        animateRectX.setAttribute("values", "4; 0; 0; 4");
+        animateRectY.setAttribute("values", "0; 1; 1; 0");
 
         animateViewBox.beginElement();
         animatePath1.beginElement();
@@ -81,10 +88,10 @@ const Slider: Component<{ state: boolean }> = (props) => {
       <animate ref={animateViewBox} attributeName="viewBox" {...commonAnimateProps} />
 
       <rect fill="white" rx="10" width="20" height="20" x="4" y="0">
-        <animate ref={animateRectWidth} attributeName="width" {...commonAnimateProps} values="20; 28; 28; 20" />
-        <animate ref={animateRectHeight} attributeName="height" {...commonAnimateProps} values="20; 18; 18; 20" />
-        <animate ref={animateRectX} attributeName="x" {...commonAnimateProps} values="4; 0; 0; 4" />
-        <animate ref={animateRectY} attributeName="y" {...commonAnimateProps} values="0; 1; 1; 0" />
+        <animate ref={animateRectWidth} attributeName="width" {...commonAnimateProps} />
+        <animate ref={animateRectHeight} attributeName="height" {...commonAnimateProps} />
+        <animate ref={animateRectX} attributeName="x" {...commonAnimateProps} />
+        <animate ref={animateRectY} attributeName="y" {...commonAnimateProps} />
       </rect>
       <svg viewBox="0 0 20 20" fill="none">
         <path

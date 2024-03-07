@@ -92,7 +92,7 @@ export const PluginCard: Component<{
             if (props.plugin.on === newVal) return;
             setOn(!on());
             // oh no! i have to save my pretty animations! (this is utterly stupid)
-            setTimeout(() => (newVal ? startPlugin(props.id) : stopPlugin(props.id)), 291);
+            setTimeout(() => (newVal ? startPlugin(props.id) : stopPlugin(props.id)), 226);
           }}
         />
       </div>
