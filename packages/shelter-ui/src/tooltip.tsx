@@ -12,6 +12,8 @@ declare module "solid-js" {
   }
 }
 
+const verticalOffset = 8;
+
 const ToolTip: Component<{
   left: number;
   top: number;
@@ -37,11 +39,12 @@ const ToolTip: Component<{
       }}
       style={{
         left: props.left + props.width / 2 - tooltipWidth() / 2 + "px",
-        top: props.under ? props.bottom + "px" : undefined,
-        bottom: !props.under ? window.innerHeight - props.top + "px" : undefined,
+        top: props.under ? props.bottom + verticalOffset + "px" : undefined,
+        bottom: !props.under ? window.innerHeight - props.top + verticalOffset + "px" : undefined,
         "transform-origin": `50% ${props.under ? 0 : 100}%`,
       }}
     >
+      <div class={`${classes.pointer} ${props.under ? classes.under : ""}`} />
       <div class={classes.content}>{props.children}</div>
     </div>
   );

@@ -20,6 +20,25 @@
   }
 }
 
+.pointer {
+  position: absolute;
+  width: 0;
+  height: 0;
+  left: 50%;
+
+  border: 5px solid transparent;
+  border-top-color: var(--background-floating);
+
+  margin-left: -5px;
+  top: 100%;
+
+  &.under {
+    transform: rotate(180deg);
+    bottom: 100%;
+    top: unset;
+  }
+}
+
 .content {
   padding: 8px 12px;
   overflow: hidden;
