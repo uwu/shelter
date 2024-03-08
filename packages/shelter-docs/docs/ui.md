@@ -66,9 +66,7 @@ modify(); // removes the css
 modify(" .myClass { color: blue } "); // no-op
 ```
 
-### `cleanupCss`
-
-<Pill col="red">standalone only</Pill>
+### `cleanupCss` <Pill col="red">standalone only</Pill>
 
 ::: details Type Signature
 ```ts
@@ -137,9 +135,7 @@ You can listen for your modal being closed using [onCleanup](https://www.solidjs
 
 <video src="/ui/openModal.webm" loop autoplay controls></video>
 
-### `<ReactInSolidBridge />`
-
-<Pill col="shelter">shelter only</Pill>
+### `<ReactInSolidBridge />` <Pill col="shelter">shelter only</Pill>
 
 ::: details Type Signature
 ```ts
@@ -155,9 +151,7 @@ const ComponentFromDiscord = webpack.findByProps("...").default;
 <ReactInSolidBridge comp={ComponentFromDiscord} props={{ className: "reactelem", tag: "H1" }} />;
 ```
 
-### `SolidInReactBridge`
-
-<Pill col="shelter">shelter only</Pill>
+### `SolidInReactBridge` <Pill col="shelter">shelter only</Pill>
 
 ::: details Type Signature
 ```ts
@@ -181,9 +175,7 @@ React.createElement(SolidInReactBridge, {
 // if you were using React JSX: <SolidInReactBridge comp={SolidCounter} props={{className: "solidelem"}} />
 ```
 
-### `renderSolidInReact`
-
-<Pill col="shelter">shelter only</Pill>
+### `renderSolidInReact` <Pill col="shelter">shelter only</Pill>
 
 ::: details Type Signature
 ```ts
@@ -246,9 +238,7 @@ showToast({
 
 ![](/ui/showToast.webp)
 
-### `initToasts`
-
-<Pill col="red">standalone only</Pill>
+### `initToasts` <Pill col="red">standalone only</Pill>
 
 ::: details Type Signature
 ```ts

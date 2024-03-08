@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed} from "vue";
 
-const props = defineProps<{ col: "red" | "green" | "blue" }>();
+const props = defineProps<{ col: "red" | "green" | "blue" | "shelter" }>();
 
 const colour = computed(
   () => ({
@@ -14,14 +14,7 @@ const colour = computed(
 </script>
 
 <template>
-  <div class="inline-block text-sm px-1.5 pb-0.5 rounded-9999" :style="{background: colour, /*'--content': `'${$slots.default()[0].children}'`*/}">
+  <div class="inline-block text-sm mx-2 px-2.5 py-1 font-semibold rounded-full" :style="{background: colour}">
     <slot />
   </div>
 </template>
-
-<!--
-<style scoped>
-  div::after {
-    content: var(&#45;&#45;content);
-  }
-</style>-->
