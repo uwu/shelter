@@ -4,7 +4,7 @@ import { PluginCard } from "./Plugins";
 import { devModeReservedId, enableDevmode, stopDevmode } from "../devmode";
 import { installedPlugins } from "../plugins";
 import { css, classes } from "./DevUI.tsx.scss";
-import { Show } from "solid-js";
+import { createMemo, Show } from "solid-js";
 
 let injectedCss = false;
 
@@ -14,6 +14,8 @@ export default () => {
     injectedCss = true;
   }
 
+  const devModeOn = createMemo(() => devModeReservedId in installedPlugins());
+
   return (
     <div class={classes.open}>
       <SwitchItem value={dbStore.logDispatch} onChange={(v) => (dbStore.logDispatch = v)}>
@@ -22,7 +24,7 @@ export default () => {
 
       <SwitchItem
         hideBorder
-        value={devModeReservedId in installedPlugins()}
+        value={devModeOn()}
         onChange={(val) =>
           val
             ? enableDevmode().catch((e) =>
