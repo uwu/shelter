@@ -6,5 +6,9 @@ compatibility_date = "2024-01-29"
 binding = "REPO"
 id = "648ec2e863644b98a32aa51ce436bff5"
 
+[[kv_namespaces]]
+binding = "OVERRIDES"
+id = "42d29600915447858596507798a24597"
+
 [triggers]
 crons = ["0/10 * * * *"]

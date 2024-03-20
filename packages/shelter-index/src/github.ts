@@ -1,3 +1,5 @@
+import { Env } from ".";
+
 type RepositoryDeployments = {
   nodes: RepositoryDeploymentNode[];
 };
@@ -40,6 +42,7 @@ type ResultType = {
   data: {
     search: {
       nodes: {
+        id: string;
         nameWithOwner: string;
         deployments: RepositoryDeployments;
         workflows: RepositoryWorkflowsObject | null;
@@ -55,6 +58,7 @@ const query = gql`query {
   search(query: "shelter-plugins", type: REPOSITORY, first: 100) {
     nodes {
       ... on Repository {
+        id
         nameWithOwner
         deployments(first: 10, orderBy: {field: CREATED_AT, direction: DESC}) {
           nodes {
@@ -137,6 +141,7 @@ async function searchRepositories(token: string) {
     headers: {
       Authorization: `Bearer ${token}`,
       "User-Agent": "shelter/plugin-scraper",
+      "X-Github-Next-Global-ID": "1",
     },
     body: JSON.stringify({ query }),
   });
@@ -155,10 +160,12 @@ export type RepositoryData = {
   url: string;
   plugins: PluginManifest[];
 };
-export async function fetchSources(token: string): Promise<RepositoryData[]> {
+export async function fetchSources(env: Env): Promise<RepositoryData[]> {
   const result: RepositoryData[] = [];
-  const search = await searchRepositories(token);
+  const overrides = await env.OVERRIDES.list().then((l) => l.keys.map((k) => k.name));
+  const search = await searchRepositories(env.GH_TOKEN);
   for (const repository of search.data.search.nodes) {
+    if (overrides.includes(repository.id)) continue;
     if (!repository.workflows || !hopefullyUsesLune(repository.workflows)) continue;
     const url = getEnvironmentUrl(repository.deployments);
     if (!url || repository.plugins == null) continue;

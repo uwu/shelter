@@ -4,11 +4,12 @@ import Fuse from "fuse.js";
 export interface Env {
   GH_TOKEN: string;
   REPO: KVNamespace;
+  OVERRIDES: KVNamespace;
 }
 
 const handler: ExportedHandler<Env> = {
   async scheduled(event, env, ctx) {
-    const data = await fetchSources(env.GH_TOKEN);
+    const data = await fetchSources(env);
     await env.REPO.put("data", JSON.stringify(data));
     await env.REPO.delete("index");
   },
