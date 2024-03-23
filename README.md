@@ -13,24 +13,31 @@ to all others that was Discord's switch to SWC.
 
 You can read much more about this event [here](https://web.archive.org/web/20230726025103/https://cumcord.com/an-exercise-in-futility).
 
-It is developed by ex-members of the old Cumcord Team, under uwu.network.
+It is developed by ex-members of the old Cumcord Team, under [uwu.network](https://uwu.network/).
 
 ## What plugins has it got?
 
 Its early days at the moment, but there are a couple.
 
-Check the githubs of uwu members or search for `shelter-plugins`.
+Check the githubs of uwu members or [search for shelter-plugins](https://github.com/search?q=shelter-plugins&type=repositories).
 
 ## How do I install it?
 
 ### Desktop
 
 - Download this repo.
-- Find your discord install folder (`%LocalAppData%` for Windows) and go into `resources/` - if theres a file called `app.asar` youre probably in the right place.
-- make the folder `resources/app/`
-- copy the contents of `shelter/injectors/desktop/app/` into it
-- rename `app.asar` to `original.asar`
-- fully close and restart discord
+- Find your Discord install folder (`%LocalAppData%` for Windows) and go into `resources/` - if theres a file called `app.asar` youre probably in the right place.
+- From the repo you downloaded, copy the folder `shelter/injectors/desktop/app/` into `resources/`. 
+- Close Discord and rename `app.asar` to `original.asar`. It should look like this:
+```
+🗁 resources/
+ ├── 🗁 app/
+ │    ├── 🗋 index.js
+ │    ├── 🗋 preload.js
+ │    └── 🗋 package.json
+ └── 🗋 original.asar
+```
+- Start Discord and you should find a section called `shelter` in the settings.
 
 ### Kernel
 
