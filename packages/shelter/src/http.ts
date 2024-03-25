@@ -22,7 +22,7 @@ const unpatch = after("bind", Function.prototype, function (args, res) {
 export let unpatchHttpHandlers;
 function patchHttpHandlers() {
   if (unpatchHttpHandlers) return;
-  const patches = ["get", "post", "put", "patch", "delete"].map((fun) =>
+  const patches = ["get", "post", "put", "patch", "del"].map((fun) =>
     instead(fun, discordHttp, async (args, original) => {
       let req = args[0];
       if (typeof req === "string") {
@@ -56,7 +56,7 @@ function patchHttpHandlers() {
   unpatchHttpHandlers = () => patches.forEach((p) => p());
 }
 
-type Method = "get" | "post" | "put" | "patch" | "delete";
+type Method = "get" | "post" | "put" | "patch" | "del";
 type FilterFn = (url: string) => boolean;
 type InterceptFn = (
   req: HTTPRequest,
