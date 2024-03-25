@@ -154,7 +154,7 @@ export interface DiscordHTTP {
   post: HTTPFunction;
   put: HTTPFunction;
   patch: HTTPFunction;
-  delete: HTTPFunction;
+  del: HTTPFunction;
   getAPIBaseURL: string;
   V6OrEarlierAPIError: Error;
   V8APIError: Error;
