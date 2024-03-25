@@ -187,7 +187,7 @@ const unintercept = intercept((dispatch) => {
 Shelter exposes Discord's internal HTTP functions, which may be used to commit authenticated requests,
 as well as powerful utilities to intercept and modify them.
 
-The following methods are available: `get`, `post`, `put`, `patch` and `delete`.
+The following methods are available: `get`, `post`, `put`, `patch` and `del`.
 These functions may simply be passed an URL or a request object, which is extensively described in the shelter typings.
 
 Be careful directly making requests, as this carries the highest risk of selfbot related bans,
