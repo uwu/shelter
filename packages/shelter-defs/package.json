@@ -6,11 +6,12 @@
   "repository": "github:uwu/shelter",
   "types": "./dist/shelter-defs/rootdefs.d.ts",
   "scripts": {
-    "prepare": "rimraf dist && tsc && node postprocess.mjs"
+    "prepare": "rimraf dist && tsc && node postprocess.mjs && treetype def.tt dist/shelter-defs/modules.d.ts"
   },
   "devDependencies": {
+    "@uwu/treetype": "^1.1.0",
     "shelter": "workspace:^",
-    "typescript": "^4.9.4"
+    "typescript": "^5.4.3"
   },
   "dependencies": {
     "idb": "^7.1.0",

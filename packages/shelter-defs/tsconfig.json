@@ -8,6 +8,7 @@
     "emitDeclarationOnly": true,
     "outDir": "./dist",
     "jsx": "preserve",
-    "jsxImportSource": "solid-js"
+    "jsxImportSource": "solid-js",
+    "skipLibCheck": true
   }
 }
