@@ -1,3 +1,4 @@
+import { before } from "spitroast";
 const current = new Set<string>();
 
 export default function (prop: string, filter?: (t: any) => boolean) {
@@ -23,16 +24,23 @@ export default function (prop: string, filter?: (t: any) => boolean) {
           enumerable: true,
           value: v,
         });
-
-        if (!filter || filter(this)) {
-          res(this);
-          if (!hitProto) delete Object.prototype[prop];
-        }
       },
 
       get() {
         return this[protoKey];
       },
+    });
+
+    const unpatch = before("defineProperty", Object, (args) => {
+      if (args[1] === prop) {
+        queueMicrotask(() => {
+          if (!filter || filter(args[0])) {
+            unpatch();
+            res(args[0]);
+            if (!hitProto) delete Object.prototype[prop];
+          }
+        });
+      }
     });
   });
 }
