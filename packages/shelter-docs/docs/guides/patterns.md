@@ -173,3 +173,42 @@ In my testing (on a reasonably modern system, in Firefox) it has an impact too s
 - [Open Profile Images, ioj4](https://github.com/ioj4/shelter-plugins/blob/cabec08563b8639b3a62ec067672eaa0b6ddd17c/plugins/open-profile-images/index.jsx)
 - [Freemoji, Yellowsink](https://github.com/yellowsink/shelter-plugins/blob/91efdf57385794d4b189748431b89fb4deebe9c8/plugins/freemoji/index.js)
 - [GPT, edde746](https://github.com/edde746/shelter-plugins/blob/0bcee4af88163442ee514ac390cb35953e881ce6/plugins/gpt/index.jsx)
+
+## Cleanup Reinsertion
+
+To have your component persist throughout rerenders of it's parent element you can reinsert your component when solid's `onCleanup` gets called.
+
+To make `onCleanup` function properly, you'll need to wrap your component in shelter's `ReactiveRoot` block.
+
+The pattern can look like this:
+```js
+
+function MyComponent() {
+  // queueMicrotask to give React enough time to finish the rerender
+  shelter.solid.onCleanup(() => queueMicrotask(insertComponent))
+  return (
+    <ReactiveRoot>
+      <h1>My Header</h1>
+    </ReactiveRoot>
+  )
+}
+
+function insertComponent() {
+  // see warning below
+  if (!isPluginEnabled) return;
+
+  const parent = document.querySelector(`[class*="whatever"]`)
+  if (parent) {
+    parent.append(<MyComponent />)
+  } else {
+    // long lived observer here just in case
+  }
+}
+```
+
+::: warning
+When using recursive methods in your plugins, make sure to check whether your instance of the plugin is still enabled otherwise it will continue to run after disabling the plugin.
+:::
+
+### Some plugins with this pattern:
+ - [VC Timer, ioj4](https://github.com/ioj4/shelter-plugins/blob/d74844320e09a2813a66ab7e003d29a9b8e7d4d5/plugins/vc-timer/components/timer.jsx)
