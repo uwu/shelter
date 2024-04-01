@@ -13,13 +13,13 @@ export async function getDispatcher() {
   if (dispatcher) return dispatcher;
 
   // Promises bubble up, this is fine.
-  return (dispatcher = exfiltrate("_dispatcher").then((fluxstore) => fluxstore._dispatcher as Dispatcher));
+  return (dispatcher = exfiltrate("_dispatcher", true).then((fluxstore) => fluxstore._dispatcher as Dispatcher));
 }
 
 export const stores: Record<string, FluxStore | FluxStore[]> = {};
 
 // noinspection JSIgnoredPromiseFromCall
-exfiltrate("_dispatchToken", (store: FluxStore) => {
+exfiltrate("_dispatchToken", true, (store: FluxStore) => {
   const name = store.getName();
   if (!stores[name]) {
     stores[name] = store;

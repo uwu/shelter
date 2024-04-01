@@ -2,5 +2,5 @@ import exfiltrate from "./exfiltrate";
 
 export let React, ReactDOM;
 
-exfiltrate("useId").then((v) => (React = v));
-exfiltrate("findDOMNode").then((v) => (ReactDOM = v));
+exfiltrate("useId", false).then((v) => (React = v));
+exfiltrate("findDOMNode", false).then((v) => (ReactDOM = v));
