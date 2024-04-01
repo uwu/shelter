@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref, reactive, computed} from "vue";
+import { ref, reactive, computed } from "vue";
 import { useFuse } from "@vueuse/integrations/useFuse";
 import { useClipboard } from "@vueuse/core";
 
@@ -11,7 +11,7 @@ interface PluginManifest {
   repoName: string;
 }
 
-type PluginItem = PluginManifest & { isCopied: boolean };
+type PluginItem = PluginManifest & { isCopied: boolean, repoAuthor: string };
 
 const data: PluginItem[] = reactive([]);
 let isLoading = ref(true);
@@ -26,6 +26,7 @@ fetch("https://shindex.uwu.network/data")
         author: plugin.author,
         url: plugin.url,
         repoName: item.name,
+        repoAuthor: item.name.split("/")[0],
         isCopied: false
       }))
     });
@@ -67,22 +68,23 @@ const plugins = computed(() => (search.value ? results.value.map((i) => i.item) 
 
   <div text-center v-if="isLoading">Loading plugins...</div>
   <div text-center v-else-if="plugins.length === 0">No plugins found.. <span font-mono tracking-tight ml-2>( • ᴖ • ｡)</span></div>
-  <div v-else flex="~ wrap" gap-3 items-center>
-    <div v-for="(plugin) in plugins"  w-20rem h-44 px-4 py-3 border="1 solid $vp-c-divider" rounded-md
+  <div v-else flex="~ wrap" gap-3 items-center justify-center>
+    <div v-for="(plugin) in plugins" w-20rem h-44 px-4 py-3 border="1 solid $vp-c-divider" rounded-md
       important-transition-all duration-400 hover="shadow-md bg-$vp-c-bg-soft" flex="~ col" justify-between>
-      <div font-semibold dark="text-gray-200" text-gray-900 text-16px>
+      <div font-semibold dark="text-gray-200" line-clamp-1 overflow-hidden text-gray-900 text-16px>
         {{ plugin.name }}
       </div>
 
-      <div dark="text-gray-400" text-gray-500 text-14px>by {{ plugin.author }}</div>
-
+      <div dark="text-gray-400" text-gray-500 text-14px>by
+        <a text-gray-500 inline line-clamp-1 overflow-hidden :href="`https://github.com/` + plugin.repoAuthor">{{plugin.repoAuthor}}</a>
+      </div>
       <div text-gray-500 dark="text-gray-400" flex-auto mt-2 text-14px>
         <span line-clamp-2>
           {{ plugin.description }}
         </span>
       </div>
 
-      <div flex gap-5 items-end>
+      <div flex justify-between items-end>
         <div flex items-center gap-1>
           <button @click="copyUrl(plugin)" w-32 inline-flex justify-center whitespace-nowrap text-sm font-medium
             cursor-pointer bg="$vp-badge-tip-bg" text="$vp-badge-tip-text" px2 py2 rounded-md block mt2 flex
@@ -91,9 +93,8 @@ const plugins = computed(() => (search.value ? results.value.map((i) => i.item) 
             <span v-else>Copied!</span>
           </button>
         </div>
-        <div flex items-center gap-6 justify-right>
-          <a :href="`https://github.com/` + plugin.repoName" i-carbon-logo-github w-8 h-8 bg-dark dark:bg-light right-a
-            justify-right px2 ml-28 mt-2 flex items-center>
+        <div flex>
+          <a :href="`https://github.com/` + plugin.repoName" i-carbon-logo-github w-8 h-8 bg-dark dark:bg-light>
           </a>
         </div>
       </div>
