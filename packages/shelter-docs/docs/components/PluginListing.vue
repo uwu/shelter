@@ -11,7 +11,7 @@ interface PluginManifest {
   repoName: string;
 }
 
-type PluginItem = PluginManifest & { isCopied: boolean, repoAuthor: string };
+type PluginItem = PluginManifest & { isCopied: boolean, repoOwner: string };
 
 const data: PluginItem[] = reactive([]);
 let isLoading = ref(true);
@@ -26,7 +26,7 @@ fetch("https://shindex.uwu.network/data")
         author: plugin.author,
         url: plugin.url,
         repoName: item.name,
-        repoAuthor: item.name.split("/")[0],
+        repoOwner: item.name.split("/")[0],
         isCopied: false
       }))
     });
@@ -37,7 +37,7 @@ const search = ref("");
 
 const { results } = useFuse(search, data, {
   fuseOptions: {
-    keys: ["name", "description"],
+    keys: ["name", "description", "author", "repoOwner"],
     threshold: 0.5,
     useExtendedSearch: true,
   },
@@ -76,7 +76,7 @@ const plugins = computed(() => (search.value ? results.value.map((i) => i.item) 
       </div>
 
       <div dark="text-gray-400" text-gray-500 text-14px>by
-        <a text-gray-500 inline line-clamp-1 overflow-hidden :href="`https://github.com/` + plugin.repoAuthor">{{plugin.repoAuthor}}</a>
+        <a text-gray-500 inline line-clamp-1 overflow-hidden :href="`https://github.com/` + plugin.repoOwner">{{plugin.repoOwner}}</a>
       </div>
       <div text-gray-500 dark="text-gray-400" flex-auto mt-2 text-14px>
         <span line-clamp-2>
