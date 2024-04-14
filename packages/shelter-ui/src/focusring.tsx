@@ -32,7 +32,7 @@ export function focusring(el: Element, rad: Accessor<number>) {
   let focusRingEl: HTMLDivElement;
 
   const keyHandler = (ev) => {
-    if (lastFocused || !isFocused()) return;
+    if (lastFocused || !isFocused() || ev.code !== "Tab") return;
     lastFocused = true;
 
     focusRingEl?.remove();
