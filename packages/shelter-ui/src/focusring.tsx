@@ -18,6 +18,7 @@ const FocusRing: Component<{ x: number; y: number; width: number; height: number
       width: props.width + "px",
       height: props.height + "px",
       outline: "#00a8fc solid",
+      "pointer-events": "none",
       "outline-offset": "3px",
       "border-radius": props.rad + "px",
       "z-index": 9999999,
