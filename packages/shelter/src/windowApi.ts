@@ -11,7 +11,7 @@ import * as plugins from "./plugins";
 import { registerSection } from "./settings";
 import * as storage from "./storage";
 import { observe } from "./observer";
-import { discordHttp, intercept, ready } from "./http";
+import http from "./http";
 import { HTTPApi } from "./types";
 import { constants } from "./constants";
 
@@ -22,7 +22,6 @@ function without<T extends Record<string, any>, TK extends string>(object: T, ..
   return cloned as Omit<T, TK>;
 }
 
-let http;
 const windowApi = async (unloads) => {
   const dispatcher = await flux.getDispatcher();
 
@@ -38,18 +37,7 @@ const windowApi = async (unloads) => {
       "modifiedSym",
       "initDispatchLogger",
     ),
-    get http(): HTTPApi {
-      if (discordHttp === undefined) {
-        return { intercept, ready };
-      }
-
-      return (http ??= {
-        ...discordHttp,
-        _raw: discordHttp,
-        intercept,
-        ready,
-      });
-    },
+    http,
     constants,
     patcher: without(patcher, "unpatchAll"),
     solid,

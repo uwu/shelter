@@ -1,19 +1,39 @@
 import { after, instead } from "spitroast";
-import { DiscordHTTP, HTTPRequest, HTTPResponse } from "./types";
+import { DiscordHTTP, HTTPApi, HTTPRequest, HTTPResponse } from "./types";
+
+const methods = ["get", "post", "put", "patch", "del"];
 
 let resolve: () => void;
 export let ready = new Promise<void>((res) => (resolve = res));
-
 export let discordHttp: DiscordHTTP;
+
+const api: HTTPApi = {
+  intercept,
+  ready,
+  get _raw() {
+    return discordHttp;
+  },
+};
+
+for (const fun of methods) {
+  api[fun] = (...args: any[]) => {
+    if (discordHttp === undefined) throw new Error("HTTP method used before API was ready");
+    return discordHttp[fun](...args);
+  };
+}
+
+export default api;
+
 const unpatch = after("bind", Function.prototype, function (args, res) {
   if (args.length !== 2 || args[0] !== null || args[1] !== "get") return;
   unpatch();
   return function (...args) {
     // I don't know why, but for the first call `this` is Window
     if (this !== window) {
-      discordHttp = this;
-      resolve();
       this.get = res;
+      discordHttp = this;
+      Object.assign(api, discordHttp);
+      resolve();
     }
     return res(...args);
   };
@@ -22,7 +42,7 @@ const unpatch = after("bind", Function.prototype, function (args, res) {
 export let unpatchHttpHandlers;
 function patchHttpHandlers() {
   if (unpatchHttpHandlers) return;
-  const patches = ["get", "post", "put", "patch", "del"].map((fun) =>
+  const patches = methods.map((fun) =>
     instead(fun, discordHttp, async (args, original) => {
       let req = args[0];
       if (typeof req === "string") {
