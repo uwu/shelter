@@ -19,9 +19,9 @@ jobs:
           repository: "uwu/shelter-builds"
           path: "builds"
           token: ${{ secrets.SINK_TOKEN }}
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16
+          node-version: 20.x
 
       - name: Install dependencies
         working-directory: packages/shelter
