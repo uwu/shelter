@@ -782,7 +782,7 @@ If `tick` is not passed, no ticks show.
 `step` is any by default.
 
 ```jsx
-<Slider value={val()} onChange={setVal}
+<Slider value={val()} onInput={setVal}
         min={0} max={10}
         step={2} tick
 />
