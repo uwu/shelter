@@ -3,10 +3,10 @@
   --saturation-factor: 1;
   --text-normal: #dbdee1;
   --text-link: #00a8fc;
-  --brand-experiment-400: #7983f5;
-  --brand-experiment-500: #5865f2;
-  --brand-experiment-560: #4752c4;
-  --brand-experiment: var(--brand-experiment-500);
+  --brand-400: #7983f5;
+  --brand-500: #5865f2;
+  --brand-560: #4752c4;
+  --brand-experiment: var(--brand-500);
   --interactive-active: var(--white-500);
   --interactive-normal: #b5bac1;
   --interactive-hover: #dbdee1;
