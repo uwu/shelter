@@ -21,7 +21,7 @@ type ButtonColor = [string, string, string];
 // and the only thing better than a brand coloured buttons is a brand_new coloured button!!! -- sink
 export const ButtonColors: Record<string, ButtonColor> = {
   // COLOUR: [bg, fg, hover]
-  BRAND: ["var(--brand-experiment)", "var(--interactive-active)", "var(--brand-experiment-560)"],
+  BRAND: ["var(--brand-500)", "var(--interactive-active)", "var(--brand-560)"],
   RED: ["var(--button-danger-background)", "var(--interactive-active)", "var(--button-danger-background-hover)"],
   GREEN: ["var(--button-positive-background)", "var(--interactive-active)", "var(--button-positive-background-hover)"],
   SECONDARY: [
