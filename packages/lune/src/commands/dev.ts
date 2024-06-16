@@ -16,7 +16,7 @@ let current: { manifest: any; js: string };
 
 const broadcastList = new Set<() => Promise<void>>();
 function startWs() {
-  const wsServer = new WebSocketServer({ port: 1211 });
+  const wsServer = new WebSocketServer({ host: "127.0.0.1", port: 1211 });
   wsServer.on("connection", (sockets) => {
     const broadcast = () =>
       new Promise<void>((res, rej) => {
