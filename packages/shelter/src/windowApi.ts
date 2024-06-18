@@ -12,8 +12,6 @@ import { registerSection } from "./settings";
 import * as storage from "./storage";
 import { observe } from "./observer";
 import http from "./http";
-import { HTTPApi } from "./types";
-import { constants } from "./constants";
 
 function without<T extends Record<string, any>, TK extends string>(object: T, ...keys: TK[]) {
   //return Object.fromEntries(Object.entries(object).filter(([k]) => !keys.includes(k as any))) as Omit<T, TK>;
@@ -38,7 +36,6 @@ const windowApi = async (unloads) => {
       "initDispatchLogger",
     ),
     http,
-    constants,
     patcher: without(patcher, "unpatchAll"),
     solid,
     solidStore,
