@@ -110,10 +110,21 @@ function patchLatest() {
 
     logger.log("Host update occured! Copying injector to new directory...");
     const newResourcesPath = path.join(latestPath, "resources");
-    fs.cpSync(path.join(currentPath, "resources", "app"), path.join(newResourcesPath, "app"), { recursive: true });
 
-    const appAsar = path.join(newResourcesPath, "app.asar");
-    const originalAsar = path.join(newResourcesPath, "original.asar");
+    const newAppPath = path.join(newResourcesPath, "app");
+    const oldAppPath = path.join(currentPath, "resources", "app");
+
+    logger.log("Creating app directory in resources...");
+    fs.mkdirSync(newAppPath, logger.error);
+
+    fs.readdirSync(oldAppPath).forEach((file) => {
+      logger.log("Copying", file);
+      fs.copyFileSync(path.join(oldAppPath, file), path.join(newAppPath, file));
+    });
+
+    const appAsar = path.join(latestPath, "resources", "app.asar");
+    const originalAsar = path.join(latestPath, "resources", "original.asar");
+
     if (!fs.existsSync(appAsar)) return;
 
     logger.log("Renaming app.asar -> original.asar...");
