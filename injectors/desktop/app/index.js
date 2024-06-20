@@ -114,6 +114,11 @@ function patchLatest() {
     const newAppPath = path.join(newResourcesPath, "app");
     const oldAppPath = path.join(currentPath, "resources", "app");
 
+    if (!fs.existsSync(newResourcesPath)) {
+      logger.log("Resources directory doesn't exist yet. Creating it...");
+      fs.mkdirSync(newResourcesPath);
+    }
+
     logger.log("Creating app directory in resources...");
     fs.mkdirSync(newAppPath, logger.error);
 
