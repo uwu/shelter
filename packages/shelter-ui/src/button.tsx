@@ -19,7 +19,7 @@ type ButtonColor = [string, string, string];
 // discord actually has `null` as the bg for white & link hovers which is funny
 // also they have tons of overloads for red and green which is equally funny
 // and the only thing better than a brand coloured buttons is a brand_new coloured button!!! -- sink
-export const ButtonColors: Record<string, ButtonColor> = {
+export const ButtonColors = {
   // COLOUR: [bg, fg, hover]
   BRAND: ["var(--brand-500)", "var(--interactive-active)", "var(--brand-560)"],
   RED: ["var(--button-danger-background)", "var(--interactive-active)", "var(--button-danger-background-hover)"],
@@ -41,11 +41,11 @@ export const ButtonColors: Record<string, ButtonColor> = {
     "hsl(240,calc(var(--saturation-factor, 1)*5.9%),96.7%)",
     "hsla(0,calc(var(--saturation-factor, 1)*0%),100%,.05)",
   ],
-};
+} satisfies Record<string, ButtonColor>;
 
 type ButtonSize = [string, string, string];
 
-export const ButtonSizes: Record<string, ButtonSize> = {
+export const ButtonSizes = {
   // SIZE: [width, height, class]
   NONE: ["", "", ""],
   TINY: ["53px", "24px", ""],
@@ -56,7 +56,7 @@ export const ButtonSizes: Record<string, ButtonSize> = {
   MIN: ["auto", "auto", classes.large],
   MAX: ["100%", "100%", classes.max],
   ICON: ["", "auto", classes.icon],
-};
+} satisfies Record<string, ButtonSize>;
 
 export const Button: Component<{
   look?: string;
