@@ -2,6 +2,7 @@ import { Component, createEffect, createSignal, For } from "solid-js";
 import { classes, css } from "./modals.tsx.scss";
 import { ReactiveRoot } from "./util";
 import { ensureInternalStyle } from "./internalstyles";
+import { ErrorBoundary } from "./errorboundary";
 
 type ModalProps = { close(): void };
 
@@ -57,7 +58,9 @@ const ModalRoot: Component = () => {
                 [classes.active]: idx() === currentModals().length - (animationPrePost() ? 2 : 1),
               }}
             >
-              <M close={() => popSpecificModal(M)} />
+              <ErrorBoundary>
+                <M close={() => popSpecificModal(M)} />
+              </ErrorBoundary>
             </div>
           )}
         </For>
