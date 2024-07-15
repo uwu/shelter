@@ -13,16 +13,18 @@ type SettingsSection =
   | ["section", string, string, Component, object?]
   | ["button", string, string, () => void];
 
-const injectedSections: SettingsSection[] = [
+const shelterSections: SettingsSection[] = [
   ["divider"],
   ["header", "Shelter"],
   ["section", "settings", "Settings", Settings],
 ];
 
+let injectorSections: SettingsSection[] = [];
+
 let externalSections: SettingsSection[] = [];
 
 const generatePredicateSections = () =>
-  [...injectedSections, ...externalSections].map((s) => {
+  [...injectorSections, ...shelterSections, ...externalSections].map((s) => {
     switch (s[0]) {
       case "divider":
         return { section: "DIVIDER" };
@@ -114,6 +116,10 @@ export function registerSection(...sec: SettingsSection) {
     externalSections.splice(idx, 1);
     rerenderSidebar();
   };
+}
+
+export function setInjectorSections(secs: SettingsSection[]) {
+  injectorSections = secs;
 }
 
 export function removeAllSections() {
