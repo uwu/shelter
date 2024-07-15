@@ -48,7 +48,7 @@ const waitForAppMount = async () => {
   // shelter injector settings support
   // used for injectors and custom clients such as the web ext, desktop inj, armcord, to use our settings services cleanly
   // @ts-expect-error this is either a window global, or passed to shelter via the same kind of hacks used for shelterPluginEdition, so check with typeof, not window[]
-  if (typeof SHELTER_INJECTOR_SETTINGS !== undefined) {
+  if (typeof SHELTER_INJECTOR_SETTINGS !== "undefined") {
     // @ts-expect-error
     const injSettings = SHELTER_INJECTOR_SETTINGS;
     createEffect(() => {
