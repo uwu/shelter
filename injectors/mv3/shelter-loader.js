@@ -1,7 +1,10 @@
 const SHELTER_URL = "https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js";
 
-// discord removes localStorage later, so hold onto it
-const localStorage = window.localStorage;
+// discord removes localStorage from window so we get it through an iframe
+const iframe = document.createElement("iframe");
+iframe.style.display = "none";
+document.documentElement.append(iframe);
+const { localStorage } = iframe.contentWindow;
 
 async function fetchShelter() {
   const shelter = await (await fetch(SHELTER_URL)).text();
