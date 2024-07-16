@@ -49,13 +49,21 @@ This is nice because you can run multiple mods at once.
 
 https://addons.mozilla.org/firefox/addon/shelter-injector/
 
-### Chrome (Opera, Brave etc.)
-
-https://chromewebstore.google.com/detail/shelter-mv3-inj/ghdambgjhkmpeaogmikdkaemplkfeaod
-
 ### Microsoft Edge
 
 https://microsoftedge.microsoft.com/addons/detail/shelter-mv3-inj/okemjpeidkmhjpmdcpaibakdhnheblib
+
+### Chrome (Opera, Brave, etc.)
+
+The MV3 extension got removed from the chrome store because it runs remotely hosted code (shelter and the plugins you download).
+As there's no easy way to comply with that policy we won't make our extension available on the chrome store.
+However, you can still install it manually:
+
+- Download the latest MV3 Injector from Releases
+- Unpack the .zip file
+- Head to `chrome://extensions`
+- Enable Developer mode
+- Load the unpacked extension
 
 ## How do I make a plugin?
 
