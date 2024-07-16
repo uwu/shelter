@@ -1,0 +1,23 @@
+\source rootdefs.ts
+\import ./rootdefs.d.ts
+
+@shelter from ShelterApi {
+  flux
+  http
+  patcher
+  solid
+  solidStore
+  solidWeb
+  util
+  plugins
+  ui
+  settings
+  plugin from ShelterPluginApi {
+    scoped {
+      flux
+      patcher
+      settings
+      ui
+    }
+  }
+}

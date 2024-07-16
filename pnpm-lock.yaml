@@ -133,12 +133,15 @@ importers:
         specifier: ^1.4.2
         version: 1.4.2
     devDependencies:
+      '@uwu/treetype':
+        specifier: ^1.1.0
+        version: 1.1.0(typescript@5.4.3)
       shelter:
         specifier: workspace:^
         version: link:../shelter
       typescript:
-        specifier: ^4.9.4
-        version: 4.9.5
+        specifier: ^5.4.3
+        version: 5.4.3
 
   packages/shelter-index:
     dependencies:
@@ -2065,6 +2068,15 @@ packages:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
     dependencies:
       '@types/node': 18.15.11
+    dev: true
+
+  /@uwu/treetype@1.1.0(typescript@5.4.3):
+    resolution: {integrity: sha512-de9T/2E/ZhLihxfyZHnBrLEi05tw2YJL++gqGV3p4Y7D6HyuQum31qHsYODsXmx2p8LFCil7g3Dq9RO0oBphBQ==}
+    hasBin: true
+    peerDependencies:
+      typescript: ^5.0.0
+    dependencies:
+      typescript: 5.4.3
     dev: true
 
   /abort-controller@3.0.0:
@@ -5987,6 +5999,12 @@ packages:
 
   /typescript@5.3.3:
     resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
+    engines: {node: '>=14.17'}
+    hasBin: true
+    dev: true
+
+  /typescript@5.4.3:
+    resolution: {integrity: sha512-KrPd3PKaCLr78MalgiwJnA25Nm8HAmdwN3mYUYZgG/wizIo9EainNVQI9/yDavtVFRN2h3k8uf3GLHuhDMgEHg==}
     engines: {node: '>=14.17'}
     hasBin: true
     dev: true
