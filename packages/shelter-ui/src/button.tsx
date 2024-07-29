@@ -1,4 +1,4 @@
-import { Component, JSX, mergeProps } from "solid-js";
+import { Component, JSX, mergeProps, splitProps } from "solid-js";
 import { classes, css } from "./button.tsx.scss";
 import { focusring } from "./focusring";
 import { tooltip } from "./tooltip";
@@ -58,21 +58,23 @@ export const ButtonSizes = {
   ICON: ["", "auto", classes.icon],
 } satisfies Record<string, ButtonSize>;
 
-export const Button: Component<{
+type ButtonProps = {
   look?: string;
   color?: ButtonColor;
   size?: ButtonSize;
   grow?: boolean;
-  disabled?: boolean;
-  type?: "button" | "reset" | "submit";
-  style?: JSX.CSSProperties;
-  class?: string;
-  onClick?: (e: Event) => void;
-  onDoubleClick?: (e: Event) => void;
   tooltip?: JSX.Element;
-  "aria-label"?: string;
-  children?: JSX.Element;
-}> = (rawProps) => {
+
+  // backwards-compatibility alias
+  onDoubleClick?: (e: Event) => void;
+
+  // overwritten to exclude plain string
+  style?: JSX.CSSProperties;
+};
+
+export const Button: Component<ButtonProps & Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, keyof ButtonProps>> = (
+  rawProps,
+) => {
   const props = mergeProps(
     {
       look: ButtonLooks.FILLED,
@@ -80,22 +82,28 @@ export const Button: Component<{
       size: ButtonSizes.SMALL,
       grow: false,
       type: "button",
-      class: "",
     },
     rawProps,
   );
+
+  const [local, buttonProps] = splitProps(rawProps, [
+    "look",
+    "color",
+    "size",
+    "grow",
+    "tooltip",
+    "style",
+    "onDoubleClick",
+    "class",
+  ]);
 
   ensureInternalStyle(css);
 
   return (
     <button
       use:focusring
-      use:tooltip={props.tooltip}
-      onClick={props.onClick}
-      onDblClick={props.onDoubleClick}
-      aria-label={props["aria-label"]}
-      type={props.type}
-      disabled={props.disabled}
+      use:tooltip={local.tooltip}
+      onDblClick={local.onDoubleClick}
       class={`${props.class} ${classes.button} ${props.look} ${props.size[2]} ${props.grow ? classes.grow : ""}`}
       style={{
         "--shltr-btn-w": props.size[0],
@@ -105,32 +113,31 @@ export const Button: Component<{
         "--shltr-btn-bg-hov": props.color[2],
         ...props.style,
       }}
+      {...buttonProps}
     >
       {props.children}
     </button>
   );
 };
 
-export const LinkButton: Component<{
-  style?: JSX.CSSProperties;
-  class?: string;
-  href?: string;
-  "aria-label"?: string;
+type LinkButtonProps = {
   tooltip?: JSX.Element;
-  children?: JSX.Element;
-}> = (props) => {
+} & JSX.AnchorHTMLAttributes<HTMLAnchorElement>;
+
+export const LinkButton: Component<LinkButtonProps> = (rawProps) => {
+  const props = mergeProps(
+    {
+      target: "_blank",
+    },
+    rawProps,
+  );
+
+  const [local, anchorProps] = splitProps(props, ["tooltip"]);
+
   ensureInternalStyle(css);
 
   return (
-    <a
-      use:focusring
-      use:tooltip={props.tooltip}
-      style={props.style}
-      href={props.href}
-      aria-label={props["aria-label"]}
-      target="_blank"
-      class={props.class}
-    >
+    <a use:focusring use:tooltip={local.tooltip} {...anchorProps}>
       {props.children}
     </a>
   );
