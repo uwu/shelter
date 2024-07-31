@@ -67,6 +67,7 @@ export async function buildPlugin(path: string, to: string, cfg: LuneCfg, minify
         }),
         ...(cfg.vitePlugins ?? []),
       ],
+      plugins: [...(cfg.farmPlugins ?? [])],
       compilation: {
         partialBundling: {
           enforceResources: [

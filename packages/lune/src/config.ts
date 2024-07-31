@@ -37,8 +37,7 @@ export type LuneCfg = {
       /** A list of Vite / Rollup plugins */
       vitePlugins?: any[];
       /** A list of Farm plugins */
-      // farmPlugins?: UserConfig["plugins"];
-      // TODO: Get this to actually work. [ Probably not possible :^) ]
+      farmPlugins?: UserConfig["plugins"];
     }
 );
 
