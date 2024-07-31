@@ -99,6 +99,7 @@ export async function buildPlugin(path: string, to: string, cfg: LuneCfg, minify
             contents: built,
             sourcefile: "index.js",
           },
+          format: "iife",
           minify,
           bundle: true,
           write: false,
