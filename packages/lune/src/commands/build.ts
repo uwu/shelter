@@ -1,4 +1,4 @@
-import type { Command } from ".";
+import type { Command } from "./index.js";
 
 import { hrtime } from "process";
 import { buildPlugin } from "../builder.js";

@@ -1,26 +1,46 @@
 import type { Plugin } from "esbuild";
-
+import type { UserConfig } from "@farmfe/core";
 import { existsSync } from "fs";
 import { resolve, parse } from "path";
 import { pathToFileURL } from "url";
 
-export interface LuneCfg {
-  /**
-   * If CSS Modules should be enabled
-   * @default false
-   */
-  cssModules?: boolean | "legacy";
+export type LuneCfg = {
   /**
    * If the output should be minified
    * @default false
    */
   minify?: boolean;
+} & (
+  | {
+      /**
+       * If Farm should be used instead of esbuild
+       */
+      useFarm?: false;
 
-  /** esbuild plugins that run before Lune's transforms */
-  prePlugins?: Plugin[];
-  /** esbuild plugins that run after Lune's transforms */
-  postPlugins?: Plugin[];
-}
+      /**
+       * If CSS Modules should be enabled
+       * @default false
+       */
+      cssModules?: boolean | "legacy";
+
+      /** esbuild plugins that run before Lune's transforms */
+      prePlugins?: Plugin[];
+      /** esbuild plugins that run after Lune's transforms */
+      postPlugins?: Plugin[];
+    }
+  | {
+      /**
+       * If Farm should be used instead of esbuild
+       */
+      useFarm: true;
+
+      /** A list of Vite / Rollup plugins */
+      vitePlugins?: any[];
+      /** A list of Farm plugins */
+      // farmPlugins?: UserConfig["plugins"];
+      // TODO: Get this to actually work. [ Probably not possible :^) ]
+    }
+);
 
 export async function loadCfg(path?: string) {
   if (!path || !existsSync(resolve(path))) return null;
