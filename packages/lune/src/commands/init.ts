@@ -1,4 +1,4 @@
-import type { Command } from ".";
+import type { Command } from "./index.js";
 import { createInterface } from "readline/promises";
 import { stdin, stdout, cwd } from "process";
 import { resolve } from "path";

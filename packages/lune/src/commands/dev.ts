@@ -1,4 +1,4 @@
-import type { Command } from ".";
+import type { Command } from "./index.js";
 
 import { createServer } from "http";
 import { WebSocketServer } from "ws";
