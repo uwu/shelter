@@ -1,4 +1,4 @@
-import { Component, JSX } from "solid-js";
+import { Component, JSX, splitProps } from "solid-js";
 import { css, classes } from "./header.tsx.scss";
 import { Dynamic } from "solid-js/web";
 import { ensureInternalStyle } from "./internalstyles";
@@ -11,16 +11,20 @@ export const HeaderTags: Record<string, string> = {
   H5: classes.h5,
 };
 
-export const Header: Component<{ tag: string; children: JSX.Element; class?: string; id?: string }> = (props) => {
+type HeaderProps = {
+  tag: string;
+};
+
+export const Header: Component<HeaderProps & JSX.HTMLAttributes<HTMLHeadingElement>> = (props) => {
   ensureInternalStyle(css);
+
+  const [local, headerProps] = splitProps(props, ["tag", "class"]);
 
   return (
     <Dynamic
-      component={props.tag === HeaderTags.H5 ? "h3" : "h2"}
-      class={`${props.class ?? ""} ${props.tag ?? HeaderTags.H5} ${classes.h}`}
-      id={props.id}
-    >
-      {props.children}
-    </Dynamic>
+      component={local.tag === HeaderTags.H5 ? "h3" : "h2"}
+      class={`${local.class ?? ""} ${local.tag ?? HeaderTags.H5} ${classes.h}`}
+      {...headerProps}
+    />
   );
 };
