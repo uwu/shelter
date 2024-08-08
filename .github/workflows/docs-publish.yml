@@ -2,8 +2,9 @@ name: Deploy documentation
 
 on:
   push:
-    branches: ["docs-rewrite"]
-
+    branches: [main]
+    paths:
+      - "packages/shelter-docs/**"
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
