@@ -1,4 +1,4 @@
-import { Component, JSX, Show } from "solid-js";
+import { Component, JSX, Show, splitProps } from "solid-js";
 import { css, classes } from "./checkbox.tsx.scss";
 import { genId } from "./util";
 import { focusring } from "./focusring";
@@ -25,51 +25,46 @@ const CheckIcon: Component<{
   </div>
 );
 
-export const CheckboxItem: Component<{
-  checked?: boolean;
-  disabled?: boolean;
-  children?: JSX.Element;
+type CheckboxItemProps = {
   onChange?(newVal: boolean): void;
   mt?: boolean;
   id?: string;
   tooltip?: JSX.Element;
-  "aria-label"?: string;
-}> = (props) => {
+};
+
+export const CheckboxItem: Component<
+  CheckboxItemProps &
+    // TODO: specifically only pick checkbox fields
+    Omit<JSX.InputHTMLAttributes<HTMLInputElement>, keyof CheckboxItemProps>
+> = (rawProps) => {
+  const [local, checkboxProps] = splitProps(rawProps, ["onChange", "mt", "id", "tooltip", "children"]);
+
   ensureInternalStyle(css);
 
   const id = genId();
 
   return (
     <div
-      classList={{ [classes.cbwrap]: true, [classes.disabled]: props.disabled }}
-      onclick={() => props.disabled || props.onChange?.(!props.checked)}
-      style={props.mt ? "margin-top: 20px" : ""}
+      classList={{ [classes.cbwrap]: true, [classes.disabled]: checkboxProps.disabled }}
+      onclick={() => checkboxProps.disabled || local.onChange?.(!checkboxProps.checked)}
+      style={local.mt ? "margin-top: 20px" : ""}
     >
       <div class={classes.checkbox}>
-        <CheckIcon state={props.checked} />
-        <input
-          use:focusring
-          use:tooltip={props.tooltip}
-          id={props.id ?? id}
-          type="checkbox"
-          checked={props.checked}
-          disabled={props.disabled}
-          aria-label={props["aria-label"]}
-        />
+        <CheckIcon state={checkboxProps.checked} />
+        <input use:focusring use:tooltip={local.tooltip} id={local.id ?? id} {...checkboxProps} />
       </div>
-      <Show when={props.children} keyed={false}>
+      <Show when={local.children} keyed={false}>
         {/* TODO: make onclick work here */}
-        <label for={id}>{props.children}</label>
+        <label for={id}>{local.children}</label>
       </Show>
     </div>
   );
 };
 
-export const Checkbox: Component<{
-  checked?: boolean;
-  disabled?: boolean;
+type CheckboxProps = {
   onChange?(newVal: boolean): void;
   id?: string;
   tooltip?: JSX.Element;
-  "aria-label"?: string;
-}> = (props) => <CheckboxItem {...props} />; // lazy lmao but it works
+};
+export const Checkbox: Component<CheckboxProps & Omit<JSX.InputHTMLAttributes<HTMLInputElement>, keyof CheckboxProps>> =
+  (props) => <CheckboxItem {...props} />; // lazy lmao but it works
