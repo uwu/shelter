@@ -22,6 +22,7 @@ const ModalRoot: Component = () => {
   ensureInternalStyle(css);
 
   let dialogEl;
+  let backdropEl;
 
   createEffect(() => {
     dialogEl.showModal();
@@ -36,9 +37,7 @@ const ModalRoot: Component = () => {
     dialogEl.addEventListener("keydown", (ev) => ev.stopImmediatePropagation());
 
     // click outside dialog handler
-    dialogEl.addEventListener("click", (ev) => {
-      if (ev.target === dialogEl || ev.target.parentElement === dialogEl) popModal();
-    });
+    backdropEl.addEventListener("click", popModal);
   });
 
   return (
@@ -50,6 +49,7 @@ const ModalRoot: Component = () => {
           [classes.active]: !bgAnimPrePost(),
         }}
       >
+        <div ref={backdropEl} class={classes.backdrop} />
         <For each={currentModals()}>
           {(M, idx) => (
             <div
