@@ -1,0 +1,18 @@
+{
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "@iconify-json/carbon": "^1.1.30",
+    "unocss": "^0.58.5",
+    "vitepress": "1.0.0-rc.44"
+  },
+  "dependencies": {
+    "@vueuse/core": "^10.7.2",
+    "@vueuse/integrations": "^10.7.2",
+    "fuse.js": "^7.0.0",
+    "vue": "^3.4.15"
+  }
+}
