@@ -1,6 +1,7 @@
 import { batch, createSignal, Signal, untrack } from "solid-js";
-import { IDBPDatabase, openDB } from "idb";
 import { makeDeepProxy } from "./deep";
+import { DbStore, open } from "./idb";
+import { makeRoot, SignalTreeRoot } from "./signalTree";
 
 // idb cannot directly store proxies so this clones them
 function cloneRec(node: unknown, seenNodes: object[] = []) {
@@ -18,7 +19,6 @@ function cloneRec(node: unknown, seenNodes: object[] = []) {
         newObj[k] = cloneRec(node[k], [...seenNodes, node]);
       }
       return newObj;
-
     default:
       return node as undefined | boolean | number | string | bigint;
   }
@@ -32,12 +32,12 @@ export interface IdbStore<T> {
   [_: string]: T;
 
   [symWait]: (cb: () => void) => void;
-  [symDb]: IDBPDatabase<any>;
+  [symDb]: DbStore; //IDBPDatabase<any>;
   [symSig]: () => Record<string, T>;
 }
 
-// we have to mutex opening the db for adding new stores etc to work correctly
-let storesToAdd: string[] = [];
+// ~~we have to mutex opening the db for adding new stores etc to work correctly~~
+/*let storesToAdd: string[] = [];
 let getDbPromise: Promise<IDBPDatabase<any>>;
 
 async function getDb(store: string) {
@@ -56,16 +56,18 @@ async function getDb(store: string) {
   });
 
   return (getDbPromise = prom);
-}
+}*/
+
+const getDb = (store: string) => open("shelter", store);
 
 export const idbStore = <T = any>(name: string) => {
-  const signals: Record<string, Signal<any>> = {}; // TODO: signal tree
-  let db: IDBPDatabase<any>;
+  const tree = makeRoot();
+  let store: DbStore;
   let modifiedKeys = new Set<string>();
 
   // queues callbacks for when the db loads
   const waitQueue: (() => void)[] = [];
-  const waitInit = (cb: () => void) => (db ? cb() : waitQueue.push(cb));
+  const waitInit = (cb: () => void) => (store ? cb() : waitQueue.push(cb));
 
   const [mainSignal, setMainSignal] = createSignal({});
   const updateMainSignal = () => {
@@ -91,7 +93,7 @@ export const idbStore = <T = any>(name: string) => {
   });
 
   return makeDeepProxy({
-    get(_, p) {
+    get(path, p) {
       // internal things
       if (p === symWait) return waitInit;
       if (p === symDb) return db;
