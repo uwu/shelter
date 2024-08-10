@@ -1,4 +1,4 @@
-import { Component } from "solid-js";
+import { Component, createEffect } from "solid-js";
 import { css, classes } from "./textbox.tsx.scss";
 import { focusring } from "./focusring";
 import { ensureInternalStyle } from "./internalstyles";
@@ -14,12 +14,18 @@ export const TextBox: Component<{
 }> = (props) => {
   ensureInternalStyle(css);
 
+  let r: HTMLInputElement;
+  createEffect(() => {
+    // only set value if it changed, to avoid unnecessary resets of scroll position from doing value = value
+    if (props.value !== r?.value && r) r.value = props.value;
+  });
+
   return (
     <input
       use:focusring
       class={classes.tbox}
       type="text"
-      value={props.value}
+      ref={r}
       placeholder={props.placeholder}
       maxlength={props.maxLength ?? 999}
       id={props.id}
@@ -43,6 +49,11 @@ export const TextArea: Component<{
 }> = (props) => {
   ensureInternalStyle(css);
 
+  let r: HTMLTextAreaElement;
+  createEffect(() => {
+    if (props.value !== r?.value && r) r.value = props.value;
+  });
+
   return (
     <textarea
       use:focusring
@@ -52,7 +63,7 @@ export const TextArea: Component<{
         [classes.ry]: props["resize-y"],
         [classes.mono]: props.mono,
       }}
-      value={props.value}
+      ref={r}
       placeholder={props.placeholder}
       id={props.id}
       aria-labelledby={props["aria-label"]}
