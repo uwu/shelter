@@ -1,7 +1,7 @@
-import { idbStore } from "shelter-storage";
+import { idbStore } from "@uwu/shelter-storage";
 import { createSignal } from "solid-js";
 
-export * from "shelter-storage";
+export * from "@uwu/shelter-storage";
 
 export const dbStore = idbStore("dbstore");
 export const _dbStore = dbStore;

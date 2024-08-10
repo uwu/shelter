@@ -78,6 +78,9 @@ importers:
       '@cumjar/websmack':
         specifier: ^1.2.0
         version: 1.2.0
+      '@uwu/shelter-storage':
+        specifier: workspace:*
+        version: link:../shelter-storage
       '@uwu/shelter-ui':
         specifier: workspace:*
         version: link:../shelter-ui
@@ -90,9 +93,6 @@ importers:
       shelter-assets:
         specifier: workspace:*
         version: link:../shelter-assets
-      shelter-storage:
-        specifier: workspace:*
-        version: link:../shelter-storage
       solid-js:
         specifier: 1.6.16
         version: 1.6.16

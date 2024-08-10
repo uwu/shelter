@@ -26,22 +26,26 @@ export interface DeepProxyHandler {
   setPrototypeof?(path: Path, prototype: object | null): boolean;
 }
 
-export const makeDeepProxy = (handler: DeepProxyHandler, init: object = {}) => {
-  const makeProx = (init, ctxt: Path = []) => {
+export function makeDeepProxy<T extends {}>(handler: DeepProxyHandler, init?: T) {
+  const makeProx = <T2>(init: T2, ctxt: Path = []) => {
     const deepHandler = {
       get: !handler.get
         ? undefined
         : (_, p) => {
             const gotten = handler.get(ctxt, p);
 
-            return typeof gotten === "object" && gotten !== null ? makeProx(gotten, [...ctxt, p]) : gotten;
+            return typeof gotten === "function" || (typeof gotten === "object" && gotten !== null)
+              ? makeProx(gotten, [...ctxt, p])
+              : gotten;
           },
     };
 
-    for (const k in handler) if (!deepHandler[k]) deepHandler[k] = (_, ...args) => handler[k](ctxt, ...args);
+    for (const k in handler) {
+      deepHandler[k] ??= (_, ...args) => handler[k](ctxt, ...args);
+    }
 
     return new Proxy(init, deepHandler);
   };
 
-  return makeProx(init);
-};
+  return makeProx<T>(init ?? ({} as any)); // as any :D
+}
