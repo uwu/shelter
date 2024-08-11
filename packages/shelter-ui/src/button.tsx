@@ -1,4 +1,4 @@
-import { Component, JSX, mergeProps, splitProps } from "solid-js";
+import { type Component, type JSX, mergeProps, splitProps } from "solid-js";
 import { classes, css } from "./button.tsx.scss";
 import { focusring } from "./focusring";
 import { tooltip } from "./tooltip";
@@ -14,6 +14,9 @@ export const ButtonLooks = {
   //BLANK,
 };
 
+/**
+ * [background, color, hover:background]
+ */
 type ButtonColor = [string, string, string];
 
 // discord actually has `null` as the bg for white & link hovers which is funny
@@ -43,6 +46,9 @@ export const ButtonColors = {
   ],
 } satisfies Record<string, ButtonColor>;
 
+/**
+ * [width, height, class]
+ */
 type ButtonSize = [string, string, string];
 
 export const ButtonSizes = {
@@ -62,40 +68,52 @@ type ButtonProps = {
   look?: string;
   color?: ButtonColor;
   size?: ButtonSize;
+  /**
+   * Fill width
+   */
   grow?: boolean;
   tooltip?: JSX.Element;
 
-  // backwards-compatibility alias
-  onDoubleClick?: (e: Event) => void;
-
-  // overwritten to exclude plain string
+  /**
+   * overwritten to exclude plain string
+   */
   style?: JSX.CSSProperties;
+
+  /**
+   * backwards-compatibility alias
+   * @deprecated Use onDblClick instead
+   */
+  onDoubleClick?: (e: Event) => void;
 };
 
 export const Button: Component<ButtonProps & Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, keyof ButtonProps>> = (
   rawProps,
 ) => {
-  const props = mergeProps(
-    {
-      look: ButtonLooks.FILLED,
-      color: ButtonColors.BRAND,
-      size: ButtonSizes.SMALL,
-      grow: false,
-      type: "button",
-    },
-    rawProps,
+  const [local, buttonProps] = splitProps(
+    mergeProps(
+      {
+        look: ButtonLooks.FILLED,
+        color: ButtonColors.BRAND,
+        size: ButtonSizes.SMALL,
+        grow: false,
+        type: "button",
+        onDblClick: rawProps.onDoubleClick,
+      },
+      rawProps,
+    ),
+    [
+      "look",
+      "color",
+      "size",
+      "grow",
+      "tooltip",
+      "style",
+      "onDoubleClick",
+      "class",
+      // TODO: can children just be spread react-style too?
+      "children",
+    ],
   );
-
-  const [local, buttonProps] = splitProps(rawProps, [
-    "look",
-    "color",
-    "size",
-    "grow",
-    "tooltip",
-    "style",
-    "onDoubleClick",
-    "class",
-  ]);
 
   ensureInternalStyle(css);
 
@@ -103,19 +121,18 @@ export const Button: Component<ButtonProps & Omit<JSX.ButtonHTMLAttributes<HTMLB
     <button
       use:focusring
       use:tooltip={local.tooltip}
-      onDblClick={local.onDoubleClick}
-      class={`${props.class} ${classes.button} ${props.look} ${props.size[2]} ${props.grow ? classes.grow : ""}`}
+      class={`${local.class} ${classes.button} ${local.look} ${local.size[2]} ${local.grow ? classes.grow : ""}`}
       style={{
-        "--shltr-btn-w": props.size[0],
-        "--shltr-btn-h": props.size[1],
-        "--shltr-btn-col": props.color[1],
-        "--shltr-btn-bg": props.color[0],
-        "--shltr-btn-bg-hov": props.color[2],
-        ...props.style,
+        "--shltr-btn-w": local.size[0],
+        "--shltr-btn-h": local.size[1],
+        "--shltr-btn-col": local.color[1],
+        "--shltr-btn-bg": local.color[0],
+        "--shltr-btn-bg-hov": local.color[2],
+        ...local.style,
       }}
       {...buttonProps}
     >
-      {props.children}
+      {local.children}
     </button>
   );
 };
@@ -125,20 +142,21 @@ type LinkButtonProps = {
 } & JSX.AnchorHTMLAttributes<HTMLAnchorElement>;
 
 export const LinkButton: Component<LinkButtonProps> = (rawProps) => {
-  const props = mergeProps(
-    {
-      target: "_blank",
-    },
-    rawProps,
+  const [local, anchorProps] = splitProps(
+    mergeProps(
+      {
+        target: "_blank",
+      },
+      rawProps,
+    ),
+    ["tooltip", "children"],
   );
-
-  const [local, anchorProps] = splitProps(props, ["tooltip"]);
 
   ensureInternalStyle(css);
 
   return (
     <a use:focusring use:tooltip={local.tooltip} {...anchorProps}>
-      {props.children}
+      {local.children}
     </a>
   );
 };
