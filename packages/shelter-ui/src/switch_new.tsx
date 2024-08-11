@@ -117,29 +117,37 @@ const Slider: Component<{ state: boolean }> = (props) => {
 type SwitchProps = {
   onChange?(newVal: boolean): void;
   tooltip?: JSX.Element;
+  /**
+   * backwards compat alias for `checked`
+   * @deprecated use checked
+   */
+  value?: boolean;
 };
 export const Switch: NativeExtendingComponent<SwitchProps, JSX.InputHTMLAttributes<HTMLInputElement>, "type"> = (
   rawProps,
 ) => {
   ensureInternalStyle(css);
 
-  const [local, other] = splitProps(rawProps, ["onChange", "tooltip"]);
+  const [local, other] = splitProps(rawProps, ["onChange", "tooltip", "value"]);
+
+  const checked = () => other.checked ?? local.value;
 
   return (
     <div
       class={`${classes.switch} ${other.disabled ? classes.disabled : ""}`}
       style={{
-        "--shltr-sw-col": other.checked ? COL_GREEN : COL_GRAY,
+        "--shltr-sw-col": checked() ? COL_GREEN : COL_GRAY,
         "--shltr-sw-dur": DURATION + "ms",
       }}
     >
       {/* the slider */}
-      <Slider state={other.checked} />
+      <Slider state={checked()} />
       {/* the actual input: useful for accessibility etc */}
       <input
         use:focusring={12}
         use:tooltip={local.tooltip}
-        onchange={() => local.onChange?.(!other.checked)}
+        onchange={() => local.onChange?.(!checked())}
+        checked={checked()}
         {...other}
       />
     </div>
