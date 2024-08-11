@@ -1,4 +1,4 @@
-import { Component, JSX } from "solid-js";
+import { type Component, type JSX } from "solid-js";
 import { render } from "solid-js/web";
 import { css as sBarCss, classes as sBarClasses } from "./scrollbars.scss";
 import { ensureInternalStyle } from "./internalstyles";

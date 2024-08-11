@@ -1,4 +1,4 @@
-import { Component, createEffect, createSignal, For } from "solid-js";
+import { type Component, createEffect, createSignal, For } from "solid-js";
 import { classes, css } from "./modals.tsx.scss";
 import { ReactiveRoot } from "./util";
 import { ensureInternalStyle } from "./internalstyles";

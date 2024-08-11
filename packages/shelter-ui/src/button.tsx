@@ -1,8 +1,9 @@
-import { type Component, type JSX, mergeProps, splitProps } from "solid-js";
+import { type JSX, mergeProps, splitProps } from "solid-js";
 import { classes, css } from "./button.tsx.scss";
 import { focusring } from "./focusring";
 import { tooltip } from "./tooltip";
 import { ensureInternalStyle } from "./internalstyles";
+import { type NativeExtendingComponent } from "./wrapperTypes";
 false && focusring;
 false && tooltip;
 
@@ -85,8 +86,7 @@ type ButtonProps = {
    */
   onDoubleClick?: (e: Event) => void;
 };
-
-export const Button: Component<ButtonProps & Omit<JSX.ButtonHTMLAttributes<HTMLButtonElement>, keyof ButtonProps>> = (
+export const Button: NativeExtendingComponent<ButtonProps, JSX.ButtonHTMLAttributes<HTMLButtonElement>> = (
   rawProps,
 ) => {
   const [local, buttonProps] = splitProps(
@@ -139,9 +139,10 @@ export const Button: Component<ButtonProps & Omit<JSX.ButtonHTMLAttributes<HTMLB
 
 type LinkButtonProps = {
   tooltip?: JSX.Element;
-} & JSX.AnchorHTMLAttributes<HTMLAnchorElement>;
-
-export const LinkButton: Component<LinkButtonProps> = (rawProps) => {
+};
+export const LinkButton: NativeExtendingComponent<LinkButtonProps, JSX.AnchorHTMLAttributes<HTMLAnchorElement>> = (
+  rawProps,
+) => {
   const [local, anchorProps] = splitProps(
     mergeProps(
       {

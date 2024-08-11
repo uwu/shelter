@@ -1,4 +1,4 @@
-import { Component, JSX, onCleanup } from "solid-js";
+import { type Component, type JSX, onCleanup } from "solid-js";
 import { classes } from "./modals.tsx.scss";
 import { Header, HeaderTags } from "./header";
 import { Button, ButtonColors, ButtonSizes } from "./button";
