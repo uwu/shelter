@@ -1,4 +1,4 @@
-import { Component, JSX, Show, splitProps } from "solid-js";
+import { type Component, type JSX, Show, splitProps } from "solid-js";
 import { css, classes } from "./checkbox.tsx.scss";
 import { genId } from "./util";
 import { focusring } from "./focusring";
@@ -27,8 +27,10 @@ const CheckIcon: Component<{
 
 type CheckboxItemProps = {
   onChange?(newVal: boolean): void;
+  /**
+   * Add margin-top: 20px
+   */
   mt?: boolean;
-  id?: string;
   tooltip?: JSX.Element;
 };
 
@@ -41,17 +43,17 @@ export const CheckboxItem: Component<
 
   ensureInternalStyle(css);
 
-  const id = genId();
+  const id = local.id ?? genId();
 
   return (
     <div
       classList={{ [classes.cbwrap]: true, [classes.disabled]: checkboxProps.disabled }}
-      onclick={() => checkboxProps.disabled || local.onChange?.(!checkboxProps.checked)}
+      onclick={() => !checkboxProps.disabled && local.onChange?.(!checkboxProps.checked)}
       style={local.mt ? "margin-top: 20px" : ""}
     >
       <div class={classes.checkbox}>
         <CheckIcon state={checkboxProps.checked} />
-        <input use:focusring use:tooltip={local.tooltip} id={local.id ?? id} {...checkboxProps} />
+        <input use:focusring use:tooltip={local.tooltip} id={id} {...checkboxProps} />
       </div>
       <Show when={local.children} keyed={false}>
         {/* TODO: make onclick work here */}
@@ -63,7 +65,6 @@ export const CheckboxItem: Component<
 
 type CheckboxProps = {
   onChange?(newVal: boolean): void;
-  id?: string;
   tooltip?: JSX.Element;
 };
 export const Checkbox: Component<CheckboxProps & Omit<JSX.InputHTMLAttributes<HTMLInputElement>, keyof CheckboxProps>> =
