@@ -1,10 +1,11 @@
-import { Component, createEffect, JSX, on, onMount, Show } from "solid-js";
+import { type Component, createEffect, type JSX, on, Show, splitProps } from "solid-js";
 import { genId } from "./util";
 import { Divider } from "./index";
 import { css, classes } from "./switch_new.tsx.scss";
 import { focusring } from "./focusring";
 import { tooltip } from "./tooltip";
 import { ensureInternalStyle } from "./internalstyles";
+import { type NativeExtendingComponent } from "./wrapperTypes";
 false && focusring;
 false && tooltip;
 
@@ -113,75 +114,67 @@ const Slider: Component<{ state: boolean }> = (props) => {
   );
 };
 
-export const Switch: Component<{
-  id?: string;
-  checked?: boolean;
-  disabled?: boolean;
+type SwitchProps = {
   onChange?(newVal: boolean): void;
   tooltip?: JSX.Element;
-  "aria-label"?: string;
-}> = (props) => {
+};
+export const Switch: NativeExtendingComponent<SwitchProps, JSX.InputHTMLAttributes<HTMLInputElement>, "type"> = (
+  rawProps,
+) => {
   ensureInternalStyle(css);
+
+  const [local, other] = splitProps(rawProps, ["onChange", "tooltip"]);
 
   return (
     <div
-      class={`${classes.switch} ${props.disabled ? classes.disabled : ""}`}
+      class={`${classes.switch} ${other.disabled ? classes.disabled : ""}`}
       style={{
-        "--shltr-sw-col": props.checked ? COL_GREEN : COL_GRAY,
+        "--shltr-sw-col": other.checked ? COL_GREEN : COL_GRAY,
         "--shltr-sw-dur": DURATION + "ms",
       }}
     >
       {/* the slider */}
-      <Slider state={props.checked} />
+      <Slider state={other.checked} />
       {/* the actual input: useful for accessibility etc */}
       <input
         use:focusring={12}
-        use:tooltip={props.tooltip}
-        id={props.id}
-        type="checkbox"
-        checked={props.checked}
-        disabled={props.disabled}
-        aria-disabled={props.disabled}
-        aria-label={props["aria-label"]}
-        onchange={() => props.onChange?.(!props.checked)}
+        use:tooltip={local.tooltip}
+        onchange={() => local.onChange?.(!other.checked)}
+        {...other}
       />
     </div>
   );
 };
 
-export const SwitchItem: Component<{
-  value: boolean;
-  onChange?(v: boolean): void;
-  disabled?: boolean;
+type SwitchItemProps = SwitchProps & {
   children: JSX.Element;
   note?: JSX.Element;
   hideBorder?: boolean;
-  tooltip?: JSX.Element;
-  "aria-label"?: string;
-}> = (props) => {
+};
+export const SwitchItem: NativeExtendingComponent<
+  SwitchItemProps,
+  JSX.InputHTMLAttributes<HTMLInputElement>,
+  "type" | "id"
+> = (rawProps) => {
   const id = genId();
+
+  // TODO: allow external "id" prop?
+  const [local, other] = splitProps(rawProps, ["children", "note", "hideBorder"]);
 
   return (
     <div class={classes.sitem}>
       <div class={classes.irow}>
-        <label for={id}>{props.children}</label>
+        <label for={id}>{local.children}</label>
         <div>
-          <Switch
-            id={id}
-            checked={props.value}
-            onChange={props.onChange}
-            disabled={props.disabled}
-            aria-label={props["aria-label"]}
-            tooltip={props.tooltip}
-          />
+          <Switch id={id} {...other} />
         </div>
       </div>
 
-      <Show when={props.note} keyed>
-        <div class={classes.note}>{props.note}</div>
+      <Show when={local.note} keyed>
+        <div class={classes.note}>{local.note}</div>
       </Show>
 
-      <Show when={!props.hideBorder} keyed>
+      <Show when={!local.hideBorder} keyed>
         <Divider mt />
       </Show>
     </div>

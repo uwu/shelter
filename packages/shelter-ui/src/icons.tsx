@@ -1,11 +1,12 @@
-import { Component, JSX } from "solid-js";
+import { type Component, type JSX } from "solid-js";
+import { type NativeExtendingComponent } from "./wrapperTypes";
 
 type IconProps = {
   // overwritten to exclude plain string
   style?: JSX.CSSProperties;
 };
 
-type IconComponent = Component<IconProps & Omit<JSX.SvgSVGAttributes<SVGSVGElement>, keyof IconProps>>;
+type IconComponent = NativeExtendingComponent<IconProps, JSX.SvgSVGAttributes<SVGSVGElement>>;
 
 export const IconClose: Component = (props: JSX.SvgSVGAttributes<SVGSVGElement>) => (
   <svg width="24" height="24" viewBox="0 0 24 24" {...props}>

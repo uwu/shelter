@@ -1,7 +1,8 @@
-import { type Component, type JSX, splitProps } from "solid-js";
+import { type JSX, splitProps } from "solid-js";
 import { css, classes } from "./header.tsx.scss";
 import { Dynamic } from "solid-js/web";
 import { ensureInternalStyle } from "./internalstyles";
+import { type NativeExtendingComponent } from "./wrapperTypes";
 
 export const HeaderTags = {
   H1: classes.h1,
@@ -14,8 +15,7 @@ export const HeaderTags = {
 type HeaderProps = {
   tag: string;
 };
-
-export const Header: Component<HeaderProps & JSX.HTMLAttributes<HTMLHeadingElement>> = (props) => {
+export const Header: NativeExtendingComponent<HeaderProps, JSX.HTMLAttributes<HTMLHeadingElement>> = (props) => {
   ensureInternalStyle(css);
 
   const [local, headerProps] = splitProps(props, ["tag", "class"]);

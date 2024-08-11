@@ -1,4 +1,5 @@
-import { Component, JSX, splitProps } from "solid-js";
+import { type JSX, splitProps } from "solid-js";
+import { type NativeExtendingComponent } from "./wrapperTypes";
 
 export * from "./util";
 export * from "./button";
@@ -20,8 +21,7 @@ type TextProps = {
   // overwritten to exclude plain string
   style?: JSX.CSSProperties;
 };
-
-export const Text: Component<TextProps & Omit<JSX.HTMLAttributes<HTMLSpanElement>, keyof TextProps>> = (props) => (
+export const Text: NativeExtendingComponent<TextProps, JSX.HTMLAttributes<HTMLSpanElement>> = (props) => (
   <span
     {...props}
     style={{
@@ -37,10 +37,7 @@ type DividerProps = {
   // overwritten to exclude plain string
   style?: JSX.CSSProperties;
 };
-
-export const Divider: Component<DividerProps & Omit<JSX.HTMLAttributes<HTMLDivElement>, keyof DividerProps>> = (
-  props,
-) => {
+export const Divider: NativeExtendingComponent<DividerProps, JSX.HTMLAttributes<HTMLDivElement>, "role"> = (props) => {
   const [local, divProps] = splitProps(props, ["mt", "mb", "style"]);
 
   return (
@@ -64,8 +61,7 @@ type SpaceProps = {
   // overwritten to exclude plain string
   style?: JSX.CSSProperties;
 };
-
-export const Space: Component<SpaceProps & Omit<JSX.HTMLAttributes<HTMLPreElement>, keyof SpaceProps>> = (props) => (
+export const Space: NativeExtendingComponent<SpaceProps, JSX.HTMLAttributes<HTMLPreElement>> = (props) => (
   <pre
     {...props}
     style={{

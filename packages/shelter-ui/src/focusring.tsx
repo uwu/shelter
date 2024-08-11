@@ -1,4 +1,4 @@
-import { onCleanup, Component, Accessor } from "solid-js";
+import { onCleanup, type Component, type Accessor } from "solid-js";
 import { getRoot } from "./util";
 
 declare module "solid-js" {

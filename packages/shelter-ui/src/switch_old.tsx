@@ -68,6 +68,9 @@ const ButtonIcon: Component<{ state: boolean }> = (props) => {
   );
 };
 
+/**
+ * @deprecated see switch_new
+ */
 export const Switch: Component<{
   id?: string;
   checked?: boolean;
@@ -106,6 +109,9 @@ export const Switch: Component<{
   );
 };
 
+/**
+ * @deprecated see switch_new
+ */
 export const SwitchItem: Component<{
   value: boolean;
   onChange?(v: boolean): void;

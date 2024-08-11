@@ -1,7 +1,7 @@
 import { Header, HeaderTags } from "../header";
 import { Text } from "../index";
 import { classes } from "./index.tsx.scss";
-import { Component } from "solid-js";
+import { type Component } from "solid-js";
 
 export default ((props) => (
   <div onClick={props.onClick} class={`${classes.toast} ${props.class ?? ""}`}>
@@ -16,7 +16,7 @@ export default ((props) => (
       </div>
     )}
   </div>
-)) as Component<{
+)) satisfies Component<{
   title?: string;
   content?: string;
   class?: string;

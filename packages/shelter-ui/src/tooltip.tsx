@@ -1,5 +1,4 @@
-import type { JSX } from "solid-js"; // esbuild bug?
-import { onCleanup, Component, Accessor, createSignal, createEffect, on } from "solid-js";
+import { onCleanup, type Component, type Accessor, createSignal, createEffect, on, type JSX } from "solid-js";
 import { getRoot } from "./util";
 import { classes, css } from "./tooltip.tsx.scss";
 import { ensureInternalStyle } from "./internalstyles";

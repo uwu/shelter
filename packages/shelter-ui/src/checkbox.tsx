@@ -4,6 +4,7 @@ import { genId } from "./util";
 import { focusring } from "./focusring";
 import { tooltip } from "./tooltip";
 import { ensureInternalStyle } from "./internalstyles";
+import { type NativeExtendingComponent } from "./wrapperTypes";
 false && focusring;
 false && tooltip;
 
@@ -33,12 +34,9 @@ type CheckboxItemProps = {
   mt?: boolean;
   tooltip?: JSX.Element;
 };
-
-export const CheckboxItem: Component<
-  CheckboxItemProps &
-    // TODO: specifically only pick checkbox fields
-    Omit<JSX.InputHTMLAttributes<HTMLInputElement>, keyof CheckboxItemProps>
-> = (rawProps) => {
+export const CheckboxItem: NativeExtendingComponent<CheckboxItemProps, JSX.InputHTMLAttributes<HTMLInputElement>> = (
+  rawProps,
+) => {
   const [local, checkboxProps] = splitProps(rawProps, ["onChange", "mt", "id", "tooltip", "children"]);
 
   ensureInternalStyle(css);
@@ -67,5 +65,6 @@ type CheckboxProps = {
   onChange?(newVal: boolean): void;
   tooltip?: JSX.Element;
 };
-export const Checkbox: Component<CheckboxProps & Omit<JSX.InputHTMLAttributes<HTMLInputElement>, keyof CheckboxProps>> =
-  (props) => <CheckboxItem {...props} />; // lazy lmao but it works
+export const Checkbox: NativeExtendingComponent<CheckboxProps, JSX.InputHTMLAttributes<HTMLInputElement>> = (props) => (
+  <CheckboxItem {...props} />
+);

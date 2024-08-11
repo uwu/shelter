@@ -6,7 +6,9 @@ const styleSet = new Set<string>();
 const [styleTxt, setStyleTxt] = createSignal("");
 
 export const ensureInternalStyle = (style: string) => {
-  if (styleSet.has(style)) return;
+  if (styleSet.has(style)) {
+    return;
+  }
   styleSet.add(style);
   setStyleTxt((v) => v + style);
 };
