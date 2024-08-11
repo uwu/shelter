@@ -67,9 +67,7 @@ However, you can still install it manually:
 
 ## How do I make a plugin?
 
-See [the docs](packages/shelter-docs/README.md)
-
-Also see [Lune's docs](https://github.com/uwu/shelter/tree/main/packages/lune#readme)
+See [the docs](https://shelter.uwu.network/guides/)
 
 ## Is there a plugin repo / website / etc.?
 

@@ -1,8 +1,9 @@
 {
   "name": "@uwu/shelter-ui",
-  "description": "Discord components remade for Shelter",
-  "version": "0.0.2",
+  "description": "Discord components remade for shelter",
+  "version": "0.0.3",
   "author": "uwu.network",
+  "homepage": "https://shelter.uwu.network/",
   "repository": "github:uwu/shelter",
   "type": "module",
   "main": "dist/index.jsx",

@@ -29,6 +29,12 @@ $RADIUS: 4px;
   }
 }
 
+.backdrop {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
 .wrap {
   transition-property: opacity, transform;
   transition-duration: 250ms;

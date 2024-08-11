@@ -1,8 +1,10 @@
 {
   "name": "@uwu/shelter-defs",
-  "version": "1.4.0",
-  "author": "shelter team (Cain Atkinson)",
+  "version": "1.4.1",
+  "description": "Type definitions for shelter",
+  "author": "uwu.network",
   "license": "CC-0-1.0",
+  "homepage": "https://shelter.uwu.network/",
   "repository": "github:uwu/shelter",
   "types": "./dist/shelter-defs/rootdefs.d.ts",
   "scripts": {
