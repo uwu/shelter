@@ -1,15 +1,15 @@
-import { Component, JSX, splitProps } from "solid-js";
+import { type Component, type JSX, splitProps } from "solid-js";
 import { css, classes } from "./header.tsx.scss";
 import { Dynamic } from "solid-js/web";
 import { ensureInternalStyle } from "./internalstyles";
 
-export const HeaderTags: Record<string, string> = {
+export const HeaderTags = {
   H1: classes.h1,
   H2: classes.h2,
   H3: classes.h3,
   H4: classes.h4,
   H5: classes.h5,
-};
+} satisfies Record<string, string>;
 
 type HeaderProps = {
   tag: string;
