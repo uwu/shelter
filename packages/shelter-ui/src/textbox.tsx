@@ -1,23 +1,47 @@
-import { Component, createEffect } from "solid-js";
+import { type Component, createEffect, type JSX, mergeProps, splitProps } from "solid-js";
 import { css, classes } from "./textbox.tsx.scss";
 import { focusring } from "./focusring";
 import { ensureInternalStyle } from "./internalstyles";
 false && focusring;
 
-export const TextBox: Component<{
+type TextBoxProps = {
   value?: string;
-  placeholder?: string;
-  maxLength?: number;
-  id?: string;
-  "aria-label"?: string;
   onInput?(v: string): void;
-}> = (props) => {
+
+  /**
+   * Backwards compatibility alias for aria-labelledby
+   * @deprecated
+   */
+  "aria-label"?: string;
+  /**
+   * Backwards compatibility alias for maxlength
+   * @deprecated
+   */
+  maxLength?: number;
+};
+export const TextBox: Component<
+  TextBoxProps &
+    Omit<JSX.InputHTMLAttributes<HTMLInputElement>, keyof TextBoxProps | "type" | "class" | "classList" | "ref">
+> = (rawProps) => {
   ensureInternalStyle(css);
+
+  const [local, other] = splitProps(
+    mergeProps(
+      {
+        maxlength: rawProps.maxLength ?? 999,
+        "aria-labelledby": rawProps["aria-label"],
+      },
+      rawProps,
+    ),
+    ["value", "onInput", "aria-label", "maxLength"],
+  );
 
   let r: HTMLInputElement;
   createEffect(() => {
     // only set value if it changed, to avoid unnecessary resets of scroll position from doing value = value
-    if (props.value !== r?.value && r) r.value = props.value;
+    if (r && local.value !== r.value) {
+      r.value = local.value;
+    }
   });
 
   return (
@@ -26,32 +50,68 @@ export const TextBox: Component<{
       class={classes.tbox}
       type="text"
       ref={r}
-      placeholder={props.placeholder}
-      maxlength={props.maxLength ?? 999}
-      id={props.id}
-      aria-labelledby={props["aria-label"]}
-      onInput={(e) => props.onInput((e.target as HTMLInputElement).value)}
+      onInput={(e) => local.onInput((e.target as HTMLInputElement).value)}
+      {...other}
     />
   );
 };
 
-export const TextArea: Component<{
+type TextAreaProps = {
   value?: string;
-  placeholder?: string;
-  id?: string;
-  "aria-label"?: string;
   onInput?(v: string): void;
-  width?: string;
-  height?: string;
+
+  /**
+   * Allow resizing horizontally
+   */
   "resize-x"?: boolean;
+
+  /**
+   * Allow resizing vertically
+   */
   "resize-y"?: boolean;
+
+  /**
+   * Monospace font
+   */
   mono?: boolean;
-}> = (props) => {
+
+  /**
+   * Backwards compatibility alias for aria-labelledby
+   * @deprecated
+   */
+  "aria-label"?: string;
+  /**
+   * Unused
+   * @deprecated
+   */
+  width?: string;
+  /**
+   * Unused
+   * @deprecated
+   */
+  height?: string;
+};
+export const TextArea: Component<
+  TextAreaProps &
+    Omit<JSX.TextareaHTMLAttributes<HTMLTextAreaElement>, keyof TextAreaProps | "ref" | "class" | "classList">
+> = (rawProps) => {
   ensureInternalStyle(css);
+
+  const [local, other] = splitProps(
+    mergeProps(
+      {
+        "aria-labelledby": rawProps["aria-label"],
+      },
+      rawProps,
+    ),
+    ["value", "resize-x", "resize-y", "mono", "onInput"],
+  );
 
   let r: HTMLTextAreaElement;
   createEffect(() => {
-    if (props.value !== r?.value && r) r.value = props.value;
+    if (local.value !== r?.value && r) {
+      r.value = local.value;
+    }
   });
 
   return (
@@ -59,15 +119,14 @@ export const TextArea: Component<{
       use:focusring
       classList={{
         [classes.tarea]: true,
-        [classes.rx]: props["resize-x"],
-        [classes.ry]: props["resize-y"],
-        [classes.mono]: props.mono,
+        [classes.rx]: local["resize-x"],
+        [classes.ry]: local["resize-y"],
+        [classes.mono]: local.mono,
       }}
       ref={r}
-      placeholder={props.placeholder}
-      id={props.id}
-      aria-labelledby={props["aria-label"]}
-      onInput={(e) => props.onInput((e.target as HTMLTextAreaElement).value)}
+      // TODO: e.currentTarget?
+      onInput={(e) => local.onInput((e.target as HTMLTextAreaElement).value)}
+      {...other}
     />
   );
 };
