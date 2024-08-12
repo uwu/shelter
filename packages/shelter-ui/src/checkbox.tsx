@@ -34,9 +34,11 @@ type CheckboxItemProps = {
   mt?: boolean;
   tooltip?: JSX.Element;
 };
-export const CheckboxItem: NativeExtendingComponent<CheckboxItemProps, JSX.InputHTMLAttributes<HTMLInputElement>> = (
-  rawProps,
-) => {
+export const CheckboxItem: NativeExtendingComponent<
+  CheckboxItemProps,
+  JSX.InputHTMLAttributes<HTMLInputElement>,
+  "type"
+> = (rawProps) => {
   const [local, checkboxProps] = splitProps(rawProps, ["onChange", "mt", "id", "tooltip", "children"]);
 
   ensureInternalStyle(css);
@@ -51,7 +53,7 @@ export const CheckboxItem: NativeExtendingComponent<CheckboxItemProps, JSX.Input
     >
       <div class={classes.checkbox}>
         <CheckIcon state={checkboxProps.checked} />
-        <input use:focusring use:tooltip={local.tooltip} id={id} {...checkboxProps} />
+        <input type="checkbox" use:focusring use:tooltip={local.tooltip} id={id} {...checkboxProps} />
       </div>
       <Show when={local.children} keyed={false}>
         {/* TODO: make onclick work here */}
