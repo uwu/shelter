@@ -57,7 +57,7 @@ export function makeRoot(adoptSig?: Signal<any>): SignalTreeRoot {
     sig: adoptSig ?? createSignal(),
     updateKey(newkey: string) {
       setSubs((s) => {
-        s[newkey] = this.children[newkey].acc;
+        s[newkey] = this.children[newkey].sig[0];
         return s;
       });
     },
@@ -89,7 +89,7 @@ export function makeNode(value: any, parent: SignalTreeRoot | SignalTreeNode, ad
       sig: adoptSig ?? createSignal(),
       updateKey(newkey: string) {
         setSubs((s) => {
-          s[newkey] = this.children[newkey].acc;
+          s[newkey] = this.children[newkey].sig[0];
           return s;
         });
       },
@@ -180,7 +180,12 @@ export function set(tree: SignalTreeNode | SignalTreeRoot, path: string[], value
       case "object":
       case "root":
         const childNode = tree.children[key];
-        if (childNode.type !== "object") {
+
+        if (childNode === undefined) {
+          // brand new node
+          tree.children[key] = makeNode(value, tree);
+          tree.updateKey(key);
+        } else if (childNode.type !== "object") {
           if (typeofValue === "object") {
             // convert value node to object node
             tree.children[key] = makeNode(value, tree, childNode.sig);

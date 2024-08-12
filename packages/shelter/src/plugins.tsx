@@ -34,14 +34,16 @@ function createStorage(pluginId: string): [Record<string, any>, () => void] {
   if (!isInited(pluginStorages))
     throw new Error("to keep data persistent, plugin storages must not be created until connected to IDB");
 
-  const data = createMutable((pluginStorages[pluginId] ?? {}) as Record<string, any>);
+  //const data = createMutable((pluginStorages[pluginId] ?? {}) as Record<string, any>);
+  const data = (pluginStorages[pluginId] ??= {});
 
   const flush = () => {
-    pluginStorages[pluginId] = { ...data };
+    //pluginStorages[pluginId] = { ...data };
+    console.warn("ignored flush");
   };
 
   return [
-    new Proxy(data, {
+    /*new Proxy(data, {
       set(t, p, v, r) {
         queueMicrotask(flush);
         return Reflect.set(t, p, v, r);
@@ -50,7 +52,8 @@ function createStorage(pluginId: string): [Record<string, any>, () => void] {
         queueMicrotask(flush);
         return Reflect.deleteProperty(t, p);
       },
-    }),
+    })*/
+    data,
     flush,
   ];
 }

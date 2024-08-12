@@ -187,7 +187,6 @@ importers:
   packages/shelter-storage:
     dependencies:
       solid-js:
-      solid-js:
         specifier: 1.6.16
         version: 1.6.16
 

@@ -61,12 +61,10 @@ export const idbStore = <T = any>(name: string) => {
       // etc
       if (typeof p === "symbol") throw new Error("cannot index idb store with a symbol");
 
-      return getNode(tree, [...(path as string[]), p]).sig[0]();
+      return getNode(tree, [...(path as string[]), p])?.sig[0]();
     },
 
     set(path, p, v) {
-      //debugger;
-
       if (typeof p === "symbol") throw new Error("cannot index idb store with a symbol");
 
       const resolvedPath = [...(path as string[]), p];
