@@ -68,5 +68,7 @@ export const Space: NativeExtendingComponent<SpaceProps, JSX.HTMLAttributes<HTML
       display: "inline",
       ...props.style,
     }}
-  />
+  >
+    {" "}
+  </pre>
 );
