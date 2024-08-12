@@ -66,7 +66,7 @@ export function keys(store: DbStore) {
 export function entries(store: DbStore) {
   return store("readonly", (st) =>
     Promise.all([promisifyIdbReq(st.getAllKeys()), promisifyIdbReq(st.getAll())]).then(([k, v]) =>
-      k.map((key, i) => [key, v[i]]),
+      k.map((key, i) => [key, v[i]] as const),
     ),
   );
 }

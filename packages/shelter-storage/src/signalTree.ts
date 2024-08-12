@@ -9,6 +9,7 @@ export type SignalTreeRoot = {
   type: "root";
   // when called by a child node, tells the parent to update its listen on a given child key
   updateKey(newkey: string): void;
+  rmKey(oldkey: string): void; // like above but removes a key
 };
 
 export type SignalTreeNode = {
@@ -25,6 +26,7 @@ export type SignalTreeNode = {
       type: "object";
       children: Record<string, SignalTreeNode>;
       updateKey(newkey: string): void; // see tree root
+      rmKey(oldkey: string): void;
     }
 );
 
@@ -59,6 +61,12 @@ export function makeRoot(adoptSig?: Signal<any>): SignalTreeRoot {
         return s;
       });
     },
+    rmKey(oldkey: string) {
+      setSubs((s) => {
+        delete s[oldkey];
+        return s;
+      });
+    },
   };
 
   createEffect(() => {
@@ -82,6 +90,12 @@ export function makeNode(value: any, parent: SignalTreeRoot | SignalTreeNode, ad
       updateKey(newkey: string) {
         setSubs((s) => {
           s[newkey] = this.children[newkey].acc;
+          return s;
+        });
+      },
+      rmKey(oldkey: string) {
+        setSubs((s) => {
+          delete s[oldkey];
           return s;
         });
       },
@@ -198,6 +212,74 @@ export function set(tree: SignalTreeNode | SignalTreeRoot, path: string[], value
       case "object":
       case "root":
         return set(tree.children[path[0]], path.slice(1), value);
+
+      default:
+        return false;
+    }
+  }
+}
+
+export function delKey(tree: SignalTreeNode | SignalTreeRoot, path: string[]): boolean {
+  if (path.length === 0) {
+    // :(
+    switch (tree.type) {
+      case "root":
+        return false;
+
+      default:
+        // slow, but this should very rarely be hit anyway
+        // @ts-expect-error all parents are object or root
+        const tpc = tree.parent.children;
+        for (const k in tpc) {
+          if (tree === tpc[k]) {
+            return delKey(tree.parent, [k]);
+          }
+        }
+        return false;
+    }
+  } else if (path.length === 1) {
+    // :)
+    const key = path[0];
+    switch (tree.type) {
+      case "root":
+      case "object":
+        delete tree.children[key];
+        tree.rmKey(key);
+        return true;
+
+      default:
+        return false;
+    }
+  } else {
+    // recurse
+    switch (tree.type) {
+      case "root":
+      case "object":
+        return delKey(tree.children[path[0]], path.slice(1));
+
+      default:
+        return false;
+    }
+  }
+}
+
+export function has(tree: SignalTreeNode | SignalTreeRoot, path: string[]): boolean {
+  if (path.length === 0) return false;
+
+  if (path.length === 1) {
+    switch (tree.type) {
+      case "root":
+      case "object":
+        return path[0] in tree.children;
+
+      default:
+        return path[0] in untrack(tree.sig[0]);
+    }
+  } else {
+    switch (tree.type) {
+      case "root":
+      case "object":
+        return has(tree.children[path[0]], path.slice(1));
 
       default:
         return false;

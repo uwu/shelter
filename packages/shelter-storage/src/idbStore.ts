@@ -1,30 +1,10 @@
-import { batch, createSignal, Signal, untrack } from "solid-js";
+import { batch, untrack } from "solid-js";
 import { makeDeepProxy } from "./deep";
-import { DbStore, open } from "./idb";
-import { makeRoot, SignalTreeRoot } from "./signalTree";
-
-// idb cannot directly store proxies so this clones them
-function cloneRec(node: unknown, seenNodes: object[] = []) {
-  switch (typeof node) {
-    case "function":
-    case "symbol":
-      console.error(`can't store a ${typeof node} in a shelter IDB store!`);
-      return undefined;
-
-    case "object":
-      if (seenNodes?.includes(node)) throw new Error("can't store a circular reference in a shelter storage!");
-
-      const newObj = Array.isArray(node) ? [] : {};
-      for (const k of Object.keys(node)) {
-        newObj[k] = cloneRec(node[k], [...seenNodes, node]);
-      }
-      return newObj;
-    default:
-      return node as undefined | boolean | number | string | bigint;
-  }
-}
+import { DbStore, entries, open, remove, set as dbSet } from "./idb";
+import { makeRoot, set, getNode, delKey, has } from "./signalTree";
 
 const symWait = Symbol();
+const symReady = Symbol();
 const symDb = Symbol();
 const symSig = Symbol();
 
@@ -32,115 +12,103 @@ export interface IdbStore<T> {
   [_: string]: T;
 
   [symWait]: (cb: () => void) => void;
+  [symReady]: boolean;
   [symDb]: DbStore; //IDBPDatabase<any>;
   [symSig]: () => Record<string, T>;
 }
-
-// ~~we have to mutex opening the db for adding new stores etc to work correctly~~
-/*let storesToAdd: string[] = [];
-let getDbPromise: Promise<IDBPDatabase<any>>;
-
-async function getDb(store: string) {
-  storesToAdd.push(store);
-
-  if (storesToAdd.length > 1) return getDbPromise;
-
-  const prom = openDB("shelter", Date.now(), {
-    upgrade(udb) {
-      for (const name of storesToAdd) if (!udb.objectStoreNames.contains(name)) udb.createObjectStore(name);
-    },
-  }).then((db) => {
-    storesToAdd = [];
-
-    return db;
-  });
-
-  return (getDbPromise = prom);
-}*/
 
 const getDb = (store: string) => open("shelter", store);
 
 export const idbStore = <T = any>(name: string) => {
   const tree = makeRoot();
-  let store: DbStore;
+  const store = getDb(name);
+  let inited = false;
   let modifiedKeys = new Set<string>();
 
   // queues callbacks for when the db loads
   const waitQueue: (() => void)[] = [];
-  const waitInit = (cb: () => void) => (store ? cb() : waitQueue.push(cb));
+  const waitInit = (cb: () => void) => void (inited ? cb() : waitQueue.push(cb));
 
-  const [mainSignal, setMainSignal] = createSignal({});
-  const updateMainSignal = () => {
-    const o = {};
-    for (const k in signals) o[k] = untrack(() => signals[k][0]());
-    setMainSignal(o);
-  };
+  // get all entries of db to setup initial state
+  entries(store).then((e) => {
+    // if a node exists but wasn't modified (get), set it from db
+    // if a node exists and was modified, (set, delete) leave it be
+    // if a node does not exist, create it from db
+    for (const [_k, v] of e) {
+      // idbvalidkey is more permissive than keyof {}
+      const k = _k as string;
 
-  getDb(name).then(async (d) => {
-    const keys = await db.getAllKeys(name);
-    await Promise.all(keys.map(async (k) => [k, await db.get(name, k)])).then((vals) => {
-      for (const [k, v] of vals) {
-        if (k in signals) {
-          if (!modifiedKeys.has(k)) signals[k][1](v);
-        } else signals[k] = createSignal(v);
+      if (k in tree.children) {
+        if (!modifiedKeys.has(k)) set(tree, [k], v);
+      } else {
+        set(tree, [k], v);
       }
-      updateMainSignal();
-    });
+    }
 
-    db = d;
+    inited = true;
     waitQueue.forEach((cb) => cb());
-    waitQueue.splice(0, waitQueue.length);
+    waitQueue.length = 0;
   });
 
   return makeDeepProxy({
     get(path, p) {
       // internal things
       if (p === symWait) return waitInit;
-      if (p === symDb) return db;
-      if (p === symSig) return mainSignal;
+      if (p === symReady) return inited;
+      if (p === symDb) return store;
+      if (p === symSig) return () => tree.sig[0]();
 
       // etc
       if (typeof p === "symbol") throw new Error("cannot index idb store with a symbol");
 
-      return (signals[p] ??= createSignal())[0]();
+      return getNode(tree, [...(path as string[]), p]).sig[0]();
     },
 
     set(path, p, v) {
-      debugger;
+      //debugger;
 
       if (typeof p === "symbol") throw new Error("cannot index idb store with a symbol");
 
-      const resolvedPath = [...path, p];
+      const resolvedPath = [...(path as string[]), p];
+      const topLevelPath = resolvedPath[0];
+      modifiedKeys.add(topLevelPath);
 
-      modifiedKeys.add(p);
+      set(tree, resolvedPath, v);
 
-      const [, setSig] = (signals[p] ??= createSignal());
-      setSig(() => v);
-      updateMainSignal();
-
-      waitInit(() => db.put(name, cloneRec(v), p));
+      waitInit(async () => {
+        const val = untrack(getNode(tree, [topLevelPath]).sig[0]);
+        await dbSet(topLevelPath, val, store);
+      });
 
       return true;
     },
 
-    deleteProperty(_, p) {
+    deleteProperty(path, p) {
       if (typeof p === "symbol") throw new Error("cannot index idb store with a symbol");
 
-      modifiedKeys.add(p);
-      delete signals[p];
-      updateMainSignal();
-      waitInit(() => db.delete(name, p));
+      const resolvedPath = [...(path as string[]), p];
+      const topLevelPath = resolvedPath[0];
+      modifiedKeys.add(topLevelPath);
+
+      delKey(tree, resolvedPath);
+      waitInit(async () => {
+        if (path.length === 0) await remove(p, store);
+        else {
+          const val = untrack(getNode(tree, [topLevelPath]).sig[0]);
+          await dbSet(topLevelPath, val, store);
+        }
+      });
 
       return true;
     },
 
-    has: (_, p) => p in signals,
+    has: (path, p) => has(tree, [...path, p] as string[]),
 
-    ownKeys: () => Object.keys(signals),
+    ownKeys: () => Object.keys(tree.children),
 
     // without this, properties are not enumerable! (object.keys wouldn't work)
-    getOwnPropertyDescriptor: (_, p) => ({
-      value: p,
+    getOwnPropertyDescriptor: (path, p) => ({
+      get: () => getNode(tree, [...path, p] as string[]).sig[0](),
       enumerable: true,
       configurable: true,
       writable: true,
@@ -151,9 +119,9 @@ export const idbStore = <T = any>(name: string) => {
 // stuff like this is necessary when you *need* to have gets return persisted values as well as newly set ones
 
 /** if the store is or is not yet connected to IDB */
-export const isInited = (store: IdbStore<unknown>) => !!store[symDb];
+export const isInited = (store: IdbStore<unknown>) => store[symReady];
 /** waits for the store to connect to IDB, then runs the callback (if connected, synchronously runs the callback now) */
-export const whenInited = (store: IdbStore<unknown>, cb: () => void) => store[symWait](cb) as void;
+export const whenInited = (store: IdbStore<unknown>, cb: () => void) => store[symWait](cb);
 /** returns a promise that resolves when the store is connected to IDB (if connected, resolves instantly) */
 export const waitInit = (store: IdbStore<unknown>) => new Promise<void>((res) => whenInited(store, res));
 
