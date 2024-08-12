@@ -1,33 +1,33 @@
-type Path = (string | symbol)[];
+export type ObjPath = (string | symbol)[];
 
 export interface DeepProxyHandler {
-  apply?(path: Path, thisArg: any, args: any[]): any;
+  apply?(path: ObjPath, thisArg: any, args: any[]): any;
 
-  construct?(path: Path, args: any[], newTarget: any): any;
+  construct?(path: ObjPath, args: any[], newTarget: any): any;
 
-  defineProperty?(path: Path, property: string | symbol, descriptor: PropertyDescriptor): boolean;
+  defineProperty?(path: ObjPath, property: string | symbol, descriptor: PropertyDescriptor): boolean;
 
-  deleteProperty?(path: Path, property: string | symbol): boolean;
+  deleteProperty?(path: ObjPath, property: string | symbol): boolean;
 
-  get?(path: Path, property: string | symbol): any;
+  get?(path: ObjPath, property: string | symbol): any;
 
-  getOwnPropertyDescriptor?(path: Path, prop: string | symbol): undefined | PropertyDescriptor;
+  getOwnPropertyDescriptor?(path: ObjPath, prop: string | symbol): undefined | PropertyDescriptor;
 
-  has?(path: Path, prop: string | symbol): boolean;
+  has?(path: ObjPath, prop: string | symbol): boolean;
 
-  isExtensible?(path: Path): boolean;
+  isExtensible?(path: ObjPath): boolean;
 
-  ownKeys?(path: Path): (string | symbol)[];
+  ownKeys?(path: ObjPath): (string | symbol)[];
 
-  preventExtensions?(path: Path): boolean;
+  preventExtensions?(path: ObjPath): boolean;
 
-  set?(path: Path, prop: string | symbol, value: any): boolean;
+  set?(path: ObjPath, prop: string | symbol, value: any): boolean;
 
-  setPrototypeof?(path: Path, prototype: object | null): boolean;
+  setPrototypeof?(path: ObjPath, prototype: object | null): boolean;
 }
 
 export function makeDeepProxy<T extends {}>(handler: DeepProxyHandler, init?: T) {
-  const makeProx = <T2>(init: T2, ctxt: Path = []) => {
+  const makeProx = <T2>(init: T2, ctxt: ObjPath = []) => {
     const deepHandler = {
       get: !handler.get
         ? undefined

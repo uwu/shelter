@@ -35,7 +35,8 @@ function createStorage(pluginId: string): [Record<string, any>, () => void] {
     throw new Error("to keep data persistent, plugin storages must not be created until connected to IDB");
 
   //const data = createMutable((pluginStorages[pluginId] ?? {}) as Record<string, any>);
-  const data = (pluginStorages[pluginId] ??= {});
+  pluginStorages[pluginId] ??= {};
+  const data = pluginStorages[pluginId];
 
   const flush = () => {
     //pluginStorages[pluginId] = { ...data };

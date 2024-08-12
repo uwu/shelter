@@ -1,10 +1,10 @@
 // A tree that stores the signals to back a store
 
 import { Accessor, createEffect, createMemo, createSignal, Setter, Signal, untrack } from "solid-js";
+import { ObjPath } from "./deep";
 
 export type SignalTreeRoot = {
   children: Record<string, SignalTreeNode>;
-  //acc: Accessor<any>;
   sig: Signal<any>;
   type: "root";
   // when called by a child node, tells the parent to update its listen on a given child key
@@ -13,9 +13,7 @@ export type SignalTreeRoot = {
 };
 
 export type SignalTreeNode = {
-  //path: string[];
   parent: SignalTreeNode | SignalTreeRoot;
-  //acc: Accessor<any>
   sig: Signal<any>;
 } & (
   | {
@@ -23,7 +21,7 @@ export type SignalTreeNode = {
       set: Setter<any>;
     }
   | {
-      type: "object";
+      type: "object" | "array";
       children: Record<string, SignalTreeNode>;
       updateKey(newkey: string): void; // see tree root
       rmKey(oldkey: string): void;
@@ -40,8 +38,8 @@ function mapValues<TIn, TOut>(value: Record<string, TIn>, mapper: (v: TIn) => TO
 }
 */
 
-const subsToObj = (subs: Record<string, Accessor<any>>) => {
-  const obj = {};
+const subsToObj = (subs: Record<string, Accessor<any>>, isArr = false) => {
+  const obj = isArr ? [] : {};
   for (const k in subs) {
     obj[k] = subs[k]();
   }
@@ -82,8 +80,8 @@ export function makeNode(value: any, parent: SignalTreeRoot | SignalTreeNode, ad
   if (type === "object") {
     const [subs, setSubs] = createSignal<Record<string, Accessor<any>>>({}, { equals: false });
 
-    const n = {
-      type,
+    const n: SignalTreeNode = {
+      type: Array.isArray(value) ? "array" : "object",
       parent,
       children: {},
       sig: adoptSig ?? createSignal(),
@@ -103,10 +101,11 @@ export function makeNode(value: any, parent: SignalTreeRoot | SignalTreeNode, ad
 
     for (const k in value) {
       n.children[k] = makeNode(value[k], n);
+      n.updateKey(k);
     }
 
     createEffect(() => {
-      n.sig[1](subsToObj(subs()));
+      n.sig[1](subsToObj(subs(), n.type === "array"));
     });
 
     return n;
@@ -118,9 +117,14 @@ export function makeNode(value: any, parent: SignalTreeRoot | SignalTreeNode, ad
 }
 
 export function getNode(tree: SignalTreeNode | SignalTreeRoot, path: string[]) {
-  for (let i = 0; i < path.length; i++)
+  if (path.length === 0) return tree;
+
+  for (let i = 0; i < path.length; i++) {
+    if (tree === undefined) return undefined;
+
     switch (tree.type) {
       case "object":
+      case "array":
       case "root":
         if (i === path.length - 1) return tree.children[path[i]];
         else tree = tree.children[path[i]];
@@ -129,6 +133,31 @@ export function getNode(tree: SignalTreeNode | SignalTreeRoot, path: string[]) {
       default:
         throw new Error(`cannot index type ${tree.type} with key - this should NOT happen EVER`);
     }
+  }
+}
+
+export function getValue(tree: SignalTreeNode | SignalTreeRoot, path: ObjPath) {
+  if (path.length === 0) return tree;
+
+  switch (tree.type) {
+    case "object":
+    case "array":
+    case "root":
+      if (path[0] in tree.children && typeof path[0] === "string") {
+        if (path.length === 1) return tree.children[path[0]].sig[0]();
+        else return getValue(tree.children[path[0]], path.slice(1));
+      } else if (path.length === 1 && tree.type === "array" && path[0] in Array.prototype)
+        return Array.prototype[path[0]];
+      else return undefined;
+
+    default:
+      let val = tree.sig[0]();
+      while (path.length > 0) {
+        val = val[path[0]];
+        path.shift();
+      }
+      return val;
+  }
 }
 
 /*function calcValueOfUnreactive(tree: SignalTreeNode | SignalTreeRoot) {
@@ -178,6 +207,7 @@ export function set(tree: SignalTreeNode | SignalTreeRoot, path: string[], value
 
     switch (tree.type) {
       case "object":
+      case "array":
       case "root":
         const childNode = tree.children[key];
 
@@ -185,7 +215,7 @@ export function set(tree: SignalTreeNode | SignalTreeRoot, path: string[], value
           // brand new node
           tree.children[key] = makeNode(value, tree);
           tree.updateKey(key);
-        } else if (childNode.type !== "object") {
+        } else if (childNode.type !== "object" && childNode.type !== "array") {
           if (typeofValue === "object") {
             // convert value node to object node
             tree.children[key] = makeNode(value, tree, childNode.sig);
@@ -193,6 +223,7 @@ export function set(tree: SignalTreeNode | SignalTreeRoot, path: string[], value
           } else {
             // fast path: value -> value
             childNode.type = typeofValue;
+            // @ts-expect-error what
             childNode.set(() => value);
           }
         } else {
@@ -215,6 +246,7 @@ export function set(tree: SignalTreeNode | SignalTreeRoot, path: string[], value
     // set something far down the tree - most common case but we just recurse
     switch (tree.type) {
       case "object":
+      case "array":
       case "root":
         return set(tree.children[path[0]], path.slice(1), value);
 
@@ -247,6 +279,7 @@ export function delKey(tree: SignalTreeNode | SignalTreeRoot, path: string[]): b
     const key = path[0];
     switch (tree.type) {
       case "root":
+      case "array":
       case "object":
         delete tree.children[key];
         tree.rmKey(key);
@@ -259,6 +292,7 @@ export function delKey(tree: SignalTreeNode | SignalTreeRoot, path: string[]): b
     // recurse
     switch (tree.type) {
       case "root":
+      case "array":
       case "object":
         return delKey(tree.children[path[0]], path.slice(1));
 
@@ -274,6 +308,7 @@ export function has(tree: SignalTreeNode | SignalTreeRoot, path: string[]): bool
   if (path.length === 1) {
     switch (tree.type) {
       case "root":
+      case "array":
       case "object":
         return path[0] in tree.children;
 
@@ -283,6 +318,7 @@ export function has(tree: SignalTreeNode | SignalTreeRoot, path: string[]): bool
   } else {
     switch (tree.type) {
       case "root":
+      case "array":
       case "object":
         return has(tree.children[path[0]], path.slice(1));
 

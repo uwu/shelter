@@ -1,7 +1,7 @@
 import { batch, untrack } from "solid-js";
 import { makeDeepProxy } from "./deep";
 import { DbStore, entries, open, remove, set as dbSet } from "./idb";
-import { makeRoot, set, getNode, delKey, has } from "./signalTree";
+import { delKey, getNode, getValue, has, makeRoot, set } from "./signalTree";
 
 const symWait = Symbol();
 const symReady = Symbol();
@@ -59,9 +59,10 @@ export const idbStore = <T = any>(name: string) => {
       if (p === symSig) return () => tree.sig[0]();
 
       // etc
-      if (typeof p === "symbol") throw new Error("cannot index idb store with a symbol");
+      //if (typeof p === "symbol") throw new Error("cannot index idb store with a symbol");
 
-      return getNode(tree, [...(path as string[]), p])?.sig[0]();
+      //return getNode(tree, [...(path as string[]), p])?.sig[0]();
+      return getValue(tree, [...(path as string[]), p]);
     },
 
     set(path, p, v) {
@@ -102,11 +103,16 @@ export const idbStore = <T = any>(name: string) => {
 
     has: (path, p) => has(tree, [...path, p] as string[]),
 
-    ownKeys: () => Object.keys(tree.children),
+    ownKeys(path) {
+      const node = getNode(tree, path as string[]);
+      return Object.keys(
+        node.type === "object" || node.type === "root" || node.type === "array" ? node.children : untrack(node.sig[0]),
+      );
+    },
 
     // without this, properties are not enumerable! (object.keys wouldn't work)
     getOwnPropertyDescriptor: (path, p) => ({
-      get: () => getNode(tree, [...path, p] as string[]).sig[0](),
+      value: null, // this should never be directly accessed, `get` should be used.
       enumerable: true,
       configurable: true,
       writable: true,
