@@ -144,6 +144,7 @@ export const Switch: NativeExtendingComponent<SwitchProps, JSX.InputHTMLAttribut
       <Slider state={checked()} />
       {/* the actual input: useful for accessibility etc */}
       <input
+        type="checkbox"
         use:focusring={12}
         use:tooltip={local.tooltip}
         onchange={() => local.onChange?.(!checked())}
