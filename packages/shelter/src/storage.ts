@@ -4,7 +4,7 @@ import { createSignal } from "solid-js";
 export * from "@uwu/shelter-storage";
 
 export const dbStore = idbStore("dbstore");
-export const _dbStore = dbStore;
+//export const _dbStore = dbStore;
 
 /** wraps a solid mutable to provide a global signal */
 export const solidMutWithSignal = <T extends object = any>(store: T) => {
