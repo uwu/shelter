@@ -38,12 +38,11 @@ function mapValues<TIn, TOut>(value: Record<string, TIn>, mapper: (v: TIn) => TO
 }
 */
 
-const subsToObj = (subs: Record<string, Accessor<any>>, isArr = false) => {
-  const obj = isArr ? [] : {};
+const subsToObj = (target: object | any[], subs: Record<string, Accessor<any>>) => {
   for (const k in subs) {
-    obj[k] = subs[k]();
+    target[k] = subs[k]();
   }
-  return obj;
+  return target;
 };
 
 export function makeRoot(adoptSig?: Signal<any>): SignalTreeRoot {
@@ -52,7 +51,7 @@ export function makeRoot(adoptSig?: Signal<any>): SignalTreeRoot {
   const root: SignalTreeRoot = {
     type: "root" as const,
     children: {},
-    sig: adoptSig ?? createSignal(),
+    sig: adoptSig ?? createSignal({}, { equals: false }),
     updateKey(newkey: string) {
       setSubs((s) => {
         s[newkey] = this.children[newkey].sig[0];
@@ -67,8 +66,11 @@ export function makeRoot(adoptSig?: Signal<any>): SignalTreeRoot {
     },
   };
 
+  // possible with an adopted signal
+  if (Object.keys(untrack(root.sig[0])).length !== 0) root.sig[1]({});
+
   createEffect(() => {
-    root.sig[1](subsToObj(subs()));
+    root.sig[1]((o) => subsToObj(o, subs()));
   });
 
   return root;
@@ -80,11 +82,12 @@ export function makeNode(value: any, parent: SignalTreeRoot | SignalTreeNode, ad
   if (type === "object") {
     const [subs, setSubs] = createSignal<Record<string, Accessor<any>>>({}, { equals: false });
 
+    const consIsArr = Array.isArray(value);
     const n: SignalTreeNode = {
-      type: Array.isArray(value) ? "array" : "object",
+      type: consIsArr ? "array" : "object",
       parent,
       children: {},
-      sig: adoptSig ?? createSignal(),
+      sig: adoptSig ?? createSignal(consIsArr ? [] : {}, { equals: false }),
       updateKey(newkey: string) {
         setSubs((s) => {
           s[newkey] = this.children[newkey].sig[0];
@@ -99,18 +102,22 @@ export function makeNode(value: any, parent: SignalTreeRoot | SignalTreeNode, ad
       },
     };
 
+    // possible with an adopted signal
+    if (Object.keys(untrack(n.sig[0])).length !== 0) n.sig[1](consIsArr ? [] : {});
+
     for (const k in value) {
       n.children[k] = makeNode(value[k], n);
       n.updateKey(k);
     }
 
     createEffect(() => {
-      n.sig[1](subsToObj(subs(), n.type === "array"));
+      n.sig[1]((o) => subsToObj(o, subs()));
     });
 
     return n;
   } else {
-    adoptSig ??= createSignal();
+    // needs to be { equals: false } in case an object later adopts this signal, as the object impl relies on that
+    adoptSig ??= createSignal(undefined, { equals: false });
     adoptSig[1](() => value);
     return { type, parent, sig: adoptSig, set: adoptSig[1] };
   }
@@ -147,7 +154,8 @@ export function getValue(tree: SignalTreeNode | SignalTreeRoot, path: ObjPath) {
         if (path.length === 1) return tree.children[path[0]].sig[0]();
         else return getValue(tree.children[path[0]], path.slice(1));
       } else if (path.length === 1 && tree.type === "array" && path[0] in Array.prototype)
-        return Array.prototype[path[0]];
+        //return Array.prototype[path[0]];
+        return tree.sig[0]()[path[0]];
       else return undefined;
 
     default:

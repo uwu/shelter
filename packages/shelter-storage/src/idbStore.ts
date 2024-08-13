@@ -105,18 +105,28 @@ export const idbStore = <T = any>(name: string) => {
 
     ownKeys(path) {
       const node = getNode(tree, path as string[]);
-      return Object.keys(
-        node.type === "object" || node.type === "root" || node.type === "array" ? node.children : untrack(node.sig[0]),
+      return Reflect.ownKeys(
+        /*node.type === "object" || node.type === "root" /!*|| node.type === "array"*!/ ? node.children :*/ untrack(
+          node.sig[0],
+        ),
       );
     },
 
     // without this, properties are not enumerable! (object.keys wouldn't work)
-    getOwnPropertyDescriptor: (path, p) => ({
-      value: null, // this should never be directly accessed, `get` should be used.
-      enumerable: true,
-      configurable: true,
-      writable: true,
-    }),
+    getOwnPropertyDescriptor: (path, p) => {
+      const parentNode = getNode(tree, path as string[]);
+      if (!parentNode) return undefined;
+
+      /*if ((parentNode.type === "object" || parentNode.type === "root") && p in parentNode.children)
+        return ({
+          value: null, // this should never be directly accessed, `get` should be used.
+          enumerable: true,
+          configurable: true,
+          writable: true,
+        });
+      else*/
+      return Reflect.getOwnPropertyDescriptor(untrack(parentNode.sig[0]), p);
+    },
   }) as IdbStore<T>;
 };
 
