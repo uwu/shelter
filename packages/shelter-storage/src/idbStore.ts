@@ -1,6 +1,6 @@
 import { batch, untrack } from "solid-js";
 import { makeDeepProxy } from "./deep";
-import { DbStore, entries, open, remove, set as dbSet } from "./idb";
+import { DbStore, entries, keys, open, remove, set as dbSet } from "./idb";
 import { delKey, getNode, getValue, has, makeRoot, set } from "./signalTree";
 
 const symWait = Symbol();
@@ -17,11 +17,23 @@ export interface IdbStore<T> {
   [symSig]: () => Record<string, T>;
 }
 
-const getDb = (store: string) => open("shelter", store);
+let getdbprom: Promise<unknown>;
+
+// todo: can't bootstrap stores. oops.
+const getDb = async (store: string) => {
+  if (!getdbprom) {
+    const db = open("shelter", store);
+    getdbprom = keys(db); // wait for it to connect
+    await getdbprom;
+  } else {
+    await getdbprom;
+    return open("shelter", store);
+  }
+};
 
 export const idbStore = <T = any>(name: string) => {
   const tree = makeRoot();
-  const store = getDb(name);
+  let store: DbStore;
   let inited = false;
   let modifiedKeys = new Set<string>();
 
@@ -30,25 +42,30 @@ export const idbStore = <T = any>(name: string) => {
   const waitInit = (cb: () => void) => void (inited ? cb() : waitQueue.push(cb));
 
   // get all entries of db to setup initial state
-  entries(store).then((e) => {
-    // if a node exists but wasn't modified (get), set it from db
-    // if a node exists and was modified, (set, delete) leave it be
-    // if a node does not exist, create it from db
-    for (const [_k, v] of e) {
-      // idbvalidkey is more permissive than keyof {}
-      const k = _k as string;
+  getDb(name)
+    .then((s) => {
+      store = s;
+      return entries(s);
+    })
+    .then((e) => {
+      // if a node exists but wasn't modified (get), set it from db
+      // if a node exists and was modified, (set, delete) leave it be
+      // if a node does not exist, create it from db
+      for (const [_k, v] of e) {
+        // idbvalidkey is more permissive than keyof {}
+        const k = _k as string;
 
-      if (k in tree.children) {
-        if (!modifiedKeys.has(k)) set(tree, [k], v);
-      } else {
-        set(tree, [k], v);
+        if (k in tree.children) {
+          if (!modifiedKeys.has(k)) set(tree, [k], v);
+        } else {
+          set(tree, [k], v);
+        }
       }
-    }
 
-    inited = true;
-    waitQueue.forEach((cb) => cb());
-    waitQueue.length = 0;
-  });
+      inited = true;
+      waitQueue.forEach((cb) => cb());
+      waitQueue.length = 0;
+    });
 
   return makeDeepProxy({
     get(path, p) {

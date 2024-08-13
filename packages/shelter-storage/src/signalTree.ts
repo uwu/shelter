@@ -103,7 +103,8 @@ export function makeNode(value: any, parent: SignalTreeRoot | SignalTreeNode, ad
     };
 
     // possible with an adopted signal
-    if (Object.keys(untrack(n.sig[0])).length !== 0) n.sig[1](consIsArr ? [] : {});
+    const _gotten = untrack(n.sig[0]);
+    if (typeof _gotten !== "object" || Object.keys(_gotten).length !== 0) n.sig[1](consIsArr ? [] : {});
 
     for (const k in value) {
       n.children[k] = makeNode(value[k], n);

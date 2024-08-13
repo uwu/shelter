@@ -153,11 +153,13 @@ async function updatePlugin(pluginId: string) {
 
       const newPluginText = await (await fetch(new URL("plugin.js", data.src), { cache: "no-store" })).text();
 
-      internalData[pluginId] = {
+      internalData[pluginId].js = newPluginText;
+      internalData[pluginId].manifest = newPluginManifest;
+      /*internalData[pluginId] = {
         ...data,
         js: newPluginText,
         manifest: newPluginManifest,
-      };
+      };*/
 
       return true;
     } catch (e) {
