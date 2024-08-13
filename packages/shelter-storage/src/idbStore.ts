@@ -20,16 +20,7 @@ export interface IdbStore<T> {
 let getdbprom: Promise<unknown>;
 
 // todo: can't bootstrap stores. oops.
-const getDb = async (store: string) => {
-  if (!getdbprom) {
-    const db = open("shelter", store);
-    getdbprom = keys(db); // wait for it to connect
-    await getdbprom;
-  } else {
-    await getdbprom;
-    return open("shelter", store);
-  }
-};
+const getDb = async (store: string) => open(store);
 
 export const idbStore = <T = any>(name: string) => {
   const tree = makeRoot();

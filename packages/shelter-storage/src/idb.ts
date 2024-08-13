@@ -27,12 +27,39 @@ function promisifyIdbReq<T>(request: IDBRequest<T> | IDBTransaction): Promise<T>
 
 export type DbStore = <T>(txm: IDBTransactionMode, cb: (s: IDBObjectStore) => T | PromiseLike<T>) => Promise<T>;
 
-export function open(db: string, store: string): DbStore {
-  const req = indexedDB.open(db);
-  req.onupgradeneeded = () => req.result.createObjectStore(store);
-  const prom = promisifyIdbReq(req);
+// all DBs must have their open()s start before the db actually opens
+let storesToAdd: string[] = [];
+let openProm: Promise<IDBDatabase>;
+export async function open(store: string): Promise<DbStore> {
+  const makeDbStore =
+    (db: Promise<IDBDatabase>): DbStore =>
+    (txm, cb) =>
+      db.then((d) => cb(d.transaction(store, txm).objectStore(store)));
 
-  return (txm, cb) => prom.then((db) => cb(db.transaction(store, txm).objectStore(store)));
+  storesToAdd.push(store);
+
+  if (storesToAdd.length <= 1) {
+    let res, rej;
+    openProm = new Promise<IDBDatabase>((r, j) => ((res = r), (rej = j)));
+
+    // check if we *need* to upgrade:
+    const req1 = indexedDB.open("shelter");
+    const sns = (await promisifyIdbReq(req1)).objectStoreNames;
+    let needUpgrade = false;
+    for (const store of storesToAdd) if (!sns.contains(store)) needUpgrade = true;
+
+    //if (needUpgrade)
+    const req = indexedDB.open("shelter", Date.now());
+    req.onupgradeneeded = () => {
+      for (const s of storesToAdd) if (!req.result.objectStoreNames.contains(s)) req.result.createObjectStore(s);
+
+      storesToAdd = [];
+    };
+    openProm = promisifyIdbReq(req);
+  }
+
+  await openProm;
+  return makeDbStore(promisifyIdbReq(indexedDB.open("shelter")));
 }
 
 export function get<T>(key: IDBValidKey, store: DbStore): Promise<T> {
