@@ -397,6 +397,7 @@ Header is, well, a header. It has a few styles, chosen by the `tag` prop.
 - `HeaderTags.H3`: A smaller again header - like "Gifts you purchased" in settings.
 - `HeaderTags.H4`: Smaller again, allcaps text.
 - `HeaderTags.H5`: Small, allcaps text, default - like "sms backup authentication" in settings.
+- `HeaderTags.EYEBROW`: A descriptive keyword or phrase placed above the main headline.
 
 ### `<Divider />`
 

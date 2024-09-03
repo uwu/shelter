@@ -10,11 +10,13 @@ export const HeaderTags = {
   H3: classes.h3,
   H4: classes.h4,
   H5: classes.h5,
+  EYEBROW: classes.eyebrow,
 } satisfies Record<string, string>;
 
 type HeaderProps = {
   tag: string;
 };
+
 export const Header: NativeExtendingComponent<HeaderProps, JSX.HTMLAttributes<HTMLHeadingElement>> = (props) => {
   ensureInternalStyle(css);
 
@@ -22,7 +24,7 @@ export const Header: NativeExtendingComponent<HeaderProps, JSX.HTMLAttributes<HT
 
   return (
     <Dynamic
-      component={local.tag === HeaderTags.H5 ? "h3" : "h2"}
+      component={[HeaderTags.H5, HeaderTags.EYEBROW].includes(local.tag) ? "h3" : "h2"}
       class={`${local.class ?? ""} ${local.tag ?? HeaderTags.H5} ${classes.h}`}
       {...headerProps}
     />

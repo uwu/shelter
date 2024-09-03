@@ -36,10 +36,16 @@
   font-size: 16px;
 }
 
-.h5 {
+.h5, .eyebrow {
   font-size: 12px;
   line-height: 16px;
   color: var(--header-secondary);
+}
+
+.eyebrow {
+  font-weight: 700;
+  letter-spacing: .02em;
+  margin-bottom: 8px;
 }
 
 .h4,
@@ -49,6 +55,7 @@
 
 .h2,
 .h4,
-.h5 {
+.h5,
+.eyebrow {
   text-transform: uppercase;
 }
