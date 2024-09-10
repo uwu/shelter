@@ -29,7 +29,7 @@ const unpatch = after("bind", Function.prototype, function (args, res) {
   unpatch();
   return function (...args) {
     // I don't know why, but for the first call `this` is Window
-    if (this !== window) {
+    if (this && this !== window) {
       this.get = res;
       discordHttp = this;
       Object.assign(api, discordHttp);
