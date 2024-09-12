@@ -9,8 +9,9 @@ $RADIUS: 4px;
   max-height: 100%;
   background: none;
   border: none;
-  display: grid;
+  display: flex;
   align-items: center;
+  justify-content: center;
   padding: 0;
   margin: 0;
 
@@ -23,10 +24,6 @@ $RADIUS: 4px;
   &.active::backdrop {
     opacity: 1;
   }
-
-  & > * {
-    grid-area: 1 / 1 / 2 / 2;
-  }
 }
 
 .backdrop {
@@ -36,6 +33,8 @@ $RADIUS: 4px;
 }
 
 .wrap {
+  position: absolute;
+  z-index: 1;
   transition-property: opacity, transform;
   transition-duration: 250ms;
 
