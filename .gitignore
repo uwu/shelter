@@ -251,3 +251,6 @@ _metadata
 
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
+
+# stupid arch thing
+injectors/desktop/app/app

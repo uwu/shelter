@@ -1,0 +1,16 @@
+{
+  "name": "@uwu/shelter-storage",
+  "description": "deep proxy & IDB-based storage library for shelter",
+  "version": "1.0.0",
+  "author": "uwu.network",
+  "repository": "github:uwu/shelter",
+  "scripts": {
+    "prepare": "tsc"
+  },
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "dependencies": {
+    "solid-js": "1.6.16"
+  }
+}

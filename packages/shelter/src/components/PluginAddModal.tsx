@@ -28,7 +28,7 @@ export default (props: { close(): void }) => {
     if (!local()) return rSrc().split("://")[1];
 
     let id = lName().toLowerCase().replaceAll(/[^A-Za-z0-9-_.]/g, "-");
-    while (installedPlugins[id]) id += "_";
+    while (id in installedPlugins()) id += "_";
 
     return id;
   };
@@ -42,7 +42,7 @@ export default (props: { close(): void }) => {
 
     if ((!lName() || !lCode() || !lAuthor()) && local()) return;
 
-    return !installedPlugins[newId()];
+    return !(newId() in installedPlugins());
   };
 
   return (

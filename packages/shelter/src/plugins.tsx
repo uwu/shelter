@@ -1,5 +1,5 @@
-import { isInited, signalOf, solidMutWithSignal, storage, waitInit } from "./storage";
-import { Component } from "solid-js";
+import { isInited, signalOf, solidMutWithSignal, idbStore, waitInit } from "./storage";
+import { Component, createSignal, JSX } from "solid-js";
 import { createMutable } from "solid-js/store";
 import { createScopedApi, log } from "./util";
 import { ModalBody, ModalHeader, ModalRoot, openModal } from "@uwu/shelter-ui";
@@ -23,8 +23,8 @@ export type EvaledPlugin = {
   scopedDispose(): void;
 };
 
-const internalData = storage<StoredPlugin>("plugins-internal");
-const pluginStorages = storage("plugins-data");
+const internalData = idbStore<StoredPlugin>("plugins-internal");
+const pluginStorages = idbStore("plugins-data");
 const [internalLoaded, loadedPlugins] = solidMutWithSignal(createMutable({} as Record<string, EvaledPlugin>));
 
 export const installedPlugins = signalOf(internalData);
@@ -34,14 +34,17 @@ function createStorage(pluginId: string): [Record<string, any>, () => void] {
   if (!isInited(pluginStorages))
     throw new Error("to keep data persistent, plugin storages must not be created until connected to IDB");
 
-  const data = createMutable((pluginStorages[pluginId] ?? {}) as Record<string, any>);
+  //const data = createMutable((pluginStorages[pluginId] ?? {}) as Record<string, any>);
+  pluginStorages[pluginId] ??= {};
+  const data = pluginStorages[pluginId];
 
   const flush = () => {
-    pluginStorages[pluginId] = { ...data };
+    //pluginStorages[pluginId] = { ...data };
+    console.warn("ignored flush");
   };
 
   return [
-    new Proxy(data, {
+    /*new Proxy(data, {
       set(t, p, v, r) {
         queueMicrotask(flush);
         return Reflect.set(t, p, v, r);
@@ -50,7 +53,8 @@ function createStorage(pluginId: string): [Record<string, any>, () => void] {
         queueMicrotask(flush);
         return Reflect.deleteProperty(t, p);
       },
-    }),
+    })*/
+    data,
     flush,
   ];
 }
@@ -149,11 +153,13 @@ async function updatePlugin(pluginId: string) {
 
       const newPluginText = await (await fetch(new URL("plugin.js", data.src), { cache: "no-store" })).text();
 
-      internalData[pluginId] = {
+      internalData[pluginId].js = newPluginText;
+      internalData[pluginId].manifest = newPluginManifest;
+      /*internalData[pluginId] = {
         ...data,
         js: newPluginText,
         manifest: newPluginManifest,
-      };
+      };*/
 
       return true;
     } catch (e) {
