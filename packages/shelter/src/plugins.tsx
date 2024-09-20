@@ -139,32 +139,38 @@ export function stopPlugin(pluginId: string) {
   internalData[pluginId] = { ...data, on: false };
 }
 
-async function updatePlugin(pluginId: string) {
+async function fetchUpdate(pluginId: string): Promise<false | StoredPlugin> {
   const data = internalData[pluginId];
   if (!data) throw new Error(`attempted to update a non-existent plugin: ${pluginId}`);
-  if (internalLoaded[pluginId]) throw new Error(`attempted to update a loaded plugin: ${pluginId}`);
+  if (data.local) throw new Error("cannot check for updates to a local plugin.");
+  if (!data.src) throw new Error("cannot check for updates to a plugin with no src");
 
-  if (data.src) {
-    try {
-      const newPluginManifest = await (await fetch(new URL("plugin.json", data.src), { cache: "no-store" })).json();
+  try {
+    const newPluginManifest = await (await fetch(new URL("plugin.json", data.src), { cache: "no-store" })).json();
 
-      if (data.manifest.hash !== undefined && newPluginManifest.hash === data.manifest.hash) return false;
+    if (data.manifest.hash !== undefined && newPluginManifest.hash === data.manifest.hash) return false;
 
-      const newPluginText = await (await fetch(new URL("plugin.js", data.src), { cache: "no-store" })).text();
+    const newPluginText = await (await fetch(new URL("plugin.js", data.src), { cache: "no-store" })).text();
 
-      internalData[pluginId] = {
-        ...data,
-        js: newPluginText,
-        manifest: newPluginManifest,
-      };
-
-      return true;
-    } catch (e) {
-      throw new Error(`failed to update plugin ${pluginId}: ${e}`);
-    }
+    return {
+      ...data,
+      js: newPluginText,
+      manifest: newPluginManifest,
+    };
+  } catch (e) {
+    throw new Error(`failed to check for updates for ${pluginId}: ${e}`);
   }
+}
 
-  return false;
+export async function updatePlugin(pluginId: string) {
+  const checked = await fetchUpdate(pluginId);
+
+  if (checked) {
+    editPlugin(pluginId, checked, true);
+    return true;
+  } else {
+    return false;
+  }
 }
 
 const stopAllPlugins = () => Object.keys(internalData).forEach(stopPlugin);
@@ -245,14 +251,15 @@ export function removePlugin(id: string) {
 
 export const getSettings = (id: string) => internalLoaded[id]?.settings;
 
-export function editPlugin(id: string, overwrite: StoredPlugin) {
-  if (!internalData[id]) throw new Error(`attempted to edit non-existent plugin ${id}`);
+export function editPlugin(id: string, overwrite: StoredPlugin, updating = false) {
+  if (!internalData[id])
+    throw new Error(`attempted to ${updating ? "apply update to" : "edit"} non-existent plugin ${id}`);
   const wasRunning = id in internalLoaded;
-  if (wasRunning) stopPlugin(id);
+  if (wasRunning && !updating) stopPlugin(id);
   // modify plugin
-  Object.assign(internalData[id], overwrite);
+  internalData[id] = overwrite;
   // potentially restart plugin
-  if (wasRunning) startPlugin(id);
+  if (wasRunning && !updating) startPlugin(id);
 }
 
 // maybe this should be elsewhere but w/e

@@ -1,5 +1,13 @@
 import { Component, createSignal, JSX, Show } from "solid-js";
-import { getSettings, installedPlugins, removePlugin, startPlugin, stopPlugin, StoredPlugin } from "../plugins";
+import {
+  getSettings,
+  installedPlugins,
+  removePlugin,
+  startPlugin,
+  stopPlugin,
+  StoredPlugin,
+  updatePlugin,
+} from "../plugins";
 import { devModeReservedId } from "../devmode";
 import { css, classes } from "./Plugins.tsx.scss";
 import {
@@ -21,6 +29,7 @@ import {
   TextBox,
   IconEdit,
   IconUpdate,
+  showToast,
 } from "@uwu/shelter-ui";
 import { addPluginModal, editPluginModal } from "./PluginEditModal";
 import Fuse from "fuse.js";
@@ -67,17 +76,33 @@ export const PluginCard: Component<{
           </button>
         </Show>
         {/* TODO: implement edit button */}
-        {/*<Show keyed when={!isDev() && !props.plugin.local}>
+        <Show keyed when={!isDev() && !props.plugin.local}>
           <button
             use:tooltip="Check for update"
             aria-label={`update ${props.plugin.manifest.name}`}
             use:focusring
             class={classes.btn}
-            onClick={() => console.error("TODO")}
+            onClick={() =>
+              updatePlugin(props.id).then(
+                (updated) =>
+                  showToast({
+                    title: updated
+                      ? `Updated ${props.plugin.manifest.name} successfully`
+                      : `${props.plugin.manifest.name} is already up to date`,
+                    duration: 3000,
+                  }),
+                (error) =>
+                  showToast({
+                    title: `Failed to update ${props.plugin.manifest.name}`,
+                    content: error?.message ?? error + "",
+                    duration: 3000,
+                  }),
+              )
+            }
           >
             <IconUpdate />
           </button>
-        </Show>*/}
+        </Show>
         <Show keyed when={!isDev()}>
           <button
             use:tooltip="Edit"

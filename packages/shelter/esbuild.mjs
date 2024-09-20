@@ -9,7 +9,7 @@ await build({
   bundle: true,
   outfile: "dist/shelter.js",
   sourcemap: "external",
-  minify: true,
+  minify: !process.env.DEV,
   loader: {
     ".png": "dataurl",
     ".jpg": "dataurl",

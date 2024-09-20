@@ -19,10 +19,10 @@ import {
   addRemotePlugin,
   editPlugin,
   installedPlugins,
-  loadedPlugins,
   startPlugin,
   stopPlugin,
   StoredPlugin,
+  updatePlugin,
 } from "../plugins";
 
 const PluginEditModal = (props: {
@@ -145,12 +145,19 @@ const PluginEditModal = (props: {
         onConfirm={async () => {
           try {
             if (props.editId) {
+              const wasRunning = stateInit.on;
+              if (!local() && wasRunning) {
+                stopPlugin(props.editId);
+              }
+
               // edit existing plugin
               editPlugin(props.editId, {
                 local: local(),
                 js: lCode(),
                 update: rUpdate(),
                 manifest: {
+                  ...stateInit.manifest,
+                  hash: !local() && lCode() === stateInit.js ? stateInit.manifest.hash : undefined,
                   name: lName(),
                   author: lAuthor(),
                   description: lDesc(),
@@ -158,6 +165,11 @@ const PluginEditModal = (props: {
                 on: stateInit.on,
                 src: rSrc(),
               });
+
+              // update if necessary
+              if (!local()) await updatePlugin(props.editId);
+
+              if (!local() && wasRunning) startPlugin(props.editId);
             } else if (local()) {
               // create new local plugin
               addLocalPlugin(genId(), {
@@ -200,7 +212,7 @@ export const addPluginModal = () =>
               duration: 3000,
             });
 
-          return r;
+          res(r);
         }}
         reject={(err) => {
           showToast({
@@ -227,7 +239,7 @@ export const editPluginModal = (id: string) =>
               duration: 3000,
             });
 
-          return r;
+          res(r);
         }}
         reject={(err) => {
           showToast({
