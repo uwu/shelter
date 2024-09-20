@@ -9,11 +9,11 @@ import {
   TextArea,
   TextBox,
   Space,
-  openConfirmationModal,
   openModal,
   showToast,
+  IconUpload,
 } from "@uwu/shelter-ui";
-import { createMemo, createSignal, Match, onCleanup, Show, Switch, untrack } from "solid-js";
+import { Component, createMemo, createSignal, Match, onCleanup, Show, Switch, untrack } from "solid-js";
 import {
   addLocalPlugin,
   addRemotePlugin,
@@ -24,6 +24,33 @@ import {
   StoredPlugin,
   updatePlugin,
 } from "../plugins";
+import { classes } from "./Plugins.tsx.scss";
+
+const JsUploader: Component<{ setCode: (t: string) => void }> = (props) => {
+  let inp: HTMLInputElement;
+
+  return (
+    <>
+      <input
+        ref={inp}
+        type="file"
+        style="display: none"
+        accept="text/javascript"
+        onChange={() => {
+          const f = inp.files[0];
+          if (f) {
+            const reader = new FileReader();
+            reader.readAsText(f);
+            reader.onloadend = () => props.setCode(reader.result as string);
+          }
+        }}
+      />
+      <button class={classes.btn} onClick={() => inp.click()}>
+        <IconUpload />
+      </button>
+    </>
+  );
+};
 
 const PluginEditModal = (props: {
   close(): void;
@@ -63,7 +90,7 @@ const PluginEditModal = (props: {
   const [lAuthor, setLAuthor] = createSignal(stateInit.manifest?.author ?? "");
   const [lDesc, setLDesc] = createSignal(stateInit.manifest?.description ?? "");
 
-  const genId = createMemo(() => {
+  const targetId = createMemo(() => {
     if (props.editId) return props.editId;
 
     if (!local()) return rSrc().split("://")[1];
@@ -83,8 +110,8 @@ const PluginEditModal = (props: {
 
     if ((!lName() || !lCode() || !lAuthor()) && local()) return;
 
-    if (props.editId) return genId() == props.editId;
-    else return !(genId() in untrack(installedPlugins));
+    if (props.editId) return targetId() == props.editId;
+    else return !(targetId() in untrack(installedPlugins));
   };
 
   return (
@@ -118,11 +145,15 @@ const PluginEditModal = (props: {
             <Header tag={HeaderTags.H4}>Description</Header>
             <TextBox placeholder="The plugin is very cool and helpful" value={lDesc()} onInput={setLDesc} />
             <Header tag={HeaderTags.H4}>Code</Header>
-            {/* TODO: monaco */}
-            <TextArea
-              mono
-              resize-y
-              placeholder={`{
+
+            <div class={classes.tawrap}>
+              <JsUploader setCode={setLCode} />
+              {/* TODO: monaco */}
+              <TextArea
+                mono
+                style={{ height: "150px" }}
+                resize-y
+                placeholder={`{
   onLoad() {
     const { name } = shelter.plugin.manifest;
     console.log(\`Hello from $\u200C{name}!\`);
@@ -131,9 +162,10 @@ const PluginEditModal = (props: {
     console.log("Goodbye :(");
   }
 }`}
-              value={lCode()}
-              onInput={setLCode}
-            />
+                value={lCode()}
+                onInput={setLCode}
+              />
+            </div>
           </Match>
         </Switch>
       </ModalBody>
@@ -172,7 +204,7 @@ const PluginEditModal = (props: {
               if (!local() && wasRunning) startPlugin(props.editId);
             } else if (local()) {
               // create new local plugin
-              addLocalPlugin(genId(), {
+              addLocalPlugin(targetId(), {
                 local: true,
                 js: lCode(),
                 update: rUpdate(),
@@ -186,7 +218,7 @@ const PluginEditModal = (props: {
               });
             } else {
               // create new remote plugin
-              await addRemotePlugin(genId(), rSrc(), rUpdate());
+              await addRemotePlugin(targetId(), rSrc(), rUpdate());
             }
           } catch (e) {
             return props.reject(e);
