@@ -14,7 +14,7 @@
   },
   "type": "module",
   "devDependencies": {
-    "@types/node": "^18.15.3",
+    "@types/node": "^22.5.5",
     "@types/ws": "^8.5.4",
     "typescript": "^5.0.2",
     "esbuild-plugin-solid": "^0.5.0"
