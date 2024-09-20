@@ -1,5 +1,5 @@
 {
-  "include": ["./src/*", "../../globals.d.ts"],
+  "include": ["./src/**/*", "../../globals.d.ts"],
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
@@ -10,6 +10,11 @@
 
     "outDir": "dist",
     "emitDeclarationOnly": true,
-    "strictFunctionTypes": true
+    "strictFunctionTypes": true,
+
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "composite": true
   }
 }

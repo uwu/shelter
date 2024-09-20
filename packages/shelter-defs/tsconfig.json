@@ -1,6 +1,7 @@
 {
-  "include": ["*.ts", "../*/*.d.ts", "../shelter/src/index.ts", "../shelter-ui/src/index.tsx", "../../globals.d.ts"],
+  "include": ["rootdefs.ts", "../*/*.d.ts", "../shelter/src/**/*", "../shelter-ui/src/**/*", "../../globals.d.ts"],
   "compilerOptions": {
+    "rootDir": "..",
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "node",
@@ -8,6 +9,11 @@
     "emitDeclarationOnly": true,
     "outDir": "./dist",
     "jsx": "preserve",
-    "jsxImportSource": "solid-js"
+    "jsxImportSource": "solid-js",
+
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "composite": true
   }
 }

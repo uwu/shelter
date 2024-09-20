@@ -1,8 +1,8 @@
 import { ShelterApi } from "shelter/src/windowApi";
 import { ShelterPluginApi } from "shelter/src/plugins";
 
-export { ShelterApi };
-export { ShelterPluginApi };
+export type { ShelterApi };
+export type { ShelterPluginApi };
 
 export * from "shelter/src/types";
 
