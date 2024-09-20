@@ -44,6 +44,8 @@ export const PluginCard: Component<{
 
   const isDev = () => props.id === devModeReservedId;
 
+  const ldi = props.plugin.loaderIntegration;
+
   return (
     <div class={classes.plugin}>
       <div class={classes.row}>
@@ -65,7 +67,7 @@ export const PluginCard: Component<{
             <IconCog />
           </button>
         </Show>
-        <Show keyed when={!isDev() && !props.plugin.local}>
+        <Show keyed when={!isDev() && !props.plugin.local && (!ldi || ldi.allowedActions.update)}>
           <button
             use:tooltip="Check for update"
             aria-label={`update ${props.plugin.manifest.name}`}
@@ -92,7 +94,7 @@ export const PluginCard: Component<{
             <IconUpdate />
           </button>
         </Show>
-        <Show keyed when={!isDev()}>
+        <Show keyed when={!isDev() && (!ldi || ldi.allowedActions.edit)}>
           <button
             use:tooltip="Edit"
             aria-label={`edit ${props.plugin.manifest.name}`}
@@ -103,7 +105,7 @@ export const PluginCard: Component<{
             <IconEdit />
           </button>
         </Show>
-        <Show keyed when={!isDev()}>
+        <Show keyed when={!isDev() && (!ldi || ldi.allowedActions.delete)}>
           <button
             use:tooltip="Delete"
             aria-label={`delete ${props.plugin.manifest.name}`}
@@ -124,16 +126,18 @@ export const PluginCard: Component<{
             <IconBin />
           </button>
         </Show>
-        <Switch
-          aria-label={`${on() ? "disable" : "enable"} ${props.plugin.manifest.name}`}
-          checked={on()}
-          onChange={(newVal) => {
-            if (props.plugin.on === newVal) return;
-            setOn(!on());
-            // oh no! i have to save my pretty animations! (this is utterly stupid)
-            setTimeout(() => (newVal ? startPlugin(props.id) : stopPlugin(props.id)), 226);
-          }}
-        />
+        <Show keyed when={!ldi || ldi.allowedActions.toggle}>
+          <Switch
+            aria-label={`${on() ? "disable" : "enable"} ${props.plugin.manifest.name}`}
+            checked={on()}
+            onChange={(newVal) => {
+              if (props.plugin.on === newVal) return;
+              setOn(!on());
+              // oh no! i have to save my pretty animations! (this is utterly stupid)
+              setTimeout(() => (newVal ? startPlugin(props.id) : stopPlugin(props.id)), 226);
+            }}
+          />
+        </Show>
       </div>
 
       <span class={classes.desc}>{props.plugin.manifest.description}</span>
@@ -182,7 +186,7 @@ export default (): JSX.Element => {
        * https://codesandbox.io/s/explicit-keys-4iyen?file=/Key.js
        */}
       {fuzzy(Object.entries(installedPlugins()), searchTerm())
-        .filter(([id]) => id !== devModeReservedId)
+        .filter(([id, obj]) => id !== devModeReservedId && (!obj.loaderIntegration || obj.loaderIntegration.isVisible))
         .sort(([, pluginA], [, pluginB]) => {
           const nameA = pluginA.manifest.name?.toLowerCase();
           const nameB = pluginB.manifest.name?.toLowerCase();

@@ -291,20 +291,24 @@ export function showSettingsFor(id: string) {
 
 // this is used by shelter to install plugins with loader superpowers
 export async function ensureLoaderPlugin(id: string, plugin: [string, LoaderIntegrationOpts] | StoredPlugin) {
+  // allow internalData to connect to IDB, as we need to read plugin-internals
+  await Promise.all([waitInit(internalData), waitInit(pluginStorages)]);
+
+  debugger;
   const isRemote = Array.isArray(plugin);
   const integration = isRemote ? plugin?.[1] : plugin?.loaderIntegration;
 
   if (typeof integration?.isVisible !== "boolean")
     throw new Error("cannot add a loader plugin without an isVisible setting");
 
-  if (typeof integration?.allowedActions !== "object" && integration.allowedActions !== null)
+  if (typeof integration?.allowedActions !== "object" || integration.allowedActions == null)
     throw new Error("cannot add a loader plugin without an allowed actions object");
 
   if (!isRemote) {
     plugin.local = true;
-    plugin.on = true;
     plugin.update = false;
     delete plugin.src;
+    delete plugin.on;
   }
 
   if (id in internalData) {
@@ -319,17 +323,25 @@ export async function ensureLoaderPlugin(id: string, plugin: [string, LoaderInte
       Object.assign(internalData[id], plugin);
       delete internalData[id].src;
     }
+
+    // if a plugin is un-toggleable or invisible, ensure its always on. if its toggleable and exists, leave it alone.
+    if (!integration.allowedActions.toggle || !integration.isVisible) internalData[id].on = true;
   }
   // install plugin
   else {
     if (isRemote) await addRemotePlugin(id, plugin[0], true);
     else addLocalPlugin(id, plugin);
+
+    // unlike most shelter plugins, NEW loader plugins default to on
+    internalData[id].on = true;
   }
 
-  // set integration and make sure it enables
-  internalData[id].on = true;
-
-  internalData[id].loaderIntegration = integration;
+  // set integration
+  // replace object to force db write
+  internalData[id] = {
+    ...internalData[id],
+    loaderIntegration: integration,
+  };
 }
 
 // maybe this should be elsewhere but w/e

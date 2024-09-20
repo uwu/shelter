@@ -67,14 +67,11 @@ const waitForAppMount = async () => {
     // @ts-expect-error
     const injPlugins = SHELTER_INJECTOR_PLUGINS;
 
-    const promises: Promise<void>[] = [];
     for (const id in injPlugins) {
       const p = injPlugins[id];
       // p is either [url, loaderOpts] or a plugin object
-      promises.push(plugins.ensureLoaderPlugin(id, p));
+      await plugins.ensureLoaderPlugin(id, p);
     }
-
-    for (const p of promises) await p;
   }
 
   // once everything is fully inited, start plugins
