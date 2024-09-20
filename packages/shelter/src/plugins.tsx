@@ -12,6 +12,9 @@ export type StoredPlugin = {
   js: string;
   update: boolean;
   src?: string;
+  // optional for backwards compat, but should be filled in always from 2024-09-20
+  // the plugin loader will automatically set this if not present to (!src)
+  local: boolean;
   manifest: Record<string, string>;
 };
 
@@ -172,6 +175,9 @@ export async function startAllPlugins() {
 
   const allPlugins = Object.keys(internalData);
 
+  // migrate missing local keys from before it was stored
+  for (const k of allPlugins) if (internalData[k].local === undefined) internalData[k].local = !internalData[k].src;
+
   // update in parallel
   const results = await Promise.allSettled(allPlugins.filter((id) => internalData[id].update).map(updatePlugin));
 
@@ -190,6 +196,8 @@ export function addLocalPlugin(id: string, plugin: StoredPlugin) {
   // validate
   if (typeof id !== "string" || id in internalData || id === devModeReservedId)
     throw new Error("plugin ID invalid or taken");
+
+  if (!plugin.local) plugin.local = true;
 
   if (
     typeof plugin.js !== "string" ||
@@ -212,6 +220,7 @@ export async function addRemotePlugin(id: string, src: string, update = true) {
     throw new Error("plugin ID invalid or taken");
 
   internalData[id] = {
+    local: false,
     src,
     update,
     on: false,
@@ -236,10 +245,21 @@ export function removePlugin(id: string) {
 
 export const getSettings = (id: string) => internalLoaded[id]?.settings;
 
+export function editPlugin(id: string, overwrite: StoredPlugin) {
+  if (!internalData[id]) throw new Error(`attempted to edit non-existent plugin ${id}`);
+  const wasRunning = id in internalLoaded;
+  if (wasRunning) stopPlugin(id);
+  // modify plugin
+  Object.assign(internalData[id], overwrite);
+  // potentially restart plugin
+  if (wasRunning) startPlugin(id);
+}
+
 // maybe this should be elsewhere but w/e
 export const devmodePrivateApis = {
   initDevmodePlugin: () =>
     (internalData[devModeReservedId] = {
+      local: true,
       update: false,
       on: false,
       manifest: {},

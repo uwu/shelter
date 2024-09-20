@@ -19,8 +19,10 @@ import {
   focusring,
   tooltip,
   TextBox,
+  IconEdit,
+  IconUpdate,
 } from "@uwu/shelter-ui";
-import PluginAddModal from "./PluginAddModal";
+import { addPluginModal, editPluginModal } from "./PluginEditModal";
 import Fuse from "fuse.js";
 
 false && focusring;
@@ -62,6 +64,29 @@ export const PluginCard: Component<{
             }
           >
             <IconCog />
+          </button>
+        </Show>
+        {/* TODO: implement edit button */}
+        {/*<Show keyed when={!isDev() && !props.plugin.local}>
+          <button
+            use:tooltip="Check for update"
+            aria-label={`update ${props.plugin.manifest.name}`}
+            use:focusring
+            class={classes.btn}
+            onClick={() => console.error("TODO")}
+          >
+            <IconUpdate />
+          </button>
+        </Show>*/}
+        <Show keyed when={!isDev()}>
+          <button
+            use:tooltip="Edit"
+            aria-label={`edit ${props.plugin.manifest.name}`}
+            use:focusring
+            class={classes.btn}
+            onClick={() => editPluginModal(props.id)}
+          >
+            <IconEdit />
           </button>
         </Show>
         <Show keyed when={!isDev()}>
@@ -130,7 +155,7 @@ export default (): JSX.Element => {
           aria-label="add a plugin"
           use:focusring
           class={classes.btn}
-          onclick={() => openModal((props) => <PluginAddModal close={props.close} />)}
+          onclick={addPluginModal}
         >
           <IconAdd />
         </button>
