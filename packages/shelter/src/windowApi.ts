@@ -7,6 +7,7 @@ import * as ui from "@uwu/shelter-ui";
 import * as reacts from "./react";
 import * as bridges from "./bridges";
 import * as util from "./util";
+import * as plugins from "./plugins";
 import { registerSection } from "./settings";
 import * as storage from "./storage";
 import { observe } from "./observer";
@@ -43,6 +44,7 @@ const windowApi = async (unloads) => {
       ...util,
       createScopedApi: util.createScopedApi.bind(undefined, dispatcher),
     },
+    plugins: without(plugins, "startAllPlugins", "devmodePrivateApis"),
     storage,
     observeDom: observe,
     ui: {

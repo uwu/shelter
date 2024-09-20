@@ -686,6 +686,96 @@ function showSettings(): void
 
 A [scoped API](#shelter-util-createscopedapi) instance that cleans up automatically on unload.
 
+## `shelter.plugins`
+
+Shelter provides multiple APIs for managing installed plugins programmatically.
+
+These will be more sparsely documented as if you are directly using these it is assumed that you understand how shelter's internals (at least, the plugin loader) work - feel free to read the source!
+
+### `shelter.plugins.installedPlugins`
+
+`installedPlugins` is a Solid signal that returns the installed shelter plugins, as a `Record<string, StoredPlugin>`.
+
+An example:
+
+```ts
+installedPlugins() === {
+  "yellowsink.github.io/shelter-plugins/antitrack/": {
+	js: "...",
+    on: true,
+    src: "https://yellowsink.github.io/shelter-plugins/antitrack/",
+    update: true,
+    manifest: {
+      author: "Yellowsink",
+      description: "The essential.",
+      hash: "2d8d76c008e0b37ed4e2eb1d9ea56a6d",
+      name: "AntiTrack"
+    }
+  }
+}
+```
+
+### `shelter.plugins.loadedPlugins`
+
+`loadedPlugins` is a Solid signal containing the evaled plugins currently loaded. It is, similarly to `installedPlugins`, a record of string to objects, where the objects contain the exports of the plugin bundles.
+
+This generally consists of `onUnload`, and optionally `settings` and `onLoad`.
+
+### `shelter.plugins.startPlugin`
+
+```ts
+function startPlugin(id: string): void
+```
+
+`startPlugin` starts an installed but unloaded plugin.
+
+### `shelter.plugin.stopPlugin`
+
+```ts
+function stopPlugin(id: string): void
+```
+
+`stopPlugin` stops an installed and loaded plugin.
+
+### `shelter.plugins.addLocalPlugin`
+
+```ts
+function addLocalPlugin(id: string, plugin: {
+  js: string,
+  update: boolean,
+  src?: string,
+  manifest: Record<string, string>
+}): void
+```
+
+`addLocalPlugin` adds a plugin from JS source code and a manifest object.
+
+### `shelter.plugins.addRemotePlugin`
+
+```ts
+function addRemotePlugin(id: string, src: string, update = true): Promise<void>
+```
+
+`addRemotePlugin` installs a plugin from a URL.
+
+### `shelter.plugins.removePlugin`
+
+```ts
+function removePlugin(id: string): void
+```
+
+`removePlugin` removes a plugin.
+
+hmm yes, the floor here is made out of floor.
+
+### `shelter.plugins.getSettings`
+
+```ts
+function getSettings(id: string): solid.Component | undefined
+```
+
+`getSettings` grabs the Solid settings component for the plugin, if the plugin has settings.
+
 ## Plugin exports
 
 These are not what shelter provides to you, but rather what your plugin should provide back to shelter.
