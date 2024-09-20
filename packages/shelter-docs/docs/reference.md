@@ -758,6 +758,15 @@ function addRemotePlugin(id: string, src: string, update = true): Promise<void>
 
 `addRemotePlugin` installs a plugin from a URL.
 
+### `shelter.plugins.updatePlugin`
+
+```ts
+function updatePlugin(id: string): Promise<boolean>
+```
+
+`updatePlugin` checks for an update, and if there is one, updates the plugin.
+It returns whether or not an update was installed.
+
 ### `shelter.plugins.removePlugin`
 
 ```ts
@@ -775,6 +784,27 @@ function getSettings(id: string): solid.Component | undefined
 ```
 
 `getSettings` grabs the Solid settings component for the plugin, if the plugin has settings.
+
+### `shelter.plugins.showSettingsFor`
+
+```ts
+function showSettingsFor(id: string): Promise<void>
+```
+
+Shows a settings modal for the plugin of the given ID.
+The returned promise resolves when the modal is closed.
+
+### `shelter.plugins.editPlugin`
+
+```ts
+function editPlugin(id: string, overwrite: StoredPlugin): void
+```
+
+`editPlugin` edits a plugin. Pass a new plugin object to overwrite the old one.
+
+Note that this is a little more basic than you may expect - the edit modal plays some extra tricks,
+notably, the auto-updating behaviour for remote plugins is not provided by this function,
+and the edit modal does it in a cleverer way than just calling this then update, too.
 
 ## Plugin exports
 

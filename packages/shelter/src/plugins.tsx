@@ -24,7 +24,7 @@ export type StoredPlugin = {
   local: boolean;
   manifest: Record<string, string>;
   // non existent for normal plugins
-  loaderIntegration?: LoaderIntegrationOpts;
+  injectorIntegration?: LoaderIntegrationOpts;
 };
 
 export type EvaledPlugin = {
@@ -67,9 +67,9 @@ function createStorage(pluginId: string): [Record<string, any>, () => void] {
   ];
 }
 
-function createPluginApi(pluginId: string, { manifest, loaderIntegration }: StoredPlugin) {
+function createPluginApi(pluginId: string, { manifest, injectorIntegration }: StoredPlugin) {
   const [store, flushStore] = createStorage(pluginId);
-  const scoped = createScopedApiInternal(window["shelter"].flux.dispatcher, !!loaderIntegration);
+  const scoped = createScopedApiInternal(window["shelter"].flux.dispatcher, !!injectorIntegration);
 
   return {
     store,
@@ -102,7 +102,7 @@ export function startPlugin(pluginId: string) {
   };
 
   // injector plugins have superpowers
-  if (data.loaderIntegration)
+  if (data.injectorIntegration)
     shelterPluginEdition.settings = {
       ...shelterPluginEdition.settings,
       setInjectorSections,
@@ -221,7 +221,7 @@ export function addLocalPlugin(id: string, plugin: StoredPlugin) {
     throw new Error("plugin ID invalid or taken");
 
   if (!plugin.local) plugin.local = true;
-  delete plugin.loaderIntegration;
+  delete plugin.injectorIntegration;
 
   if (
     typeof plugin.js !== "string" ||
@@ -304,7 +304,7 @@ export async function ensureLoaderPlugin(id: string, plugin: [string, LoaderInte
   await Promise.all([waitInit(internalData), waitInit(pluginStorages)]);
 
   const isRemote = Array.isArray(plugin);
-  const integration = isRemote ? plugin?.[1] : plugin?.loaderIntegration;
+  const integration = isRemote ? plugin?.[1] : plugin?.injectorIntegration;
 
   if (typeof integration?.isVisible !== "boolean")
     throw new Error("cannot add a loader plugin without an isVisible setting");
@@ -348,7 +348,7 @@ export async function ensureLoaderPlugin(id: string, plugin: [string, LoaderInte
   // replace object to force db write
   internalData[id] = {
     ...internalData[id],
-    loaderIntegration: integration,
+    injectorIntegration: integration,
   };
 }
 

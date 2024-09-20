@@ -35,6 +35,7 @@ export default defineConfig({
             { text: "Patterns", link: "/guides/patterns" },
             { text: "Ideals", link: "/guides/ideals" },
             { text: "Background", link: "/guides/background" },
+            { text: "Injector Integration", link: "/guides/injectors" },
           ],
         },
       ],

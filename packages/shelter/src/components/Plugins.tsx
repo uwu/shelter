@@ -44,7 +44,7 @@ export const PluginCard: Component<{
 
   const isDev = () => props.id === devModeReservedId;
 
-  const ldi = props.plugin.loaderIntegration;
+  const ldi = props.plugin.injectorIntegration;
 
   return (
     <div class={classes.plugin}>
