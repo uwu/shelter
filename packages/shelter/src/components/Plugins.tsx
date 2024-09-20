@@ -186,7 +186,9 @@ export default (): JSX.Element => {
        * https://codesandbox.io/s/explicit-keys-4iyen?file=/Key.js
        */}
       {fuzzy(Object.entries(installedPlugins()), searchTerm())
-        .filter(([id, obj]) => id !== devModeReservedId && (!obj.loaderIntegration || obj.loaderIntegration.isVisible))
+        .filter(
+          ([id, obj]) => id !== devModeReservedId && (!obj.injectorIntegration || obj.injectorIntegration.isVisible),
+        )
         .sort(([, pluginA], [, pluginB]) => {
           const nameA = pluginA.manifest.name?.toLowerCase();
           const nameB = pluginB.manifest.name?.toLowerCase();

@@ -107,7 +107,7 @@ export function startPlugin(pluginId: string) {
       ...shelterPluginEdition.settings,
       setInjectorSections,
       registerSection: registerInjSection,
-    };
+    } as any; // otherwise, cannot add setInjectorSections, lol
 
   const pluginString = `shelter=>{return ${data.js}}${atob("Ci8v")}# sourceURL=s://!SHELTER/${pluginId}`;
 
