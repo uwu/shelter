@@ -7,9 +7,6 @@
     "indentSize": 2
   },
   "files": {
-    "ignore": [
-      "dist",
-        ".vitepress/cache"
-    ]
+    "ignore": ["dist", ".vitepress/cache"]
   }
 }

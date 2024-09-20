@@ -75,7 +75,6 @@ export const PluginCard: Component<{
             <IconCog />
           </button>
         </Show>
-        {/* TODO: implement edit button */}
         <Show keyed when={!isDev() && !props.plugin.local}>
           <button
             use:tooltip="Check for update"
