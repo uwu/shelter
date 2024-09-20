@@ -1,11 +1,17 @@
 import { isInited, signalOf, solidMutWithSignal, storage, waitInit } from "./storage";
-import { Component } from "solid-js";
+import { Component, onCleanup } from "solid-js";
 import { createMutable } from "solid-js/store";
 import { createScopedApi, log } from "./util";
 import { ModalBody, ModalHeader, ModalRoot, openModal } from "@uwu/shelter-ui";
 import { devModeReservedId } from "./devmode";
 
-// a lot of this is adapted from cumcord, but some of it is new, and hopefully the code should be a lot less messy :)
+// note that these controls only apply to the UI, not to the APIs
+export type LoaderIntegrationOpts = {
+  // actions that the end user is shown on the UI
+  allowedActions: { toggle?: true; delete?: true; edit?: true; update?: true };
+  // is the plugin visible in the ui, or hidden from sight?
+  isVisible: boolean;
+};
 
 export type StoredPlugin = {
   on: boolean;
@@ -16,6 +22,8 @@ export type StoredPlugin = {
   // the plugin loader will automatically set this if not present to (!src)
   local: boolean;
   manifest: Record<string, string>;
+  // non existent for normal plugins
+  loaderIntegration?: LoaderIntegrationOpts;
 };
 
 export type EvaledPlugin = {
@@ -204,6 +212,7 @@ export function addLocalPlugin(id: string, plugin: StoredPlugin) {
     throw new Error("plugin ID invalid or taken");
 
   if (!plugin.local) plugin.local = true;
+  delete plugin.loaderIntegration;
 
   if (
     typeof plugin.js !== "string" ||
@@ -260,6 +269,67 @@ export function editPlugin(id: string, overwrite: StoredPlugin, updating = false
   internalData[id] = overwrite;
   // potentially restart plugin
   if (wasRunning && !updating) startPlugin(id);
+}
+
+export function showSettingsFor(id: string) {
+  const p = internalLoaded[id];
+  if (!p) throw new Error(`cannot show plugins for non-loaded plugin ${id}`);
+  if (!p.settings) throw new Error(`cannot show plugins for ${id}, which has no settings`);
+
+  return new Promise<void>((res) => {
+    openModal((mprops) => {
+      onCleanup(res);
+      return (
+        <ModalRoot>
+          <ModalHeader close={mprops.close}>Settings - {internalData[id].manifest.name}</ModalHeader>
+          <ModalBody>{p.settings({})}</ModalBody>
+        </ModalRoot>
+      );
+    });
+  });
+}
+
+// this is used by shelter to install plugins with loader superpowers
+export async function ensureLoaderPlugin(id: string, plugin: [string, LoaderIntegrationOpts] | StoredPlugin) {
+  const isRemote = Array.isArray(plugin);
+  const integration = isRemote ? plugin?.[1] : plugin?.loaderIntegration;
+
+  if (typeof integration?.isVisible !== "boolean")
+    throw new Error("cannot add a loader plugin without an isVisible setting");
+
+  if (typeof integration?.allowedActions !== "object" && integration.allowedActions !== null)
+    throw new Error("cannot add a loader plugin without an allowed actions object");
+
+  if (!isRemote) {
+    plugin.local = true;
+    plugin.on = true;
+    plugin.update = false;
+    delete plugin.src;
+  }
+
+  if (id in internalData) {
+    // existing plugins need to be off so we can set their stuff up
+    if (id in internalLoaded) throw new Error("ensureLoaderPlugin must not be called with running plugin IDs!");
+
+    if (isRemote) {
+      internalData[id].src = plugin[0];
+      internalData[id].update = true;
+      internalData[id].local = false;
+    } else {
+      Object.assign(internalData[id], plugin);
+      delete internalData[id].src;
+    }
+  }
+  // install plugin
+  else {
+    if (isRemote) await addRemotePlugin(id, plugin[0], true);
+    else addLocalPlugin(id, plugin);
+  }
+
+  // set integration and make sure it enables
+  internalData[id].on = true;
+
+  internalData[id].loaderIntegration = integration;
 }
 
 // maybe this should be elsewhere but w/e

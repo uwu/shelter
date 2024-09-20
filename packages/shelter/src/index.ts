@@ -47,6 +47,7 @@ const waitForAppMount = async () => {
 
   // shelter injector settings support
   // used for injectors and custom clients such as the web ext, desktop inj, armcord, to use our settings services cleanly
+  // read the docs!
   // @ts-expect-error this is either a window global, or passed to shelter via the same kind of hacks used for shelterPluginEdition, so check with typeof, not window[]
   if (typeof SHELTER_INJECTOR_SETTINGS !== "undefined") {
     // @ts-expect-error
@@ -56,6 +57,24 @@ const waitForAppMount = async () => {
       if (Array.isArray(sections)) setInjectorSections(sections);
       else util.log("injector settings must be an array of sections or a signal getter for array of sections", "error");
     });
+  }
+
+  // shelter loader plugins support
+  // used for injectors and custom clients to inject special plugins that have some superpowers
+  // read the docs!
+  // @ts-expect-error
+  if (typeof SHELTER_INJECTOR_PLUGINS !== "undefined") {
+    // @ts-expect-error
+    const injPlugins = SHELTER_INJECTOR_PLUGINS;
+
+    const promises: Promise<void>[] = [];
+    for (const id in injPlugins) {
+      const p = injPlugins[id];
+      // p is either [url, loaderOpts] or a plugin object
+      promises.push(plugins.ensureLoaderPlugin(id, p));
+    }
+
+    for (const p of promises) await p;
   }
 
   // once everything is fully inited, start plugins

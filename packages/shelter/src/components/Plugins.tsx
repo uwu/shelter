@@ -3,6 +3,7 @@ import {
   getSettings,
   installedPlugins,
   removePlugin,
+  showSettingsFor,
   startPlugin,
   stopPlugin,
   StoredPlugin,
@@ -17,11 +18,7 @@ import {
   IconBin,
   IconCog,
   injectCss,
-  ModalBody,
-  ModalHeader,
-  ModalRoot,
   openConfirmationModal,
-  openModal,
   Space,
   Switch,
   focusring,
@@ -63,14 +60,7 @@ export const PluginCard: Component<{
             use:focusring
             class={classes.btn}
             style={on() ? "" : "opacity: 0"}
-            onclick={() =>
-              openModal((mprops) => (
-                <ModalRoot>
-                  <ModalHeader close={mprops.close}>Settings - {props.plugin.manifest.name}</ModalHeader>
-                  <ModalBody>{getSettings(props.id)({})}</ModalBody>
-                </ModalRoot>
-              ))
-            }
+            onclick={() => showSettingsFor(props.id)}
           >
             <IconCog />
           </button>
