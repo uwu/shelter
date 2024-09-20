@@ -46,7 +46,7 @@ export const ModalHeader: Component<{
       use:tooltip="Close modal"
       aria-label="close modal"
       class={classes.cbtn}
-      style={{ display: props.noClose ? "none" : "" }}
+      style={props.noClose ? "display: none" : ""}
       onclick={props.close}
     >
       <IconClose />

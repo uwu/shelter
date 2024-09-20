@@ -151,7 +151,7 @@ const PluginEditModal = (props: {
               {/* TODO: monaco */}
               <TextArea
                 mono
-                style={{ height: "150px" }}
+                style="height: 150px"
                 resize-y
                 placeholder={`{
   onLoad() {

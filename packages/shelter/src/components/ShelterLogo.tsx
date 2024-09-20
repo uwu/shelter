@@ -7,7 +7,7 @@ interface ShelterLogoProps {
 
 export default (props: ShelterLogoProps) => (
   <img
-    style={{ display: "inline", "user-select": "none" }}
+    style="display: inline; user-select: none"
     src={ShelterSvg}
     width={props.width || 225}
     height={props.height ?? 80.5}

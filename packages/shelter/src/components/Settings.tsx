@@ -20,7 +20,7 @@ export default () => {
 
       <Divider mt mb />
 
-      <div class={classes.column} style={{ padding: "0.25rem" }}>
+      <div class={classes.column} style="padding: 0.25rem">
         <Header tag={HeaderTags.H3} class={classes.head}>
           Developer Tools
         </Header>
