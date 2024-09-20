@@ -1,9 +1,10 @@
 import { isInited, signalOf, solidMutWithSignal, storage, waitInit } from "./storage";
 import { Component, onCleanup } from "solid-js";
 import { createMutable } from "solid-js/store";
-import { createScopedApi, log } from "./util";
+import { createScopedApiInternal, log } from "./util";
 import { ModalBody, ModalHeader, ModalRoot, openModal } from "@uwu/shelter-ui";
 import { devModeReservedId } from "./devmode";
+import { setInjectorSections, registerInjSection } from "./settings";
 
 // note that these controls only apply to the UI, not to the APIs
 export type LoaderIntegrationOpts = {
@@ -66,9 +67,9 @@ function createStorage(pluginId: string): [Record<string, any>, () => void] {
   ];
 }
 
-function createPluginApi(pluginId: string, { manifest }: StoredPlugin) {
+function createPluginApi(pluginId: string, { manifest, loaderIntegration }: StoredPlugin) {
   const [store, flushStore] = createStorage(pluginId);
-  const scoped = createScopedApi(window["shelter"].flux.dispatcher); // this feels not nice but i guess its ok?
+  const scoped = createScopedApiInternal(window["shelter"].flux.dispatcher, !!loaderIntegration);
 
   return {
     store,
@@ -99,6 +100,14 @@ export function startPlugin(pluginId: string) {
     ...window["shelter"],
     plugin: pluginApi,
   };
+
+  // injector plugins have superpowers
+  if (data.loaderIntegration)
+    shelterPluginEdition.settings = {
+      ...shelterPluginEdition.settings,
+      setInjectorSections,
+      registerSection: registerInjSection,
+    };
 
   const pluginString = `shelter=>{return ${data.js}}${atob("Ci8v")}# sourceURL=s://!SHELTER/${pluginId}`;
 
@@ -294,7 +303,6 @@ export async function ensureLoaderPlugin(id: string, plugin: [string, LoaderInte
   // allow internalData to connect to IDB, as we need to read plugin-internals
   await Promise.all([waitInit(internalData), waitInit(pluginStorages)]);
 
-  debugger;
   const isRemote = Array.isArray(plugin);
   const integration = isRemote ? plugin?.[1] : plugin?.loaderIntegration;
 

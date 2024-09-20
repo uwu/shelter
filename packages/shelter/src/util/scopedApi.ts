@@ -3,7 +3,7 @@ import { intercept as fluxIntercept } from "../flux";
 import { intercept as httpIntercept } from "../http";
 import { observe as observeDom } from "../observer";
 import * as patcher from "spitroast";
-import { registerSection } from "../settings";
+import { registerSection, registerInjSection } from "../settings";
 import { injectCss } from "@uwu/shelter-ui";
 import { Dispatcher } from "../types";
 
@@ -16,7 +16,9 @@ function shimDisposableFn<F extends DisposableFn>(unpatches: (() => void)[], f: 
   };
 }
 
-export function createScopedApi(dispatcher: Dispatcher) {
+export const createScopedApi = (dispatcher: Dispatcher) => createScopedApiInternal(dispatcher, false);
+
+export function createScopedApiInternal(dispatcher: Dispatcher, injector: boolean) {
   const disposes = [];
 
   return {
@@ -56,7 +58,7 @@ export function createScopedApi(dispatcher: Dispatcher) {
       instead: shimDisposableFn(disposes, patcher.instead),
     },
     settings: {
-      registerSection: shimDisposableFn(disposes, registerSection),
+      registerSection: shimDisposableFn(disposes, injector ? registerInjSection : registerSection),
     },
     ui: {
       injectCss: shimDisposableFn(disposes, injectCss),

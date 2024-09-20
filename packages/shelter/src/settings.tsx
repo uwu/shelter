@@ -105,18 +105,25 @@ function rerenderSidebar() {
   getFiberOwner(sidebarParent)?.forceUpdate();
 }
 
-export function registerSection(...sec: SettingsSection) {
-  externalSections.push(sec);
+function registerSectionInternal(sec: SettingsSection, injector: boolean) {
+  const secs = injector ? injectorSections : externalSections;
+
+  secs.push(sec);
   rerenderSidebar();
 
   return () => {
-    const idx = externalSections.indexOf(sec);
+    const idx = secs.indexOf(sec);
     if (idx === -1) return;
 
-    externalSections.splice(idx, 1);
+    secs.splice(idx, 1);
     rerenderSidebar();
   };
 }
+
+export const registerSection = (...sec: SettingsSection) => registerSectionInternal(sec, false);
+
+// this may cause issues if used with setInjectorSections
+export const registerInjSection = (...sec: SettingsSection) => registerSectionInternal(sec, true);
 
 export function setInjectorSections(secs: SettingsSection[]) {
   injectorSections = secs;
