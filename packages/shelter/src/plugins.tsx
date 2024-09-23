@@ -273,11 +273,11 @@ export function editPlugin(id: string, overwrite: StoredPlugin, updating = false
   if (!internalData[id])
     throw new Error(`attempted to ${updating ? "apply update to" : "edit"} non-existent plugin ${id}`);
   const wasRunning = id in internalLoaded;
-  if (wasRunning && !updating) stopPlugin(id);
+  if (wasRunning) stopPlugin(id);
   // modify plugin
   internalData[id] = overwrite;
   // potentially restart plugin
-  if (wasRunning && !updating) startPlugin(id);
+  if (wasRunning) startPlugin(id);
 }
 
 export function showSettingsFor(id: string) {
