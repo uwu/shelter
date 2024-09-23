@@ -1,12 +1,12 @@
 {
   "scripts": {
     "postinstall": "husky install",
-    "format": "rome format --write ."
+    "format": "dprint fmt"
   },
   "devDependencies": {
+    "dprint": "^0.47.2",
     "husky": "^8.0.3",
     "rimraf": "^4.4.1",
-    "rome": "^11.0.0",
     "typescript": "^5.6.2"
   },
   "overrides": {

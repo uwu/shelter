@@ -1,23 +1,23 @@
 .button {
-  transition: background-color 0.17s ease, color 0.17s ease;
-  cursor: pointer;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  width: var(--shltr-btn-w);
+  min-width: var(--shltr-btn-w);
+  height: var(--shltr-btn-h);
+  min-height: var(--shltr-btn-h);
+  padding: 2px 16px;
   border: none;
   border-radius: 3px;
-  font-size: 14px;
   font-weight: 500;
+  font-size: 14px;
   line-height: 16px;
-  padding: 2px 16px;
+  cursor: pointer;
+  transition: background-color .17s ease, color .17s ease;
   user-select: none;
-  width: var(--shltr-btn-w);
-  height: var(--shltr-btn-h);
-  min-width: var(--shltr-btn-w);
-  min-height: var(--shltr-btn-h);
 
   &[disabled] {
-    filter: brightness(0.6);
+    filter: brightness(.6);
   }
 
   &.grow {
@@ -25,33 +25,33 @@
   }
   &.filled,
   &.outlined:hover:not([disabled]) {
-    color: var(--shltr-btn-col);
     background: var(--shltr-btn-bg);
+    color: var(--shltr-btn-col);
   }
   &.filled:hover:not([disabled]) {
     background: var(--shltr-btn-bg-hov);
   }
   &.inverted {
-    color: var(--shltr-btn-bg);
     background: var(--shltr-btn-col);
+    color: var(--shltr-btn-bg);
   }
   &.link {
-    color: unset;
     background: transparent;
+    color: unset;
   }
   &.outlined {
-    color: var(--shltr-btn-bg);
     border: 1px solid var(--shltr-btn-bg);
     background: transparent;
+    color: var(--shltr-btn-bg);
   }
   &.xlarge {
+    padding: 2px 20px;
     font-size: 16px;
     line-height: normal;
-    padding: 2px 20px;
   }
   &.large {
-    padding: 2px 4px;
     display: inline;
+    padding: 2px 4px;
   }
   &.max {
     font-size: 16px;

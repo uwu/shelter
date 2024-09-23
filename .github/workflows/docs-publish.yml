@@ -28,7 +28,7 @@ jobs:
     steps:
       # setup
       - uses: actions/checkout@v4
-      
+
       - uses: actions/setup-node@v3
         with:
           node-version: 20.x
@@ -50,7 +50,7 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           # Upload dist folder
-          path: 'packages/shelter-docs/docs/.vitepress/dist'
+          path: "packages/shelter-docs/docs/.vitepress/dist"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

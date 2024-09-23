@@ -11,15 +11,15 @@ importers:
 
   .:
     devDependencies:
+      dprint:
+        specifier: ^0.47.2
+        version: 0.47.2
       husky:
         specifier: ^8.0.3
         version: 8.0.3
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
-      rome:
-        specifier: ^11.0.0
-        version: 11.0.0
       typescript:
         specifier: ^5.6.2
         version: 5.6.2
@@ -665,6 +665,46 @@ packages:
       search-insights:
         optional: true
 
+  '@dprint/darwin-arm64@0.47.2':
+    resolution: {integrity: sha512-mVPFBJsXxGDKHHCAY8wbqOyS4028g1bN15H9tivCnPAjwaZhkUimZHXWejXADjhGn+Xm2SlakugY9PY/68pH3Q==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@dprint/darwin-x64@0.47.2':
+    resolution: {integrity: sha512-T7wzlc+rBV+6BRRiBjoqoy5Hj4TR2Nv2p2s9+ycyPGs10Kj/JXOWD8dnEHeBgUr2r4qe/ZdcxmsFQ5Hf2n0WuA==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@dprint/linux-arm64-glibc@0.47.2':
+    resolution: {integrity: sha512-B0m1vT5LdVtrNOVdkqpLPrSxuCD+l5bTIgRzPaDoIB1ChWQkler9IlX8C+RStpujjPj6SYvwo5vTzjQSvRdQkA==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@dprint/linux-arm64-musl@0.47.2':
+    resolution: {integrity: sha512-zID6wZZqpg2/Q2Us+ERQkbhLwlW3p3xaeEr00MPf49bpydmEjMiPuSjWPkNv+slQSIyIsVovOxF4lbNZjsdtvw==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@dprint/linux-x64-glibc@0.47.2':
+    resolution: {integrity: sha512-rB3WXMdINnRd33DItIp7mObS7dzHW90ZzeJSsoKJLPp+Z7wXjjb27UUowfqVI4baa/1pd7sdbX54DPohMtfu/A==}
+    cpu: [x64]
+    os: [linux]
+
+  '@dprint/linux-x64-musl@0.47.2':
+    resolution: {integrity: sha512-E0+TNbzYdTXJ/jCVjUctVxkda/faw++aDQLfyWGcmdMJnbM7NZz+W4fUpDXzMPsjy+zTWxXcPK7/q2DZz2gnbg==}
+    cpu: [x64]
+    os: [linux]
+
+  '@dprint/win32-arm64@0.47.2':
+    resolution: {integrity: sha512-K1EieTCFjfOCmyIhw9zFSduE6qVCNHEveupqZEfbSkVGw5T9MJQ1I9+n7MDb3RIDYEUk0enJ58/w82q8oDKCyA==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@dprint/win32-x64@0.47.2':
+    resolution: {integrity: sha512-LhizWr8VrhHvq4ump8HwOERyFmdLiE8C6A42QSntGXzKdaa2nEOq20x/o56ZIiDcesiV+1TmosMKimPcOZHa+Q==}
+    cpu: [x64]
+    os: [win32]
+
   '@esbuild-plugins/node-globals-polyfill@0.2.3':
     resolution: {integrity: sha512-r3MIryXDeXDOZh7ih1l/yE9ZLORCd5e8vWg02azWRGj5SPTuoh69A2AIyn0Z31V/kHBfZ4HgWJ+OK3GTTwLmnw==}
     peerDependencies:
@@ -1294,36 +1334,6 @@ packages:
 
   '@rollup/rollup-win32-x64-msvc@4.22.2':
     resolution: {integrity: sha512-Yy8So+SoRz8I3NS4Bjh91BICPOSVgdompTIPYTByUqU66AXSIOgmW3Lv1ke3NORPqxdF+RdrZET+8vYai6f4aA==}
-    cpu: [x64]
-    os: [win32]
-
-  '@rometools/cli-darwin-arm64@11.0.0':
-    resolution: {integrity: sha512-F3vkdY+s3FLIEnAjSbyHTuIPB88cLpccimW4ecid5I7S6GzGG3iUJI4xT00JhH73K4P/qW20/9r+kH1T9Du8Xg==}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@rometools/cli-darwin-x64@11.0.0':
-    resolution: {integrity: sha512-X6jhtS6Iml4GOzgNtnLwIp/KXXhSdqeVyfv69m/AHnIzx3gQAjPZ7BPnJLvTCbhe4SKHL+uTZYFSCJpkUUKE6w==}
-    cpu: [x64]
-    os: [darwin]
-
-  '@rometools/cli-linux-arm64@11.0.0':
-    resolution: {integrity: sha512-dktTJJlTpmycBZ2TwhJBcAO8ztK8DdevdyZnFFxdYRvtmJgTjIsC2UFayf/SbKew8B8q1IhI0it+D6ihAeIpeg==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@rometools/cli-linux-x64@11.0.0':
-    resolution: {integrity: sha512-WVcnXPNdWGUWo0p4NU8YzuthjYR7q+b4vRcjdxtP1DlpphZmSsoC/RSE85nEqRAz8hChcKUansVzOPM8BSsuGA==}
-    cpu: [x64]
-    os: [linux]
-
-  '@rometools/cli-win32-arm64@11.0.0':
-    resolution: {integrity: sha512-tPj6RThQzS7Q45jqQll7NlTYvNcsg/BEP3LYiiazqSh9FAFnMkrV6ewUcMPKWyAfiyLs7jlz4rRvdNRUSygzfQ==}
-    cpu: [arm64]
-    os: [win32]
-
-  '@rometools/cli-win32-x64@11.0.0':
-    resolution: {integrity: sha512-bmBai8WHxYjsGk1+je7ZTfCUCWq30WJI3pQM8pzTA674lfGTZ9ymJoZwTaIMSO4rL5V9mlO6uLunsBKso9VqOg==}
     cpu: [x64]
     os: [win32]
 
@@ -2110,6 +2120,10 @@ packages:
   dot-prop@6.0.1:
     resolution: {integrity: sha512-tE7ztYzXHIeyvc7N+hR3oi7FIbf/NIjVP9hmAt3yMXzrQ072/fpjGLx2GxNxGxUl5V73MEqYzioOMoVhGMJ5cA==}
     engines: {node: '>=10'}
+
+  dprint@0.47.2:
+    resolution: {integrity: sha512-geUcVIIrmLaY+YtuOl4gD7J/QCjsXZa5gUqre9sO6cgH0X/Fa9heBN3l/AWVII6rKPw45ATuCSDWz1pyO+HkPQ==}
+    hasBin: true
 
   dtrace-provider@0.8.8:
     resolution: {integrity: sha512-b7Z7cNtHPhH9EJhNNbbeqTcXB8LGFFZhq1PGgEvpeHlzd36bhbdTWoE/Ba/YguqpBSlAPKnARWhVlhunCMwfxg==}
@@ -3679,11 +3693,6 @@ packages:
     engines: {node: '>=18.0.0', npm: '>=8.0.0'}
     hasBin: true
 
-  rome@11.0.0:
-    resolution: {integrity: sha512-rRo6JOwpMLc3OkeTDRXkrmrDqnxDvZ75GS4f0jLDBNmRgDXWbu0F8eVnJoRn+VbK2AE7vWvhVOMBjnWowcopkQ==}
-    engines: {node: '>=14.*'}
-    hasBin: true
-
   run-parallel@1.2.0:
     resolution: {integrity: sha512-5l4VyZR86LZ/lDxZTR6jqL8AFE2S0IFLMP26AbjsLVADxHdhB/c0GUsH+y39UfCi3dzz8OlQuPmnaJOMoDHQBA==}
 
@@ -4942,6 +4951,30 @@ snapshots:
     transitivePeerDependencies:
       - '@algolia/client-search'
 
+  '@dprint/darwin-arm64@0.47.2':
+    optional: true
+
+  '@dprint/darwin-x64@0.47.2':
+    optional: true
+
+  '@dprint/linux-arm64-glibc@0.47.2':
+    optional: true
+
+  '@dprint/linux-arm64-musl@0.47.2':
+    optional: true
+
+  '@dprint/linux-x64-glibc@0.47.2':
+    optional: true
+
+  '@dprint/linux-x64-musl@0.47.2':
+    optional: true
+
+  '@dprint/win32-arm64@0.47.2':
+    optional: true
+
+  '@dprint/win32-x64@0.47.2':
+    optional: true
+
   '@esbuild-plugins/node-globals-polyfill@0.2.3(esbuild@0.17.19)':
     dependencies:
       esbuild: 0.17.19
@@ -5338,24 +5371,6 @@ snapshots:
     optional: true
 
   '@rollup/rollup-win32-x64-msvc@4.22.2':
-    optional: true
-
-  '@rometools/cli-darwin-arm64@11.0.0':
-    optional: true
-
-  '@rometools/cli-darwin-x64@11.0.0':
-    optional: true
-
-  '@rometools/cli-linux-arm64@11.0.0':
-    optional: true
-
-  '@rometools/cli-linux-x64@11.0.0':
-    optional: true
-
-  '@rometools/cli-win32-arm64@11.0.0':
-    optional: true
-
-  '@rometools/cli-win32-x64@11.0.0':
     optional: true
 
   '@shikijs/core@1.18.0':
@@ -6269,6 +6284,17 @@ snapshots:
   dot-prop@6.0.1:
     dependencies:
       is-obj: 2.0.0
+
+  dprint@0.47.2:
+    optionalDependencies:
+      '@dprint/darwin-arm64': 0.47.2
+      '@dprint/darwin-x64': 0.47.2
+      '@dprint/linux-arm64-glibc': 0.47.2
+      '@dprint/linux-arm64-musl': 0.47.2
+      '@dprint/linux-x64-glibc': 0.47.2
+      '@dprint/linux-x64-musl': 0.47.2
+      '@dprint/win32-arm64': 0.47.2
+      '@dprint/win32-x64': 0.47.2
 
   dtrace-provider@0.8.8:
     dependencies:
@@ -7870,15 +7896,6 @@ snapshots:
       '@rollup/rollup-win32-ia32-msvc': 4.22.2
       '@rollup/rollup-win32-x64-msvc': 4.22.2
       fsevents: 2.3.3
-
-  rome@11.0.0:
-    optionalDependencies:
-      '@rometools/cli-darwin-arm64': 11.0.0
-      '@rometools/cli-darwin-x64': 11.0.0
-      '@rometools/cli-linux-arm64': 11.0.0
-      '@rometools/cli-linux-x64': 11.0.0
-      '@rometools/cli-win32-arm64': 11.0.0
-      '@rometools/cli-win32-x64': 11.0.0
 
   run-parallel@1.2.0:
     dependencies:

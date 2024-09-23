@@ -1,15 +1,15 @@
 .row {
   display: flex;
+  align-items: center;
   // default
   //flex-direction: row;
-  gap: 0.5rem;
-  align-items: center;
+  gap: .5rem;
 }
 
 .column {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: .5rem;
 }
 
 .slogan {

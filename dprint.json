@@ -1,0 +1,22 @@
+{
+  "lineWidth": 120,
+  "useTabs": false,
+  "indentWidth": 2,
+
+  "biome": {},
+  "toml": {},
+  "malva": {
+    "omitNumberLeadingZero": true,
+    "declarationOrder": "smacss"
+  },
+  "markup": {},
+  "yaml": {},
+  "excludes": ["pnpm-lock.yaml", "**/node_modules", "**/*-lock.json", "**/dist", "**/.vitepress/cache"],
+  "plugins": [
+    "https://plugins.dprint.dev/toml-0.6.2.wasm",
+    "https://plugins.dprint.dev/g-plane/malva-v0.10.1.wasm",
+    "https://plugins.dprint.dev/g-plane/markup_fmt-v0.13.0.wasm",
+    "https://plugins.dprint.dev/g-plane/pretty_yaml-v0.5.0.wasm",
+    "https://plugins.dprint.dev/biome-0.6.0.wasm"
+  ]
+}

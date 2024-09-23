@@ -1,21 +1,19 @@
 .tbox,
 .tarea {
   box-sizing: border-box;
-
-  font-size: 16px;
   width: 100%;
-  border-radius: 3px;
-  color: var(--text-normal);
-  background-color: var(--input-background);
-  border: none;
-  transition: border-color 0.2s ease-in-out;
   padding: 10px;
+  border: none;
+  border-radius: 3px;
+  background-color: var(--input-background);
+  color: var(--text-normal);
+  font-size: 16px;
+  transition: border-color .2s ease-in-out;
 }
 
 .tbox {
-  height: 40px;
-
   flex-grow: 1;
+  height: 40px;
   margin-right: 20px;
 }
 

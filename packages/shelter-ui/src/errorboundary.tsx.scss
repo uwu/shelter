@@ -2,9 +2,9 @@
 // https://github.com/Cumcord/Cumcord/blob/f98494df6e7ee781163a7f2a54f3197e92bf73a4/src/api/init.js#L46
 
 .errbound {
-  font-family: var(--font-display);
-  color: var(--text-normal);
   padding: 16px;
+  color: var(--text-normal);
+  font-family: var(--font-display);
 }
 
 .errboundtitle {

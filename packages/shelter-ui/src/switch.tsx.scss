@@ -9,42 +9,42 @@ $SLIDER_MOVE: $WIDTH - $SLIDER_SIZE - ($SPACING * 2);
 
 .switch {
   position: relative;
-  background: hsl(218, calc(var(--saturation-factor, 1) * 4.6%), 46.9%);
-  height: #{$HEIGHT}px;
   width: #{$WIDTH}px;
+  height: #{$HEIGHT}px;
   border-radius: #{math.div($HEIGHT, 2)}px;
+  background: hsl(218, calc(var(--saturation-factor, 1) * 4.6%), 46.9%);
   transition: background 250ms;
 
   input {
     display: block;
+    position: absolute;
     width: 100%;
     height: 100%;
-    position: absolute;
     margin: 0;
-    opacity: 0;
     cursor: pointer;
+    opacity: 0;
   }
 }
 .on {
   background: hsl(139, calc(var(--saturation-factor, 1) * 47.3%), 43.9%);
 }
 .disabled {
-  opacity: 0.3;
+  opacity: .3;
 }
 
 .slider {
   position: absolute;
-  background: white;
-  left: #{$SPACING}px;
   top: #{$SPACING}px;
-  height: #{$SLIDER_SIZE}px;
+  left: #{$SPACING}px;
   width: #{$SLIDER_SIZE}px;
+  height: #{$SLIDER_SIZE}px;
   border-radius: #{math.div($SLIDER_SIZE, 2)}px;
+  background: white;
   .on & {
     transform: translateX(#{$SLIDER_MOVE}px);
   }
   // i found this bezier purely by playing about on cubic-bezier.com
-  transition: transform 250ms cubic-bezier(0.33, 0, 0.24, 1.02);
+  transition: transform 250ms cubic-bezier(.33, 0, .24, 1.02);
 }
 
 // SWITCH ITEM STYLES
@@ -55,17 +55,17 @@ $SLIDER_MOVE: $WIDTH - $SLIDER_SIZE - ($SPACING * 2);
 }
 .irow {
   display: flex;
-  width: 100%;
   align-items: center;
+  width: 100%;
 
   & > label {
-    flex: 1;
     display: block;
-    overflow: hidden;
+    flex: 1;
     margin: 0;
+    overflow: hidden;
     color: var(--header-primary);
-    line-height: 24px;
     font-weight: 500;
+    line-height: 24px;
     word-wrap: break-word;
     cursor: pointer;
   }
@@ -77,8 +77,8 @@ $SLIDER_MOVE: $WIDTH - $SLIDER_SIZE - ($SPACING * 2);
 .note {
   margin-top: 8px;
   color: var(--header-secondary);
+  font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  font-weight: 400;
   cursor: default;
 }

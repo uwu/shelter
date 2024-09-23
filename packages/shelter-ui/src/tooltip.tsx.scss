@@ -1,18 +1,17 @@
 .tooltip {
-  position: fixed;
-  background: var(--background-floating);
-  color: var(--text-normal);
-  pointer-events: none;
   z-index: 9999999;
-  box-shadow: var(--elevation-high);
-  border-radius: 5px;
-  font-size: 14px;
-  font-weight: 500;
+  position: fixed;
   max-width: 190px;
+  border-radius: 5px;
+  background: var(--background-floating);
+  box-shadow: var(--elevation-high);
+  color: var(--text-normal);
+  font-weight: 500;
+  font-size: 14px;
+  pointer-events: none;
   word-wrap: break-word;
-
-  transition-property: transform, opacity;
   transition-duration: 100ms;
+  transition-property: transform, opacity;
 
   &:not(.active) {
     transform: scale(0);
@@ -22,20 +21,18 @@
 
 .pointer {
   position: absolute;
+  top: 100%;
+  left: 50%;
   width: 0;
   height: 0;
-  left: 50%;
-
+  margin-left: -5px;
   border: 5px solid transparent;
   border-top-color: var(--background-floating);
 
-  margin-left: -5px;
-  top: 100%;
-
   &.under {
-    transform: rotate(180deg);
-    bottom: 100%;
     top: unset;
+    bottom: 100%;
+    transform: rotate(180deg);
   }
 }
 

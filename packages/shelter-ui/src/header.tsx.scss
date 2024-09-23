@@ -1,10 +1,10 @@
 // discord calls this `title` but w/e
 .h {
+  color: var(--header-primary);
+  font-family: var(--font-display);
   // what is this for in discord's original styles?
   //flex: 1;
   cursor: default;
-  font-family: var(--font-display);
-  color: var(--header-primary);
 }
 
 .h1 {
@@ -23,8 +23,8 @@
 }
 
 .h3 {
-  line-height: 24px;
   font-weight: 400;
+  line-height: 24px;
 }
 
 .h4 {
@@ -37,15 +37,15 @@
 }
 
 .h5, .eyebrow {
+  color: var(--header-secondary);
   font-size: 12px;
   line-height: 16px;
-  color: var(--header-secondary);
 }
 
 .eyebrow {
+  margin-bottom: 8px;
   font-weight: 700;
   letter-spacing: .02em;
-  margin-bottom: 8px;
 }
 
 .h4,

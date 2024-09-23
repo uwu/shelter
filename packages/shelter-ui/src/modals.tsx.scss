@@ -3,22 +3,22 @@
 $RADIUS: 4px;
 
 .mroot {
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
-  background: none;
-  border: none;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  height: 100%;
+  max-height: 100%;
   margin: 0;
+  padding: 0;
+  border: none;
+  background: none;
 
   &::backdrop {
-    background: rgba(0, 0, 0, 0.85);
-    transition: opacity 250ms;
+    background: rgba(0, 0, 0, .85);
     opacity: 0;
+    transition: opacity 250ms;
   }
 
   &.active::backdrop {
@@ -27,30 +27,30 @@ $RADIUS: 4px;
 }
 
 .backdrop {
+  position: absolute;
   width: 100%;
   height: 100%;
-  position: absolute;
 }
 
 .wrap {
-  position: absolute;
   z-index: 1;
-  transition-property: opacity, transform;
+  position: absolute;
   transition-duration: 250ms;
+  transition-property: opacity, transform;
 
   &:not(.active) {
-    opacity: 0;
     transform: scale(0);
+    opacity: 0;
   }
 }
 
 .modal {
-  background: var(--modal-background);
-  border-radius: $RADIUS;
-  margin: 0 auto;
-  position: relative;
   display: flex;
+  position: relative;
   flex-flow: column nowrap;
+  margin: 0 auto;
+  border-radius: $RADIUS;
+  background: var(--modal-background);
   color: var(--text-normal); // quite useful in modal body and modal footer :)
 }
 
@@ -67,10 +67,10 @@ $RADIUS: 4px;
 }
 
 .body {
-  flex: 1 1 auto;
-  overflow: hidden auto;
   position: relative;
+  flex: 1 1 auto;
   padding: 0 8px 20px 16px;
+  overflow: hidden auto;
 
   @include nice-scrollbars;
 }
@@ -87,28 +87,28 @@ $RADIUS: 4px;
 }
 
 .foot {
-  background: var(--modal-footer-background);
   border-radius: 0 0 $RADIUS $RADIUS;
+  background: var(--modal-footer-background);
 }
 
 .confirm {
   display: flex;
   justify-content: flex-end;
-  gap: 0.5rem;
+  gap: .5rem;
 }
 
 .cbtn {
   height: 26px;
-  padding: 2px;
-  cursor: pointer;
-  opacity: 0.5;
-  color: var(--interactive-normal);
-  background: transparent;
-  border: none;
   margin: 0;
+  padding: 2px;
+  border: none;
+  background: transparent;
+  color: var(--interactive-normal);
+  cursor: pointer;
+  opacity: .5;
 
   &:hover {
-    opacity: 1;
     color: var(--interactive-hover);
+    opacity: 1;
   }
 }

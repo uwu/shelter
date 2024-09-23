@@ -95,7 +95,9 @@ const PluginEditModal = (props: {
 
     if (!local()) return rSrc().split("://")[1];
 
-    let id = lName().toLowerCase().replaceAll(/[^A-Za-z0-9-_.]/g, "-");
+    let id = lName()
+      .toLowerCase()
+      .replaceAll(/[^A-Za-z0-9-_.]/g, "-");
     while (id in untrack(installedPlugins)) id += "_";
 
     return id;
