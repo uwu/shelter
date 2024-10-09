@@ -102,4 +102,25 @@ export const storeAssign = <T>(store: T, toApply: T) => batch(() => Object.assig
 
 export const sleep = (ms = 0) => new Promise((r) => setTimeout(r, ms));
 
+// pretty-print an error
+export function prettifyError(e: any) {
+  if (typeof e !== "object") return `[Unknown Error]: ${e}`;
+
+  // yes, Error.prototype.name exists, however other types may not use it e.g.
+  const errorNameRaw = e.constructor?.name;
+  const errorName = !errorNameRaw || errorNameRaw === "Object" ? "[Unknown Error]" : errorNameRaw;
+
+  // are we a real error object? we should have a stack trace!
+  if (typeof e.stack === "string") {
+    // are we on a chromium browser? if so, the stack already contains the error
+    if (e.stack.startsWith(errorName)) return e.stack;
+
+    // add the error to the start of the stack trace, to match chromium behaviour:
+    return `${errorName}: ${e.message ?? e + ""}\n${e.stack}`;
+  }
+
+  // okay, we don't have a stack, let's just print the thing
+  return `${errorName}: ${e.message ?? e + ""}`;
+}
+
 export * from "./scopedApi";

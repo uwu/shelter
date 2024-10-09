@@ -1,7 +1,7 @@
 import { isInited, signalOf, solidMutWithSignal, storage, waitInit } from "./storage";
 import { Component, onCleanup } from "solid-js";
 import { createMutable } from "solid-js/store";
-import { createScopedApiInternal, log } from "./util";
+import { createScopedApiInternal, log, prettifyError } from "./util";
 import { ModalBody, ModalHeader, ModalRoot, openModal } from "@uwu/shelter-ui";
 import { devModeReservedId } from "./devmode";
 import { setInjectorSections, registerInjSection } from "./settings";
@@ -122,12 +122,12 @@ export function startPlugin(pluginId: string) {
 
     internalData[pluginId] = { ...data, on: true };
   } catch (e) {
-    log(`plugin ${pluginId} errored while loading and will be unloaded: ${e}`, "error");
+    log([`plugin ${pluginId} errored while loading and will be unloaded`, e], "error");
 
     try {
       internalLoaded[pluginId]?.onUnload?.();
     } catch (e2) {
-      log(`plugin ${pluginId} errored while unloading: ${e2}`, "error");
+      log([`plugin ${pluginId} errored while unloading`, e2], "error");
     }
 
     delete internalLoaded[pluginId];
@@ -144,12 +144,12 @@ export function stopPlugin(pluginId: string) {
   try {
     loadedData.onUnload?.();
   } catch (e) {
-    log(`plugin ${pluginId} errored while unloading: ${e}`, "error");
+    log([`plugin ${pluginId} errored while unloading`, e], "error");
   }
   try {
     loadedData.scopedDispose();
   } catch (e) {
-    log(`plugin ${pluginId} errored while unloading scoped APIs: ${e}`, "error");
+    log([`plugin ${pluginId} errored while unloading scoped APIs`, e], "error");
   }
 
   delete internalLoaded[pluginId];
@@ -175,7 +175,7 @@ async function fetchUpdate(pluginId: string): Promise<false | StoredPlugin> {
       manifest: newPluginManifest,
     };
   } catch (e) {
-    throw new Error(`failed to check for updates for ${pluginId}: ${e}`);
+    throw new Error(`failed to check for updates for ${pluginId}\n${prettifyError(e)}`, { cause: e });
   }
 }
 
