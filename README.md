@@ -17,9 +17,7 @@ It is developed by ex-members of the old Cumcord Team, under [uwu.network](https
 
 ## What plugins has it got?
 
-Its early days at the moment, but there are a couple.
-
-Check the githubs of uwu members or [search for shelter-plugins](https://github.com/search?q=shelter-plugins&type=repositories).
+Quite a few! See the automated list at https://shelter.uwu.network/plugins or [search for shelter-plugins](https://github.com/search?q=shelter-plugins&type=repositories).
 
 ## How do I install it?
 
@@ -71,11 +69,12 @@ See [the docs](https://shelter.uwu.network/guides/)
 
 ## Is there a plugin repo / website / etc.?
 
-Possibly not.
+Centralised plugin repo: no, not yet.
 
-This is a somewhat smaller project right now than Cumcord was at the time of its death.
+Website: There are the docs publicly available at https://shelter.uwu.network,
+but these are currently more geared for plugin developers than end users.
 
 We are working on improving the ecosystem slowly but surely, much is in the works.
 
 Keep an eye on the uwu gh org or [our Discord server](https://discord.gg/FhHQQrVs7U)
-to see what we _are_ working on, inside and outside of the client modding space. :)
+to see what we are working on, inside and outside of the client modding space. :)
