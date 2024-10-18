@@ -3,6 +3,7 @@ const path = require("path");
 const Module = require("module");
 const fs = require("original-fs"); // using electron's fs causes app.asar to be locked during host updates
 const https = require("https");
+const { EOL } = require("os");
 
 const logger = new Proxy(console, {
   get: (target, key) =>
@@ -81,61 +82,72 @@ electron.app.on("ready", () => {
 // #endregion
 
 // #region Windows host updates
-function isNewerDir(newDir, oldDir) {
-  const newParts = newDir.split("app-")[1].split(".");
-  const oldParts = oldDir.split("app-")[1].split(".");
-  for (let i = 0; i < newParts.length; i++) {
-    const a = parseInt(newParts[i]);
-    const b = parseInt(oldParts[i]);
-    if (a > b) return true;
-    if (a < b) return false;
-  }
-  return false;
-}
-
 function patchLatest() {
   try {
-    const currentPath = path.join(__dirname, "..", "..");
-    const localPath = path.join(currentPath, "..");
+    // Before quit we inject our files into all app-* directories (newer and older versions)
+    // to account for both host updates and rollbacks
+    const currentAppDir = path.join(__dirname, "..", "..");
+    const localDir = path.join(currentAppDir, "..");
 
-    const latestPath = path.join(
-      localPath,
-      fs
-        .readdirSync(localPath)
-        .filter((dir) => dir.startsWith("app-"))
-        .reduce((prev, curr) => (isNewerDir(curr, prev) ? curr : prev)),
-    );
+    const appDirs = fs
+      .readdirSync(localDir, { withFileTypes: true })
+      .filter(
+        (entry) =>
+          entry.name.startsWith("app-") &&
+          !currentAppDir.endsWith(entry.name) &&
+          entry.isDirectory() &&
+          fs.existsSync(path.join(localDir, entry.name, "resources")),
+        // If the app-* directory is empty and missing this subdirectory,
+        // we assume it's an old version that Discord will delete soon
+      )
+      .map((entry) => entry.name);
 
-    if (latestPath === currentPath) return;
-
-    logger.log("Host update occured! Copying injector to new directory...");
-    const newResourcesPath = path.join(latestPath, "resources");
-
-    const newAppPath = path.join(newResourcesPath, "app");
-    const oldAppPath = path.join(currentPath, "resources", "app");
-
-    if (!fs.existsSync(newResourcesPath)) {
-      logger.log("Resources directory doesn't exist yet. Creating it...");
-      fs.mkdirSync(newResourcesPath);
+    logger.log(`Current app path: ${currentAppDir}`);
+    if (appDirs.length === 0) {
+      logger.log("Done! No other app-* directories found.");
+      return;
     }
+    logger.log(`Found the following app-* directory candidates: ${appDirs}`);
 
-    logger.log("Creating app directory in resources...");
-    fs.mkdirSync(newAppPath, logger.error);
+    const resourcesSrc = path.join(currentAppDir, "resources");
+    const appSrc = path.join(resourcesSrc, "app");
 
-    fs.readdirSync(oldAppPath).forEach((file) => {
-      logger.log("Copying", file);
-      fs.copyFileSync(path.join(oldAppPath, file), path.join(newAppPath, file));
+    appDirs.forEach((appDir) => {
+      try {
+        logger.log(`Injecting files into: ${appDir}`);
+        const resourcesDest = path.join(localDir, appDir, "resources");
+        const appDest = path.join(resourcesDest, "app");
+
+        if (fs.existsSync(appDest)) {
+          logger.log("App directory already exists.");
+        } else {
+          logger.log("Creating app directory in resources..");
+          fs.mkdirSync(appDest, logger.error);
+        }
+
+        fs.readdirSync(appSrc).forEach((file) => {
+          if (fs.existsSync(file)) {
+            logger.log(`File already exists: ${file}`);
+          } else {
+            logger.log(`Copying ${file}`);
+            fs.copyFileSync(path.join(appSrc, file), path.join(appDest, file));
+          }
+        });
+
+        const appAsar = path.join(resourcesDest, "app.asar");
+        const originalAsar = path.join(resourcesDest, "original.asar");
+
+        if (fs.existsSync(appAsar)) {
+          logger.log("Renaming app.asar -> original.asar");
+          fs.renameSync(appAsar, originalAsar);
+        }
+      } catch (e) {
+        logger.error(`Error while injecting (${appDir}): ${e.message}${EOL}${e.stack}`);
+      }
     });
-
-    const appAsar = path.join(latestPath, "resources", "app.asar");
-    const originalAsar = path.join(latestPath, "resources", "original.asar");
-
-    if (!fs.existsSync(appAsar)) return;
-
-    logger.log("Renaming app.asar -> original.asar...");
-    fs.renameSync(appAsar, originalAsar);
+    logger.log("Finished injecting our files into all directories!");
   } catch (e) {
-    logger.error("Host update error:", e);
+    logger.error(`Host update error: ${e.message}${EOL}${e.stack}`);
   }
 }
 
