@@ -15,8 +15,8 @@ importers:
         specifier: ^0.47.2
         version: 0.47.2
       husky:
-        specifier: ^8.0.3
-        version: 8.0.3
+        specifier: ^9.1.6
+        version: 9.1.6
       rimraf:
         specifier: ^4.4.1
         version: 4.4.1
@@ -2809,9 +2809,9 @@ packages:
     resolution: {integrity: sha512-SEQu7vl8KjNL2eoGBLF3+wAjpsNfA9XMlXAYj/3EdaNfAlxKthD1xjEQfGOUhllCGGJVNY34bRr6lPINhNjyZw==}
     engines: {node: '>=8.12.0'}
 
-  husky@8.0.3:
-    resolution: {integrity: sha512-+dQSyqPh4x1hlO1swXBiNb2HzTDN1I2IGLQx1GrBuiqFJfoMrnZWwVmatvSiO+Iz8fBUnf+lekwNo4c2LlXItg==}
-    engines: {node: '>=14'}
+  husky@9.1.6:
+    resolution: {integrity: sha512-sqbjZKK7kf44hfdE94EoX8MZNk0n7HeW37O4YrVGCF4wzgQjp+akPAkfUK5LZ6KuR/6sqeAVuXHji+RzQgOn5A==}
+    engines: {node: '>=18'}
     hasBin: true
 
   icss-replace-symbols@1.1.0:
@@ -7017,7 +7017,7 @@ snapshots:
 
   human-signals@1.1.1: {}
 
-  husky@8.0.3: {}
+  husky@9.1.6: {}
 
   icss-replace-symbols@1.1.0: {}
 
