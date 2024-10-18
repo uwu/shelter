@@ -5,9 +5,32 @@ const fs = require("original-fs"); // using electron's fs causes app.asar to be 
 const https = require("https");
 const { EOL } = require("os");
 
+// Write logs to a file, enabled by default
+const enableFileLogging = process.env.SHELTER_FILE_LOGGING?.toLowerCase() !== "false";
+
+const logFilePath = path.resolve(__dirname, "../../../shelter-injector.log");
+let logFile;
+
+// Set up a logging stream and truncate it's file if it's too large
+if (enableFileLogging) {
+  try {
+    if (fs.existsSync(logFilePath)) {
+      const lines = fs.readFileSync(logFilePath).toString().split(EOL);
+      if (lines > 100_000) {
+        const truncatedContent = lines.slice(-75_000).join(EOL);
+        fs.writeFileSync(logFilePath, truncatedContent);
+      }
+    }
+    logFile = fs.createWriteStream(logFilePath, { flags: "a" });
+  } catch (e) {
+    console.error("Error setting up shelter-injector.log", e);
+  }
+}
+
 const logger = new Proxy(console, {
   get: (target, key) =>
     function (...args) {
+      logFile?.write(`[${new Date().toISOString()}] [${key}] ${args.join(" ")}${EOL}`);
       return target[key].apply(console, ["[shelter]", ...args]);
     },
 });
