@@ -157,6 +157,34 @@ if (process.platform === "win32") {
 
 // #endregion
 
+// #region DevTools
+// Patch DevTools setting, enabled by default
+const enableDevTools = process.env.SHELTER_FORCE_DEVTOOLS?.toLowerCase() !== "false";
+
+if (enableDevTools) {
+  const originalRequire = Module.prototype.require;
+
+  Module.prototype.require = function (path) {
+    const loadedModule = originalRequire.call(this, path);
+    const settings = loadedModule?.appSettings?.getSettings()?.settings;
+    if (settings) {
+      try {
+        Object.defineProperty(settings, "DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING", {
+          value: true,
+          configurable: false,
+          enumerable: false, // prevents our patched value from getting saved to settings.json
+        });
+        Module.prototype.require = originalRequire;
+      } catch (e) {
+        logger.error(`Error patching DevTools setting: ${e}${EOL}${e.stack}`);
+      }
+    }
+    return loadedModule;
+  };
+}
+
+// #endregion
+
 // #region BrowserWindow
 const ProxiedBrowserWindow = new Proxy(electron.BrowserWindow, {
   construct(target, args) {
