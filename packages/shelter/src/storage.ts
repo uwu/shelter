@@ -65,7 +65,9 @@ async function getDb(store: string) {
 export const storage = <T = any>(name: string) => {
   const signals: Record<string, Signal<any>> = {};
   let db: IDBPDatabase<any>;
+  // these are only relevant before the database is connected, to allow premature write operations
   let modifiedKeys = new Set<string>();
+  let deletedKeys = new Set<string>();
 
   // queues callbacks for when the db loads
   const waitQueue: (() => void)[] = [];
@@ -82,12 +84,12 @@ export const storage = <T = any>(name: string) => {
     const keys = await d.getAllKeys(name);
     await Promise.all(keys.map(async (k) => [k, await d.get(name, k)])).then((vals) => {
       // if a signal exists but wasn't modified (get), set it from db
-      // if a signal exists and was modified, (set, delete) leave it be
-      // if a signal does not exist, create it from db
+      // if a signal exists and was modified, (set) leave it be
+      // if a signal does not exist and was not deleted, create it from db
       for (const [k, v] of vals) {
         if (k in signals) {
           if (!modifiedKeys.has(k)) signals[k][1](v);
-        } else signals[k] = createSignal(v);
+        } else if (!deletedKeys.has(k)) signals[k] = createSignal(v);
       }
 
       updateMainSignal();
@@ -114,6 +116,7 @@ export const storage = <T = any>(name: string) => {
       if (typeof p === "symbol") throw new Error("cannot index db store with a symbol");
 
       modifiedKeys.add(p);
+      //deletedKeys.delete(p); // we're overwriting it anyway so if its creation is suppressed is irrelevant
       const [, setSig] = (signals[p] ??= createSignal());
       setSig(() => v);
       updateMainSignal();
@@ -126,7 +129,8 @@ export const storage = <T = any>(name: string) => {
     deleteProperty(_, p) {
       if (typeof p === "symbol") throw new Error("cannot index db store with a symbol");
 
-      modifiedKeys.add(p);
+      //modifiedKeys.delete(p); // doesn't do anything
+      deletedKeys.add(p);
       delete signals[p];
       updateMainSignal();
 
