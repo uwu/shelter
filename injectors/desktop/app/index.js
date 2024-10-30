@@ -5,15 +5,17 @@ const fs = require("original-fs"); // using electron's fs causes app.asar to be 
 const https = require("https");
 const { EOL } = require("os");
 
-// Write logs to a file, enabled by default
-const enableFileLogging = process.env.SHELTER_FILE_LOGGING?.toLowerCase() !== "false";
+// Write logs to a file, windows only, enabled by default
+const enableFileLogging = process.platform === "win32" && process.env.SHELTER_FILE_LOGGING?.toLowerCase() !== "false";
 
-const logFilePath = path.resolve(__dirname, "../../../shelter-injector.log");
+let logFilePath;
 let logFile;
 
 // Set up a logging stream and truncate it's file if it's too large
 if (enableFileLogging) {
   try {
+    // the directory of this path only exists on windows
+    logFilePath = path.resolve(__dirname, "../../../shelter-injector.log");
     if (fs.existsSync(logFilePath)) {
       const lines = fs.readFileSync(logFilePath).toString().split(EOL);
       if (lines > 100_000) {
