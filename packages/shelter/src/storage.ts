@@ -63,6 +63,8 @@ async function getDb(store: string) {
 }
 
 export const storage = <T = any>(name: string) => {
+  // for signals that were created by a get call because their values were not set yet
+  const pendingSignals: Record<string, Signal<any>> = {};
   const signals: Record<string, Signal<any>> = {};
   let db: IDBPDatabase<any>;
   // these are only relevant before the database is connected, to allow premature write operations
@@ -87,6 +89,10 @@ export const storage = <T = any>(name: string) => {
       // if a signal exists and was modified, (set) leave it be
       // if a signal does not exist and was not deleted, create it from db
       for (const [k, v] of vals) {
+        if (k in pendingSignals) {
+          signals[k] = pendingSignals[k];
+          delete pendingSignals[k];
+        }
         if (k in signals) {
           if (!modifiedKeys.has(k)) signals[k][1](v);
         } else if (!deletedKeys.has(k)) signals[k] = createSignal(v);
@@ -109,7 +115,8 @@ export const storage = <T = any>(name: string) => {
 
       if (typeof p === "symbol") throw new Error("cannot index db store with a symbol");
 
-      return (signals[p] ??= createSignal())[0]();
+      if (p in signals) return signals[p][0]();
+      return (pendingSignals[p] ??= createSignal())[0]();
     },
 
     set(_, p, v) {
@@ -117,6 +124,10 @@ export const storage = <T = any>(name: string) => {
 
       modifiedKeys.add(p);
       //deletedKeys.delete(p); // we're overwriting it anyway so if its creation is suppressed is irrelevant
+      if (p in pendingSignals) {
+        signals[p] = pendingSignals[p];
+        delete pendingSignals[p];
+      }
       const [, setSig] = (signals[p] ??= createSignal());
       setSig(() => v);
       updateMainSignal();
@@ -132,6 +143,7 @@ export const storage = <T = any>(name: string) => {
       //modifiedKeys.delete(p); // doesn't do anything
       deletedKeys.add(p);
       delete signals[p];
+      delete pendingSignals[p];
       updateMainSignal();
 
       waitInit(() => db.delete(name, p));
