@@ -60,3 +60,10 @@
     padding: 4px;
   }
 }
+
+.linkbutton {
+  color: var(--text-link);
+  &:hover {
+    text-decoration: underline;
+  }
+}
