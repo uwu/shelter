@@ -1,7 +1,7 @@
 import { type Component, createEffect, type JSX, on, Show, splitProps } from "solid-js";
 import { genId } from "./util";
 import { Divider } from "./index";
-import { css, classes } from "./switch_new.tsx.scss";
+import { css, classes } from "./switch.tsx.scss";
 import { focusring } from "./focusring";
 import { tooltip } from "./tooltip";
 import { ensureInternalStyle } from "./internalstyles";
