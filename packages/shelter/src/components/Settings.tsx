@@ -1,4 +1,4 @@
-import { injectCss, Header, HeaderTags, Divider } from "@uwu/shelter-ui";
+import { injectCss, Header, HeaderTags } from "@uwu/shelter-ui";
 import { classes, css } from "./Settings.tsx.scss";
 import ShelterLogo from "./ShelterLogo";
 import Plugins from "./Plugins";
@@ -14,18 +14,11 @@ export default () => {
 
   return (
     <>
-      <Header tag={HeaderTags.H1} class={`${classes.row} ${classes.slogan}`}>
-        <ShelterLogo />- an attempt to prepare for the worst
-      </Header>
-
-      <Divider mt mb />
-
-      <div class={classes.column} style="padding: 0.25rem">
-        <Header tag={HeaderTags.H3} class={classes.head}>
-          Developer Tools
+      <div class={classes.wrapper}>
+        <Header tag={HeaderTags.H1} class={classes.header}>
+          <ShelterLogo />- an attempt to prepare for the worst
         </Header>
         <DevUi />
-
         <Plugins />
       </div>
     </>

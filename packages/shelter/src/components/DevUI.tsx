@@ -1,23 +1,16 @@
-import { injectCss, LinkButton, showToast, Space, SwitchItem } from "@uwu/shelter-ui";
+import { Divider, Header, HeaderTags, LinkButton, showToast, Space, SwitchItem } from "@uwu/shelter-ui";
 import { dbStore } from "../storage";
 import { PluginCard } from "./Plugins";
 import { devModeReservedId, enableDevmode, stopDevmode } from "../devmode";
 import { installedPlugins } from "../plugins";
-import { css, classes } from "./DevUI.tsx.scss";
 import { createMemo, Show } from "solid-js";
 
-let injectedCss = false;
-
 export default () => {
-  if (!injectedCss) {
-    injectCss(css);
-    injectedCss = true;
-  }
-
   const devModeOn = createMemo(() => devModeReservedId in installedPlugins());
 
   return (
-    <div class={classes.open}>
+    <div>
+      <Header tag={HeaderTags.EYEBROW}>Developer Tools</Header>
       <SwitchItem value={dbStore.logDispatch} onChange={(v) => (dbStore.logDispatch = v)}>
         Log FluxDispatcher events to the console
       </SwitchItem>
@@ -43,7 +36,9 @@ export default () => {
               <Space />
               <LinkButton href="https://github.com/uwu/shelter/tree/main/packages/lune#readme">Lune</LinkButton>
               <Space />
-              via dev mode. To disable dev mode, close Lune. The following dev plugin is loaded:
+              via dev mode. To disable dev mode, close Lune.
+              <br />
+              The following dev plugin is loaded:
             </>
           ) : (
             <>
@@ -62,6 +57,8 @@ export default () => {
       <Show when={installedPlugins()[devModeReservedId]} keyed>
         {(plugin) => <PluginCard id={devModeReservedId} plugin={plugin} />}
       </Show>
+
+      <Divider mt />
     </div>
   );
 };

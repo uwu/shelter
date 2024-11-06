@@ -14,7 +14,6 @@ import { css, classes } from "./Plugins.tsx.scss";
 import {
   Header,
   HeaderTags,
-  IconAdd,
   IconBin,
   IconCog,
   injectCss,
@@ -27,6 +26,10 @@ import {
   IconEdit,
   IconUpdate,
   showToast,
+  Button,
+  ButtonLooks,
+  ButtonSizes,
+  ButtonColors,
 } from "@uwu/shelter-ui";
 import { addPluginModal, editPluginModal } from "./PluginEditModal";
 import Fuse from "fuse.js";
@@ -40,6 +43,11 @@ export const PluginCard: Component<{
   id: string;
   plugin: StoredPlugin;
 }> = (props) => {
+  if (!cssInjected) {
+    injectCss(css);
+    cssInjected = true;
+  }
+
   const [on, setOn] = createSignal(props.plugin.on);
 
   const isDev = () => props.id === devModeReservedId;
@@ -166,20 +174,19 @@ export default (): JSX.Element => {
 
   return (
     <div class={classes.list}>
-      <Header tag={HeaderTags.H3}>
-        Plugins
-        <button
-          use:tooltip="Add a plugin"
-          aria-label="add a plugin"
-          use:focusring
-          class={classes.btn}
-          onclick={addPluginModal}
+      <Header tag={HeaderTags.EYEBROW}>{`Plugins (${Object.keys(installedPlugins()).length})`}</Header>
+      <div class={classes.bar}>
+        <TextBox value={searchTerm()} onInput={setSearchTerm} placeholder="Search plugins..." />
+        <Button
+          grow
+          look={ButtonLooks.FILLED}
+          color={ButtonColors.BRAND}
+          size={ButtonSizes.MEDIUM}
+          onClick={addPluginModal}
         >
-          <IconAdd />
-        </button>
-      </Header>
-
-      <TextBox value={searchTerm()} onInput={setSearchTerm} placeholder="Search plugins..." />
+          Add Plugin
+        </Button>
+      </div>
 
       {/* IIRC not using a <For> here was very intentional due to keying -- sink
        * the only way to do what we need cleanly in solid looks *like this*!:

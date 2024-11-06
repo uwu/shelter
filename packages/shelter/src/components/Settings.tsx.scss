@@ -1,17 +1,12 @@
-.row {
+.header {
   display: flex;
   align-items: center;
-  // default
-  //flex-direction: row;
   gap: .5rem;
-}
-
-.column {
-  display: flex;
-  flex-direction: column;
-  gap: .5rem;
-}
-
-.slogan {
   font-style: oblique;
+}
+
+.wrapper {
+  display: flex;
+  row-gap: 48px;
+  flex-direction: column;
 }
