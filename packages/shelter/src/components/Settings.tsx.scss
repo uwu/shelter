@@ -8,13 +8,14 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  gap: 48px;
 }
 
 .banner {
-  width: 300px;
+  width: 280px;
   height: 120px;
   cursor: pointer;
-  transition: transform .4s cubic-bezier(.2, 1, .3, 1);
+  transition: transform .3s cubic-bezier(.2, 1, .3, 1);
 
   &:active {
     transform: translateY(-4px);
@@ -23,8 +24,10 @@
 
 .linkwrapper {
   display: flex;
-  flex-grow: 1;
   flex-direction: column;
   align-items: center;
   gap: .5rem;
+  > * {
+    width: 100%;
+  }
 }

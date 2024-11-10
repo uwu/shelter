@@ -1,6 +1,6 @@
 import ShelterKawaiiSvg from "shelter-assets/svg/banner-kawaii.svg";
 import ShelterSvg from "shelter-assets/svg/banner.svg";
-import { injectCss, LinkButton } from "@uwu/shelter-ui";
+import { injectCss, Button, ButtonColors } from "@uwu/shelter-ui";
 import { classes, css } from "./Settings.tsx.scss";
 import { createSignal } from "solid-js";
 import { dbStore } from "../storage";
@@ -36,8 +36,18 @@ export default () => {
             draggable={false}
           />
           <div class={classes.linkwrapper}>
-            <LinkButton href="https://shelter.uwu.network/">Documentation</LinkButton>
-            <LinkButton href="https://github.com/uwu/shelter/">GitHub Repository</LinkButton>
+            <Button
+              color={ButtonColors.SECONDARY}
+              onClick={() => window.open("https://shelter.uwu.network/", "_blank")}
+            >
+              Documentation
+            </Button>
+            <Button
+              color={ButtonColors.SECONDARY}
+              onClick={() => window.open("https://github.com/uwu/shelter/", "_blank")}
+            >
+              GitHub Repository
+            </Button>
           </div>
         </div>
         <DevUi />
