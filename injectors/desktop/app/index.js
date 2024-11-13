@@ -191,7 +191,12 @@ if (enableDevTools) {
 
   Module.prototype.require = function (path) {
     const loadedModule = originalRequire.call(this, path);
-    const settings = loadedModule?.appSettings?.getSettings()?.settings;
+    if (!path.endsWith("appSettings")) return loadedModule;
+
+    const settings =
+      loadedModule?.appSettings?.getSettings?.()?.settings ?? // Original
+      loadedModule?.getSettings?.()?.store; // OpenAsar
+
     if (settings) {
       try {
         Object.defineProperty(settings, "DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING", {
