@@ -8,7 +8,14 @@ declare global {
   }
 }
 
-export const getFiber = (n: Element): Fiber => n[Object.keys(n).find((key) => key.startsWith("__reactFiber$"))];
+// the randomKey that React adds after __reactFiber$ is the same for all elements created by the React instance
+// so it's sensible to cache it
+// see https://github.com/facebook/react/blob/2a9f4c04e54294b668e0a2ae11c1930c2e57b248/packages/react-dom-bindings/src/client/ReactDOMComponentTree.js#L39
+let fiberKey: string;
+export const getFiber = (n: Element): Fiber => {
+  if (fiberKey && n[fiberKey]) return n[fiberKey];
+  return n[(fiberKey = Object.keys(n).find((key) => key.startsWith("__reactFiber$")) ?? fiberKey)];
+};
 
 export const getFiberOwner = (n: Element | Fiber): undefined | null | FiberOwner => {
   const filter = ({ stateNode }: Fiber) => stateNode && !(stateNode instanceof Element);
