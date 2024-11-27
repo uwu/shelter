@@ -10,7 +10,7 @@
   "module": "dist/index.jsx",
   "types": "dist/index.d.ts",
   "scripts": {
-    "prepare": "tsc && node esbuild.mjs"
+    "prepare": "rimraf dist && tsc && mv dist/src/* dist && rmdir dist/src && node esbuild.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.20.1",

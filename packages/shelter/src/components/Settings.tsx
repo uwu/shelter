@@ -50,7 +50,7 @@ export default () => {
             </Button>
           </div>
         </div>
-        <DevUi />
+        <DevUi fullVersion />
         <Plugins />
       </div>
     </>
