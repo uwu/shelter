@@ -2,7 +2,7 @@ import { after } from "spitroast";
 const origDefineProperty = Object.defineProperty;
 const current = new Set<string>();
 
-export default function (prop: string, patchDefine: boolean, filter?: (t: any) => boolean) {
+export default function (prop: string, patchDefine: boolean, filter?: (t: any) => boolean, qmt?: boolean) {
   if (current[prop]) throw new Error(`Already exfiltrating ${prop}!`);
 
   const protoKey = Symbol(prop);
@@ -32,10 +32,14 @@ export default function (prop: string, patchDefine: boolean, filter?: (t: any) =
           value: v,
         });
 
-        if (!filter || filter(this)) {
-          cleanup();
-          res(this);
-        }
+        const run = qmt ? queueMicrotask : (c) => c();
+
+        run(() => {
+          if (!filter || filter(this)) {
+            cleanup();
+            res(this);
+          }
+        });
       },
 
       get() {
