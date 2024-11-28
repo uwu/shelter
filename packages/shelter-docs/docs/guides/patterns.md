@@ -1,4 +1,4 @@
-# Plugin development patterns
+# Plugin Development Patterns
 
 This page lists common patterns you will use in your plugins very often,
 and are generally safe.

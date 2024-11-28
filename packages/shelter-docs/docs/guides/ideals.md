@@ -1,4 +1,4 @@
-# shelter ideals
+# shelter Ideals
 
 This page goes through some ideals and principles, including those behind shelter and those held by the core developers.
 Some of them are applicable to plugin developers, and you would do well to follow those in your plugins.

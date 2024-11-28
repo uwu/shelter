@@ -1,4 +1,4 @@
-# Your first plugin
+# Your First Plugin
 
 This guide will walk through writing a simple but functional plugin from start to finish.
 It assumes you have shelter installed, Lune setup, and your monorepo setup.

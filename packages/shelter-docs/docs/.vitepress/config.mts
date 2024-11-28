@@ -13,12 +13,12 @@ export default defineConfig({
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: "https://github.com/uwu/shelter/raw/main/packages/shelter-assets/svg/banner.svg",
-    siteTitle: "docs",
+    siteTitle: "",
     search: { provider: "local" },
     nav: [
-      { text: "Home", link: "/" },
+      { text: "Install", link: "/install" },
       { text: "Plugins", link: "/plugins" },
-      { text: "Guides", link: "/guides/" },
+      { text: "Dev Guides", link: "/guides/" },
       { text: "API Reference", link: "/reference" },
       { text: "shelter UI", link: "/ui" },
     ],
