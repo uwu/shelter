@@ -1,4 +1,4 @@
-import { onCleanup, type Component, type Accessor, createSignal, createEffect, on, type JSX } from "solid-js";
+import { type Accessor, type Component, createEffect, createSignal, type JSX, onCleanup } from "solid-js";
 import { getRoot } from "./util";
 import { classes, css } from "./tooltip.tsx.scss";
 import { ensureInternalStyle } from "./internalstyles";
@@ -22,21 +22,31 @@ const ToolTip: Component<{
   active: boolean;
   under: boolean;
 }> = (props) => {
-  let tooltipRef: HTMLDivElement;
+  let contentWrapRef: HTMLDivElement;
 
-  // default is just an estimate
-  const [tooltipWidth, setTooltipWidth] = createSignal(props.width);
+  // 190px is just an estimate, as it is equal to max-width
+  // we will need to actually measure content
+  const [tooltipWidth, setTooltipWidth] = createSignal(190);
 
-  createEffect(on([() => props.children], () => setTimeout(() => setTooltipWidth(tooltipRef.clientWidth))));
+  createEffect(() => {
+    props.children; // sub
+
+    // 24px to account for content padding, plus one because otherwise sometimes it wraps anyway. idk man.
+    setTimeout(() =>
+      setTooltipWidth(
+        25 + ((contentWrapRef.firstElementChild as HTMLElement)?.offsetWidth ?? contentWrapRef.offsetWidth),
+      ),
+    );
+  });
 
   return (
     <div
-      ref={tooltipRef}
       classList={{
         [classes.tooltip]: true,
         [classes.active]: props.active,
       }}
       style={{
+        width: tooltipWidth() ? tooltipWidth() + "px" : undefined,
         left: props.left + props.width / 2 - tooltipWidth() / 2 + "px",
         top: props.under ? props.bottom + verticalOffset + "px" : undefined,
         bottom: !props.under ? window.innerHeight - props.top + verticalOffset + "px" : undefined,
@@ -44,7 +54,9 @@ const ToolTip: Component<{
       }}
     >
       <div class={`${classes.pointer} ${props.under ? classes.under : ""}`} />
-      <div class={classes.content}>{props.children}</div>
+      <div class={classes.content} ref={contentWrapRef}>
+        {props.children instanceof Node ? props.children : <span>{props.children}</span>}
+      </div>
     </div>
   );
 };
@@ -113,6 +125,7 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
       }
     } else {
       isInside = false;
+      // top tip: if you need to debug tooltips, comment this line right here :) -- sink
       exitHandler();
     }
   };

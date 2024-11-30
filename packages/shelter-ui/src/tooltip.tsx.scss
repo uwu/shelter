@@ -10,8 +10,10 @@
   font-size: 14px;
   pointer-events: none;
   word-wrap: break-word;
+  text-align: center;
   transition-duration: 100ms;
   transition-property: transform, opacity;
+  text-wrap: balance;
 
   &:not(.active) {
     transform: scale(0);
