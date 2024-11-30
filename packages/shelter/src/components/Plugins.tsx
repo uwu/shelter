@@ -25,6 +25,7 @@ import {
   TextBox,
   IconEdit,
   IconUpdate,
+  IconInfo,
   showToast,
   Button,
   ButtonLooks,
@@ -53,6 +54,7 @@ export const PluginCard: Component<{
   const isDev = () => props.id === devModeReservedId;
 
   const ldi = props.plugin.injectorIntegration;
+  const ldiName = ldi && (ldi.loaderName ?? "a loader or custom client");
 
   return (
     <div class={classes.plugin}>
@@ -63,6 +65,16 @@ export const PluginCard: Component<{
         <Space />
         <span class={classes.author}>{props.plugin.manifest.author}</span>
         <div style="flex:1" />
+        {/* Some users did not understand where injector plugins came from or why, so explain it to them */}
+        <Show keyed when={ldi}>
+          <div
+            use:tooltip={`This plugin is part of ${ldiName}.`}
+            aria-label={`${props.plugin.manifest.name} is part of ${ldiName}.`}
+            class={classes.btn}
+          >
+            <IconInfo />
+          </div>
+        </Show>
         <Show keyed when={getSettings(props.id)}>
           <button
             use:tooltip="Open settings"

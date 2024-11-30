@@ -36,12 +36,15 @@ $DIM: hsl(216, calc(var(--saturation-factor, 1) * 3.7%), 73.5%);
 }
 
 .btn {
+  padding-inline: 6px;
+  padding-block: 2px;
   border: none;
   background: none;
   color: var(--interactive-active);
   transition: opacity 250ms;
 
-  &:hover {
+  // exclude the info div
+  &button:hover {
     color: var(--interactive-hover);
   }
 }
