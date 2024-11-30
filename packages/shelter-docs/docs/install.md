@@ -1,6 +1,6 @@
-<script setup>
-  import Pill from "./components/Pill.vue";
-</script>
+---
+outline: [2, 3]
+---
 
 # Install shelter
 
@@ -8,74 +8,121 @@ There are multiple ways to install shelter, depending on which platform you are 
 
 Click the links in the sidebar to skip to the relevant section.
 
----
-
-Watch this space! We are currently working on an improved desktop injection method that will:
- - be host-update resistant on all platforms (currently not supported on non-Arch Linuxes and macOS),
- - be simpler,
- - not require root access on Linux,
- - allow for running alongside other mods, such as Vencord.
-
-Once this is complete, it will be added into the installer, which should streamline the process.
+Information on the technical details of injection can be found on [this page](/guides/injection),
+but this page will simply include instructions relevant to the end user to get shelter up and running.
 
 ## Desktop
 
-There are multiple ways to install shelter on desktop. We will try to guide you to the best one for you.
-
-If you are using [Kernel](https://kernel.fish), follow these instructions:
-::: details Kernel installation
+::: details I am using [Kernel](https://kernel.fish)
 We will not cover how to install Kernel itself. We expect you to know how Kernel works if you are using it.
 
 Install the kernel package from [here](https://github.com/uwu/shelter/tree/main/injectors/kernel).
 :::
 
-If you are using Arch Linux, follow these instructions:
-::: details Arch Linux installation
-Install the [`shelter` AUR package](https://aur.archlinux.org/packages/shelter).
-This method is resistant to being overwritten during updates.
-:::
+Assuming you are not using Kernel,
+[download the shelter installer](https://github.com/uwu/shelter-installer/releases/latest) and run that.
 
-Otherwise, [download the shelter installer](https://github.com/uwu/shelter-installer/releases/latest),
-and run that.
-This method is resistant to being overwritten during updates on Windows, but not on macOS or Linux.
+It will install shelter using an injection method called sheltupdate.
+This works on all platforms and channels, does not require root access, and should never break due to a discord update.
 
-You will need to run the installer as root if you are on Linux, which will not be possible for users on Wayland,
-so those users may need to follow the manual installation process, instead.
+![Screenshot of the shelter installer](https://i.uwu.network/61318cfbc.png)
 
-If you encounter issues with Discord (e.g. not starting) after using the installer,
-you may have to do a manual installation instead.
+If you previously installed shelter on desktop, you will have the legacy injector installed,
+and the installer will remove it for you as part of the update process, if it is able to.
 
-::: details Manual Installation
+In the very unlikely event that you encounter issues with Discord (e.g. not starting) after using the installer,
+you may have to do a manual installation instead, please see [this page](/guides/injection) for more info.
 
-If you cannot use the shelter installer for any reason, here are the steps to do exactly what it does, yourself.
+If the installer is unable to remove your existing legacy injector installation,
+it may ask you to do a manual uninstall. The instructions for this are [below](#manual-legacy-uninstall).
 
-The end result will be identical to that of running the installer, but you have to work for it.
+### Switching Branches
 
-1. Download the shelter repository [here](https://github.com/uwu/shelter/archive/refs/heads/main.zip)
-2. Locate your Discord `resources` folder.
-   - On Windows, `%LocalAppData%/discord/resources`
-   - On Linux, locations include `/opt/discord/resources` and `/usr/share/discord/resources`
-   - On macOS, `/Applications/Discord.app/Contents/resources`
-3. From the shelter repo, copy the `injectors/desktop/app` folder into `resources/`
-4. Close Discord if it is running, and rename `app.asar` to `original.asar`
-   The folder should look something like this when you are done:
-   ```
-   🗁 resources
-   ├── 🗁 app
-   │    ├── 🗋 index.js
-   │    ├── 🗋 preload.js
-   │    └── 🗋 package.json
-   ├── 🗁 bootstrap
-   ├── 🗋 build_info.json
-   └── 🗋 original.asar
-   ```
-   - You may like to take this opportunity to replace the stock asar with [OpenAsar](https://openasar.dev).
+sheltupdate supports multiple "branches", which is the mods that are injected into Discord. These are currently:
 
-:::
+| Branch Name     | Description                                                                                           |
+|-----------------|-------------------------------------------------------------------------------------------------------|
+| `shelter`       | Injects shelter                                                                                       |
+| `vencord`       | Injects Vencord; do not expect support from the Vencord authors while using this                      |
+| `betterdiscord` | Injects BetterDiscord                                                                                 |
+| `reactdevtools` | Adds the [React Developer Tools](https://github.com/facebook/react/tree/main/packages/react-devtools) |
 
-## Chromium Browsers
+In the future, we plan to add a UI to toggle these on and off, either within the app or installer.
+Watch this space for information on that, when it becomes available. For now, you'll need to do it yourself.
 
-Do not follow these instructions if you are using Microsoft Edge, [follow this instead](#microsoft-edge).
+You can install multiple branches by concatenating the names with `+`s,
+like: `shelter+vencord`, `vencord+shelter+reactdevtools`.
+
+To change these branches, you need to find your `settings.json` file,
+and modify the `UPDATE_ENDPOINT` and `NEW_UPDATE_ENDPOINT` keys:
+
+| OS              | Path                                                             |
+|-----------------|------------------------------------------------------------------|
+| Windows         | `%AppData%\discord\settings.json`                                |
+| macOS           | `~/Library/Application Support/discord/settings.json`            |
+| Linux           | `~/.config/discord/settings.json`                                |
+| Linux (Flatpak) | `~/.var/app/com.discordapp.Discord/config/discord/settings.json` |
+
+You should be able to identify that you are in the right place quite easily, it should look like
+```json
+"UPDATE_ENDPOINT": "https://inject.shelter.uwu.network/shelter",
+"NEW_UPDATE_ENDPOINT": "https://inject.shelter.uwu.network/shelter/"
+```
+
+Ensure you leave a `/` on the end of the new endpoint, and do not put one on the old endpoint.
+
+### Manual Legacy Uninstall
+
+If you have been asked by the shelter installer to manually uninstall the traditional/legacy injector, here are the
+steps to do that.
+
+First, find your resources folder:
+
+| OS              | Path                                                                                       |
+|-----------------|--------------------------------------------------------------------------------------------|
+| Windows         | `%LocalAppData%\discord\resources`                                                         |
+| macOS           | `/Applications/Discord.app/Contents/Resources`                                             |
+| Linux           | `/opt/discord/resources`                                                                   |
+| Linux           | `/usr/share/discord/resources`                                                             |
+| Linux           | `/usr/lib/discord/resources`                                                               |
+| Linux (Flatpak) | `/var/lib/flatpak/app/com.discordapp.Discord/x86_64/stable/active/files/discord/resources` |
+
+It should look like so:
+
+```
+🗁 resources
+├── 🗁 app
+│    ├── 🗋 index.js
+│    ├── 🗋 preload.js
+│    └── 🗋 package.json
+├── 🗁 bootstrap
+├── 🗋 build_info.json
+└── 🗋 original.asar
+```
+
+Rename `original.asar` to `app.asar`, and delete the `app` folder. It should look like this:
+
+```
+🗁 resources
+├── 🗋 app.asar
+├── 🗁 bootstrap
+└── 🗋 build_info.json
+```
+
+You're done! Go back to the shelter installer to install sheltupdate, if you were trying to do that.
+
+## Firefox
+
+Install this extension: https://addons.mozilla.org/firefox/addon/shelter-injector/
+
+## Microsoft Edge
+
+Install this extension:
+https://microsoftedge.microsoft.com/addons/detail/shelter-mv3-inj/okemjpeidkmhjpmdcpaibakdhnheblib
+
+## Other Chromium Browsers
+
+Do not follow these instructions if you are using Microsoft Edge.
 
 As these extensions fetch the latest build of shelter, it is not allowed on the Chrome Webstore (we got kicked off!),
 and as there is no easy way to comply with this, you will have to manually install the extension.
@@ -84,12 +131,3 @@ and as there is no easy way to comply with this, you will have to manually insta
 2. Unpack the zip to a folder somewhere safe. If you delete this folder, the extension will be uninstalled.
 3. Head to [chrome://extensions](chrome://extensions), and enable Developer Mode in the top-right corner
 4. Click "Load Unpacked Extension", and select the folder you unpacked the zip into
-
-## Microsoft Edge
-
-Install this extension:
-https://microsoftedge.microsoft.com/addons/detail/shelter-mv3-inj/okemjpeidkmhjpmdcpaibakdhnheblib
-
-## Firefox
-
-Install this extension: https://addons.mozilla.org/firefox/addon/shelter-injector/

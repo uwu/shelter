@@ -4,12 +4,13 @@ import UnoCSS from "unocss/vite";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "shelter docs",
-  description: "Documentation for the shelter client mod",
+  title: "shelter",
+  description: "an attempt to prepare for the worst",
   vite: {
     plugins: [UnoCSS(fileURLToPath(new URL("./unocss.config.ts", import.meta.url)))],
     optimizeDeps: { exclude: ["@vueuse/integrations"] },
   },
+  head: [["link", { rel: "icon", type: "image/svg+xml", href: "/logo.svg" }]],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     logo: "https://github.com/uwu/shelter/raw/main/packages/shelter-assets/svg/banner.svg",
@@ -36,6 +37,7 @@ export default defineConfig({
             { text: "Ideals", link: "/guides/ideals" },
             { text: "Background", link: "/guides/background" },
             { text: "Injector Integration", link: "/guides/injectors" },
+            { text: "How Injectors Work", link: "/guides/injection" },
           ],
         },
       ],
