@@ -276,6 +276,51 @@ As above, `solid-js/web`
 
 As above, `solid-js/store`
 
+## `shelter.solidH`
+
+### `shelter.solidH.h`
+
+```ts
+function h(type: string | Component<any>, ...children: (JSXElement | (() => JSXElement))[]): () => JSXElement;
+function h(type: string | Component<any>, props: Record<string, any>, ...children: (JSXElement | (() => JSXElement))[]): () => JSXElement;
+```
+
+The [hyperscript interface](https://github.com/solidjs/solid/tree/main/packages/solid/h) to SolidJS.
+
+Intended to help in-console debugging and writing plugins without Lune.
+
+### `shelter.solidH.html`
+
+This is a [htm](https://github.com/developit/htm) tagged template, that lets you use JSX-like syntax to create solid
+elements at runtime.
+
+To template using reactive values, you should pass them as no-element functions e.g.:
+```js
+const [count, setCount] = createSignal();
+
+setInterval(() => setCount(count() + 1), 500);
+
+// html``
+return html`
+  <div>${() => count() * 2}</div>
+`;
+
+// JSX equivalent:
+return <div>{count() * 2}</div>;
+```
+
+Note that you must also make sure you have the argument specified for event handlers, else they will be interpreted
+by solid's templater as a reactive value:
+```ts
+//                        YES  ⬇️
+return html` <button onClick=${(e) => console.log("clicked")}>Click me!</button> `;
+
+//                         NO  ⬇️
+return html` <button onClick=${() => console.log("clicked")}>Click me!</button> `;
+```
+
+Remember that this returns a function, which you call within a component to retreive the value, for reactivity reasons.
+
 ## `shelter.React`
 
 Discord's instance of [React](https://react.dev/) (`react`).
