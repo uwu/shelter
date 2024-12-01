@@ -705,6 +705,14 @@ function flushStore(): void
 
 If you deeply modify something in the store, where it will not be automatically picked up (e.g. `store.foo.bar = "baz"`), you may call `flushStore()` to force a save.
 
+### `shelter.plugin.id`
+
+```ts
+id: string
+```
+
+The ID for this plugin, used by `shelter.plugins` APIs.
+
 ### `shelter.plugin.manifest`
 
 `manifest` contains the manifest object for your plugin.

@@ -76,6 +76,7 @@ function createPluginApi(pluginId: string, { manifest, injectorIntegration }: St
   return {
     store,
     flushStore,
+    id: pluginId,
     manifest,
     showSettings: () =>
       openModal((mprops) => (
