@@ -143,21 +143,23 @@ function patchLatest() {
         const resourcesDest = path.join(localDir, appDir, "resources");
         const appDest = path.join(resourcesDest, "app");
 
-        if (fs.existsSync(appDest)) {
-          logger.log("App directory already exists.");
-        } else {
-          logger.log("Creating app directory in resources..");
-          fs.mkdirSync(appDest, logger.error);
-        }
+        const copyDirRecursive = (from, to) => {
+          if (!fs.existsSync(to)) fs.mkdirSync(to);
+          fs.readdirSync(from).forEach((element) => {
+            if (fs.existsSync(path.join(to, element))) {
+              logger.log(`Element already exists: ${element}`);
+              return;
+            }
+            if (fs.lstatSync(path.join(from, element)).isFile()) {
+              fs.copyFileSync(path.join(from, element), path.join(to, element));
+            } else {
+              copyDirRecursive(path.join(from, element), path.join(to, element));
+            }
+          });
+        };
 
-        fs.readdirSync(appSrc).forEach((file) => {
-          if (fs.existsSync(file)) {
-            logger.log(`File already exists: ${file}`);
-          } else {
-            logger.log(`Copying ${file}`);
-            fs.copyFileSync(path.join(appSrc, file), path.join(appDest, file));
-          }
-        });
+        copyDirRecursive(appSrc, appDest);
+        logger.log(`Copied all injector files.`);
 
         const appAsar = path.join(resourcesDest, "app.asar");
         const originalAsar = path.join(resourcesDest, "original.asar");
