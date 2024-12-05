@@ -194,16 +194,18 @@ if (enableDevTools) {
     if (!path.endsWith("appSettings")) return loadedModule;
 
     const settings =
-      loadedModule?.appSettings?.getSettings?.()?.settings ?? // Original
-      loadedModule?.getSettings?.()?.store; // OpenAsar
+      loadedModule?.appSettings?.getSettings?.() ?? // Original
+      loadedModule?.getSettings?.(); // OpenAsar
 
-    if (settings) {
+    if (settings?.get) {
       try {
-        Object.defineProperty(settings, "DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING", {
-          value: true,
-          configurable: false,
-          enumerable: false, // prevents our patched value from getting saved to settings.json
-        });
+        const origGet = settings.get;
+        settings.get = function (key, defaultValue) {
+          if (key === "DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING") {
+            return true;
+          }
+          return origGet.apply(this, [key, defaultValue]);
+        };
         Module.prototype.require = originalRequire;
       } catch (e) {
         logger.error(`Error patching DevTools setting: ${e}${EOL}${e.stack}`);
