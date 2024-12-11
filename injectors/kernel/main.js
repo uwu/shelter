@@ -26,11 +26,10 @@ Object.defineProperty(session, "defaultSession", {
 
     if (!cspIsPatched) {
       dsess.webRequest.onHeadersReceived(({ responseHeaders, resourceType }, done) => {
-        const cspHeaders = Object.keys(responseHeaders).filter(
-          (name) =>
-            name.toLowerCase().startsWith("content-security-policy") ||
-            name.toLowerCase().startsWith("access-control-allow-origin"),
+        const cspHeaders = Object.keys(responseHeaders).filter((name) =>
+          name.toLowerCase().startsWith("content-security-policy"),
         );
+        for (const header of cspHeaders) delete responseHeaders[header];
 
         // what the hell is wrong with vencord
         // oh well we'll just implement their weird choices so as to maintain compatibility because
@@ -39,15 +38,6 @@ Object.defineProperty(session, "defaultSession", {
           const header = Object.keys(responseHeaders).find((h) => h.toLowerCase() === "content-type") ?? "content-type";
           responseHeaders[header] = "text/css";
         }
-
-        for (const header of cspHeaders) delete responseHeaders[header];
-
-        // Allow loading content from sites that don't allow CORS, like raw.githubusercontent.com
-        // Vencord's uses this for text/css sources only to allow this specific site
-        // This is their rationale for trying to stop other mods trampling theirs so if we not only fix it for us but
-        // fix it for them too, then I think we come to a pretty agreeable solution ;)
-        // We do, however, leave headers, methods, and other CORS headers intact, to prevent breakages.
-        responseHeaders["Access-Control-Allow-Origin"] = "*";
 
         done({ responseHeaders });
       });
