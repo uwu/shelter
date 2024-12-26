@@ -12,6 +12,8 @@ export type LoaderIntegrationOpts = {
   allowedActions: { toggle?: true; delete?: true; edit?: true; update?: true };
   // is the plugin visible in the ui, or hidden from sight?
   isVisible: boolean;
+  // a name to show in the info tooltip for the loader
+  loaderName?: string;
 };
 
 export type StoredPlugin = {
@@ -74,6 +76,7 @@ function createPluginApi(pluginId: string, { manifest, injectorIntegration }: St
   return {
     store,
     flushStore,
+    id: pluginId,
     manifest,
     showSettings: () =>
       openModal((mprops) => (

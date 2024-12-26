@@ -23,7 +23,7 @@ export default () => {
 
   // also block discord's context menu as it's behind the shelter modal and therefore not usable anyways
   const unpatch2 = before("addEventListener", window, function ([type, listener, options]) {
-    if (type === "contextmenu" && listener.toString().includes("openContextMenuLazy")) {
+    if (type === "contextmenu" && listener.toString().includes("-webkit-user-select")) {
       return [type, blockOnModal(listener), options];
     }
   });

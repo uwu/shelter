@@ -1,17 +1,33 @@
-.row {
+.wrapper {
   display: flex;
-  align-items: center;
-  // default
-  //flex-direction: row;
-  gap: .5rem;
+  row-gap: 48px;
+  flex-direction: column;
 }
 
-.column {
+.header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 48px;
+}
+
+.banner {
+  width: 280px;
+  height: 120px;
+  cursor: pointer;
+  transition: transform .3s cubic-bezier(.2, 1, .3, 1);
+
+  &:active {
+    transform: translateY(-4px);
+  }
+}
+
+.linkwrapper {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: .5rem;
-}
-
-.slogan {
-  font-style: oblique;
+  > * {
+    width: 100%;
+  }
 }

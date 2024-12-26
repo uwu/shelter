@@ -12,6 +12,7 @@
   font-weight: 500;
   font-size: 14px;
   line-height: 16px;
+  white-space: nowrap;
   cursor: pointer;
   transition: background-color .17s ease, color .17s ease;
   user-select: none;
@@ -58,5 +59,12 @@
   }
   &.icon {
     padding: 4px;
+  }
+}
+
+.linkbutton {
+  color: var(--text-link);
+  &:hover {
+    text-decoration: underline;
   }
 }

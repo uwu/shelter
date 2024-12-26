@@ -5,6 +5,7 @@ import { css, classes } from "./devmode.css";
 import { log } from "../util";
 import DevUI from "../components/DevUI";
 import { createEffect } from "solid-js";
+import { dbStore } from "../storage";
 
 // any string would work here but this is funnier
 export const devModeReservedId = "__DEVMODE_PLUGIN_DO_NOT_USE_OR_YOU_WILL_BE_FIRED";
@@ -42,7 +43,7 @@ export async function initDevmode() {
     unobs1?.();
     unobs2?.();
 
-    if (devModeIsOn()) {
+    if (devModeIsOn() || dbStore.alwaysDevMenu) {
       unobs1 = observe(`[class*="anchor"]`, (e: HTMLAnchorElement) => {
         if (e.href === "https://support.discord.com/") {
           e.href = "#";

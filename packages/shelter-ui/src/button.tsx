@@ -156,7 +156,7 @@ export const LinkButton: NativeExtendingComponent<LinkButtonProps, JSX.AnchorHTM
   ensureInternalStyle(css);
 
   return (
-    <a use:focusring use:tooltip={local.tooltip} {...anchorProps}>
+    <a class={classes.linkbutton} use:focusring use:tooltip={local.tooltip} {...anchorProps}>
       {local.children}
     </a>
   );

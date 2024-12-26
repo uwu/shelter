@@ -131,7 +131,7 @@ const PluginEditModal = (props: {
 
         <Switch>
           <Match when={!local()} keyed={false}>
-            <Header tag={HeaderTags.H4}>URL</Header>
+            <Header tag={HeaderTags.EYEBROW}>URL</Header>
             <TextBox placeholder="https://example.com/my-plugin" value={rSrc()} onInput={setRSrc} />
             <Space />
             <SwitchItem checked={rUpdate()} onChange={setRUpdate} hideBorder>
@@ -140,13 +140,16 @@ const PluginEditModal = (props: {
           </Match>
 
           <Match when={local()} keyed={false}>
-            <Header tag={HeaderTags.H4}>Name</Header>
+            <Header tag={HeaderTags.EYEBROW}>Name</Header>
             <TextBox placeholder="My Cool Plugin" value={lName()} onInput={setLName} />
-            <Header tag={HeaderTags.H4}>Author</Header>
+            <Space />
+            <Header tag={HeaderTags.EYEBROW}>Author</Header>
             <TextBox placeholder="Rin" value={lAuthor()} onInput={setLAuthor} />
-            <Header tag={HeaderTags.H4}>Description</Header>
+            <Space />
+            <Header tag={HeaderTags.EYEBROW}>Description</Header>
             <TextBox placeholder="The plugin is very cool and helpful" value={lDesc()} onInput={setLDesc} />
-            <Header tag={HeaderTags.H4}>Code</Header>
+            <Space />
+            <Header tag={HeaderTags.EYEBROW}>Code</Header>
 
             <div class={classes.tawrap}>
               <JsUploader setCode={setLCode} />
@@ -166,6 +169,7 @@ const PluginEditModal = (props: {
 }`}
                 value={lCode()}
                 onInput={setLCode}
+                spellcheck={false}
               />
             </div>
           </Match>

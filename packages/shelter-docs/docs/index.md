@@ -4,20 +4,26 @@ layout: home
 
 hero:
   name: "shelter"
-  text: "documentation"
+  #text: "documentation"
   tagline: an attempt to prepare for the worst
   actions:
     - theme: brand
-      text: Guides
+      text: Install
+      link: /install
+    - theme: brand
+      text: Plugin List
+      link: /plugins
+    - theme: alt
+      text: Developer Guides
       link: /guides/
     - theme: alt
       text: API Reference
       link: /reference
     - theme: alt
-      text: shelter UI
+      text: shelter UI Docs
       link: /ui
   #image:
-  #  src: "https://github.com/uwu/shelter/raw/main/packages/shelter-assets/svg/logo.svg"
+  #  src: "https://github.com/uwu/shelter/raw/main/packages/shelter-assets/svg/banner-kawaii.svg"
 
 #features:
 #  - title: Robustness
@@ -34,3 +40,12 @@ hero:
 #        useful (though unconventional) APIs, and above-average documentation for a client mod.
 ---
 
+shelter is a new generation client mod built to be essentially bulletproof.
+
+It began development as a response to the death of many client mods in late September 2022, better explained in
+[*An Exercise in Futility*](https://web.archive.org/web/20230726025103/https://cumcord.com/an-exercise-in-futility).
+
+shelter is developed by uwu.network, which formed of the remains of the Cumcord Team.
+
+shelter has been lightly maintained continuously since its release in late 2022, and has not broken due to a Discord
+update once since (over two years!). This is in stark contrast to most other client mods.

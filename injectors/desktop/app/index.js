@@ -3,10 +3,36 @@ const path = require("path");
 const Module = require("module");
 const fs = require("original-fs"); // using electron's fs causes app.asar to be locked during host updates
 const https = require("https");
+const { EOL } = require("os");
+
+// Write logs to a file, windows only, enabled by default
+const enableFileLogging = process.platform === "win32" && process.env.SHELTER_FILE_LOGGING?.toLowerCase() !== "false";
+
+let logFilePath;
+let logFile;
+
+// Set up a logging stream and truncate it's file if it's too large
+if (enableFileLogging) {
+  try {
+    // the directory of this path only exists on windows
+    logFilePath = path.resolve(__dirname, "../../../shelter-injector.log");
+    if (fs.existsSync(logFilePath)) {
+      const lines = fs.readFileSync(logFilePath).toString().split(EOL);
+      if (lines > 100_000) {
+        const truncatedContent = lines.slice(-75_000).join(EOL);
+        fs.writeFileSync(logFilePath, truncatedContent);
+      }
+    }
+    logFile = fs.createWriteStream(logFilePath, { flags: "a" });
+  } catch (e) {
+    console.error("Error setting up shelter-injector.log", e);
+  }
+}
 
 const logger = new Proxy(console, {
   get: (target, key) =>
     function (...args) {
+      logFile?.write(`[${new Date().toISOString()}] [${key}] ${args.join(" ")}${EOL}`);
       return target[key].apply(console, ["[shelter]", ...args]);
     },
 });
@@ -81,66 +107,114 @@ electron.app.on("ready", () => {
 // #endregion
 
 // #region Windows host updates
-function isNewerDir(newDir, oldDir) {
-  const newParts = newDir.split("app-")[1].split(".");
-  const oldParts = oldDir.split("app-")[1].split(".");
-  for (let i = 0; i < newParts.length; i++) {
-    const a = parseInt(newParts[i]);
-    const b = parseInt(oldParts[i]);
-    if (a > b) return true;
-    if (a < b) return false;
-  }
-  return false;
-}
-
 function patchLatest() {
   try {
-    const currentPath = path.join(__dirname, "..", "..");
-    const localPath = path.join(currentPath, "..");
+    // Before quit we inject our files into all app-* directories (newer and older versions)
+    // to account for both host updates and rollbacks
+    const currentAppDir = path.join(__dirname, "..", "..");
+    const localDir = path.join(currentAppDir, "..");
 
-    const latestPath = path.join(
-      localPath,
-      fs
-        .readdirSync(localPath)
-        .filter((dir) => dir.startsWith("app-"))
-        .reduce((prev, curr) => (isNewerDir(curr, prev) ? curr : prev)),
-    );
+    const appDirs = fs
+      .readdirSync(localDir, { withFileTypes: true })
+      .filter(
+        (entry) =>
+          entry.name.startsWith("app-") &&
+          !currentAppDir.endsWith(entry.name) &&
+          entry.isDirectory() &&
+          fs.existsSync(path.join(localDir, entry.name, "resources")),
+        // If the app-* directory is empty and missing this subdirectory,
+        // we assume it's an old version that Discord will delete soon
+      )
+      .map((entry) => entry.name);
 
-    if (latestPath === currentPath) return;
-
-    logger.log("Host update occured! Copying injector to new directory...");
-    const newResourcesPath = path.join(latestPath, "resources");
-
-    const newAppPath = path.join(newResourcesPath, "app");
-    const oldAppPath = path.join(currentPath, "resources", "app");
-
-    if (!fs.existsSync(newResourcesPath)) {
-      logger.log("Resources directory doesn't exist yet. Creating it...");
-      fs.mkdirSync(newResourcesPath);
+    logger.log(`Current app path: ${currentAppDir}`);
+    if (appDirs.length === 0) {
+      logger.log("Done! No other app-* directories found.");
+      return;
     }
+    logger.log(`Found the following app-* directory candidates: ${appDirs}`);
 
-    logger.log("Creating app directory in resources...");
-    fs.mkdirSync(newAppPath, logger.error);
+    const resourcesSrc = path.join(currentAppDir, "resources");
+    const appSrc = path.join(resourcesSrc, "app");
 
-    fs.readdirSync(oldAppPath).forEach((file) => {
-      logger.log("Copying", file);
-      fs.copyFileSync(path.join(oldAppPath, file), path.join(newAppPath, file));
+    appDirs.forEach((appDir) => {
+      try {
+        logger.log(`Injecting files into: ${appDir}`);
+        const resourcesDest = path.join(localDir, appDir, "resources");
+        const appDest = path.join(resourcesDest, "app");
+
+        const copyDirRecursive = (from, to) => {
+          if (!fs.existsSync(to)) fs.mkdirSync(to);
+          fs.readdirSync(from).forEach((element) => {
+            if (fs.existsSync(path.join(to, element))) {
+              logger.log(`Element already exists: ${element}`);
+              return;
+            }
+            if (fs.lstatSync(path.join(from, element)).isFile()) {
+              fs.copyFileSync(path.join(from, element), path.join(to, element));
+            } else {
+              copyDirRecursive(path.join(from, element), path.join(to, element));
+            }
+          });
+        };
+
+        copyDirRecursive(appSrc, appDest);
+        logger.log(`Copied all injector files.`);
+
+        const appAsar = path.join(resourcesDest, "app.asar");
+        const originalAsar = path.join(resourcesDest, "original.asar");
+
+        if (fs.existsSync(appAsar)) {
+          logger.log("Renaming app.asar -> original.asar");
+          fs.renameSync(appAsar, originalAsar);
+        }
+      } catch (e) {
+        logger.error(`Error while injecting (${appDir}): ${e.message}${EOL}${e.stack}`);
+      }
     });
-
-    const appAsar = path.join(latestPath, "resources", "app.asar");
-    const originalAsar = path.join(latestPath, "resources", "original.asar");
-
-    if (!fs.existsSync(appAsar)) return;
-
-    logger.log("Renaming app.asar -> original.asar...");
-    fs.renameSync(appAsar, originalAsar);
+    logger.log("Finished injecting our files into all directories!");
   } catch (e) {
-    logger.error("Host update error:", e);
+    logger.error(`Host update error: ${e.message}${EOL}${e.stack}`);
   }
 }
 
 if (process.platform === "win32") {
   electron.app.on("before-quit", patchLatest);
+}
+
+// #endregion
+
+// #region DevTools
+// Patch DevTools setting, enabled by default
+const enableDevTools = process.env.SHELTER_FORCE_DEVTOOLS?.toLowerCase() !== "false";
+
+if (enableDevTools) {
+  const originalRequire = Module.prototype.require;
+
+  Module.prototype.require = function (path) {
+    const loadedModule = originalRequire.call(this, path);
+    if (!path.endsWith("appSettings")) return loadedModule;
+
+    const settings =
+      loadedModule?.appSettings?.getSettings?.() ?? // Original
+      loadedModule?.getSettings?.(); // OpenAsar
+
+    if (settings?.get) {
+      try {
+        const origGet = settings.get;
+        settings.get = function (key, defaultValue) {
+          if (key === "DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING") {
+            return true;
+          }
+          return origGet.apply(this, [key, defaultValue]);
+        };
+        Module.prototype.require = originalRequire;
+      } catch (e) {
+        logger.error(`Error patching DevTools setting: ${e}${EOL}${e.stack}`);
+      }
+    }
+    return loadedModule;
+  };
 }
 
 // #endregion

@@ -69,7 +69,7 @@ $RADIUS: 4px;
 .body {
   position: relative;
   flex: 1 1 auto;
-  padding: 0 8px 20px 16px;
+  padding: 0 16px 20px 16px;
   overflow: hidden auto;
 
   @include nice-scrollbars;

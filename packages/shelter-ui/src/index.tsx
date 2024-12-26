@@ -4,7 +4,7 @@ import { type NativeExtendingComponent } from "./wrapperTypes";
 export * from "./util";
 export * from "./button";
 export * from "./checkbox";
-export * from "./switch_new";
+export * from "./switch";
 export * from "./header";
 export * from "./openModal";
 export * from "./modals";

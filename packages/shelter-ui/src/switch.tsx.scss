@@ -12,8 +12,9 @@ $SLIDER_MOVE: $WIDTH - $SLIDER_SIZE - ($SPACING * 2);
   width: #{$WIDTH}px;
   height: #{$HEIGHT}px;
   border-radius: #{math.div($HEIGHT, 2)}px;
-  background: hsl(218, calc(var(--saturation-factor, 1) * 4.6%), 46.9%);
-  transition: background 250ms;
+  background: var(--shltr-sw-col);
+  transition: background, opacity;
+  transition-duration: var(--shltr-sw-dur);
 
   input {
     display: block;
@@ -25,27 +26,29 @@ $SLIDER_MOVE: $WIDTH - $SLIDER_SIZE - ($SPACING * 2);
     opacity: 0;
   }
 }
-.on {
-  background: hsl(139, calc(var(--saturation-factor, 1) * 47.3%), 43.9%);
-}
 .disabled {
   opacity: .3;
 }
 
 .slider {
   position: absolute;
-  top: #{$SPACING}px;
-  left: #{$SPACING}px;
-  width: #{$SLIDER_SIZE}px;
-  height: #{$SLIDER_SIZE}px;
-  border-radius: #{math.div($SLIDER_SIZE, 2)}px;
+  margin: 3px;
+}
+
+/*.slider {
+  position: absolute;
   background: white;
+  left: #{$SPACING}px;
+  top: #{$SPACING}px;
+  height: #{$SLIDER_SIZE}px;
+  width: #{$SLIDER_SIZE}px;
+  border-radius: #{math.div($SLIDER_SIZE, 2)}px;
   .on & {
     transform: translateX(#{$SLIDER_MOVE}px);
   }
   // i found this bezier purely by playing about on cubic-bezier.com
-  transition: transform 250ms cubic-bezier(.33, 0, .24, 1.02);
-}
+  transition: transform 250ms cubic-bezier(0.33, 0, 0.24, 1.02);
+}*/
 
 // SWITCH ITEM STYLES
 .sitem {

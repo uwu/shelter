@@ -6,9 +6,9 @@
     "build": "node esbuild.mjs"
   },
   "dependencies": {
-    "@cumjar/websmack": "^1.2.0",
     "@uwu/shelter-ui": "workspace:*",
     "fuse.js": "^7.0.0",
+    "htm": "^3.1.1",
     "idb": "^7.1.0",
     "shelter-assets": "workspace:*",
     "solid-js": "1.6.16",

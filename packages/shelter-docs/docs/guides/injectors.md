@@ -92,6 +92,9 @@ You can do the following things:
 - Disable all plugin actions except showing the settings modal (if you wanted to disable that, just don't provide one!)
 - Set injector user settings sections
 
+Note that an info icon will be shown on any visible loader plugins' cards to explain to users that they are a part of
+your loader, as we have had issues with users not understanding _why_ these plugins are here / where they came from.
+
 When your injector plugins are loaded, if they are new, they will be created and turned on.
 If they existed already, they will be overwritten with the following exceptions:
 - [`shelter.plugin.store` content](/reference#shelter-plugin-store) is kept
@@ -118,6 +121,8 @@ type InjectorIntegrationOptions = {
   // irrelevant if hidden but MUST be provided nonetheless
   // opt-in so that future new options are hidden for your plugins by default.
   allowedActions: { toggle?: true; delete?: true; edit?: true, update?: true };
+  // if set, will show your injector's name instead of a generic string in the info tooltip
+  loaderName?: string;
 };
 
 type RemotePlugin = [string, InjectorIntegrationOptions]; // string is the plugin url
