@@ -1,14 +1,14 @@
-import { build } from "esbuild";
 import { solidPlugin } from "esbuild-plugin-solid";
 import { sassPlugin, postcssModules } from "esbuild-sass-plugin-ysink";
-import { LuneCfg } from "../../config";
+import type { LuneCfg } from "../../config";
 import { ShelterSolidResolver } from "./resolver";
+import { importEsbuild } from "../utils";
 
 export async function createEsbuildBuilder(entryPoint: string, outfile: string, minify: boolean, cfg: LuneCfg) {
   if (cfg.builder && cfg.builder !== "esbuild")
     throw new Error("Cannot create esbuild builder with config specifying another builder");
 
-  await build({
+  return await (await importEsbuild()).build({
     entryPoints: [entryPoint],
     outfile,
     bundle: true,

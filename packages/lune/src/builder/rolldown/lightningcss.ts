@@ -1,8 +1,7 @@
 import type { LoadResult, Plugin } from "rolldown";
-import { bundleAsync, transform } from "lightningcss";
-import { LuneCfg } from "../../config";
-import { compileAsync } from "sass";
+import type { LuneCfg } from "../../config";
 import { readFile } from "fs/promises";
+import { importLightningCSS, importSass } from "../utils";
 
 const CSS_LANGS_RE = /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/;
 const SCSS_RE = /\.(scss|sass)(?:$|\?)/;
@@ -19,7 +18,7 @@ export const LightningCSSPlugin = (cfg: LuneCfg): Plugin => {
 
         // Handle scss/sass files ourselves by default
         if (SCSS_RE.test(id)) {
-          const sassResult = await compileAsync(id, {
+          const sassResult = await (await importSass()).compileAsync(id, {
             style: cfg.minify ? "compressed" : "expanded", // TODO: Make this configurable?
             sourceMap: false,
           });
@@ -29,7 +28,7 @@ export const LightningCSSPlugin = (cfg: LuneCfg): Plugin => {
           css = await readFile(id, "utf-8");
         }
 
-        const build = transform({
+        const { code, exports } = (await importLightningCSS()).transform({
           code: Buffer.from(css),
           filename: id,
           minify: cfg.minify,
@@ -38,12 +37,10 @@ export const LightningCSSPlugin = (cfg: LuneCfg): Plugin => {
           analyzeDependencies: true,
         });
 
-        const result = new TextDecoder().decode(build.code);
+        const result = new TextDecoder().decode(code);
 
         const exportsMap = JSON.stringify(
-          Object.fromEntries(
-            Object.entries(build.exports ?? {}).map(([origName, export_]) => [origName, export_.name]),
-          ),
+          Object.fromEntries(Object.entries(exports ?? {}).map(([origName, export_]) => [origName, export_.name])),
         );
 
         const cssStrLit = "`" + result.replaceAll("\\", "\\\\").replaceAll("`", "\\`") + "`";
