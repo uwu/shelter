@@ -8,7 +8,7 @@ export async function createRolldownBuilder(entryPoint: string, outfile: string,
   if (cfg.builder !== "rolldown")
     throw new Error("Cannot create rolldown builder with config specifying another builder");
 
-  return build({
+  return await build({
     ...cfg.input,
     plugins: [SolidPlugin(), ShelterSolidResolver(), LightningCSSPlugin(cfg)],
     input: entryPoint,

@@ -54,9 +54,6 @@ importers:
       esbuild-sass-plugin-ysink:
         specifier: ^2.3.4
         version: 2.3.4
-      lightningcss:
-        specifier: ^1.28.2
-        version: 1.28.2
       postcss:
         specifier: ^8.4.21
         version: 8.4.47
@@ -85,6 +82,12 @@ importers:
       esbuild-plugin-solid:
         specifier: ^0.5.0
         version: 0.5.0(esbuild@0.17.19)(solid-js@1.6.16)
+      lightningcss:
+        specifier: ^1.28.2
+        version: 1.28.2
+      sass:
+        specifier: ^1.83.0
+        version: 1.83.0
       solid-js:
         specifier: 1.6.16
         version: 1.6.16
