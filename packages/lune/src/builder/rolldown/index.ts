@@ -10,7 +10,7 @@ export async function createRolldownBuilder(entryPoint: string, outfile: string,
 
   return build({
     ...cfg.input,
-    plugins: [SolidPlugin(), ShelterSolidResolver(), LightningCSSPlugin(minify)],
+    plugins: [SolidPlugin(), ShelterSolidResolver(), LightningCSSPlugin(cfg)],
     input: entryPoint,
     output: {
       ...cfg.output,
