@@ -4,7 +4,7 @@ import { hrtime } from "process";
 import { resolve } from "path";
 import { existsSync } from "fs";
 import { readdir, rm } from "fs/promises";
-import { buildPlugin } from "../builder.js";
+import { buildPlugin } from "../builder";
 import { loadCfg, loadNearestCfgOrDefault } from "../config.js";
 
 export default {

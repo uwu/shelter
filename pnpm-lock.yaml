@@ -45,9 +45,6 @@ importers:
       '@babel/preset-typescript':
         specifier: ^7.26.0
         version: 7.26.0(@babel/core@7.26.0)
-      babel-preset-solid:
-        specifier: 1.6.9
-        version: 1.6.9(@babel/core@7.26.0)
       chokidar:
         specifier: ^3.5.3
         version: 3.6.0
@@ -69,9 +66,6 @@ importers:
       rolldown:
         specifier: 1.0.0-beta.1
         version: 1.0.0-beta.1(@babel/runtime@7.21.0)
-      solid-js:
-        specifier: 1.6.16
-        version: 1.6.16
       ws:
         specifier: ^8.13.0
         version: 8.18.0
@@ -85,9 +79,15 @@ importers:
       '@types/ws':
         specifier: ^8.5.4
         version: 8.5.12
+      babel-preset-solid:
+        specifier: 1.6.9
+        version: 1.6.9(@babel/core@7.26.0)
       esbuild-plugin-solid:
         specifier: ^0.5.0
         version: 0.5.0(esbuild@0.17.19)(solid-js@1.6.16)
+      solid-js:
+        specifier: 1.6.16
+        version: 1.6.16
       typescript:
         specifier: ^5.6.2
         version: 5.6.2

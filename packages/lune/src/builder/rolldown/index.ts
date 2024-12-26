@@ -1,14 +1,11 @@
-import { SolidPlugin } from "./rolldown/solid";
-import { ShelterSolidResolver } from "./rolldown/resolver";
-import { LightningCSSPlugin } from "./rolldown/lightningcss";
+import { SolidPlugin } from "./solid";
+import { ShelterSolidResolver } from "./resolver";
+import { LightningCSSPlugin } from "./lightningcss";
+import { build } from "rolldown";
 
 export async function createRolldownBuilder(entryPoint: string, outfile: string, minify: boolean, root: string) {
-  const { build } = await import("rolldown").catch(() => {
-    throw new Error("Failed to load Rolldown. Please install it with `npm install rolldown`.");
-  });
-
   // @ts-expect-error
-  const code = await build({
+  return build({
     plugins: [SolidPlugin(), ShelterSolidResolver(), LightningCSSPlugin(minify, root)],
     input: {
       input: entryPoint,
@@ -27,6 +24,4 @@ export async function createRolldownBuilder(entryPoint: string, outfile: string,
     ],
     logLevel: "silent",
   });
-
-  return code;
 }

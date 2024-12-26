@@ -8,13 +8,16 @@ await build({
   bundle: true,
   outfile: "dist/clibundle.cjs",
   external: [
-    // literally everything except from esbuild-plugin-solid
+    // literally everything except from solidjs
+    "@babel/core",
+    "@babel/preset-typescript",
+    "lightningcss",
+    "rolldown",
     "chokidar",
     "esbuild",
     "esbuild-sass-plugin-ysink",
     "postcss",
     "postcss-modules",
-    "solid-js",
     "ws",
     // node things esbuild doesn't know about
     "readline/promises",

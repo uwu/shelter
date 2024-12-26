@@ -1,7 +1,7 @@
 import type { Command } from ".";
 
 import { hrtime } from "process";
-import { buildPlugin } from "../builder.js";
+import { buildPlugin } from "../builder";
 import { loadCfg, loadNearestCfgOrDefault } from "../config.js";
 
 export default {

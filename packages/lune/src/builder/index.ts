@@ -1,11 +1,11 @@
-import type { LuneCfg } from "./config";
+import type { LuneCfg } from "../config";
 
 import { createHash } from "crypto";
 import { readFile, writeFile } from "fs/promises";
 import { resolve } from "path";
 import { existsSync } from "fs";
-import { createRolldownBuilder } from "./builder/rolldown";
-import { createEsbuildBuilder } from "./builder/esbuild";
+import { createRolldownBuilder } from "./rolldown";
+import { createEsbuildBuilder } from "./esbuild";
 
 const MD5 = (data) => createHash("md5").update(data).digest("hex").toString();
 
