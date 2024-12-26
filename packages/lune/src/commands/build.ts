@@ -28,6 +28,9 @@ Options:
     const timeBefore = hrtime.bigint();
 
     const cfg = (await loadCfg(args.cfg as string)) ?? (await loadNearestCfgOrDefault(dir));
+
+    console.log("Builder:", cfg.builder);
+
     await buildPlugin(dir, (args.to as string) ?? "dist", cfg, (args.dev as boolean) ?? cfg.minify);
 
     const timeAfter = hrtime.bigint();
