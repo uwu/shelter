@@ -34,13 +34,16 @@ const ShelterSolidResolver = (): Plugin => {
 };
 
 export async function createEsbuildBuilder(entryPoint: string, outfile: string, minify: boolean, cfg: LuneCfg) {
+  if (cfg.builder !== "esbuild")
+    throw new Error("Cannot create esbuild builder with config specifying another builder");
+
   await build({
     entryPoints: [entryPoint],
     outfile,
     bundle: true,
     minify,
     plugins: [
-      // ...(cfg.esbuild.prePlugins ?? []),
+      ...(cfg.prePlugins ?? []),
 
       solidPlugin(),
       (cfg.cssModules
@@ -59,7 +62,7 @@ export async function createEsbuildBuilder(entryPoint: string, outfile: string, 
           })) as any, // bad but version conflicts suck
       ShelterSolidResolver(),
 
-      // ...(cfg.esbuild.postPlugins ?? []),
+      ...(cfg.postPlugins ?? []),
     ],
     globalName: "__lune_temp_global",
     logLevel: "silent", // we handle errors ourself

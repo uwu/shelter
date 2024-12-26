@@ -9,7 +9,7 @@ import { createEsbuildBuilder } from "./esbuild";
 
 const MD5 = (data) => createHash("md5").update(data).digest("hex").toString();
 
-export async function buildPlugin(path: string, to: string, cfg: LuneCfg, minify = false, root = process.cwd()) {
+export async function buildPlugin(path: string, to: string, cfg: LuneCfg, minify = false) {
   const outfile = resolve(to, "plugin.js");
   const outmanifest = resolve(to, "plugin.json");
 
@@ -27,7 +27,7 @@ export async function buildPlugin(path: string, to: string, cfg: LuneCfg, minify
   if (cfg.builder === "esbuild") {
     await createEsbuildBuilder(entryPoint, outfile, minify, cfg);
   } else {
-    await createRolldownBuilder(entryPoint, outfile, minify, root);
+    await createRolldownBuilder(entryPoint, outfile, minify, cfg);
   }
 
   const finalDistJs = (await readFile(outfile)).toString().replace(/var __lune_temp_global\s*=\s*/, "");

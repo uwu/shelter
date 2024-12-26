@@ -4,7 +4,7 @@ import { bundleAsync } from "lightningcss";
 const CSS_LANGS_RE = /\.(css|less|sass|scss|styl|stylus|pcss|postcss|sss)(?:$|\?)/;
 const cssModuleRE = new RegExp(`\\.module${CSS_LANGS_RE.source}`);
 
-export const LightningCSSPlugin = (minify: boolean, root: string): Plugin => {
+export const LightningCSSPlugin = (minify: boolean): Plugin => {
   let decoder = new TextDecoder();
   return {
     name: "lune:rolldown:lightningcss",
@@ -18,7 +18,7 @@ export const LightningCSSPlugin = (minify: boolean, root: string): Plugin => {
           minify,
           cssModules: cssModuleRE.test(id),
           sourceMap: true,
-          projectRoot: root,
+          //projectRoot: root,
           analyzeDependencies: true,
         });
 

@@ -5,12 +5,7 @@ import { existsSync } from "fs";
 import { resolve, parse } from "path";
 import { pathToFileURL } from "url";
 
-export interface LuneCfg {
-  /**
-   * The builder to use
-   * @default esbuild
-   */
-  builder?: "rolldown" | "esbuild";
+export type LuneCfg = {
   /**
    * If CSS Modules should be enabled
    * @default false
@@ -21,17 +16,30 @@ export interface LuneCfg {
    * @default false
    */
   minify?: boolean;
-  esbuild?: {
-    /** esbuild plugins that run before Lune's transforms */
-    prePlugins?: Plugin[];
-    /** esbuild plugins that run after Lune's transforms */
-    postPlugins?: Plugin[];
-  };
-  rolldown?: {
-    input?: InputOptions;
-    output?: OutputOptions;
-  };
-}
+} & (
+  | {
+      /**
+       * The builder to use
+       * @default esbuild
+       */
+      builder?: "esbuild";
+
+      /** esbuild plugins that run before Lune's transforms */
+      prePlugins?: Plugin[];
+      /** esbuild plugins that run after Lune's transforms */
+      postPlugins?: Plugin[];
+    }
+  | {
+      /**
+       * The builder to use
+       * @default esbuild
+       */
+      builder?: "rolldown";
+
+      input?: InputOptions;
+      output?: OutputOptions;
+    }
+);
 
 export async function loadCfg(path?: string) {
   if (!path || !existsSync(resolve(path))) return null;
