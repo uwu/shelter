@@ -34,7 +34,7 @@ export type LuneCfg = {
        * The builder to use
        * @default esbuild
        */
-      builder?: "rolldown";
+      builder: "rolldown";
 
       input?: InputOptions;
       output?: OutputOptions;
@@ -61,7 +61,7 @@ async function loadCfgByDir(path: string) {
 }
 
 export async function loadNearestCfgOrDefault(path?: string) {
-  let currDir = resolve(path) ?? process.cwd();
+  let currDir = resolve(path ?? "") ?? process.cwd();
   const rootDir = parse(currDir).root;
 
   while (currDir !== rootDir) {

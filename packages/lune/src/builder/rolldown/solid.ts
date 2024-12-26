@@ -36,12 +36,12 @@ export const SolidPlugin = (): Plugin => {
         const shouldBeProcessedWithTypescript = currentFileExtension === ".tsx";
 
         if (shouldBeProcessedWithTypescript) {
-          babelOptions.presets.push([ts, {}]);
+          babelOptions.presets!.push([ts, {}]);
         }
 
-        const { code, map } = await transformAsync(source, babelOptions);
+        const { code, map } = (await transformAsync(source, babelOptions)) ?? {};
 
-        return { code, map };
+        return { code: code ?? "", map };
       },
     },
   };

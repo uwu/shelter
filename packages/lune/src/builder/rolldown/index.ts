@@ -6,7 +6,7 @@ import { build } from "rolldown";
 
 export async function createRolldownBuilder(entryPoint: string, outfile: string, minify: boolean, cfg: LuneCfg) {
   if (cfg.builder !== "rolldown")
-    throw new Error("Cannot create esbuild builder with config specifying another builder");
+    throw new Error("Cannot create rolldown builder with config specifying another builder");
 
   return build({
     ...cfg.input,

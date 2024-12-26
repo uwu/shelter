@@ -33,6 +33,7 @@ if (topLevelParsed[0] in commands) {
   const parsedArgs = argparse({ ...command.argSchema, help: "bool" } as Record<string, "str" | "bool">, { skip: 1 });
   if (parsedArgs.help) console.log(command.helpText);
   else {
+    // @ts-expect-error undefined issues
     Promise.resolve(command.exec(parsedArgs)).then(
       (res) => res && exit(res),
       (err) => {

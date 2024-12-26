@@ -34,7 +34,7 @@ const ShelterSolidResolver = (): Plugin => {
 };
 
 export async function createEsbuildBuilder(entryPoint: string, outfile: string, minify: boolean, cfg: LuneCfg) {
-  if (cfg.builder !== "esbuild")
+  if (cfg.builder && cfg.builder !== "esbuild")
     throw new Error("Cannot create esbuild builder with config specifying another builder");
 
   await build({

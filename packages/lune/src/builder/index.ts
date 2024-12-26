@@ -24,7 +24,7 @@ export async function buildPlugin(path: string, to: string, cfg: LuneCfg, minify
 
   if (!entryPoint) throw new Error("failed to find entrypoint - check your working directory and config");
 
-  if (cfg.builder === "esbuild") {
+  if (cfg.builder !== "rolldown") {
     await createEsbuildBuilder(entryPoint, outfile, minify, cfg);
   } else {
     await createRolldownBuilder(entryPoint, outfile, minify, cfg);

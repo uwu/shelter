@@ -8,7 +8,7 @@ export const ShelterSolidResolver = (): Plugin => {
   return {
     name: "lune:rolldown:shelter-solid-resolver",
     async resolveId(source) {
-      if (/solid-js(?:\/web|\/store)?/.test(source)) {
+      if (/^solid-js(?:\/web|\/store)?/.test(source)) {
         return {
           id: source,
           // Use Rolldown's virtual module marker
@@ -23,7 +23,7 @@ export const ShelterSolidResolver = (): Plugin => {
 
     load: (id) => {
       // TODO: Use `meta` once it's supported, unless i can do this better
-      if (/solid-js(?:\/web|\/store)?/.test(id)) {
+      if (/^solid-js(?:\/web|\/store)?/.test(id)) {
         const pathSplit = id.split("/");
         const resolvedPath =
           resolverRoots[pathSplit[0]] +
