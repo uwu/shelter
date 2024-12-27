@@ -98,7 +98,6 @@ Options:
 
     const cfg = (await loadCfg(args.cfg as string)) ?? (await loadNearestCfgOrDefault(dir));
 
-    console.log("Builder:", cfg.builder);
     try {
       await rebuildPlugin(cfg, dir);
     } catch (e) {
