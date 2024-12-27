@@ -13,9 +13,9 @@ export const ShelterSolidResolver = (): Plugin => {
           id: source,
           // Use Rolldown's virtual module marker
           external: false,
-          meta: {
+          /*meta: {
             isShelterSolid: true,
-          },
+          },*/
         };
       }
       return null;

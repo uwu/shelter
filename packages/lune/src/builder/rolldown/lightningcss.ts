@@ -45,7 +45,7 @@ export const LightningCSSPlugin = async (cfg: LuneCfg): Promise<Plugin> => {
           Object.fromEntries(Object.entries(exports ?? {}).map(([origName, export_]) => [origName, export_.name])),
         );
 
-        const cssStrLit = "`" + result.replaceAll("\\", "\\\\").replaceAll("`", "\\`") + "`";
+        const cssStrLit = "`" + result.replaceAll(/([$`\\])/g, "\\$1") + "`";
 
         const injectionCode = cfg.cssModules
           ? cfg.cssModules === "legacy"

@@ -1,4 +1,5 @@
 import type { LuneCfg } from "../../config";
+import { ShelterSolidResolver } from "./resolver";
 
 export async function createRolldownBuilder(entrypoint: string, outfile: string, minify: boolean, cfg: LuneCfg) {
   if (cfg.builder !== "rolldown")
@@ -6,7 +7,6 @@ export async function createRolldownBuilder(entrypoint: string, outfile: string,
 
   const { build } = await import("rolldown");
   const { LightningCSSPlugin } = await import("./lightningcss");
-  const { ShelterSolidResolver } = await import("../esbuild/resolver");
   const { SolidPlugin } = await import("./solid");
 
   return await build({
@@ -18,13 +18,7 @@ export async function createRolldownBuilder(entrypoint: string, outfile: string,
       minify,
       file: outfile,
       format: "iife",
-      globals: {
-        "solid-js/web": "shelter.solidWeb",
-        "solid-js/store": "shelter.solidStore",
-        "solid-js": "shelter.solid",
-      },
     },
-    external: ["solid-js/web", "solid-js/store", "solid-js"],
     logLevel: "silent",
   });
 }

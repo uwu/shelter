@@ -6,7 +6,7 @@ settings:
 
 overrides:
   babel-plugin-jsx-dom-expressions: 0.35.23
-  babel-preset-solid: 1.6.9
+  babel-preset-solid: 1.6.16
 
 importers:
 
@@ -86,8 +86,8 @@ importers:
         specifier: ^8.5.4
         version: 8.5.12
       babel-preset-solid:
-        specifier: 1.6.9
-        version: 1.6.9(@babel/core@7.26.0)
+        specifier: 1.6.16
+        version: 1.6.16(@babel/core@7.26.0)
       esbuild-plugin-solid:
         specifier: ^0.5.0
         version: 0.5.0(esbuild@0.17.19)(solid-js@1.6.16)
@@ -1798,8 +1798,8 @@ packages:
     peerDependencies:
       '@babel/core': ^7.20.12
 
-  babel-preset-solid@1.6.9:
-    resolution: {integrity: sha512-Dz4xROTGtAZ2B9+79KYUzi/bhjNGsx+8c+AD3VO/Cg1CisM1qq29XsnkWrRJeTMMn3XZkAI/Bf5Rz37d/gvPVQ==}
+  babel-preset-solid@1.6.16:
+    resolution: {integrity: sha512-xVEmdgvS5mNAdk7uoKFVRfdjihuhPl9n4MGEaicFRafAraaPr49/y7yLBaOZfeJbL0AVwDlLximseZbtoME4cQ==}
     peerDependencies:
       '@babel/core': ^7.0.0
 
@@ -5937,7 +5937,7 @@ snapshots:
       html-entities: 2.3.3
       validate-html-nesting: 1.2.1
 
-  babel-preset-solid@1.6.9(@babel/core@7.26.0):
+  babel-preset-solid@1.6.16(@babel/core@7.26.0):
     dependencies:
       '@babel/core': 7.26.0
       babel-plugin-jsx-dom-expressions: 0.35.23(@babel/core@7.26.0)
@@ -6454,7 +6454,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.26.0
       '@babel/preset-typescript': 7.26.0(@babel/core@7.26.0)
-      babel-preset-solid: 1.6.9(@babel/core@7.26.0)
+      babel-preset-solid: 1.6.16(@babel/core@7.26.0)
       esbuild: 0.15.18
       solid-js: 1.6.16
     transitivePeerDependencies:
@@ -6464,7 +6464,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.26.0
       '@babel/preset-typescript': 7.26.0(@babel/core@7.26.0)
-      babel-preset-solid: 1.6.9(@babel/core@7.26.0)
+      babel-preset-solid: 1.6.16(@babel/core@7.26.0)
       esbuild: 0.17.19
       solid-js: 1.6.16
     transitivePeerDependencies:
@@ -8399,7 +8399,7 @@ snapshots:
     dependencies:
       '@babel/core': 7.26.0
       '@types/babel__core': 7.20.5
-      babel-preset-solid: 1.6.9(@babel/core@7.26.0)
+      babel-preset-solid: 1.6.16(@babel/core@7.26.0)
       merge-anything: 5.1.7
       solid-js: 1.6.16
       solid-refresh: 0.6.3(solid-js@1.6.16)
