@@ -1,14 +1,15 @@
-import { solidPlugin } from "esbuild-plugin-solid";
-import { sassPlugin, postcssModules } from "esbuild-sass-plugin-ysink";
 import type { LuneCfg } from "../../config";
-import { ShelterSolidResolver } from "./resolver";
-import { importEsbuild } from "../utils";
 
 export async function createEsbuildBuilder(entryPoint: string, outfile: string, minify: boolean, cfg: LuneCfg) {
   if (cfg.builder && cfg.builder !== "esbuild")
     throw new Error("Cannot create esbuild builder with config specifying another builder");
 
-  return await (await importEsbuild()).build({
+  const { build } = await import("esbuild");
+  const { solidPlugin } = await import("esbuild-plugin-solid");
+  const { StylesPlugin, postcssModules } = await import("./styles");
+  const { ShelterSolidResolver } = await import("./resolver");
+
+  return await build({
     entryPoints: [entryPoint],
     outfile,
     bundle: true,
@@ -18,7 +19,7 @@ export async function createEsbuildBuilder(entryPoint: string, outfile: string, 
 
       solidPlugin(),
       (cfg.cssModules
-        ? sassPlugin({
+        ? StylesPlugin({
             style: "compressed",
             sourceMap: false,
             transform: postcssModules({
@@ -26,7 +27,7 @@ export async function createEsbuildBuilder(entryPoint: string, outfile: string, 
               inject: cfg.cssModules === "legacy" ? false : "shelter",
             } as any),
           })
-        : sassPlugin({
+        : StylesPlugin({
             style: "compressed",
             sourceMap: false,
             type: "css-text",

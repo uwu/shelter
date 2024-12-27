@@ -1,17 +1,18 @@
-import { LuneCfg } from "../../config";
-import { SolidPlugin } from "./solid";
-import { ShelterSolidResolver } from "./resolver";
-import { LightningCSSPlugin } from "./lightningcss";
-import { build } from "rolldown";
+import type { LuneCfg } from "../../config";
 
-export async function createRolldownBuilder(entryPoint: string, outfile: string, minify: boolean, cfg: LuneCfg) {
+export async function createRolldownBuilder(entrypoint: string, outfile: string, minify: boolean, cfg: LuneCfg) {
   if (cfg.builder !== "rolldown")
     throw new Error("Cannot create rolldown builder with config specifying another builder");
 
+  const { build } = await import("rolldown");
+  const { LightningCSSPlugin } = await import("./lightningcss");
+  const { ShelterSolidResolver } = await import("../esbuild/resolver");
+  const { SolidPlugin } = await import("./solid");
+
   return await build({
     ...cfg.input,
-    plugins: [SolidPlugin(), ShelterSolidResolver(), LightningCSSPlugin(cfg)],
-    input: entryPoint,
+    plugins: [SolidPlugin(), ShelterSolidResolver(), await LightningCSSPlugin(cfg)],
+    input: entrypoint,
     output: {
       ...cfg.output,
       minify,

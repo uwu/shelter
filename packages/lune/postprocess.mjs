@@ -2,26 +2,16 @@
 
 import { readFile, writeFile } from "fs/promises";
 import { build } from "esbuild";
+import module from "module";
+import pkg from "./package.json" with { type: "json" };
+
+const deps = Object.keys(pkg.dependencies).filter((d) => !d.includes("solid"));
 
 await build({
   entryPoints: ["dist/src/index.js"],
   bundle: true,
   outfile: "dist/clibundle.cjs",
-  external: [
-    // literally everything except from solidjs
-    "@babel/core",
-    "@babel/preset-typescript",
-    "lightningcss",
-    "rolldown",
-    "chokidar",
-    "esbuild",
-    "esbuild-sass-plugin-ysink",
-    "postcss",
-    "postcss-modules",
-    "ws",
-    // node things esbuild doesn't know about
-    "readline/promises",
-  ],
+  external: [...deps, ...module.builtinModules],
   platform: "node",
 });
 
