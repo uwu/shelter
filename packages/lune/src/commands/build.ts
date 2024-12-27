@@ -1,7 +1,7 @@
 import type { Command } from ".";
 
 import { hrtime } from "process";
-import { buildPlugin } from "../builder.js";
+import { buildPlugin } from "../builder";
 import { loadCfg, loadNearestCfgOrDefault } from "../config.js";
 
 export default {
@@ -28,6 +28,7 @@ Options:
     const timeBefore = hrtime.bigint();
 
     const cfg = (await loadCfg(args.cfg as string)) ?? (await loadNearestCfgOrDefault(dir));
+
     await buildPlugin(dir, (args.to as string) ?? "dist", cfg, (args.dev as boolean) ?? cfg.minify);
 
     const timeAfter = hrtime.bigint();

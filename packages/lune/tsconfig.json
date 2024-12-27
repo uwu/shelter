@@ -11,6 +11,8 @@
     "skipDefaultLibCheck": true,
     "skipLibCheck": true,
     "isolatedModules": true,
-    "composite": true
+    "composite": true,
+    "strictNullChecks": true,
+    "verbatimModuleSyntax": true
   }
 }

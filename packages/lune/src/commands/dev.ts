@@ -6,9 +6,9 @@ import { resolve } from "path";
 import { mkdtemp, rm, readFile } from "fs/promises";
 import { tmpdir } from "os";
 import { watch } from "chokidar";
-import { buildPlugin } from "../builder.js";
+import { buildPlugin } from "../builder";
 import { hrtime } from "process";
-import { loadNearestCfgOrDefault, loadCfg, LuneCfg } from "../config.js";
+import { loadNearestCfgOrDefault, loadCfg, type LuneCfg } from "../config.js";
 
 const mktempdir = () => mkdtemp(resolve(tmpdir(), "lune-"));
 
