@@ -1,4 +1,6 @@
 import type { LuneCfg } from "../../config";
+import { ShelterSolidResolver } from "./resolver";
+import { CSSPlugin } from "./css";
 
 export async function createEsbuildBuilder(entryPoint: string, outfile: string, minify: boolean, cfg: LuneCfg) {
   if (cfg.builder && cfg.builder !== "esbuild")
@@ -6,8 +8,6 @@ export async function createEsbuildBuilder(entryPoint: string, outfile: string, 
 
   const { build } = await import("esbuild");
   const { solidPlugin } = await import("esbuild-plugin-solid");
-  const { StylesPlugin, postcssModules } = await import("./styles");
-  const { ShelterSolidResolver } = await import("./resolver");
 
   return await build({
     entryPoints: [entryPoint],
@@ -18,20 +18,7 @@ export async function createEsbuildBuilder(entryPoint: string, outfile: string, 
       ...(cfg.prePlugins ?? []),
 
       solidPlugin(),
-      (cfg.cssModules
-        ? StylesPlugin({
-            style: "compressed",
-            sourceMap: false,
-            transform: postcssModules({
-              localsConvention: "camelCaseOnly",
-              inject: cfg.cssModules === "legacy" ? false : "shelter",
-            } as any),
-          })
-        : StylesPlugin({
-            style: "compressed",
-            sourceMap: false,
-            type: "css-text",
-          })) as any, // bad but version conflicts suck
+      CSSPlugin(cfg),
       ShelterSolidResolver(),
 
       ...(cfg.postPlugins ?? []),

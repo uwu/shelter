@@ -54,12 +54,6 @@ importers:
       lightningcss:
         specifier: ^1.28.2
         version: 1.28.2
-      postcss:
-        specifier: ^8.4.21
-        version: 8.4.47
-      postcss-modules:
-        specifier: ^6.0.0
-        version: 6.0.0(postcss@8.4.47)
       resolve:
         specifier: ^1.22.10
         version: 1.22.10
