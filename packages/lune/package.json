@@ -26,6 +26,8 @@
   "dependencies": {
     "@babel/core": "^7.26.0",
     "@babel/preset-typescript": "^7.26.0",
+    "@moneko/jsx-dom-expressions": "^0.7.2",
+    "@swc/core": "1.7.26",
     "chokidar": "^3.5.3",
     "esbuild": "^0.17.12",
     "lightningcss": "^1.28.2",
