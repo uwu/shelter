@@ -15,7 +15,7 @@ It provides a fairly robust and friendly command line tool.
 It can create new plugins interactively, build plugins, and build monorepos.
 It also has a hot-reload "dev mode", which is useful for plugin development.
 
-It is currently based on esbuild, which means builds are lightning quick, at the expense of ecosystem size.
+It builds your plugins using a choice of esbuild or rolldown, which means builds are lightning quick.
 
 It is totally feasible to write shelter plugins by hand, and nothing stops you from doing so, but Lune generally makes
 the whole experience much more streamlined and comfortable.
@@ -72,7 +72,7 @@ import css from "./styles.css";
 import classes from "./styles.css";
 ```
 
-When your CSS is compiled, it will have its classes suffixed with a random string to prevent conflicts.
+When your CSS is compiled, it will have its classes prefixed with a random string to prevent conflicts.
 The map of original class names to randomized class names is given in the `classes` object:
 ```css
 /* styles.css */
@@ -97,9 +97,17 @@ In order, Lune will search the following places for this file:
  - Within the folder passed by the user to the relevant command, if any
  - Within the current working directory
 
+### `builder: "esbuild" | "rolldown"`
+
+Choose between [esbuild](https://esbuild.github.io/) and [Rolldown](https://rolldown.rs/) for bundling.
+
+Defaults to esbuild.
+
+(Rolldown is available since Lune 1.5.0)
+
 ### `minify: boolean`
 
-By default true, when this is on plugins will be compressed for size.
+By default false, when this is on plugins will be compressed for size.
 Makes debugging harder, but lune dev by default does not anyway.
 
 ### `cssModules: boolean | "legacy"`
@@ -112,11 +120,19 @@ it will export the css and classes, like:
 import { css, classes } from "./styles.css";
 ```
 
-### `prePlugins: Plugin[]`
+### (esbuild only) `prePlugins: Plugin[]`
 
 This can only be set from a JS config file.
 This is a list of [esbuild](https://esbuild.github.io) plugins to run before Lune's transforms.
 
-### `postPlugins: Plugin[]`
+### (esbuild only) `postPlugins: Plugin[]`
 
 As above, after Lune's transforms.
+
+### (Rolldown only) `input: InputOptions`
+
+Extra Rolldown [input options](https://rollupjs.org/javascript-api/#inputoptions-object) to pass.
+
+### (Rolldown only) `output: OutputOptions`
+
+Extra Rolldown [output options](https://rollupjs.org/javascript-api/#outputoptions-object) to pass.
