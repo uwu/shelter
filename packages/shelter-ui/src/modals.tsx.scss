@@ -16,7 +16,7 @@ $RADIUS: 4px;
   background: none;
 
   &::backdrop {
-    background: rgba(0, 0, 0, .85);
+    background: rgba(0, 0, 0, .7);
     opacity: 0;
     transition: opacity 250ms;
   }
