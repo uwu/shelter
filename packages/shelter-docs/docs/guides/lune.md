@@ -101,9 +101,9 @@ In order, Lune will search the following places for this file:
 
 Choose between [esbuild](https://esbuild.github.io/) and [Rolldown](https://rolldown.rs/) for bundling.
 
-Defaults to esbuild.
+Rolldown is available since Lune 1.5.0.
 
-(Rolldown is available since Lune 1.5.0)
+This setting defaults to Rolldown since Lune 1.5.1, and esbuild before then.
 
 ### `minify: boolean`
 

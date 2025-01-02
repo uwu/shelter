@@ -20,9 +20,9 @@ export type LuneCfg = {
   | {
       /**
        * The builder to use
-       * @default esbuild
+       * @default rolldown
        */
-      builder?: "esbuild";
+      builder: "esbuild";
 
       /** esbuild plugins that run before Lune's transforms */
       prePlugins?: Plugin[];
@@ -32,9 +32,9 @@ export type LuneCfg = {
   | {
       /**
        * The builder to use
-       * @default esbuild
+       * @default rolldown
        */
-      builder: "rolldown";
+      builder?: "rolldown";
 
       input?: InputOptions;
       output?: OutputOptions;

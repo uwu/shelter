@@ -3,11 +3,15 @@ import { ShelterSolidResolver } from "./resolver";
 import { CSSPlugin } from "./css";
 
 export async function createEsbuildBuilder(entryPoint: string, outfile: string, minify: boolean, cfg: LuneCfg) {
-  if (cfg.builder && cfg.builder !== "esbuild")
+  if (cfg.builder !== "esbuild")
     throw new Error("Cannot create esbuild builder with config specifying another builder");
 
   const { build } = await import("esbuild");
   const { solidPlugin } = await import("esbuild-plugin-solid");
+
+  if ("input" in cfg || "output" in cfg) {
+    console.warn(`input and output are Rolldown options, and will be ignored when "builder": "esbuild" is set.`);
+  }
 
   return await build({
     entryPoints: [entryPoint],
