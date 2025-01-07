@@ -1,4 +1,4 @@
-import { Component, createSignal, JSX, Show } from "solid-js";
+import { Component, createSignal, JSX, Show, createMemo } from "solid-js";
 import {
   getSettings,
   installedPlugins,
@@ -184,9 +184,15 @@ export default (): JSX.Element => {
 
   const [searchTerm, setSearchTerm] = createSignal("");
 
+  const visiblePlugins = createMemo(() =>
+    fuzzy(Object.entries(installedPlugins()), searchTerm()).filter(
+      ([id, obj]) => id !== devModeReservedId && (!obj.injectorIntegration || obj.injectorIntegration.isVisible),
+    ),
+  );
+
   return (
     <div class={classes.list}>
-      <Header tag={HeaderTags.EYEBROW}>{`Plugins (${Object.keys(installedPlugins()).length})`}</Header>
+      <Header tag={HeaderTags.EYEBROW}>{`Plugins (${visiblePlugins().length})`}</Header>
       <div class={classes.bar}>
         <TextBox value={searchTerm()} onInput={setSearchTerm} placeholder="Search plugins..." />
         <Button
@@ -204,10 +210,7 @@ export default (): JSX.Element => {
        * the only way to do what we need cleanly in solid looks *like this*!:
        * https://codesandbox.io/s/explicit-keys-4iyen?file=/Key.js
        */}
-      {fuzzy(Object.entries(installedPlugins()), searchTerm())
-        .filter(
-          ([id, obj]) => id !== devModeReservedId && (!obj.injectorIntegration || obj.injectorIntegration.isVisible),
-        )
+      {visiblePlugins()
         .sort(([, pluginA], [, pluginB]) => {
           const nameA = pluginA.manifest.name?.toLowerCase();
           const nameB = pluginB.manifest.name?.toLowerCase();
