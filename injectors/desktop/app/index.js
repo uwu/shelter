@@ -42,42 +42,64 @@ logger.log("Loading...");
 // #region Bundle
 const remoteUrl =
   process.env.SHELTER_BUNDLE_URL || "https://raw.githubusercontent.com/uwu/shelter-builds/main/shelter.js";
-const localBundle = process.env.SHELTER_DIST_PATH;
+const distPath = process.env.SHELTER_DIST_PATH;
 
-let fetchPromise; // only fetch once
+let localBundle;
 
-if (!localBundle)
-  fetchPromise = new Promise((resolve, reject) => {
+if (distPath) {
+  localBundle =
+    fs.readFileSync(path.join(distPath, "shelter.js"), "utf8") +
+    `\n//# sourceMappingURL=file://${process.platform === "win32" ? "/" : ""}${path.join(distPath, "shelter.js.map")}`;
+}
+
+let remoteBundle;
+let remoteBundlePromise;
+
+const fetchRemoteBundleIfNeeded = () => {
+  if (localBundle || remoteBundle) return Promise.resolve();
+
+  remoteBundlePromise ??= new Promise((resolve) => {
     const req = https.get(remoteUrl);
 
     req.on("response", (res) => {
+      if (res.statusCode !== 200) {
+        remoteBundlePromise = null;
+        resolve();
+        return;
+      }
       const chunks = [];
 
       res.on("data", (chunk) => chunks.push(chunk));
       res.on("end", () => {
-        let data = Buffer.concat(chunks).toString("utf-8");
+        let script = Buffer.concat(chunks).toString("utf-8");
 
-        if (!data.includes("//# sourceMappingURL=")) data += `\n//# sourceMappingURL=${remoteUrl + ".map"}`;
-
-        resolve(data);
+        if (!script.includes("//# sourceMappingURL=")) script += `\n//# sourceMappingURL=${remoteUrl + ".map"}`;
+        remoteBundle = script;
+        remoteBundlePromise = null;
+        resolve();
       });
     });
 
-    req.on("error", reject);
+    req.on("error", (e) => {
+      logger.error("Error fetching remote bundle:", e);
+      remoteBundlePromise = null;
+      resolve();
+    });
 
     req.end();
   });
 
-const getShelterBundle = () =>
-  !localBundle
-    ? fetchPromise
-    : Promise.resolve(
-        fs.readFileSync(path.join(localBundle, "shelter.js"), "utf8") +
-          `\n//# sourceMappingURL=file://${process.platform === "win32" ? "/" : ""}${path.join(
-            localBundle,
-            "shelter.js.map",
-          )}`,
-      );
+  return remoteBundlePromise;
+};
+
+fetchRemoteBundleIfNeeded();
+
+const getShelterBundle = () => {
+  if (localBundle) return localBundle;
+  if (remoteBundle) return remoteBundle;
+  return `console.error("[shelter] Bundle could not be fetched in time. Aborting!");`;
+};
+
 // #endregion
 
 // #region IPC
@@ -234,6 +256,14 @@ const ProxiedBrowserWindow = new Proxy(electron.BrowserWindow, {
 
     const window = new target(options);
     window.webContents.originalPreload = originalPreload;
+
+    // Make sure the bundle has been fetched before loading the site
+    const originalLoadURL = window.loadURL;
+    window.loadURL = async function (url) {
+      // Optionally refetch in case the initial fetch failed
+      if (url.includes("discord.com/app")) await fetchRemoteBundleIfNeeded();
+      return await originalLoadURL.apply(this, arguments);
+    };
     return window;
   },
 });
