@@ -25,12 +25,12 @@ type ButtonColor = [string, string, string];
 // and the only thing better than a brand coloured buttons is a brand_new coloured button!!! -- sink
 export const ButtonColors = {
   // COLOUR: [bg, fg, hover]
-  BRAND: ["var(--brand-500)", "var(--white)", "var(--brand-560)"],
-  RED: ["var(--button-danger-background)", "var(--white)", "var(--button-danger-background-hover)"],
-  GREEN: ["var(--button-positive-background)", "var(--white)", "var(--button-positive-background-hover)"],
+  BRAND: ["var(--brand-500)", "var(--button-filled-brand-text)", "var(--brand-560)"],
+  RED: ["var(--button-danger-background)", "var(--white-500)", "var(--button-danger-background-hover)"],
+  GREEN: ["var(--button-positive-background)", "var(--white-500)", "var(--button-positive-background-hover)"],
   SECONDARY: [
     "var(--button-secondary-background)",
-    "hsl(0,calc(var(--saturation-factor, 1)*0%),100%)",
+    "var(--button-secondary-text)",
     "var(--button-secondary-background-hover)",
   ],
   LINK: ["var(--text-link)", "hsl(0,calc(var(--saturation-factor, 1)*0%),100%)", ""],

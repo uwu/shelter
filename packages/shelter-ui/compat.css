@@ -7,7 +7,7 @@
   --brand-500: #5865f2;
   --brand-560: #4752c4;
   --brand-experiment: var(--brand-500);
-  --interactive-active: var(--white);
+  --interactive-active: var(--white-500);
   --interactive-normal: #b5bac1;
   --interactive-hover: #dbdee1;
   --font-display: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -31,9 +31,11 @@
   --button-positive-background-hover: #1a6334;
   --button-secondary-background: var(--primary-500);
   --button-secondary-background-hover: #6d6f78;
+  --button-secondary-text: var(--white-500);
+  --button-filled-brand-text: var(--white-500);
   --primary-500: #4e5058;
   --primary-200: #e3e5e8;
-  --white: #ffffff;
+  --white-500: #ffffff;
   --black-500-hsl: 0 0% 0%;
   /* nice-to-haves */
   --font-primary: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
