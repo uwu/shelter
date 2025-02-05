@@ -1,0 +1,11 @@
+name = "shelter-sync"
+compatibility_date = "2024-09-19"
+main = "./.output/server/index.mjs"
+assets = { directory = "./.output/public/", binding = "ASSETS" }
+node_compat = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "storage"
+database_id = "ce4b30a6-5b91-40b1-9b0e-6f82991aff52"
+migrations_dir = "sync-backend/database/migrations"
