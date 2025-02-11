@@ -1,0 +1,23 @@
+.exportgrid {
+  display: grid;
+  grid-template-columns: 3fr auto auto; /* 1fr 1fr */
+  column-gap: 1.5rem;
+  row-gap: .5rem;
+  align-items: center;
+  justify-items: center;
+}
+
+.exportgrid > span {
+  justify-self: left;
+}
+
+.exportgrid > strong {
+  text-align: center;
+}
+
+// I am so sorry about this. -- sink
+// shelter-ui checkboxes can't be directly styled, and are annoyingly big
+// and are actually just empty checkboxitems so have a dumb 8px padding
+.exportgrid > div {
+  transform: translateX(4px) scale(.8);
+}

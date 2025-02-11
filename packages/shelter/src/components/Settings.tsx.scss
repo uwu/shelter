@@ -1,6 +1,6 @@
 .wrapper {
   display: flex;
-  row-gap: 48px;
+  row-gap: 36px;
   flex-direction: column;
 }
 
@@ -8,6 +8,8 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  justify-content: space-evenly;
+  margin-bottom: 12px;
   gap: 48px;
 }
 

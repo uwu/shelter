@@ -6,6 +6,7 @@ import { createSignal } from "solid-js";
 import { dbStore } from "../storage";
 import Plugins from "./Plugins";
 import DevUi from "./DevUI";
+import { DataManagement } from "./DataManagement";
 
 let injectedCss = false;
 
@@ -50,6 +51,7 @@ export default () => {
             </Button>
           </div>
         </div>
+        <DataManagement />
         <DevUi fullVersion />
         <Plugins />
       </div>
