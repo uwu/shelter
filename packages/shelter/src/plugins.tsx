@@ -1,10 +1,10 @@
-import { isInited, signalOf, solidMutWithSignal, storage, waitInit } from "./storage";
+import { dbStore, isInited, signalOf, solidMutWithSignal, storage, waitInit } from "./storage";
 import { Component, onCleanup } from "solid-js";
 import { createMutable } from "solid-js/store";
 import { createScopedApiInternal, log, prettifyError } from "./util";
 import { ModalBody, ModalHeader, ModalRoot, openModal } from "@uwu/shelter-ui";
 import { devModeReservedId } from "./devmode";
-import { setInjectorSections, registerInjSection } from "./settings";
+import { registerInjSection, setInjectorSections } from "./settings";
 
 // note that these controls only apply to the UI, not to the APIs
 export type LoaderIntegrationOpts = {
@@ -369,3 +369,68 @@ export const devmodePrivateApis = {
     }),
   replacePlugin: (obj: { js: string; manifest: object }) => Object.assign(internalData[devModeReservedId], obj),
 };
+
+type ExportedLocalPlugin = Pick<StoredPlugin, "on" | "js" | "manifest">;
+type ExportedRemotePlugin = Pick<StoredPlugin, "on" | "js" | "manifest" | "update">;
+type DataExport = {
+  // dbstore content (misc shelter configuration)
+  dbStore: Record<string, any>;
+  // local plugins of form { id: [ plugin obj, plugin data? ] }
+  // remote plugins of the form { src: [ plugin obj, plugin data? ] }
+  localPlugins: Record<string, [ExportedLocalPlugin] | [ExportedLocalPlugin, object]>;
+  remotePlugins: Record<string, [ExportedRemotePlugin] | [ExportedRemotePlugin, object]>;
+};
+
+// pluginsToExport is of the form { id: should export data too }
+export function exportData(pluginsToExport: Record<string, boolean>) {
+  const exp: DataExport = {
+    dbStore: { ...dbStore },
+    localPlugins: {},
+    remotePlugins: {},
+  };
+
+  for (const id in internalData) {
+    if (!(id in pluginsToExport)) continue;
+
+    const plugin = internalData[id];
+
+    if ("injectorIntegration" in plugin) continue;
+
+    const pluginData = pluginsToExport[id] ? { ...pluginStorages[id] } : undefined;
+
+    if (plugin.local) {
+      exp.localPlugins[id] = [
+        {
+          on: plugin.on,
+          js: plugin.js,
+          manifest: plugin.manifest,
+        },
+      ];
+      if (pluginData) exp.localPlugins[id].push(pluginData);
+    } else {
+      exp.remotePlugins[plugin.src] = [
+        {
+          update: plugin.update,
+          on: plugin.on,
+          js: plugin.js,
+          manifest: plugin.manifest,
+        },
+      ];
+      if (pluginData) exp.remotePlugins[plugin.src].push(pluginData);
+    }
+  }
+
+  return exp;
+}
+
+export function importData(dataToImport: DataExport) {
+  Object.assign(dbStore, dataToImport.dbStore);
+
+  for (const localId in dataToImport.localPlugins) {
+    const [newLocal, newLocalData] = dataToImport.localPlugins[localId];
+
+    if (localId in installedPlugins()) {
+      // we need to merge
+    }
+  }
+}
