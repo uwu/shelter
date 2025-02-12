@@ -19,6 +19,7 @@ import {
 import { exportData, importData, installedPlugins, verifyData } from "../plugins";
 import { createSignal, For, untrack } from "solid-js";
 import { classes, css } from "./DataManagement.tsx.scss";
+import { deleteDB } from "idb";
 
 let injectedCss = false;
 
@@ -171,7 +172,31 @@ export const DataManagement = () => (
       <Button size={ButtonSizes.SMALL} color={ButtonColors.SECONDARY} grow onClick={triggerImport}>
         Import Data
       </Button>
-      <Button size={ButtonSizes.SMALL} color={ButtonColors.RED} grow disabled tooltip="WIP!">
+      <Button
+        size={ButtonSizes.SMALL}
+        color={ButtonColors.RED}
+        grow
+        onClick={() =>
+          openConfirmationModal({
+            type: "danger",
+            header: () => "Are you sure?",
+            body: () =>
+              "Are you sure you want to delete all plugins and their data, and 'factory reset' shelter? " +
+              "There is absolutely no going back from this. " +
+              "This will also unload shelter (until next reload).",
+            confirmText: "Reset shelter",
+          }).then(() => {
+            // will delete the db as soon as connections are closed
+            deleteDB("shelter");
+            // try to move to a different tab
+            (
+              document.querySelector("[class*=layers] > :last-child [role=tablist] > div[role=tab]") as HTMLDivElement
+            )?.click();
+            // unload shelter, delay for modal
+            setTimeout(() => window["shelter"].unload(), 250);
+          })
+        }
+      >
         Delete All Data
       </Button>
     </div>
