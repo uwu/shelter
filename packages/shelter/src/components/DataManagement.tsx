@@ -16,7 +16,8 @@ import {
   showToast,
   Space,
 } from "@uwu/shelter-ui";
-import { exportData, importData, installedPlugins, verifyData } from "../plugins";
+import { exportData, importData, importWouldConflict, verifyData } from "../data";
+import { installedPlugins } from "../plugins";
 import { createSignal, For, untrack } from "solid-js";
 import { classes, css } from "./DataManagement.tsx.scss";
 import { deleteDB } from "idb";
@@ -121,22 +122,7 @@ const triggerImport = async () => {
       duration: 3000,
     });
 
-  // check if we will need to overwrite any plugins quickly
-  let conflicts = false;
-  for (const id in data.localPlugins)
-    if (id in installedPlugins()) {
-      conflicts = true;
-      break;
-    }
-
-  outer: for (const src in data.remotePlugins)
-    for (const p of Object.values(installedPlugins()))
-      if (src == p.src) {
-        conflicts = true;
-        break outer;
-      }
-
-  if (conflicts)
+  if (importWouldConflict(data))
     await openConfirmationModal({
       type: "danger",
       header: () => "Import has conflicts",
