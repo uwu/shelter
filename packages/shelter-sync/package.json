@@ -1,0 +1,32 @@
+{
+  "name": "shelter-sync",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "prepare": "nitro prepare",
+    "dev": "nitro dev",
+    "build": "nitro build",
+    "preview": "node .output/server/index.mjs",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240129.0",
+    "@types/cors": "^2.8.17",
+    "drizzle-kit": "^0.30.4",
+    "h3": "^1.14.0",
+    "nitro-cloudflare-dev": "^0.2.1",
+    "nitropack": "latest",
+    "wrangler": "^3.107.2"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.14.0",
+    "consola": "^3.4.0",
+    "cors": "^2.8.5",
+    "drizzle-orm": "^0.39.1",
+    "fflate": "^0.8.2",
+    "uint8array-extras": "^1.4.0",
+    "valibot": "1.0.0-beta.14"
+  }
+}
