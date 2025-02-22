@@ -41,6 +41,9 @@ const internalData = storage<StoredPlugin>("plugins-internal");
 const pluginStorages = storage("plugins-data");
 const [internalLoaded, loadedPlugins] = solidMutWithSignal(createMutable({} as Record<string, EvaledPlugin>));
 
+// dear god do not let these go anywhere other than data.ts
+export { internalData as UNSAFE_internalData, pluginStorages as UNSAFE_pluginStorages };
+
 export const installedPlugins = signalOf(internalData);
 export { loadedPlugins };
 
@@ -369,68 +372,3 @@ export const devmodePrivateApis = {
     }),
   replacePlugin: (obj: { js: string; manifest: object }) => Object.assign(internalData[devModeReservedId], obj),
 };
-
-type ExportedLocalPlugin = Pick<StoredPlugin, "on" | "js" | "manifest">;
-type ExportedRemotePlugin = Pick<StoredPlugin, "on" | "js" | "manifest" | "update">;
-type DataExport = {
-  // dbstore content (misc shelter configuration)
-  dbStore: Record<string, any>;
-  // local plugins of form { id: [ plugin obj, plugin data? ] }
-  // remote plugins of the form { src: [ plugin obj, plugin data? ] }
-  localPlugins: Record<string, [ExportedLocalPlugin] | [ExportedLocalPlugin, object]>;
-  remotePlugins: Record<string, [ExportedRemotePlugin] | [ExportedRemotePlugin, object]>;
-};
-
-// pluginsToExport is of the form { id: should export data too }
-export function exportData(pluginsToExport: Record<string, boolean>) {
-  const exp: DataExport = {
-    dbStore: { ...dbStore },
-    localPlugins: {},
-    remotePlugins: {},
-  };
-
-  for (const id in internalData) {
-    if (!(id in pluginsToExport)) continue;
-
-    const plugin = internalData[id];
-
-    if ("injectorIntegration" in plugin) continue;
-
-    const pluginData = pluginsToExport[id] ? { ...pluginStorages[id] } : undefined;
-
-    if (plugin.local) {
-      exp.localPlugins[id] = [
-        {
-          on: plugin.on,
-          js: plugin.js,
-          manifest: plugin.manifest,
-        },
-      ];
-      if (pluginData) exp.localPlugins[id].push(pluginData);
-    } else {
-      exp.remotePlugins[plugin.src] = [
-        {
-          update: plugin.update,
-          on: plugin.on,
-          js: plugin.js,
-          manifest: plugin.manifest,
-        },
-      ];
-      if (pluginData) exp.remotePlugins[plugin.src].push(pluginData);
-    }
-  }
-
-  return exp;
-}
-
-export function importData(dataToImport: DataExport) {
-  Object.assign(dbStore, dataToImport.dbStore);
-
-  for (const localId in dataToImport.localPlugins) {
-    const [newLocal, newLocalData] = dataToImport.localPlugins[localId];
-
-    if (localId in installedPlugins()) {
-      // we need to merge
-    }
-  }
-}

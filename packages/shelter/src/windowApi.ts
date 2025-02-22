@@ -62,7 +62,14 @@ const windowApi = async (unloads) => {
       ...util,
       createScopedApi: util.createScopedApi.bind(undefined, dispatcher),
     },
-    plugins: without(plugins, "startAllPlugins", "devmodePrivateApis", "ensureLoaderPlugin"),
+    plugins: without(
+      plugins,
+      "startAllPlugins",
+      "devmodePrivateApis",
+      "ensureLoaderPlugin",
+      "UNSAFE_internalData",
+      "UNSAFE_pluginStorages",
+    ),
     storage,
     observeDom: observe,
     ui: {

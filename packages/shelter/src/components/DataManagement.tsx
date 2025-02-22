@@ -11,12 +11,16 @@ import {
   ModalConfirmFooter,
   ModalHeader,
   ModalRoot,
+  openConfirmationModal,
   openModal,
+  showToast,
   Space,
 } from "@uwu/shelter-ui";
-import { exportData, installedPlugins } from "../plugins";
+import { exportData, importData, importWouldConflict, verifyData } from "../data";
+import { installedPlugins } from "../plugins";
 import { createSignal, For, untrack } from "solid-js";
 import { classes, css } from "./DataManagement.tsx.scss";
+import { deleteDB } from "idb";
 
 let injectedCss = false;
 
@@ -81,7 +85,7 @@ export const ExportModal = ({ close }: { close: () => void }) => {
           const exported = exportData(plugins);
 
           const a = document.createElement("a");
-          a.href = URL.createObjectURL(new Blob([JSON.stringify(exported)], { type: "text/json" }));
+          a.href = URL.createObjectURL(new Blob([JSON.stringify(exported)], { type: "application/json" }));
           a.download = "shelter-export.json";
           a.click();
           URL.revokeObjectURL(a.href);
@@ -89,6 +93,58 @@ export const ExportModal = ({ close }: { close: () => void }) => {
       />
     </ModalRoot>
   );
+};
+
+const triggerImport = async () => {
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "application/json";
+
+  const p = new Promise((r) => (input.onchange = r));
+
+  input.click();
+  await p;
+
+  const f = input.files[0];
+  if (!f) return;
+
+  const reader = new FileReader();
+  reader.readAsText(f);
+  await new Promise((r) => (reader.onloadend = r));
+
+  const data = JSON.parse(reader.result as string);
+  const verifyResult = verifyData(data);
+
+  if (verifyResult)
+    return showToast({
+      title: "Data is invalid and so was not imported",
+      content: verifyResult,
+      duration: 3000,
+    });
+
+  if (importWouldConflict(data))
+    await openConfirmationModal({
+      type: "danger",
+      header: () => "Import has conflicts",
+      body: () =>
+        "Importing this data will overwrite some currently installed plugins.\n" +
+        "If the export contains the plugin but without its settings, the existing settings are kept.",
+    });
+
+  try {
+    importData(data);
+  } catch (e) {
+    return showToast({
+      title: "Error while importing data export",
+      content: e?.message ?? e + "",
+      duration: 3000,
+    });
+  }
+
+  showToast({
+    title: `Successfully imported ${Object.keys(data.localPlugins).length + Object.keys(data.remotePlugins).length} plugins and data`,
+    duration: 3000,
+  });
 };
 
 export const DataManagement = () => (
@@ -99,10 +155,34 @@ export const DataManagement = () => (
       <Button size={ButtonSizes.SMALL} color={ButtonColors.SECONDARY} grow onClick={() => openModal(ExportModal)}>
         Export Data
       </Button>
-      <Button size={ButtonSizes.SMALL} color={ButtonColors.SECONDARY} grow disabled tooltip="WIP!">
+      <Button size={ButtonSizes.SMALL} color={ButtonColors.SECONDARY} grow onClick={triggerImport}>
         Import Data
       </Button>
-      <Button size={ButtonSizes.SMALL} color={ButtonColors.RED} grow disabled tooltip="WIP!">
+      <Button
+        size={ButtonSizes.SMALL}
+        color={ButtonColors.RED}
+        grow
+        onClick={() =>
+          openConfirmationModal({
+            type: "danger",
+            header: () => "Are you sure?",
+            body: () =>
+              "Are you sure you want to delete all plugins and their data, and 'factory reset' shelter? " +
+              "There is absolutely no going back from this. " +
+              "This will also unload shelter (until next reload).",
+            confirmText: "Reset shelter",
+          }).then(() => {
+            // will delete the db as soon as connections are closed
+            deleteDB("shelter");
+            // try to move to a different tab
+            (
+              document.querySelector("[class*=layers] > :last-child [role=tablist] > div[role=tab]") as HTMLDivElement
+            )?.click();
+            // unload shelter, delay for modal
+            setTimeout(() => window["shelter"].unload(), 250);
+          })
+        }
+      >
         Delete All Data
       </Button>
     </div>

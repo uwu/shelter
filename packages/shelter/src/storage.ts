@@ -32,7 +32,7 @@ const symWait = Symbol();
 const symDb = Symbol();
 const symSig = Symbol();
 
-interface ShelterStore<T> {
+export interface ShelterStore<T> {
   [_: string]: T;
 
   [symWait]: (cb: () => void) => void;
