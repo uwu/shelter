@@ -128,6 +128,7 @@ export const Button: NativeExtendingComponent<ButtonProps, JSX.ButtonHTMLAttribu
         "--shltr-btn-col": local.color[1],
         "--shltr-btn-bg": local.color[0],
         "--shltr-btn-bg-hov": local.color[2],
+        cursor: buttonProps.disabled || buttonProps["aria-disabled"] ? "not-allowed" : "pointer",
         ...local.style,
       }}
       {...buttonProps}
