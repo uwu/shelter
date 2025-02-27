@@ -1,10 +1,14 @@
 import { RepositoryData, fetchSources } from "./github";
 import Fuse from "fuse.js";
+import { handleAdd } from "./userrepos";
 
 export interface Env {
   GH_TOKEN: string;
+  BOT_KEY: string;
   REPO: KVNamespace;
   OVERRIDES: KVNamespace;
+  USERREPOS: KVNamespace;
+  PENDING: KVNamespace;
 }
 
 const handler: ExportedHandler<Env> = {
@@ -18,7 +22,12 @@ const handler: ExportedHandler<Env> = {
     let response = await caches.default.match(request);
     if (response) return response;
 
-    if (url.pathname === "/data") {
+    if (url.pathname === "/addpending") {
+      response = new Response(await handleAdd(env, request));
+    } else if (url.pathname === "/addpending") {
+      await handleAdd(env, request);
+      response = new Response();
+    } else if (url.pathname === "/data") {
       const result = await env.REPO.get<RepositoryData[]>("data", "json");
       response = Response.json(result, {
         headers: {
