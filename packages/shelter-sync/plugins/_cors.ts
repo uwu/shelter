@@ -3,7 +3,7 @@ export default defineNitroPlugin((nitroApp) => {
     handleCors(event, {
       origin: ["https://discord.com", "https://ptb.discord.com", "https://canary.discord.com"],
       exposeHeaders: ["ETag"],
-      methods: ["GET", "POST", "DELETE", "OPTIONS"],
+      methods: ["GET", "PUT", "POST", "DELETE", "OPTIONS"],
       credentials: true,
     });
 

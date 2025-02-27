@@ -26,7 +26,6 @@
     "cors": "^2.8.5",
     "drizzle-orm": "^0.39.1",
     "fflate": "^0.8.2",
-    "uint8array-extras": "^1.4.0",
-    "valibot": "1.0.0-beta.14"
+    "uint8array-extras": "^1.4.0"
   }
 }

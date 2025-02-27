@@ -1,10 +1,16 @@
-import { store } from "./components/DataManagement";
 import { stores } from "./flux";
+import { storage, defaults } from "./storage";
 
 // TODO: Update to a real instance
 // NOTE: This needs a real backend hosted with https.
 export const defaultApiUrl = "http://localhost:3000";
 export const getSyncURL = () => new URL(store.syncApiUrl);
+
+export const store = storage("sync");
+defaults(store, {
+  syncIsAuthed: false,
+  syncApiUrl: defaultApiUrl,
+});
 
 const getUser = () => {
   // @ts-expect-error
@@ -14,18 +20,20 @@ const getUser = () => {
 };
 
 export function getAuthCode() {
-  const origin = getSyncURL().origin;
-  const userId = getUser().id;
-
-  return store[`${origin}:${userId}`] ?? undefined;
+  const key = `${getSyncURL().origin}:${getUser().id}`;
+  const secret = store[key];
+  if (!secret) return undefined;
+  return window.btoa(`${secret}:${getUser().id}`);
 }
 
 export const authorize = (secret: string) => {
-  store[`${getSyncURL().origin}:${getUser().id}`] = secret;
+  const key = `${getSyncURL().origin}:${getUser().id}`;
+  store[key] = secret;
   store.syncIsAuthed = true;
 };
 
 export const unauthorize = () => {
-  delete store[`${getSyncURL().origin}:${getUser().id}`];
+  const key = `${getSyncURL().origin}:${getUser().id}`;
+  delete store[key];
   store.syncIsAuthed = false;
 };

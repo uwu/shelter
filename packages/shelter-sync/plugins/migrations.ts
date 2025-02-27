@@ -1,9 +1,11 @@
 import { consola } from "consola";
-import { migrate } from "drizzle-orm/d1/migrator";
+import { migrate } from "drizzle-orm/libsql";
 
 // TODO: figure out what way to go for this
 export default defineNitroPlugin(async () => {
-  await migrate(useDrizzle(), {
+  /**
+
+    await migrate(useDrizzle(), {
     migrationsFolder: "database/migrations",
   })
     .then(() => {
@@ -12,4 +14,5 @@ export default defineNitroPlugin(async () => {
     .catch((err) => {
       consola.withTag("migrations").withTag("d1").error("Database migrations failed", err);
     });
+   */
 });

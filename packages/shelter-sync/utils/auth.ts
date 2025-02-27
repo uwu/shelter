@@ -5,13 +5,31 @@ type EventHandlerWithUser<T extends EventHandlerRequest, D> = (event: H3Event<T>
 
 export function eventHandlerWithUser<T extends EventHandlerRequest, D>(handler: EventHandlerWithUser<T, D>) {
   return defineEventHandler(async (event) => {
-    // Get user id from params
-    const userId = event.context.params?.userId;
-    if (!userId) {
+    const authHeader = getHeader(event, "authorization");
+    if (!authHeader) {
+      throw createError({ statusCode: 400, statusMessage: "Bad Request" });
+    }
+
+    let token: string;
+
+    try {
+      token = atob(authHeader);
+    } catch {
+      throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
+    }
+
+    const [secret, userId, ...rest] = token.split(":");
+
+    if (!secret || !userId || rest.length > 0) {
       throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
     }
 
     const user = await getUser(userId);
+
+    if (!user) {
+      throw createError({ statusCode: 401, statusMessage: "Unauthorized" });
+    }
+
     return await handler(event, user);
   });
 }
