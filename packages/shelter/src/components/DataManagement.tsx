@@ -17,19 +17,22 @@ import {
 } from "@uwu/shelter-ui";
 import { DataExport, exportData, importData, importWouldConflict, verifyData } from "../data";
 import { installedPlugins } from "../plugins";
-import { createSignal, For, untrack } from "solid-js";
+import { createSignal, For, Show, untrack } from "solid-js";
 import { classes, css } from "./DataManagement.tsx.scss";
 import { deleteDB } from "idb";
 import { SyncMangement } from "./SyncManagement";
+import Alert from "./Alert";
 
 let injectedCss = false;
 
 export const ExportModal = ({
   close,
   handleExport,
+  mode = "export",
 }: {
   close: () => void;
-  handleExport: (data: DataExport) => Promise<void> | void;
+  handleExport: (data: DataExport) => Promise<{ error?: string; success?: string }> | void;
+  mode?: "export" | "sync";
 }) => {
   if (!injectedCss) {
     injectedCss = true;
@@ -38,6 +41,9 @@ export const ExportModal = ({
 
   const [pluginsActive, setPluginsActive] = createSignal(new Set<string>(), { equals: false });
   const [pluginsSaveData, setPluginsSaveData] = createSignal(new Map<string, boolean>(), { equals: false });
+  const [error, setError] = createSignal<string | null>(null);
+  const [success, setSuccess] = createSignal<string | null>(null);
+  const [isExporting, setIsExporting] = createSignal(false);
 
   // all plugins selected by default
   for (const id in untrack(installedPlugins)) {
@@ -46,28 +52,65 @@ export const ExportModal = ({
   }
 
   const handleExportedData = async () => {
+    setError(null);
+    setSuccess(null);
+    setIsExporting(true);
+
     const plugins = {};
     for (const active of pluginsActive()) plugins[active] = pluginsSaveData().get(active);
 
     const exported = exportData(plugins);
 
-    await handleExport(exported);
+    const result = await handleExport(exported);
+    if (result) {
+      if (result.error) {
+        setError(result.error);
+      } else if (result.success) {
+        setSuccess(result.success);
+      }
+    }
+    setIsExporting(false);
   };
+
+  const handleClose = () => {
+    if (!isExporting()) {
+      close();
+    }
+  };
+
+  const isSync = mode === "sync";
+  const actionText = isSync ? "Sync" : "Export";
+  const actionProgressText = isSync ? "Syncing..." : "Exporting...";
 
   return (
     <ModalRoot>
-      <ModalHeader close={close}>Export Data</ModalHeader>
+      <ModalHeader close={handleClose}>{actionText} Data</ModalHeader>
       <ModalBody>
+        <Show when={error()}>
+          <Alert type="danger">{error()}</Alert>
+        </Show>
+        <Show when={success()}>
+          <Alert type="success">{success()}</Alert>
+        </Show>
         <p>
-          You can export your shelter plugins and settings to backup and/or import to another shelter instance.
-          <Space />
-          <strong>Plugin settings may include sensitive data if exported</strong>, be careful.
+          {isSync ? (
+            <>
+              You can sync your shelter plugins and settings to your shelter sync account.
+              <Space />
+              <strong>Plugin settings may include sensitive data when synced</strong>, be careful.
+            </>
+          ) : (
+            <>
+              You can export your shelter plugins and settings to backup and/or import to another shelter instance.
+              <Space />
+              <strong>Plugin settings may include sensitive data if exported</strong>, be careful.
+            </>
+          )}
         </p>
         <div class={classes.exportgrid}>
           <div />
           <div />
-          {/*<strong>Include</strong>*/}
-          <strong>Export Settings</strong>
+          <strong>{actionText} Settings</strong>
           <For each={Object.entries(installedPlugins()).filter(([, p]) => !p.injectorIntegration)}>
             {([id, plugin]) => (
               <>
@@ -89,7 +132,13 @@ export const ExportModal = ({
           </For>
         </div>
       </ModalBody>
-      <ModalConfirmFooter close={close} confirmText="Export" type="confirm" onConfirm={handleExportedData} />
+      <ModalConfirmFooter
+        close={handleClose}
+        confirmText={isExporting() ? actionProgressText : actionText}
+        type="confirm"
+        onConfirm={handleExportedData}
+        disabled={isExporting()}
+      />
     </ModalRoot>
   );
 };
@@ -150,11 +199,16 @@ const triggerImport = async () => {
 
 const LocalDataManagement = () => {
   const handleExport = async (data: DataExport) => {
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: "application/json" }));
-    a.download = "shelter-export.json";
-    a.click();
-    URL.revokeObjectURL(a.href);
+    try {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: "application/json" }));
+      a.download = "shelter-export.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      return { success: "Data exported successfully" };
+    } catch (error) {
+      return { error: `Failed to export data: ${error?.message ?? error + ""}` };
+    }
   };
 
   return (
@@ -165,7 +219,9 @@ const LocalDataManagement = () => {
           size={ButtonSizes.SMALL}
           color={ButtonColors.SECONDARY}
           grow
-          onClick={() => openModal((props) => <ExportModal close={props.close} handleExport={handleExport} />)}
+          onClick={() =>
+            openModal((props) => <ExportModal mode="export" close={props.close} handleExport={handleExport} />)
+          }
         >
           Export Data
         </Button>
