@@ -11,6 +11,5 @@ export default defineNitroConfig({
   preset: "cloudflare_module",
   experimental: {
     database: true,
-    tasks: true,
   },
 });

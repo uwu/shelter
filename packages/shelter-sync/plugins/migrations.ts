@@ -1,18 +1,16 @@
-import { consola } from "consola";
-import { migrate } from "drizzle-orm/libsql";
+import { defineNitroPlugin } from "nitropack/dist/runtime/plugin";
+import { applyMigrations } from "../utils/migrations";
 
-// TODO: figure out what way to go for this
-export default defineNitroPlugin(async () => {
-  /**
-
-    await migrate(useDrizzle(), {
-    migrationsFolder: "database/migrations",
-  })
-    .then(() => {
-      consola.withTag("migrations").withTag("d1").success("Database migrations done");
-    })
-    .catch((err) => {
-      consola.withTag("migrations").withTag("d1").error("Database migrations failed", err);
-    });
-   */
+export default defineNitroPlugin((nitroApp) => {
+  nitroApp.hooks.hook("request", async (event) => {
+    // Only run migrations once on first request
+    if (!global.__migrationsApplied) {
+      try {
+        await applyMigrations(event);
+        global.__migrationsApplied = true;
+      } catch (error) {
+        console.error("Failed to apply migrations:", error);
+      }
+    }
+  });
 });

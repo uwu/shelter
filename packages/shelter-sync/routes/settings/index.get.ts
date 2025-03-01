@@ -1,21 +1,19 @@
-import { deflateSync as deflate } from "fflate";
+import { eventHandlerWithUser } from "~/utils/auth";
 
 export default eventHandlerWithUser(async (event, user) => {
-  const now = Date.now();
-
-  if (user.lastUpdated && user.lastUpdated.getTime() === now) {
-    return {
-      settings: null,
-    };
+  if (!user.settings || !user.lastUpdated) {
+    setResponseStatus(event, 404);
+    return null;
   }
 
-  const dataString = user.settings;
-  const data = new TextEncoder().encode(dataString);
-  const compressed = deflate(data);
+  const ifNoneMatch = getHeader(event, "if-none-match");
+  if (ifNoneMatch && ifNoneMatch === user.lastUpdated) {
+    setResponseStatus(event, 304);
+    return null;
+  }
 
-  setHeader(event, "content-type", "application/octet-stream");
-  setHeader(event, "etag", user.lastUpdated.toISOString());
+  setHeader(event, "content-type", "application/json");
+  setHeader(event, "etag", user.lastUpdated);
 
-  // return compressed as response body
-  return compressed;
+  return user.settings;
 });

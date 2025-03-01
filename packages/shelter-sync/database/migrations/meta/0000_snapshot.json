@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "ab3cd80e-c922-4699-835a-6bd654cfca77",
+  "id": "8d71b066-6e2a-4139-86f4-821096d7e515",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "users": {
@@ -25,14 +25,14 @@
           "name": "settings",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         },
         "last_updated": {
           "name": "last_updated",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false
         }
       },

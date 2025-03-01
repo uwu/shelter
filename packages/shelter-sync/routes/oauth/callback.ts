@@ -1,3 +1,5 @@
+import { createUser, getUser } from "~/utils/drizzle";
+
 export default defineEventHandler(async (event) => {
   const { code } = getQuery(event);
 
@@ -48,22 +50,17 @@ export default defineEventHandler(async (event) => {
 
   const { id: userId } = userResponse;
 
-  // Get secret for the user from database
-  const user = await useDrizzle().query.users.findFirst({
-    where: (users, { eq }) => eq(users.id, userId),
-  });
-
+  // see if user already exists
+  const user = await getUser(event, userId);
   let secret = user?.secret;
 
   if (!secret) {
     secret = generateSecret();
 
-    await useDrizzle()
-      .update(tables.users)
-      .set({
-        secret: secret,
-      })
-      .where(eq(tables.users.id, userId));
+    await createUser(event, {
+      id: userId,
+      secret,
+    });
   }
 
   return {

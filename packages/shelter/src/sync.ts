@@ -10,6 +10,7 @@ export const store = storage("sync");
 defaults(store, {
   syncIsAuthed: false,
   syncApiUrl: defaultApiUrl,
+  syncLastUpdated: null,
 });
 
 const getUser = () => {
@@ -36,4 +37,5 @@ export const unauthorize = () => {
   const key = `${getSyncURL().origin}:${getUser().id}`;
   delete store[key];
   store.syncIsAuthed = false;
+  store.syncLastUpdated = null;
 };

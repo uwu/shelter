@@ -8,4 +8,4 @@ node_compat = true
 binding = "DB"
 database_name = "storage"
 database_id = "ce4b30a6-5b91-40b1-9b0e-6f82991aff52"
-migrations_dir = "sync-backend/database/migrations"
+migrations_dir = "./database/migrations"

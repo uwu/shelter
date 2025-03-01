@@ -1,37 +1,45 @@
-import { inflateSync as inflate } from "fflate";
+import { updateUser } from "~/utils/drizzle";
+import { eventHandlerWithUser } from "~/utils/auth";
+import type { DataExport } from "~/utils/lib";
 
 export default eventHandlerWithUser(async (event, user) => {
-  if (event.headers.get("content-type") !== "application/octet-stream") {
+  if (event.headers.get("content-type") !== "application/json") {
     throw createError({
       statusCode: 400,
-      statusMessage: "Content-Type must be application/octet-stream",
+      statusMessage: "Content-Type must be application/json",
     });
   }
-  const body = await readRawBody(event, false);
 
-  if (!body) {
+  const data = await readBody<DataExport>(event);
+
+  if (!data) {
     throw createError({
       statusCode: 400,
       statusMessage: "No body provided",
     });
   }
 
+  // Cap the size at 1MB
+  if (JSON.stringify(data).length > 1024 * 1024) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Body is too large",
+    });
+  }
+
   const now = Date.now();
 
   try {
-    const decompressed = inflate(new Uint8Array(body));
-    const dataString = new TextDecoder().decode(decompressed);
-
-    await useDrizzle()
-      .update(tables.users)
-      .set({
-        settings: dataString,
-        lastUpdated: new Date(now),
-      })
-      .where(eq(tables.users.id, user.id));
+    await updateUser(event, {
+      id: user.id,
+      secret: user.secret,
+      settings: data,
+      lastUpdated: `${now}`,
+    });
 
     return {
       message: "User settings updated successfully",
+      lastUpdated: now,
     };
   } catch (error) {
     // Handle error

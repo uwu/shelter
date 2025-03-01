@@ -13,15 +13,227 @@ import {
   TextBox,
   HeaderTags,
   Header,
+  showToast,
 } from "@uwu/shelter-ui";
 import { authorize, defaultApiUrl, getAuthCode, getSyncURL, store, unauthorize } from "../sync";
 import { createSignal, Show } from "solid-js";
 import { signalOf } from "../storage";
 import { ExportModal } from "./DataManagement";
-import { DataExport } from "../data";
+import { DataExport, importData, importWouldConflict, verifyData } from "../data";
 import Alert from "./Alert";
+import { installedPlugins } from "../plugins";
 
 const sig = signalOf(store);
+
+const toast = (content: string) =>
+  showToast({
+    title: "Sync",
+    content,
+    duration: 3000,
+  });
+
+const handlePutData = async (data: DataExport) => {
+  try {
+    const request = await fetch(new URL("/settings", getSyncURL()), {
+      method: "PUT",
+      headers: {
+        Authorization: getAuthCode(),
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!request.ok) {
+      return { error: `Error while syncing data: ${request.status}: ${request.statusText}` };
+    }
+
+    const { lastUpdated } = await request.json();
+    store.syncLastUpdated = lastUpdated;
+
+    return { success: "Data synced successfully!" };
+  } catch (error) {
+    return { error: error?.message ?? error + "" };
+  }
+};
+
+const handlePullData = async () => {
+  const request = await fetch(new URL("/settings", getSyncURL()), {
+    method: "GET",
+    headers: {
+      Authorization: getAuthCode(),
+      Accept: "application/json",
+      "If-None-Match": sig().syncLastUpdated,
+    },
+  });
+
+  if (request.status === 404) {
+    return toast("No data exists on the server to pull.");
+  }
+
+  if (request.status === 304) {
+    return toast("Up to date!");
+  }
+
+  if (!request.ok) {
+    return toast(`Error while fetching data: ${request.status}: ${request.statusText}`);
+  }
+
+  const written = Number(request.headers.get("etag")!);
+  const localWritten = sig().syncLastUpdated;
+
+  // No need to check for `written > localWritten` because the server will return 304 from if-none-match header.
+  if (written < localWritten) {
+    return toast("Your local settings are newer than the cloud ones.");
+  }
+
+  const settings = await request.json();
+
+  console.log("pulled settings: ", settings, "localSettings:");
+  const verifyResult = verifyData(settings);
+
+  if (verifyResult) return toast(`Data pulled but is invalid: ${verifyResult}`);
+
+  const conflicts = [];
+  for (const id in settings.localPlugins) {
+    if (id in installedPlugins()) {
+      conflicts.push(`Local plugin: ${id}`);
+    }
+  }
+
+  for (const src in settings.remotePlugins) {
+    for (const p of Object.values(installedPlugins())) {
+      if (src == p.src) {
+        conflicts.push(`Remote plugin: ${src}`);
+      }
+    }
+  }
+
+  if (conflicts.length) {
+    console.log("Conflicting plugins:", conflicts);
+    return true;
+  }
+
+  if (importWouldConflict(settings))
+    await openConfirmationModal({
+      type: "danger",
+      header: () => "Pull has conflicts",
+      body: () =>
+        "Pulling this data will overwrite some currently installed plugins.\n" +
+        "If the export contains the plugin but without its settings, the existing settings are kept.",
+    });
+
+  try {
+    importData(settings);
+  } catch (e) {
+    return toast(`Error while pulling data: ${e?.message ?? e + ""}`);
+  }
+
+  toast(
+    `Successfully pulled ${
+      Object.keys(settings.localPlugins).length + Object.keys(settings.remotePlugins).length
+    } plugins and data`,
+  );
+
+  return;
+};
+
+const handleResetData = async () => {
+  openConfirmationModal({
+    type: "danger",
+    header: () => "Are you sure?",
+    body: () =>
+      `Are you sure you want to delete synchronized data for all plugins and your user profile (${getSyncURL().origin})? This is irreversible.`,
+    confirmText: "Reset",
+  }).then(async () => {
+    const request = await fetch(new URL("/settings", getSyncURL()), {
+      method: "DELETE",
+      headers: {
+        Authorization: getAuthCode(),
+      },
+    });
+
+    if (!request.ok) {
+      return toast(`Error while resetting data: ${request.status}: ${request.statusText}`);
+    }
+
+    unauthorize();
+
+    toast("Data reset successfully!");
+  });
+};
+
+export const SyncMangement = () => {
+  const handleSync = () =>
+    openModal((props) => <ExportModal mode="sync" close={props.close} handleExport={handlePutData} />);
+
+  // Format the last updated date if it exists
+  const formatLastUpdated = () => {
+    const timestamp = sig().syncLastUpdated;
+    if (!timestamp) return "Never";
+
+    const date = new Date(Number(timestamp));
+    return date.toLocaleString();
+  };
+
+  return (
+    <>
+      <Header tag={HeaderTags.EYEBROW}>Sync</Header>
+
+      <Show when={sig().syncIsAuthed}>
+        <div style={{ "margin-bottom": "1rem", "font-size": "0.9rem", color: "var(--text-muted)" }}>
+          <div>
+            <span style={{ "font-weight": "bold" }}>API:</span> {getSyncURL().origin}
+          </div>
+          <div>
+            <span style={{ "font-weight": "bold" }}>Last Updated:</span> {formatLastUpdated()}
+          </div>
+        </div>
+      </Show>
+
+      <div style={{ display: "grid", "grid-auto-flow": "column", gap: "1rem" }}>
+        <Button
+          size={ButtonSizes.SMALL}
+          color={sig().syncIsAuthed ? ButtonColors.RED : ButtonColors.BRAND}
+          grow
+          onClick={() =>
+            openModal((props) =>
+              sig().syncIsAuthed ? <UnauthorizeModal close={props.close} /> : <AuthorizeModal close={props.close} />,
+            )
+          }
+        >
+          {sig().syncIsAuthed ? "Unauthorize" : "Authorize"}
+        </Button>
+        <Button
+          size={ButtonSizes.SMALL}
+          color={ButtonColors.SECONDARY}
+          disabled={!sig().syncIsAuthed}
+          grow
+          onClick={handleSync}
+        >
+          Sync Data
+        </Button>
+        <Button
+          size={ButtonSizes.SMALL}
+          color={ButtonColors.SECONDARY}
+          disabled={!sig().syncIsAuthed}
+          grow
+          onClick={handlePullData}
+        >
+          Pull Data
+        </Button>
+        <Button
+          size={ButtonSizes.SMALL}
+          color={ButtonColors.RED}
+          disabled={!sig().syncIsAuthed}
+          grow
+          onClick={handleResetData}
+        >
+          Reset Data
+        </Button>
+      </div>
+    </>
+  );
+};
 
 const AuthorizeModal = ({ close }: { close: () => void }) => {
   const [secret, setSecret] = createSignal("");
@@ -58,7 +270,7 @@ const AuthorizeModal = ({ close }: { close: () => void }) => {
       authURL.searchParams.set("redirect_uri", data.redirect_uri);
       authURL.searchParams.set("scope", "identify");
 
-      open(authURL, "_blank");
+      window.open(authURL, "_blank");
       setSuccess("Please authorize in order to continue.");
     } catch (error) {
       setError(error?.message ?? error + "");
@@ -117,91 +329,7 @@ const AuthorizeModal = ({ close }: { close: () => void }) => {
   );
 };
 
-export const SyncMangement = () => {
-  const handleExport = async (data: DataExport) => {
-    try {
-      const request = await fetch(new URL("/settings", getSyncURL()), {
-        method: "PUT",
-        headers: {
-          Authorization: getAuthCode(),
-          "Content-Type": "application/octet-stream",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!request.ok) {
-        return { error: `Error while syncing data: ${request.status}: ${request.statusText}` };
-      }
-
-      return { success: "Data synced successfully" };
-    } catch (error) {
-      return { error: error?.message ?? error + "" };
-    }
-  };
-
-  return (
-    <>
-      <Header tag={HeaderTags.EYEBROW}>Sync</Header>
-      <div style={{ display: "grid", "grid-auto-flow": "column", gap: "1rem" }}>
-        <Button
-          size={ButtonSizes.SMALL}
-          color={sig().syncIsAuthed ? ButtonColors.RED : ButtonColors.BRAND}
-          grow
-          onClick={() =>
-            openModal((props) =>
-              sig().syncIsAuthed ? <UnauthorizeModal close={props.close} /> : <AuthorizeModal close={props.close} />,
-            )
-          }
-        >
-          {sig().syncIsAuthed ? "Unauthorize" : "Authorize"}
-        </Button>
-        <Button
-          size={ButtonSizes.SMALL}
-          color={ButtonColors.SECONDARY}
-          disabled={!sig().syncIsAuthed}
-          grow
-          onClick={() =>
-            openModal((props) => <ExportModal mode="sync" close={props.close} handleExport={handleExport} />)
-          }
-        >
-          Sync Data
-        </Button>
-        <Button
-          size={ButtonSizes.SMALL}
-          color={ButtonColors.SECONDARY}
-          disabled={!sig().syncIsAuthed}
-          grow
-          onClick={() => {
-            /** no-op */
-          }}
-        >
-          Pull Data
-        </Button>
-        <Button
-          size={ButtonSizes.SMALL}
-          color={ButtonColors.RED}
-          disabled={!sig().syncIsAuthed}
-          grow
-          onClick={() => {
-            openConfirmationModal({
-              type: "danger",
-              header: () => "Are you sure?",
-              body: () =>
-                "Are you sure you want to delete synchronized data for all plugins and your user profile? This is irreversible.",
-              confirmText: "Reset",
-            }).then(() => {
-              /** // TODO: work logic */
-            });
-          }}
-        >
-          Reset Data
-        </Button>
-      </div>
-    </>
-  );
-};
-
-export const UnauthorizeModal = ({ close }: { close: () => void }) => {
+const UnauthorizeModal = ({ close }: { close: () => void }) => {
   const [disabled, setDisabled] = createSignal(false);
   const [error, setError] = createSignal<string | null>(null);
 
@@ -223,7 +351,7 @@ export const UnauthorizeModal = ({ close }: { close: () => void }) => {
     <ModalRoot size={ModalSizes.SMALL}>
       <ModalHeader close={close}>Unauthorize</ModalHeader>
       <ModalBody>
-        Are you sure you want to unauthorize? This will log you out of shelter sync.
+        Are you sure you want to unauthorize? This will log you out of shelter sync ({getSyncURL().origin}).
         <Show when={error()}>
           <Alert type="danger">{error()}</Alert>
         </Show>

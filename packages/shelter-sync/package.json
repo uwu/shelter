@@ -12,9 +12,9 @@
     "db:migrate": "drizzle-kit migrate"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20240129.0",
+    "@cloudflare/workers-types": "^4.20240919.0",
     "@types/cors": "^2.8.17",
-    "drizzle-kit": "^0.30.4",
+    "drizzle-kit": "^0.30.5",
     "h3": "^1.14.0",
     "nitro-cloudflare-dev": "^0.2.1",
     "nitropack": "latest",
@@ -24,8 +24,9 @@
     "@libsql/client": "^0.14.0",
     "consola": "^3.4.0",
     "cors": "^2.8.5",
-    "drizzle-orm": "^0.39.1",
+    "drizzle-orm": "^0.40.0",
     "fflate": "^0.8.2",
+    "pathe": "^2.0.3",
     "uint8array-extras": "^1.4.0"
   }
 }
