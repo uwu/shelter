@@ -1,7 +1,6 @@
 import {
   Button,
   ButtonColors,
-  ButtonLooks,
   ButtonSizes,
   Checkbox,
   Header,
@@ -16,15 +15,25 @@ import {
   showToast,
   Space,
 } from "@uwu/shelter-ui";
-import { exportData, importData, importWouldConflict, verifyData } from "../data";
+import { DataExport, exportData, importData, importWouldConflict, verifyData } from "../data";
 import { installedPlugins } from "../plugins";
-import { createSignal, For, untrack } from "solid-js";
+import { createSignal, For, Show, untrack } from "solid-js";
 import { classes, css } from "./DataManagement.tsx.scss";
 import { deleteDB } from "idb";
+import { SyncMangement } from "./SyncManagement";
+import Alert from "./Alert";
 
 let injectedCss = false;
 
-export const ExportModal = ({ close }: { close: () => void }) => {
+export const ExportModal = ({
+  close,
+  handleExport,
+  mode = "export",
+}: {
+  close: () => void;
+  handleExport: (data: DataExport) => Promise<{ error?: string; success?: string }> | void;
+  mode?: "export" | "sync";
+}) => {
   if (!injectedCss) {
     injectedCss = true;
     injectCss(css);
@@ -32,6 +41,9 @@ export const ExportModal = ({ close }: { close: () => void }) => {
 
   const [pluginsActive, setPluginsActive] = createSignal(new Set<string>(), { equals: false });
   const [pluginsSaveData, setPluginsSaveData] = createSignal(new Map<string, boolean>(), { equals: false });
+  const [error, setError] = createSignal<string | null>(null);
+  const [success, setSuccess] = createSignal<string | null>(null);
+  const [isExporting, setIsExporting] = createSignal(false);
 
   // all plugins selected by default
   for (const id in untrack(installedPlugins)) {
@@ -39,20 +51,66 @@ export const ExportModal = ({ close }: { close: () => void }) => {
     pluginsSaveData().set(id, true);
   }
 
+  const handleExportedData = async () => {
+    setError(null);
+    setSuccess(null);
+    setIsExporting(true);
+
+    const plugins = {};
+    for (const active of pluginsActive()) plugins[active] = pluginsSaveData().get(active);
+
+    const exported = exportData(plugins);
+
+    const result = await handleExport(exported);
+    if (result) {
+      if (result.error) {
+        setError(result.error);
+      } else if (result.success) {
+        setSuccess(result.success);
+      }
+    }
+    setIsExporting(false);
+  };
+
+  const handleClose = () => {
+    if (!isExporting()) {
+      close();
+    }
+  };
+
+  const isSync = mode === "sync";
+  const actionText = isSync ? "Sync" : "Export";
+  const actionProgressText = isSync ? "Syncing..." : "Exporting...";
+
   return (
     <ModalRoot>
-      <ModalHeader close={close}>Export Data</ModalHeader>
+      <ModalHeader close={handleClose}>{actionText} Data</ModalHeader>
       <ModalBody>
+        <Show when={error()}>
+          <Alert type="danger">{error()}</Alert>
+        </Show>
+        <Show when={success()}>
+          <Alert type="success">{success()}</Alert>
+        </Show>
         <p>
-          You can export your shelter plugins and settings to backup and/or import to another shelter instance.
-          <Space />
-          <strong>Plugin settings may include sensitive data if exported</strong>, be careful.
+          {isSync ? (
+            <>
+              You can sync your shelter plugins and settings to your shelter sync account.
+              <Space />
+              <strong>Plugin settings may include sensitive data when synced</strong>, be careful.
+            </>
+          ) : (
+            <>
+              You can export your shelter plugins and settings to backup and/or import to another shelter instance.
+              <Space />
+              <strong>Plugin settings may include sensitive data if exported</strong>, be careful.
+            </>
+          )}
         </p>
         <div class={classes.exportgrid}>
           <div />
           <div />
-          {/*<strong>Include</strong>*/}
-          <strong>Export Settings</strong>
+          <strong>{actionText} Settings</strong>
           <For each={Object.entries(installedPlugins()).filter(([, p]) => !p.injectorIntegration)}>
             {([id, plugin]) => (
               <>
@@ -75,21 +133,11 @@ export const ExportModal = ({ close }: { close: () => void }) => {
         </div>
       </ModalBody>
       <ModalConfirmFooter
-        close={close}
-        confirmText="Export"
+        close={handleClose}
+        confirmText={isExporting() ? actionProgressText : actionText}
         type="confirm"
-        onConfirm={() => {
-          const plugins = {};
-          for (const active of pluginsActive()) plugins[active] = pluginsSaveData().get(active);
-
-          const exported = exportData(plugins);
-
-          const a = document.createElement("a");
-          a.href = URL.createObjectURL(new Blob([JSON.stringify(exported)], { type: "application/json" }));
-          a.download = "shelter-export.json";
-          a.click();
-          URL.revokeObjectURL(a.href);
-        }}
+        onConfirm={handleExportedData}
+        disabled={isExporting()}
       />
     </ModalRoot>
   );
@@ -142,49 +190,81 @@ const triggerImport = async () => {
   }
 
   showToast({
-    title: `Successfully imported ${Object.keys(data.localPlugins).length + Object.keys(data.remotePlugins).length} plugins and data`,
+    title: `Successfully imported ${
+      Object.keys(data.localPlugins).length + Object.keys(data.remotePlugins).length
+    } plugins and data`,
     duration: 3000,
   });
+};
+
+const LocalDataManagement = () => {
+  const handleExport = async (data: DataExport) => {
+    try {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(new Blob([JSON.stringify(data)], { type: "application/json" }));
+      a.download = "shelter-export.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      return { success: "Data exported successfully" };
+    } catch (error) {
+      return { error: `Failed to export data: ${error?.message ?? error + ""}` };
+    }
+  };
+
+  return (
+    <>
+      <Header tag={HeaderTags.EYEBROW}>Data Management</Header>
+      <div style={{ display: "grid", "grid-auto-flow": "column", gap: "1rem" }}>
+        <Button
+          size={ButtonSizes.SMALL}
+          color={ButtonColors.SECONDARY}
+          grow
+          onClick={() =>
+            openModal((props) => <ExportModal mode="export" close={props.close} handleExport={handleExport} />)
+          }
+        >
+          Export Data
+        </Button>
+        <Button size={ButtonSizes.SMALL} color={ButtonColors.SECONDARY} grow onClick={triggerImport}>
+          Import Data
+        </Button>
+        <Button
+          size={ButtonSizes.SMALL}
+          color={ButtonColors.RED}
+          grow
+          onClick={() =>
+            openConfirmationModal({
+              type: "danger",
+              header: () => "Are you sure?",
+              body: () =>
+                "Are you sure you want to delete all plugins and their data, and 'factory reset' shelter? " +
+                "There is absolutely no going back from this. " +
+                "This will also unload shelter (until next reload).",
+              confirmText: "Reset shelter",
+            }).then(() => {
+              // will delete the db as soon as connections are closed
+              deleteDB("shelter");
+              // try to move to a different tab
+              (
+                document.querySelector("[class*=layers] > :last-child [role=tablist] > div[role=tab]") as HTMLDivElement
+              )?.click();
+              // unload shelter, delay for modal
+              setTimeout(() => window["shelter"].unload(), 250);
+            })
+          }
+        >
+          Delete All Data
+        </Button>
+      </div>
+    </>
+  );
 };
 
 export const DataManagement = () => (
   // TODO: when sync is added to this section, make it collapsible.
   <div>
-    <Header tag={HeaderTags.EYEBROW}>Data Management</Header>
-    <div style={{ display: "grid", "grid-auto-flow": "column", gap: "1rem" }}>
-      <Button size={ButtonSizes.SMALL} color={ButtonColors.SECONDARY} grow onClick={() => openModal(ExportModal)}>
-        Export Data
-      </Button>
-      <Button size={ButtonSizes.SMALL} color={ButtonColors.SECONDARY} grow onClick={triggerImport}>
-        Import Data
-      </Button>
-      <Button
-        size={ButtonSizes.SMALL}
-        color={ButtonColors.RED}
-        grow
-        onClick={() =>
-          openConfirmationModal({
-            type: "danger",
-            header: () => "Are you sure?",
-            body: () =>
-              "Are you sure you want to delete all plugins and their data, and 'factory reset' shelter? " +
-              "There is absolutely no going back from this. " +
-              "This will also unload shelter (until next reload).",
-            confirmText: "Reset shelter",
-          }).then(() => {
-            // will delete the db as soon as connections are closed
-            deleteDB("shelter");
-            // try to move to a different tab
-            (
-              document.querySelector("[class*=layers] > :last-child [role=tablist] > div[role=tab]") as HTMLDivElement
-            )?.click();
-            // unload shelter, delay for modal
-            setTimeout(() => window["shelter"].unload(), 250);
-          })
-        }
-      >
-        Delete All Data
-      </Button>
-    </div>
+    <LocalDataManagement />
+    <Space />
+    <SyncMangement />
   </div>
 );
