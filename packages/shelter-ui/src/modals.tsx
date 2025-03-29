@@ -1,7 +1,7 @@
 import { type Component, type JSX, onCleanup } from "solid-js";
 import { classes } from "./modals.tsx.scss";
 import { Header, HeaderTags } from "./header";
-import { Button, ButtonColors, ButtonSizes } from "./button";
+import { Button, ButtonColors, ButtonLooks, ButtonSizes } from "./button";
 import { openModal } from "./openModal";
 import { IconClose } from "./icons";
 import { focusring } from "./focusring";
@@ -80,7 +80,7 @@ export const ModalConfirmFooter: Component<{
       <Button
         disabled={props.cancelDisabled}
         size={ButtonSizes.MEDIUM}
-        color={ButtonColors.SECONDARY}
+        look={ButtonLooks.LINK}
         onClick={() => {
           props.onCancel?.();
           props.close();

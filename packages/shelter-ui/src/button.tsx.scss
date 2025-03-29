@@ -39,6 +39,10 @@
   &.link {
     background: transparent;
     color: unset;
+    &:hover {
+      text-decoration: underline;
+      text-decoration-color: var(--white-500);
+    }
   }
   &.outlined {
     border: 1px solid var(--shltr-btn-bg);

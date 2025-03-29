@@ -455,7 +455,7 @@ Type: `Record<string, string>`
 - `ButtonLooks.FILLED`: the standard Discord button like you see all over user settings
 - `ButtonLooks.INVERTED`: swaps the bg and fg colours
 - `ButtonLooks.OUTLINED`: only outline and text is coloured, until hover when bg fills in
-- `ButtonLooks.LINK`: removes the background and unsets the colour - looks like text!
+- `ButtonLooks.LINK`: removes the background and unsets the colour - looks like a link!
 
 #### `ButtonColors`
 
