@@ -7,6 +7,51 @@
   justify-items: center;
 }
 
+.collapsible {
+  margin-bottom: 1rem;
+  overflow: hidden;
+  border-radius: 5px;
+  background-color: rgba(32, 34, 37, .3);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, .2);
+  transition: margin .3s ease;
+
+  .collapsibleHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: .75rem 1rem;
+    background-color: rgba(49, 51, 56, .6);
+    cursor: pointer;
+    transition: background-color .2s ease;
+    user-select: none;
+
+    &:hover {
+      background-color: rgba(59, 61, 66, .8);
+    }
+  }
+
+  .headerContent {
+    display: flex;
+    align-items: center;
+  }
+
+  .collapsibleArrow {
+    margin-right: .5rem;
+    color: var(--text-muted);
+    transition: transform .3s cubic-bezier(.175, .885, .32, 1.275);
+    will-change: transform;
+  }
+
+  .collapsibleContent {
+    max-height: 0;
+    padding: 0 1rem;
+    overflow: hidden;
+    opacity: 0;
+    transition: all .3s cubic-bezier(.19, 1, .22, 1);
+    will-change: max-height, opacity, padding;
+  }
+}
+
 .exportgrid > span {
   justify-self: left;
 }

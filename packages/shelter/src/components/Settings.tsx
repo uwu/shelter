@@ -6,7 +6,10 @@ import { createSignal } from "solid-js";
 import { dbStore } from "../storage";
 import Plugins from "./Plugins";
 import DevUi from "./DevUI";
-import { DataManagement } from "./DataManagement";
+import { LocalDataManagement } from "./DataManagement";
+import { SettingsPanel } from "./SettingsPanel";
+import { SyncMangement } from "./SyncManagement";
+import { LocalIcon, DevIcon, SyncIcon } from "./Icons";
 
 let injectedCss = false;
 
@@ -51,8 +54,29 @@ export default () => {
             </Button>
           </div>
         </div>
-        <DataManagement />
-        <DevUi fullVersion />
+        <div>
+          <SettingsPanel
+            title="Local Data"
+            icon={LocalIcon}
+            description="Manage your local client data, including backups and data reset options."
+          >
+            <LocalDataManagement />
+          </SettingsPanel>
+          <SettingsPanel
+            title="Shelter Sync"
+            icon={SyncIcon}
+            description="Configure Shelter Sync to backup and sync your settings across devices."
+          >
+            <SyncMangement />
+          </SettingsPanel>
+          <SettingsPanel
+            title="Developer Tools"
+            icon={DevIcon}
+            description="Only for plugin developers developing using Lune."
+          >
+            <DevUi fullVersion />
+          </SettingsPanel>
+        </div>
         <Plugins />
       </div>
     </>

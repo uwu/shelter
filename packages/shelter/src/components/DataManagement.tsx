@@ -22,6 +22,7 @@ import { classes, css } from "./DataManagement.tsx.scss";
 import { deleteDB } from "idb";
 import { SyncMangement } from "./SyncManagement";
 import Alert from "./Alert";
+import { SettingsPanel } from "./SettingsPanel";
 
 let injectedCss = false;
 
@@ -161,6 +162,7 @@ const triggerImport = async () => {
   await new Promise((r) => (reader.onloadend = r));
 
   const data = JSON.parse(reader.result as string);
+
   const verifyResult = verifyData(data);
 
   if (verifyResult)
@@ -197,7 +199,7 @@ const triggerImport = async () => {
   });
 };
 
-const LocalDataManagement = () => {
+export const LocalDataManagement = () => {
   const handleExport = async (data: DataExport) => {
     try {
       const a = document.createElement("a");
@@ -213,7 +215,6 @@ const LocalDataManagement = () => {
 
   return (
     <>
-      <Header tag={HeaderTags.EYEBROW}>Data Management</Header>
       <div style={{ display: "grid", "grid-auto-flow": "column", gap: "1rem" }}>
         <Button
           size={ButtonSizes.SMALL}
@@ -259,12 +260,3 @@ const LocalDataManagement = () => {
     </>
   );
 };
-
-export const DataManagement = () => (
-  // TODO: when sync is added to this section, make it collapsible.
-  <div>
-    <LocalDataManagement />
-    <Space />
-    <SyncMangement />
-  </div>
-);

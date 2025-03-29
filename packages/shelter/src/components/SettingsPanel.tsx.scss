@@ -1,0 +1,66 @@
+.settingspanel {
+  width: 100%;
+  margin-bottom: 8px;
+  overflow: hidden;
+  border: 1px solid var(--background-tertiary);
+  border-radius: 5px;
+  background: var(--background-secondary);
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 16px;
+    border: none;
+    background: none;
+    color: var(--text-normal);
+    cursor: pointer;
+    transition: background-color .2s;
+
+    &:hover {
+      background: var(--background-modifier-hover);
+    }
+
+    &:active {
+      background: var(--background-modifier-active);
+    }
+  }
+
+  .titleRow {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    color: var(--text-muted);
+  }
+
+  .title {
+    font-weight: 500;
+    font-size: 1rem;
+  }
+
+  .description {
+    margin-left: 8px;
+    color: var(--text-muted);
+    font-weight: normal;
+    font-size: .85rem;
+  }
+
+  .chevron {
+    width: 20px;
+    height: 20px;
+    color: var(--text-muted);
+    transition: transform .2s ease;
+  }
+
+  .content {
+    padding: 16px;
+  }
+}

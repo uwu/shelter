@@ -88,7 +88,6 @@ const handlePullData = async () => {
 
   const settings = await request.json();
 
-  console.log("pulled settings: ", settings, "localSettings:");
   const verifyResult = verifyData(settings);
 
   if (verifyResult) return toast(`Data pulled but is invalid: ${verifyResult}`);
@@ -142,7 +141,9 @@ const handleResetData = async () => {
     type: "danger",
     header: () => "Are you sure?",
     body: () =>
-      `Are you sure you want to delete synchronized data for all plugins and your user profile (${getSyncURL().origin})? This is irreversible.`,
+      `Are you sure you want to delete synchronized data for all plugins and your user profile (${
+        getSyncURL().origin
+      })? This is irreversible.`,
     confirmText: "Reset",
   }).then(async () => {
     const request = await fetch(new URL("/settings", getSyncURL()), {
@@ -177,8 +178,6 @@ export const SyncMangement = () => {
 
   return (
     <>
-      <Header tag={HeaderTags.EYEBROW}>Sync</Header>
-
       <Show when={sig().syncIsAuthed}>
         <div style={{ "margin-bottom": "1rem", "font-size": "0.9rem", color: "var(--text-muted)" }}>
           <div>
