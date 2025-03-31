@@ -2,7 +2,9 @@ import { defineNitroPlugin } from "nitropack/dist/runtime/plugin";
 import { applyMigrations } from "../utils/migrations";
 
 export default defineNitroPlugin((nitroApp) => {
-  nitroApp.hooks.hook("request", async (event) => {
+  if (!import.meta.dev) return;
+
+  nitroApp.hooks.hookOnce("request", async (event) => {
     // Only run migrations once on first request
     if (!global.__migrationsApplied) {
       try {

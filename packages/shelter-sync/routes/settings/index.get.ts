@@ -1,4 +1,5 @@
 import { eventHandlerWithUser } from "~/utils/auth";
+import type { DataExport } from "~/utils/lib";
 
 export default eventHandlerWithUser(async (event, user) => {
   if (!user.settings || !user.lastUpdated) {
@@ -12,7 +13,7 @@ export default eventHandlerWithUser(async (event, user) => {
     return null;
   }
 
-  setHeader(event, "content-type", "application/json");
+  setHeader(event, "Content-Type", "application/json");
   setHeader(event, "etag", user.lastUpdated);
 
   return user.settings;

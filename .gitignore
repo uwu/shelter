@@ -257,6 +257,8 @@ injectors/desktop/app/app
 
 # Nitro (nitro.build) folder
 .nitro
+.output
+.dev.vars
 
 # Cloudflare Workers
 .wrangler

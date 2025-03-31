@@ -15,7 +15,7 @@ import {
   Header,
   showToast,
 } from "@uwu/shelter-ui";
-import { authorize, defaultApiUrl, getAuthCode, getSyncURL, store, unauthorize } from "../sync";
+import { authorize, defaultApiUrl, getAuthCode, getSyncURL, syncStore, unauthorize } from "../sync";
 import { createSignal, Show } from "solid-js";
 import { signalOf } from "../storage";
 import { ExportModal } from "./DataManagement";
@@ -23,7 +23,7 @@ import { DataExport, importData, importWouldConflict, verifyData } from "../data
 import Alert from "./Alert";
 import { installedPlugins } from "../plugins";
 
-const sig = signalOf(store);
+const sig = signalOf(syncStore);
 
 const toast = (content: string) =>
   showToast({
@@ -44,11 +44,11 @@ const handlePutData = async (data: DataExport) => {
     });
 
     if (!request.ok) {
-      return { error: `Error while syncing data: ${request.status}: ${request.statusText}` };
+      return { error: `Error while syncing data: ${request.status}: ${request}` };
     }
 
     const { lastUpdated } = await request.json();
-    store.syncLastUpdated = lastUpdated;
+    syncStore.syncLastUpdated = lastUpdated;
 
     return { success: "Data synced successfully!" };
   } catch (error) {
@@ -86,7 +86,12 @@ const handlePullData = async () => {
     return toast("Your local settings are newer than the cloud ones.");
   }
 
-  const settings = await request.json();
+  let settings;
+  try {
+    settings = await request.json();
+  } catch (e) {
+    return toast(`Error while parsing response data: ${e?.message ?? e + ""}`);
+  }
 
   const verifyResult = verifyData(settings);
 
@@ -270,7 +275,7 @@ const AuthorizeModal = ({ close }: { close: () => void }) => {
       authURL.searchParams.set("scope", "identify");
 
       window.open(authURL, "_blank");
-      setSuccess("Please authorize in order to continue.");
+      setSuccess("Please authorize in your browser in order to continue.");
     } catch (error) {
       setError(error?.message ?? error + "");
     } finally {
@@ -279,6 +284,7 @@ const AuthorizeModal = ({ close }: { close: () => void }) => {
   };
 
   const handleConfirm = () => {
+    syncStore.syncApiUrl = apiUrl();
     authorize(secret().trim());
     close();
   };
@@ -316,7 +322,7 @@ const AuthorizeModal = ({ close }: { close: () => void }) => {
         </Button>
         <Divider mt="0.25rem" />
         <Header tag={HeaderTags.H5}>2. Paste the secret into the textbox</Header>
-        <TextBox placeholder="secret code" value={secret()} onInput={setSecret} disabled={disabled()} />
+        <TextBox type="password" placeholder="secret code" value={secret()} onInput={setSecret} disabled={disabled()} />
       </div>
       <ModalConfirmFooter
         disabled={disabled() || !secret().trim()}

@@ -1,7 +1,6 @@
 import { Component, JSX, Show, createSignal } from "solid-js";
-import { injectCss } from "@uwu/shelter-ui";
+import { injectCss, ChevronIcon } from "@uwu/shelter-ui";
 import { classes, css } from "./SettingsPanel.tsx.scss";
-import { ChevronIcon } from "./Icons";
 
 let injectedCss = false;
 

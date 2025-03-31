@@ -1,6 +1,6 @@
 import ShelterKawaiiSvg from "shelter-assets/svg/banner-kawaii.svg";
 import ShelterSvg from "shelter-assets/svg/banner.svg";
-import { injectCss, Button, ButtonColors } from "@uwu/shelter-ui";
+import { injectCss, Button, ButtonColors, LocalIcon, DevIcon, SyncIcon } from "@uwu/shelter-ui";
 import { classes, css } from "./Settings.tsx.scss";
 import { createSignal } from "solid-js";
 import { dbStore } from "../storage";
@@ -9,7 +9,6 @@ import DevUi from "./DevUI";
 import { LocalDataManagement } from "./DataManagement";
 import { SettingsPanel } from "./SettingsPanel";
 import { SyncMangement } from "./SyncManagement";
-import { LocalIcon, DevIcon, SyncIcon } from "./Icons";
 
 let injectedCss = false;
 

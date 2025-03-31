@@ -9,16 +9,16 @@
     "build": "nitro build",
     "preview": "node .output/server/index.mjs",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "deploy": "wrangler --cwd .output/ deploy"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240919.0",
     "@types/cors": "^2.8.17",
     "drizzle-kit": "^0.30.5",
-    "h3": "^1.14.0",
     "nitro-cloudflare-dev": "^0.2.1",
     "nitropack": "latest",
-    "wrangler": "^3.107.2"
+    "wrangler": "4.6.0"
   },
   "dependencies": {
     "@libsql/client": "^0.14.0",

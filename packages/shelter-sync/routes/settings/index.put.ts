@@ -3,24 +3,32 @@ import { eventHandlerWithUser } from "~/utils/auth";
 import type { DataExport } from "~/utils/lib";
 
 export default eventHandlerWithUser(async (event, user) => {
-  if (event.headers.get("content-type") !== "application/json") {
+  const contentType = event.headers.get("Content-Type");
+
+  if (contentType !== "application/json") {
     throw createError({
       statusCode: 400,
       statusMessage: "Content-Type must be application/json",
     });
   }
 
-  const data = await readBody<DataExport>(event);
+  let data: DataExport;
 
-  if (!data) {
+  try {
+    data = await readBody<DataExport>(event);
+    console.log(data);
+  } catch (error) {
     throw createError({
       statusCode: 400,
-      statusMessage: "No body provided",
+      statusMessage: "Failed to parse request body",
     });
   }
 
+  const size = JSON.stringify(data).length > 1024 * 1024;
+  console.log("exceeds size", size);
+
   // Cap the size at 1MB
-  if (JSON.stringify(data).length > 1024 * 1024) {
+  if (size) {
     throw createError({
       statusCode: 400,
       statusMessage: "Body is too large",
