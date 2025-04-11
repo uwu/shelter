@@ -191,6 +191,7 @@ export const signalOf = <T = any>(store: ShelterStore<T>): (() => Record<string,
 export const solidMutWithSignal = <T extends object = any>(store: T) => {
   const [sig, setSig] = createSignal<T>();
   const update = () => setSig(() => ({ ...store }));
+  update();
   return [
     new Proxy(store, {
       set(t, p, v, r) {
