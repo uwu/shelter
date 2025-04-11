@@ -95,7 +95,12 @@ const handlePullData = async () => {
 
   const verifyResult = verifyData(settings);
 
-  if (verifyResult) return toast(`Data pulled but is invalid: ${verifyResult}`);
+  if (verifyResult)
+    return showToast({
+      title: "Data is invalid and so was not imported",
+      content: verifyResult,
+      duration: 3000,
+    });
 
   const conflicts = [];
   for (const id in settings.localPlugins) {
@@ -113,8 +118,11 @@ const handlePullData = async () => {
   }
 
   if (conflicts.length) {
-    console.log("Conflicting plugins:", conflicts);
-    return true;
+    return showToast({
+      title: "Conflicting plugins",
+      content: conflicts.join("\n"),
+      duration: 3000,
+    });
   }
 
   if (importWouldConflict(settings))

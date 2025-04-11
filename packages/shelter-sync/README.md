@@ -13,5 +13,7 @@ pnpm -F shelter-sync dev
 ## Deployment
 
 ```bash
-pnpm -F shelter-sync deploy
+cd packages/shelter-sync
+node --env-file-if-exists=.env --run build
+node --env-file-if-exists=.env --run deploy
 ```

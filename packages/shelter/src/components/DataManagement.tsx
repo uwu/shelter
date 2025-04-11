@@ -3,8 +3,6 @@ import {
   ButtonColors,
   ButtonSizes,
   Checkbox,
-  Header,
-  HeaderTags,
   injectCss,
   ModalBody,
   ModalConfirmFooter,
@@ -20,9 +18,6 @@ import { installedPlugins } from "../plugins";
 import { createSignal, For, Show, untrack } from "solid-js";
 import { classes, css } from "./DataManagement.tsx.scss";
 import { deleteDB } from "idb";
-import { SyncMangement } from "./SyncManagement";
-import Alert from "./Alert";
-import { SettingsPanel } from "./SettingsPanel";
 
 let injectedCss = false;
 
@@ -42,8 +37,6 @@ export const ExportModal = ({
 
   const [pluginsActive, setPluginsActive] = createSignal(new Set<string>(), { equals: false });
   const [pluginsSaveData, setPluginsSaveData] = createSignal(new Map<string, boolean>(), { equals: false });
-  const [error, setError] = createSignal<string | null>(null);
-  const [success, setSuccess] = createSignal<string | null>(null);
   const [isExporting, setIsExporting] = createSignal(false);
 
   // all plugins selected by default
@@ -53,24 +46,52 @@ export const ExportModal = ({
   }
 
   const handleExportedData = async () => {
-    setError(null);
-    setSuccess(null);
     setIsExporting(true);
+
+    // Close the modal immediately
+    close();
 
     const plugins = {};
     for (const active of pluginsActive()) plugins[active] = pluginsSaveData().get(active);
 
     const exported = exportData(plugins);
 
-    const result = await handleExport(exported);
-    if (result) {
-      if (result.error) {
-        setError(result.error);
-      } else if (result.success) {
-        setSuccess(result.success);
+    const isSync = mode === "sync";
+    const actionText = isSync ? "Sync" : "Export";
+
+    setTimeout(async () => {
+      try {
+        const result = await handleExport(exported);
+        if (result) {
+          if (result.error) {
+            showToast({
+              title: `${actionText} Failed`,
+              content: result.error,
+              duration: 3000,
+            });
+          } else if (result.success) {
+            showToast({
+              title: `${actionText} Successful`,
+              content: result.success,
+              duration: 3000,
+            });
+          }
+        } else {
+          showToast({
+            title: `${actionText} Completed`,
+            duration: 3000,
+          });
+        }
+      } catch (error) {
+        showToast({
+          title: `${actionText} Failed`,
+          content: error?.message ?? error + "",
+          duration: 3000,
+        });
+      } finally {
+        setIsExporting(false);
       }
-    }
-    setIsExporting(false);
+    }, 0);
   };
 
   const handleClose = () => {
@@ -87,12 +108,6 @@ export const ExportModal = ({
     <ModalRoot>
       <ModalHeader close={handleClose}>{actionText} Data</ModalHeader>
       <ModalBody>
-        <Show when={error()}>
-          <Alert type="danger">{error()}</Alert>
-        </Show>
-        <Show when={success()}>
-          <Alert type="success">{success()}</Alert>
-        </Show>
         <p>
           {isSync ? (
             <>
