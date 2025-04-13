@@ -1,0 +1,9 @@
+name = "shelter-sync"
+compatibility_date = "2024-09-23"
+main = "./.output/server/index.mjs"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "shelter-sync-db"
+database_id = "77d098f3-9082-4c2f-b507-c52b0ba3f0aa"
+migrations_dir = "./database/migrations"

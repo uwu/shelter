@@ -8,6 +8,7 @@ false && focusring;
 type TextBoxProps = {
   value?: string;
   onInput?(v: string): void;
+  type?: string;
 
   /**
    * Backwards compatibility alias for maxlength
@@ -18,7 +19,7 @@ type TextBoxProps = {
 export const TextBox: NativeExtendingComponent<
   TextBoxProps,
   JSX.InputHTMLAttributes<HTMLInputElement>,
-  "type" | "class" | "classList" | "ref"
+  "class" | "classList" | "ref"
 > = (rawProps) => {
   ensureInternalStyle(css);
 
@@ -26,10 +27,11 @@ export const TextBox: NativeExtendingComponent<
     mergeProps(
       {
         maxlength: rawProps.maxLength ?? 999,
+        type: "text",
       },
       rawProps,
     ),
-    ["value", "onInput", "maxLength"],
+    ["value", "onInput", "maxLength", "type"],
   );
 
   let r: HTMLInputElement;
@@ -44,7 +46,7 @@ export const TextBox: NativeExtendingComponent<
     <input
       use:focusring
       class={classes.tbox}
-      type="text"
+      type={local.type}
       ref={r}
       onInput={(e) => local.onInput((e.target as HTMLInputElement).value)}
       {...other}
