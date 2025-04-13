@@ -70,7 +70,6 @@ const windowApi = async (unloads) => {
       "UNSAFE_internalData",
       "UNSAFE_pluginStorages",
     ),
-    storage,
     observeDom: observe,
     ui: {
       ...without(ui, "cleanupCss", "initToasts"),
