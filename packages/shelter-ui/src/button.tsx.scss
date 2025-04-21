@@ -7,60 +7,76 @@
   height: var(--shltr-btn-h);
   min-height: var(--shltr-btn-h);
   padding: 2px 16px;
-  border: none;
-  border-radius: 3px;
+  border: 1px solid var(--opacity-white-8);
+  border-radius: 8px;
+  background: none;
   font-weight: 500;
   font-size: 14px;
   line-height: 16px;
   white-space: nowrap;
   cursor: pointer;
-  transition: background-color .17s ease, color .17s ease;
+  // note: the base button uses --custom-button-transition-duration (170ms), but it is later overridden to 200ms anyway
+  transition:
+    background-color var(--custom-button-transition-duration) ease,
+    color var(--custom-button-transition-duration) ease;
+  transition-duration: .2s;
   user-select: none;
 
   &[disabled] {
-    filter: brightness(.6);
+    cursor: not-allowed;
+    opacity: .5;
   }
 
   &.grow {
     width: auto;
   }
+
   &.filled,
-  &.outlined:hover:not([disabled]) {
+  &.outlined {
+    border-color: var(--shltr-btn-border);
     background: var(--shltr-btn-bg);
     color: var(--shltr-btn-col);
   }
+
+  &.outlined:hover:not([disabled]),
   &.filled:hover:not([disabled]) {
     background: var(--shltr-btn-bg-hov);
   }
-  &.inverted {
-    background: var(--shltr-btn-col);
-    color: var(--shltr-btn-bg);
+
+  &:active:not([disabled]) {
+    background: var(--shltr-btn-bg-act);
   }
+
+  &.inverted {
+    background: red;
+    color: greenyellow;
+  }
+
   &.link {
     background: transparent;
     color: unset;
+
     &:hover {
       text-decoration: underline;
       text-decoration-color: var(--white-500);
     }
   }
-  &.outlined {
-    border: 1px solid var(--shltr-btn-bg);
-    background: transparent;
-    color: var(--shltr-btn-bg);
-  }
+
   &.xlarge {
     padding: 2px 20px;
     font-size: 16px;
     line-height: normal;
   }
+
   &.large {
     display: inline;
     padding: 2px 4px;
   }
+
   &.max {
     font-size: 16px;
   }
+
   &.icon {
     padding: 4px;
   }
@@ -68,6 +84,7 @@
 
 .linkbutton {
   color: var(--text-link);
+
   &:hover {
     text-decoration: underline;
   }
