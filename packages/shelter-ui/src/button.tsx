@@ -18,13 +18,13 @@ export const ButtonLooks = {
 /**
  * [[background, color, hover:background, active:background, border-color], [background, color, hover:background, active:background, border-color]]
  */
-type ButtonColor = [[string, string, string, string, string], [string, string, string, string, string]];
+type ButtonColor = [[string, string, string, string, string], [string, string, string, string, string], string];
 
 // discord actually has `null` as the bg for white & link hovers which is funny
 // also they have tons of overloads for red and green which is equally funny
 // and the only thing better than a brand coloured buttons is a brand_new coloured button!!! -- sink
 export const ButtonColors = {
-  // COLOUR: [filled][bg, fg, hover, active, border], [outline][bg, fg, hover, active, border]
+  // COLOUR: [filled][bg, fg, hover, active, border], [outline][bg, fg, hover, active, border], [link]
   BRAND: [
     [
       "var(--button-filled-brand-background)",
@@ -40,6 +40,7 @@ export const ButtonColors = {
       "var(--button-outline-brand-background-active)",
       "var(--button-outline-brand-border)",
     ],
+    "var(--brand-500)",
   ],
 
   RED: [
@@ -57,6 +58,7 @@ export const ButtonColors = {
       "var(--button-outline-danger-background-active)",
       "var(--button-outline-danger-border)",
     ],
+    "var(--text-danger)",
   ],
 
   GREEN: [
@@ -74,6 +76,7 @@ export const ButtonColors = {
       "var(--button-outline-positive-background-active)",
       "var(--button-outline-positive-border)",
     ],
+    "var(--green-360)",
   ],
 
   PRIMARY: [
@@ -91,6 +94,7 @@ export const ButtonColors = {
       "var(--button-outline-primary-background-active)",
       "var(--button-outline-primary-border)",
     ],
+    "var(--brand-360)",
   ],
   // Alias of primary for backwards compatibility
   SECONDARY: [
@@ -104,15 +108,17 @@ export const ButtonColors = {
     [
       "none",
       "var(--button-outline-primary-text)",
-      "none",
+      "var(--button-outline-primary-background-hover)",
       "var(--button-outline-primary-background-active)",
       "var(--button-outline-primary-border)",
     ],
+    "var(--brand-360)",
   ],
 
   LINK: [
     ["var(--text-link)", "var(--white)", "var(--blue-500)", "var(--blue-530)", "var(--opacity-white-8)"],
     ["none", "var(--text-link)", "none", "none", "var(--text-link)"],
+    "var(--brand-360)",
   ],
 
   WHITE: [
@@ -124,6 +130,7 @@ export const ButtonColors = {
       "var(--opacity-8)",
     ],
     ["none", "var(--white)", "none", "var(--button-outline-white-background-active)", "var(--white)"],
+    "var(--white)",
   ],
 
   TRANSPARENT: [
@@ -141,17 +148,25 @@ export const ButtonColors = {
       "var(--button--outline--transparent-background-active",
       "var(--primary-200)",
     ],
+    "var(--text-normal)",
   ],
   // Alias of transparent for backwards compatibility
   BLACK: [
     [
-      "var(--button-filled-white-background)",
-      "var(--button-filled-white-text)",
-      "var(--button-filled-white-background-hover)",
-      "var(--button-filled-white-background-active)",
-      "var(--opacity-8)",
+      "var(--button-transparent-background)",
+      "var(--button-transparent-text)",
+      "var(--button-transparent-background-hover)",
+      "var(--button-transparent-background-active)",
+      "var(--border-faint)",
     ],
-    ["none", "var(--text-normal)", "none", "var(--button-outline-white-background-active)", "var(--primary-200)"],
+    [
+      "none",
+      "var(--text-normal)",
+      "none",
+      "var(--button--outline--transparent-background-active",
+      "var(--primary-200)",
+    ],
+    "var(--text-normal)",
   ],
 } satisfies Record<string, ButtonColor>;
 
@@ -225,21 +240,8 @@ export const Button: NativeExtendingComponent<ButtonProps, JSX.ButtonHTMLAttribu
 
   ensureInternalStyle(css);
 
-  const isOutlined = local.look === ButtonLooks.OUTLINED || local.look === ButtonLooks.LINK ? 1 : 0;
-
-  console.log(
-    "Button",
-    local.size[0],
-    local.size[1],
-    local.size[2],
-    local.grow,
-    local.class,
-    local.color[isOutlined][0],
-    local.color[isOutlined][1],
-    local.color[isOutlined][2],
-    local.color[isOutlined][3],
-    local.color[isOutlined][4],
-  );
+  const isOutlined = local.look === ButtonLooks.OUTLINED ? 1 : 0;
+  const isLink = local.look === ButtonLooks.LINK; // toon link
 
   return (
     <button
@@ -250,7 +252,7 @@ export const Button: NativeExtendingComponent<ButtonProps, JSX.ButtonHTMLAttribu
         "--shltr-btn-w": local.size[0],
         "--shltr-btn-h": local.size[1],
         "--shltr-btn-bg": local.color[isOutlined][0],
-        "--shltr-btn-col": local.color[isOutlined][1],
+        "--shltr-btn-col": isLink ? local.color[2] : local.color[isOutlined][1],
         "--shltr-btn-bg-hov": local.color[isOutlined][2],
         "--shltr-btn-bg-act": local.color[isOutlined][3],
         "--shltr-btn-border": local.color[isOutlined][4],
