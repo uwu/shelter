@@ -1,16 +1,18 @@
 @use "sass:math";
 
-$HEIGHT: 24;
-$WIDTH: 40;
-$SPACING: 3;
+$HEIGHT: 28;
+$WIDTH: 44;
+$SPACING: 2;
 
 $SLIDER_SIZE: $HEIGHT - ($SPACING * 2);
 $SLIDER_MOVE: $WIDTH - $SLIDER_SIZE - ($SPACING * 2);
 
 .switch {
+  box-sizing: border-box;
   position: relative;
   width: #{$WIDTH}px;
   height: #{$HEIGHT}px;
+  border: 1px solid var(--shltr-sw-border);
   border-radius: #{math.div($HEIGHT, 2)}px;
   background: var(--shltr-sw-col);
   transition: background, opacity;
@@ -26,13 +28,14 @@ $SLIDER_MOVE: $WIDTH - $SLIDER_SIZE - ($SPACING * 2);
     opacity: 0;
   }
 }
+
 .disabled {
   opacity: .3;
 }
 
 .slider {
   position: absolute;
-  margin: 3px;
+  margin: 4px;
 }
 
 /*.slider {
@@ -56,6 +59,7 @@ $SLIDER_MOVE: $WIDTH - $SLIDER_SIZE - ($SPACING * 2);
   flex-direction: column;
   margin-bottom: 20px;
 }
+
 .irow {
   display: flex;
   align-items: center;
@@ -72,11 +76,13 @@ $SLIDER_MOVE: $WIDTH - $SLIDER_SIZE - ($SPACING * 2);
     word-wrap: break-word;
     cursor: pointer;
   }
+  color: #4e5058;
 
   & > div {
     flex: 0 0 auto;
   }
 }
+
 .note {
   margin-top: 8px;
   color: var(--header-secondary);

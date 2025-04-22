@@ -22,13 +22,14 @@ const PATHS_2_CHECK = "M4.08643 11.0903L5.67742 9.49929L9.4485 13.2704L7.85751 1
 const TIMING_POINTS = [0, 0.3, 0.7, 1];
 const SPLINES = ["0.46 0.33 0.61 0.65", "0.26 0.45 0.65 0.88", "0.19 0.43 0.42 0.82"];
 const DURATION = 225;
-const COL_GRAY = "#80848e";
-const COL_GREEN = "#23a55a";
+const COL_DISABLED = "#4e5058";
+const COL_ENABLED = "var(--button-filled-brand-background)";
+const COL_BORDER = "var(--input-border)";
 const PATHS_1 = [PATHS_1_X, PATHS_1_BAR, PATHS_1_BAR, PATHS_1_CHECK];
 const PATHS_2 = [PATHS_2_X, PATHS_2_BAR, PATHS_2_BAR, PATHS_2_CHECK];
-const X_OFFSETS = [-3, 1, 8, 12];
+const X_OFFSETS = [-4, 1, 8, 14];
 //const VALUES = [0, 0.515, 0.93, 1];
-//const LERPED_COLS = [COL_GRAY, "#648e7e", "#3f9b6a", COL_GREEN];
+//const LERPED_COLS = [COL_DISABLED, "#648e7e", "#3f9b6a", COL_ENABLED];
 
 const Slider: Component<{ state: boolean }> = (props) => {
   let animateViewBox: SVGAnimateElement;
@@ -80,7 +81,7 @@ const Slider: Component<{ state: boolean }> = (props) => {
 
   return (
     <svg
-      viewBox={`${props.state ? -12 : 3} 0 28 20`}
+      viewBox={`${props.state ? -X_OFFSETS[X_OFFSETS.length - 1] : -X_OFFSETS[0]} 0 28 20`}
       width="34"
       height="18"
       preserveAspectRatio="xMinYMid meet"
@@ -97,14 +98,14 @@ const Slider: Component<{ state: boolean }> = (props) => {
       <svg viewBox="0 0 20 20" fill="none">
         <path
           style={`transition: fill ${DURATION}ms`}
-          fill={props.state ? COL_GREEN : COL_GRAY}
+          fill={props.state ? COL_ENABLED : COL_DISABLED}
           d={props.state ? PATHS_1_CHECK : PATHS_1_X}
         >
           <animate ref={animatePath1} attributeName="d" {...commonAnimateProps} />
         </path>
         <path
           style={`transition: fill ${DURATION}ms`}
-          fill={props.state ? COL_GREEN : COL_GRAY}
+          fill={props.state ? COL_ENABLED : COL_DISABLED}
           d={props.state ? PATHS_2_CHECK : PATHS_2_X}
         >
           <animate ref={animatePath2} attributeName="d" {...commonAnimateProps} />
@@ -136,7 +137,8 @@ export const Switch: NativeExtendingComponent<SwitchProps, JSX.InputHTMLAttribut
     <div
       class={`${classes.switch} ${other.disabled ? classes.disabled : ""}`}
       style={{
-        "--shltr-sw-col": checked() ? COL_GREEN : COL_GRAY,
+        "--shltr-sw-col": checked() ? COL_ENABLED : COL_DISABLED,
+        "--shltr-sw-border:": checked() ? COL_BORDER : "transparent",
         "--shltr-sw-dur": DURATION + "ms",
       }}
     >
