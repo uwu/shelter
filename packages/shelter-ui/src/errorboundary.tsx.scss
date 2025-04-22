@@ -3,6 +3,9 @@
 
 .errbound {
   padding: 16px;
+  border: 1px solid var(--button-danger-background);
+  border-radius: 8px;
+  background: var(--background-surface-high);
   color: var(--text-normal);
   font-family: var(--font-display);
 }
