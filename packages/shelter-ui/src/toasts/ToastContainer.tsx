@@ -1,10 +1,7 @@
-import { toasts } from "./store";
+import { For } from "solid-js";
 import { Dynamic } from "solid-js/web";
+import { toasts } from "./store";
 
-export default () => (
-  <>
-    {toasts().map((t) => (
-      <Dynamic component={t} />
-    ))}
-  </>
-);
+export default () => {
+  return <For each={toasts()}>{(toast) => <Dynamic component={toast.component} />}</For>;
+};
