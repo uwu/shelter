@@ -1,5 +1,6 @@
 // discord calls this `title` but w/e
 .h {
+  margin-bottom: 20px;
   color: var(--header-primary);
   font-family: var(--font-display);
   // what is this for in discord's original styles?
@@ -8,54 +9,54 @@
 }
 
 .h1 {
-  font-size: 20px;
-  line-height: 24px;
+  font-size: 32px;
+  line-height: 1.25;
 }
 
 .h2 {
-  font-size: 16px;
-  line-height: 20px;
-}
-
-.h1,
-.h2 {
-  font-weight: 600;
+  font-size: 24px;
+  line-height: 1.25;
 }
 
 .h3 {
-  font-weight: 400;
-  line-height: 24px;
+  font-size: 20px;
+  line-height: 1.2;
 }
 
-.h4 {
-  line-height: 20px;
-}
-
-.h3,
 .h4 {
   font-size: 16px;
+  line-height: 1.25;
 }
 
-.h5, .eyebrow {
-  color: var(--header-secondary);
-  font-size: 12px;
-  line-height: 16px;
+.h5 {
+  font-size: 14px;
+  line-height: 1.2857142857142858;
 }
 
 .eyebrow {
-  margin-bottom: 8px;
+  color: var(--header-secondary);
   font-weight: 700;
+  line-height: 1.3333333333333333;
   letter-spacing: .02em;
+  text-transform: uppercase;
 }
 
-.h4,
-.h5 {
+.normal {
+  font-weight: 400;
+}
+
+.medium {
   font-weight: 500;
 }
 
-.h2,
-.h4,
-.h5,
-.eyebrow {
-  text-transform: uppercase;
+.semibold {
+  font-weight: 600;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.extrabold {
+  font-weight: 800;
 }
