@@ -56,10 +56,16 @@ export const Slider: NativeExtendingComponent<SliderProps, JSX.InputHTMLAttribut
         }
         onInput={(e) => local.onInput?.(parseFloat((e.target as HTMLInputElement).value))}
       />
-      <div class={classes.sticks}>
+      <div
+        class={classes.sticks}
+        style={{
+          "margin-left": `-${ticks().length / 2}px`,
+          width: `calc(100% + ${ticks().length}px)`,
+        }}
+      >
         {ticks().map((t) => (
           <div class={classes.stick}>
-            <span>{t}</span>
+            <span class={classes.sticktext}>{t}</span>
             <div class={classes.stickline}></div>
           </div>
         ))}
