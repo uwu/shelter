@@ -2,7 +2,8 @@
   z-index: 9999999;
   position: fixed;
   max-width: 190px;
-  border-radius: 5px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
   background: var(--background-floating);
   box-shadow: var(--elevation-high);
   color: var(--text-normal);
