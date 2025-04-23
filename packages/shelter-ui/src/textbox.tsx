@@ -46,7 +46,7 @@ export const TextBox: NativeExtendingComponent<
       class={classes.tbox}
       type="text"
       ref={r}
-      onInput={(e) => local.onInput((e.target as HTMLInputElement).value)}
+      onInput={(e) => local.onInput?.((e.target as HTMLInputElement).value)}
       {...other}
     />
   );
@@ -118,7 +118,7 @@ export const TextArea: NativeExtendingComponent<
         // TODO: e.currentTarget?
         onInput={(e) => {
           setCounter(e.currentTarget.value.length);
-          local.onInput((e.target as HTMLTextAreaElement).value);
+          local.onInput?.((e.target as HTMLTextAreaElement).value);
         }}
         {...other}
       />

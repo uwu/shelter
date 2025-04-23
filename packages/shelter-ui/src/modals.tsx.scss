@@ -1,7 +1,5 @@
 @import "./scrollbars.scss";
 
-$RADIUS: 4px;
-
 .mroot {
   display: flex;
   align-items: center;
@@ -49,66 +47,83 @@ $RADIUS: 4px;
   position: relative;
   flex-flow: column nowrap;
   margin: 0 auto;
-  border-radius: $RADIUS;
+  border: 1px solid var(--border-normal);
+  border-radius: var(--radius-md);
   background: var(--modal-background);
+  box-shadow: var(--shadow-medium);
   color: var(--text-normal); // quite useful in modal body and modal footer :)
 }
 
 .sm {
-  width: 440px;
-  min-height: 200px;
+  width: var(--modal-width-small);
+  min-height: 220px;
   max-height: 720px;
 }
 
 .md {
-  width: 600px;
+  width: var(--modal-width-medium);
   min-height: 400px;
   max-height: 800px;
 }
 
-.body {
-  position: relative;
-  flex: 1 1 auto;
-  padding: 0 16px 20px 16px;
-  overflow: hidden auto;
+.lg {
+  min-width: var(--modal-width-large);
+  max-width: 962px;
+  min-height: 400px;
+}
 
-  @include nice-scrollbars;
+.dynamic {
+  width: auto;
+  max-width: 100%;
+  min-height: fit-content;
+}
+
+.body,
+.head,
+.foot {
+  position: relative;
+}
+
+.body,
+.foot {
+  overflow-x: hidden;
 }
 
 .head,
 .foot {
-  flex: 0 0 auto;
-  padding: 16px;
+  display: flex;
+  z-index: 1;
+  flex-wrap: nowrap;
+  align-items: center;
+  padding: var(--modal-vertical-padding) var(--modal-horizontal-padding);
+}
+
+.body {
+  box-sizing: border-box;
+  z-index: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  padding-top: var(--space-8);
+  padding-right: var(--modal-horizontal-padding);
+  padding-left: var(--modal-horizontal-padding);
+  border-radius: 5px 5px 0 0;
+
+  @include nice-scrollbars;
 }
 
 .head {
-  display: flex;
   justify-content: space-between;
+  border-radius: 4px 4px 0 0;
+  transition: box-shadow .1s ease-out;
+  word-wrap: break-word;
+  padding-bottom: 0;
 }
 
 .foot {
-  border-radius: 0 0 $RADIUS $RADIUS;
-  background: var(--modal-footer-background);
-}
-
-.confirm {
-  display: flex;
+  flex: 0 0 auto;
   justify-content: flex-end;
-  gap: .5rem;
-}
-
-.cbtn {
-  height: 26px;
-  margin: 0;
-  padding: 2px;
-  border: none;
-  background: transparent;
-  color: var(--interactive-normal);
-  cursor: pointer;
-  opacity: .5;
-
-  &:hover {
-    color: var(--interactive-hover);
-    opacity: 1;
-  }
+  padding-top: var(--space-16); // overrides vertical padding top if needed
+  gap: var(--space-8);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  background-color: var(--modal-footer-background);
 }

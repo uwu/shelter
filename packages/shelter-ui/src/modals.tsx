@@ -12,6 +12,8 @@ false && tooltip;
 export const ModalSizes = {
   SMALL: classes.sm,
   MEDIUM: classes.md,
+  LARGE: classes.lg,
+  DYNAMIC: classes.dynamic,
 };
 
 export const ModalRoot: Component<{
@@ -39,18 +41,7 @@ export const ModalHeader: Component<{
   close(): void;
 }> = (props) => (
   <div class={classes.head}>
-    <Header tag={HeaderTags.H1}>{props.children}</Header>
-
-    <button
-      use:focusring
-      use:tooltip="Close modal"
-      aria-label="close modal"
-      class={classes.cbtn}
-      style={props.noClose ? "display: none" : ""}
-      onclick={props.close}
-    >
-      <IconClose />
-    </button>
+    <Header tag={HeaderTags.H2}>{props.children}</Header>
   </div>
 );
 
@@ -76,30 +67,30 @@ export const ModalConfirmFooter: Component<{
   cancelDisabled?: boolean;
 }> = (props) => (
   <ModalFooter>
-    <div class={classes.confirm}>
-      <Button
-        disabled={props.cancelDisabled}
-        size={ButtonSizes.MEDIUM}
-        look={ButtonLooks.LINK}
-        onClick={() => {
-          props.onCancel?.();
-          props.close();
-        }}
-      >
-        {props.cancelText ?? "Cancel"}
-      </Button>
-      <Button
-        disabled={props.disabled}
-        size={ButtonSizes.MEDIUM}
-        color={confirmColours[props.type ?? "neutral"]}
-        onClick={() => {
-          props.onConfirm?.();
-          props.close();
-        }}
-      >
-        {props.confirmText ?? "Confirm"}
-      </Button>
-    </div>
+    <Button
+      grow
+      disabled={props.cancelDisabled}
+      size={ButtonSizes.MEDIUM}
+      color={ButtonColors.PRIMARY}
+      onClick={() => {
+        props.onCancel?.();
+        props.close();
+      }}
+    >
+      {props.cancelText ?? "Cancel"}
+    </Button>
+    <Button
+      grow
+      disabled={props.disabled}
+      size={ButtonSizes.MEDIUM}
+      color={confirmColours[props.type ?? "confirm"]}
+      onClick={() => {
+        props.onConfirm?.();
+        props.close();
+      }}
+    >
+      {props.confirmText ?? "Confirm"}
+    </Button>
   </ModalFooter>
 );
 
