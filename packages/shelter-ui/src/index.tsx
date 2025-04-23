@@ -15,6 +15,7 @@ export * from "./toasts";
 export * from "./focusring";
 export * from "./tooltip";
 export * from "./slider";
+export * from "./text";
 export { InternalStyles, injectInternalStyles } from "./internalstyles";
 
 type TextProps = {

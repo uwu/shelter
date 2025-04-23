@@ -1,0 +1,80 @@
+.text {
+  color: var(--text-normal);
+  font-family: var(--font-primary);
+}
+
+.textXSS {
+  font-size: 10px;
+  line-height: 1.2;
+}
+
+.textXS {
+  font-size: 12px;
+  line-height: 1.333333333333;
+}
+
+.textSM {
+  font-size: 14px;
+  line-height: 1.2857142857142858;
+}
+
+.textMD {
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.textLG {
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.messagePreview {
+  font-size: 15px;
+  line-height: 1.333333333333;
+}
+
+.channelTitle {
+  font-size: 16px;
+  line-height: 1.1375;
+}
+
+.displaySM {
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 1;
+  font-family: var(--font-headline);
+}
+
+.displayMD {
+  font-weight: 800;
+  font-size: 34px;
+  line-height: 1.0588235294117647;
+  font-family: var(--font-headline);
+}
+
+.displayLG {
+  font-weight: 800;
+  font-size: 44px;
+  line-height: 1.0588235294117647;
+  font-family: var(--font-headline);
+}
+
+.normal {
+  font-weight: 400;
+}
+
+.medium {
+  font-weight: 500;
+}
+
+.semibold {
+  font-weight: 600;
+}
+
+.bold {
+  font-weight: 700;
+}
+
+.extrabold {
+  font-weight: 800;
+}
