@@ -1,4 +1,4 @@
-import { type Component, createEffect, type JSX, mergeProps, splitProps } from "solid-js";
+import { type Component, createEffect, type JSX, mergeProps, splitProps, createSignal } from "solid-js";
 import { css, classes } from "./textbox.tsx.scss";
 import { focusring } from "./focusring";
 import { ensureInternalStyle } from "./internalstyles";
@@ -72,6 +72,11 @@ type TextAreaProps = {
   mono?: boolean;
 
   /**
+   * Whether to show or not the char counter
+   */
+  counter?: boolean;
+
+  /**
    * Unused
    * @deprecated
    */
@@ -88,8 +93,9 @@ export const TextArea: NativeExtendingComponent<
   "ref" | "class" | "classList"
 > = (rawProps) => {
   ensureInternalStyle(css);
+  const [counter, setCounter] = createSignal(0);
 
-  const [local, other] = splitProps(rawProps, ["value", "resize-x", "resize-y", "mono", "onInput"]);
+  const [local, other] = splitProps(rawProps, ["value", "resize-x", "resize-y", "mono", "onInput", "counter"]);
 
   let r: HTMLTextAreaElement;
   createEffect(() => {
@@ -99,18 +105,28 @@ export const TextArea: NativeExtendingComponent<
   });
 
   return (
-    <textarea
-      use:focusring
-      classList={{
-        [classes.tarea]: true,
-        [classes.rx]: local["resize-x"],
-        [classes.ry]: local["resize-y"],
-        [classes.mono]: local.mono,
-      }}
-      ref={r}
-      // TODO: e.currentTarget?
-      onInput={(e) => local.onInput((e.target as HTMLTextAreaElement).value)}
-      {...other}
-    />
+    <div class={classes.wrapper}>
+      <textarea
+        use:focusring
+        classList={{
+          [classes.tarea]: true,
+          [classes.rx]: local["resize-x"],
+          [classes.ry]: local["resize-y"],
+          [classes.mono]: local.mono,
+        }}
+        ref={r}
+        // TODO: e.currentTarget?
+        onInput={(e) => {
+          setCounter(e.currentTarget.value.length);
+          local.onInput((e.target as HTMLTextAreaElement).value);
+        }}
+        {...other}
+      />
+      {local.counter && (
+        <div class={classes.counter} aria-hidden="true">
+          {counter()}
+        </div>
+      )}
+    </div>
   );
 };
