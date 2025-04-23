@@ -12,10 +12,11 @@ $DIM: hsl(216, calc(var(--saturation-factor, 1) * 3.7%), 73.5%);
 }
 
 .plugin {
-  margin-top: .5rem;
-  padding: .5rem;
-  border: 1px solid var(--background-accent);
-  border-radius: 4px;
+  margin-top: .6rem;
+  padding: .8rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--background-surface-high);
 }
 
 .row {
@@ -31,8 +32,10 @@ $DIM: hsl(216, calc(var(--saturation-factor, 1) * 3.7%), 73.5%);
 }
 
 .desc {
+  margin-top: 4px;
   color: $DIM;
   font-size: .9em;
+  line-height: 1.25;
 }
 
 .btn {

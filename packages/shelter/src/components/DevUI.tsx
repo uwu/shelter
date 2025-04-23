@@ -12,7 +12,7 @@ export default (props: { fullVersion?: boolean }) => {
   return (
     <div>
       <Show when={props.fullVersion}>
-        <Header tag={HeaderTags.EYEBROW}>Developer Tools</Header>
+        <Header tag={HeaderTags.H3}>Developer Tools</Header>
       </Show>
 
       <SwitchItem value={dbStore.logDispatch} onChange={(v) => (dbStore.logDispatch = v)}>
