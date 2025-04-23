@@ -2,7 +2,16 @@ import { dbStore, isInited, signalOf, solidMutWithSignal, storage, waitInit } fr
 import { Component, onCleanup } from "solid-js";
 import { createMutable } from "solid-js/store";
 import { createScopedApiInternal, log, prettifyError } from "./util";
-import { ModalBody, ModalHeader, ModalRoot, openModal } from "@uwu/shelter-ui";
+import {
+  ModalBody,
+  ModalHeader,
+  ModalRoot,
+  ModalFooter,
+  Button,
+  ButtonColors,
+  ButtonSizes,
+  openModal,
+} from "@uwu/shelter-ui";
 import { devModeReservedId } from "./devmode";
 import { registerInjSection, setInjectorSections } from "./settings";
 
@@ -86,6 +95,17 @@ function createPluginApi(pluginId: string, { manifest, injectorIntegration }: St
         <ModalRoot>
           <ModalHeader close={mprops.close}>Settings - {manifest.name}</ModalHeader>
           <ModalBody>{getSettings(pluginId)({})}</ModalBody>
+          <ModalFooter>
+            <Button
+              size={ButtonSizes.MEDIUM}
+              color={ButtonColors.PRIMARY}
+              onclick={() => {
+                mprops.close();
+              }}
+            >
+              Done
+            </Button>
+          </ModalFooter>
         </ModalRoot>
       )),
     scoped,

@@ -1,6 +1,17 @@
 import { devmodePrivateApis, installedPlugins, loadedPlugins, removePlugin, startPlugin, stopPlugin } from "../plugins";
 import { observe } from "../observer";
-import { injectCss, ModalBody, ModalHeader, ModalRoot, ModalSizes, openModal } from "@uwu/shelter-ui";
+import {
+  injectCss,
+  ModalBody,
+  ModalHeader,
+  ModalRoot,
+  ModalFooter,
+  ModalSizes,
+  openModal,
+  Button,
+  ButtonSizes,
+  ButtonColors,
+} from "@uwu/shelter-ui";
 import { css, classes } from "./devmode.css";
 import { log } from "../util";
 import DevUI from "../components/DevUI";
@@ -27,6 +38,17 @@ function openDevmodeModal() {
       <ModalBody>
         <DevUI />
       </ModalBody>
+      <ModalFooter>
+        <Button
+          size={ButtonSizes.MEDIUM}
+          color={ButtonColors.PRIMARY}
+          onclick={() => {
+            props.close();
+          }}
+        >
+          Done
+        </Button>
+      </ModalFooter>
     </ModalRoot>
   ));
 }

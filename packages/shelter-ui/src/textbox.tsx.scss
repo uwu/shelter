@@ -1,3 +1,5 @@
+@import "./scrollbars.scss";
+
 .tbox,
 .tarea {
   box-sizing: border-box;
@@ -35,6 +37,7 @@
 .tarea {
   height: auto;
   resize: none;
+  @include nice-scrollbars;
 }
 
 .rx {
