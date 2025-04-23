@@ -5,16 +5,16 @@ import { ensureInternalStyle } from "./internalstyles";
 import { type NativeExtendingComponent } from "./wrapperTypes";
 
 export const TextTags = {
-  textXXS: classes.textXXS,
-  textXS: classes.textXS,
-  textSM: classes.textSM,
-  textMD: classes.textMD,
-  textLG: classes.textLG,
+  textXXS: classes.textXxs,
+  textXS: classes.textXs,
+  textSM: classes.textSm,
+  textMD: classes.textMd,
+  textLG: classes.textLg,
   messagePreview: classes.messagePreview,
   channelTitle: classes.channelTitle,
-  displaySM: classes.displaySM,
-  displayMD: classes.displayMD,
-  displayLG: classes.displayLG,
+  displaySM: classes.displaySm,
+  displayMD: classes.displayMd,
+  displayLG: classes.displayLg,
 } satisfies Record<string, string>;
 
 export const TextWeights = {
@@ -26,18 +26,22 @@ export const TextWeights = {
 } satisfies Record<string, string>;
 
 type TextProps = {
-  tag: string;
+  tag?: string;
   weight?: string;
+  style?: JSX.CSSProperties;
 };
 
-export const Text: NativeExtendingComponent<TextProps, JSX.HTMLAttributes<HTMLHeadingElement>> = (props) => {
+export const Text: NativeExtendingComponent<TextProps, JSX.HTMLAttributes<HTMLSpanElement>> = (props) => {
   ensureInternalStyle(css);
 
-  const [local, headerProps] = splitProps(props, ["tag", "weight", "class"]);
+  const [local, headerProps] = splitProps(props, ["tag", "weight", "class", "style"]);
 
   return (
-    <p
-      class={`${local.class ?? ""} ${local.tag ?? TextTags.textMD} ${local.weight ?? TextWeights.normal} ${classes.p}`}
+    <span
+      class={`${local.class ?? ""} ${local.tag ?? TextTags.textMD} ${local.weight ?? TextWeights.normal} ${classes.text}`}
+      style={{
+        ...local.style,
+      }}
       {...headerProps}
     />
   );
