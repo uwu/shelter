@@ -1,4 +1,4 @@
-import { type Component, type JSX } from "solid-js";
+import { type JSX } from "solid-js";
 import { type NativeExtendingComponent } from "./wrapperTypes";
 
 type IconProps = {
@@ -6,7 +6,7 @@ type IconProps = {
   style?: JSX.CSSProperties;
 };
 
-type IconComponent = NativeExtendingComponent<IconProps, JSX.SvgSVGAttributes<SVGSVGElement>>;
+export type IconComponent = NativeExtendingComponent<IconProps, JSX.SvgSVGAttributes<SVGSVGElement>>;
 
 export const ChevronIcon: IconComponent = (props) => (
   <svg width="24" height="24" viewBox="0 0 24 24" {...props}>
