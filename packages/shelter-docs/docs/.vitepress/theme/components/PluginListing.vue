@@ -19,7 +19,7 @@ let isLoading = ref(true);
 fetch("https://shindex.uwu.network/data")
   .then((r) => r.json())
   .then((items) => {
-    items.forEach((item) => {
+    items.forEach((item: { name: string; plugins: PluginManifest[] }) => {
       item.plugins.forEach((plugin: PluginManifest) =>
         data.push({
           name: plugin.name,
