@@ -15,13 +15,13 @@ export default (props: { fullVersion?: boolean }) => {
         <Header tag={HeaderTags.H3}>Developer Tools</Header>
       </Show>
 
-      <SwitchItem value={dbStore.logDispatch} onChange={(v) => (dbStore.logDispatch = v)}>
+      <SwitchItem checked={dbStore.logDispatch} onChange={(v) => (dbStore.logDispatch = v)}>
         Log FluxDispatcher events to the console
       </SwitchItem>
 
       <SwitchItem
         hideBorder
-        value={devModeOn()}
+        checked={devModeOn()}
         onChange={(val) =>
           val
             ? enableDevmode().catch((e) =>

@@ -1,66 +1,63 @@
-.settingspanel {
-  width: 100%;
-  margin-bottom: 8px;
+.container {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--spacing-24);
+  padding: var(--spacing-16);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background-color: var(--background-surface-highest);
+  text-align: left;
+}
+
+.containeropened {
+  margin-bottom: var(--spacing-24);
+}
+
+.header {
+  gap: var(--spacing-16);
+  cursor: pointer;
+}
+
+.icon {
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-xl);
+  background-color: var(--background-tertiary);
+  color: var(--interactive-normal);
+}
+
+.header,
+.icon {
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.caret {
+  margin-left: auto;
+  color: var(--interactive-normal);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  max-height: 0;
+  margin: 0;
+  padding-top: 0;
   overflow: hidden;
-  border: 1px solid var(--background-tertiary);
-  border-radius: 5px;
-  background: var(--background-secondary);
+  gap: var(--spacing-16);
+  border-width: 0;
+}
 
-  .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    padding: 16px;
-    border: none;
-    background: none;
-    color: var(--text-normal);
-    cursor: pointer;
-    transition: background-color .2s;
-
-    &:hover {
-      background: var(--background-modifier-hover);
-    }
-
-    &:active {
-      background: var(--background-modifier-active);
-    }
-  }
-
-  .titleRow {
-    display: flex;
-    flex: 1;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .icon {
-    flex-shrink: 0;
-    width: 20px;
-    height: 20px;
-    color: var(--text-muted);
-  }
-
-  .title {
-    font-weight: 500;
-    font-size: 1rem;
-  }
-
-  .description {
-    margin-left: 8px;
-    color: var(--text-muted);
-    font-weight: normal;
-    font-size: .85rem;
-  }
-
-  .chevron {
-    width: 20px;
-    height: 20px;
-    color: var(--text-muted);
-    transition: transform .2s ease;
-  }
-
-  .content {
-    padding: 16px;
-  }
+.sectionopened {
+  max-height: 220px;
+  margin-top: var(--spacing-16);
+  padding-top: var(--spacing-16);
+  border-top: 1px solid var(--background-modifier-accent);
 }

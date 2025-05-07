@@ -213,7 +213,7 @@ export const SyncMangement = () => {
             )
           }
         >
-          {sig().syncIsAuthed ? "Unauthorize" : "Authorize"}
+          {sig().syncIsAuthed ? "Deauthorize" : "Authorize"}
         </Button>
         <Button
           size={ButtonSizes.SMALL}
@@ -362,7 +362,7 @@ const UnauthorizeModal = ({ close }: { close: () => void }) => {
 
   return (
     <ModalRoot size={ModalSizes.SMALL}>
-      <ModalHeader close={close}>Unauthorize</ModalHeader>
+      <ModalHeader close={close}>Deauthorize</ModalHeader>
       <ModalBody>
         Are you sure you want to unauthorize? This will log you out of shelter sync ({getSyncURL().origin}).
         <Show when={error()}>
