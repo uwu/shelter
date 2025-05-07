@@ -15,6 +15,15 @@ The API signatures are _not_ identical to Discord's React components.
 If you are using shelter, these are exposed to you on `shelter.ui`, and if not, you can get it at
 [`@uwu/shelter-ui`](https://npm.im/@uwu/shelter-ui), and please read the [relevant docs](#standalone-usage).
 
+:::warning Visual Refresh
+shelter-ui has been updated to Discord's 2025 visual refresh redesign. Changes other than styles include:
+- Reworked `<Text>` component, supporting the newly added styles
+- Completely overhauled toasts
+- Various misc changes to shelter internal styling to look more "discordy"
+
+Deprecated styles have been aliased to new styles, as to not break existing plugins: the styles might not be perfectly matching anymore and **an update to plugins is recommended**.
+:::
+
 ## Accessibility
 
 All efforts are taken to support users of
@@ -359,15 +368,54 @@ openConfirmationModal({
 
 ::: details Type Signature
 ```ts
-solid.Component<{ children: JSX.Element }>
+solid.Component<{
+  tag?: string,       // default: TextTags.textMD
+  weight?: string,    // default: TextWeights.normal
+  style?: JSX.CSSProperties,
+  class?: string,
+  children?: JSX.Element
+}>
 ```
 :::
 
-Text just renders some text, _using Discord's current text colour_, instead of just black or whatever.
+The Text component is used to render styled text that matches Discord's typography. It provides various text styles, sizes, and weights.
+
+The `tag` prop controls the size and style of the text, using values from `TextTags`. If not provided, it defaults to `TextTags.textMD`.
+
+The `weight` prop controls the font weight, using values from `TextWeights`. If not provided, it defaults to `TextWeights.normal`.
 
 ```jsx
-<Text>This is some text</Text>
+<Text>Default text</Text>
+<Text tag={TextTags.textLG} weight={TextWeights.bold}>Large bold text</Text>
+<Text tag={TextTags.displayMD}>Medium display title</Text>
 ```
+
+![Variants](/ui/text-variants.webp){width=500,height=300}
+
+#### `TextTags`
+
+Type: `Record<string, string>`
+
+- `TextTags.textXXS`: Tiny text (10px)
+- `TextTags.textXS`: Extra small text (12px)
+- `TextTags.textSM`: Small text (14px)
+- `TextTags.textMD`: Medium text (16px, default)
+- `TextTags.textLG`: Large text (20px)
+- `TextTags.messagePreview`: Message preview text (15px)
+- `TextTags.channelTitle`: Channel title text (16px)
+- `TextTags.displaySM`: Small display text (20px, bold)
+- `TextTags.displayMD`: Medium display text (34px, bold)
+- `TextTags.displayLG`: Large display text (44px, bold)
+
+#### `TextWeights`
+
+Type: `Record<string, string>`
+
+- `TextWeights.normal`: Normal weight (400)
+- `TextWeights.medium`: Medium weight (500)
+- `TextWeights.semibold`: Semi-bold weight (600)
+- `TextWeights.bold`: Bold weight (700)
+- `TextWeights.extrabold`: Extra bold weight (800)
 
 ### `<Header>`
 

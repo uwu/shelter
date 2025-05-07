@@ -1,6 +1,16 @@
-import { Component, createSignal } from "solid-js";
+import { type Component, createSignal } from "solid-js";
 
-const [sig, setSig] = createSignal<Component[]>([]);
+interface ToastComponent {
+  id: string;
+  component: Component;
+}
+
+const [sig, setSig] = createSignal<ToastComponent[]>([]);
 
 export const toasts = () => Object.freeze(sig());
-export const setToasts = (t: Component[]) => setSig(t);
+export const setToasts = (t: ToastComponent[]) => setSig(t);
+
+export const removeToast = (id: string) => {
+  const newToasts = toasts().filter((toast) => toast.id !== id);
+  setToasts(newToasts);
+};

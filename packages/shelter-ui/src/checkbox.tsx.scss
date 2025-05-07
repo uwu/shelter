@@ -2,6 +2,7 @@
   display: flex;
   align-items: center;
   color: var(--text-normal);
+
   &,
   & > label {
     cursor: pointer;
@@ -25,6 +26,7 @@
 }
 
 .icon {
+  box-sizing: border-box;
   // i give up
   display: flex;
   align-items: center;
@@ -32,19 +34,21 @@
   width: 24px;
   height: 24px;
   padding: 2px;
-  border: 1px solid hsl(218, calc(var(--saturation-factor, 1) * 4.6%), 46.9%);
+  border: 1px solid var(--checkbox-border-default);
   border-radius: 6px;
+  background-color: var(--checkbox-background-default);
   color: transparent;
 
   &.active {
-    border-color: var(--brand-400);
-    background: var(--brand-500);
-    color: var(--interactive-active);
+    border-color: var(--checkbox-border-checked);
+    background: var(--checkbox-background-checked);
+    color: var(--white);
   }
 }
 
 .disabled {
-  opacity: .3;
+  opacity: .6;
+
   &,
   & > label {
     cursor: not-allowed;

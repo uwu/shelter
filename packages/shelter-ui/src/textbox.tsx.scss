@@ -1,24 +1,43 @@
+@import "./scrollbars.scss";
+
 .tbox,
 .tarea {
   box-sizing: border-box;
   width: 100%;
-  padding: 10px;
-  border: none;
-  border-radius: 3px;
+  height: 44px;
+  padding: 12px 10px;
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
   background-color: var(--input-background);
   color: var(--text-normal);
   font-size: 16px;
   transition: border-color .2s ease-in-out;
 }
 
-.tbox {
-  flex-grow: 1;
-  height: 40px;
-  margin-right: 20px;
+.wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.counter {
+  position: absolute;
+  right: 14px;
+  bottom: 12px;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-family: var(--font-code);
+  pointer-events: none;
+}
+
+.tbox:focus,
+.tarea:focus {
+  border-color: var(--text-link);
 }
 
 .tarea {
+  height: auto;
   resize: none;
+  @include nice-scrollbars;
 }
 
 .rx {

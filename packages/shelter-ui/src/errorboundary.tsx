@@ -10,7 +10,7 @@ const ErrBoundFallback = (err, reset) => {
     <div class={classes.errbound}>
       <h1 class={classes.errboundtitle}>Oops, we had a fucky wucky. (shelter)</h1>
       <code class={classes.errboundcode}>{err}</code>
-      <Button color={ButtonColors.RED} size={ButtonSizes.TINY} look={ButtonLooks.OUTLINED} onClick={reset}>
+      <Button color={ButtonColors.RED} size={ButtonSizes.TINY} look={ButtonLooks.FILLED} onClick={reset}>
         Retry
       </Button>
     </div>

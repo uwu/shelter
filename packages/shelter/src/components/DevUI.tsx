@@ -11,7 +11,11 @@ export default (props: { fullVersion?: boolean }) => {
 
   return (
     <>
-      <SwitchItem hideBorder={true} value={dbStore.logDispatch} onChange={(v) => (dbStore.logDispatch = v)}>
+      <Show when={props.fullVersion}>
+        <Header tag={HeaderTags.H3}>Developer Tools</Header>
+      </Show>
+
+      <SwitchItem value={dbStore.logDispatch} onChange={(v) => (dbStore.logDispatch = v)}>
         Log FluxDispatcher events to the console
       </SwitchItem>
 

@@ -15,21 +15,8 @@ export * from "./toasts";
 export * from "./focusring";
 export * from "./tooltip";
 export * from "./slider";
+export * from "./text";
 export { InternalStyles, injectInternalStyles } from "./internalstyles";
-
-type TextProps = {
-  // overwritten to exclude plain string
-  style?: JSX.CSSProperties;
-};
-export const Text: NativeExtendingComponent<TextProps, JSX.HTMLAttributes<HTMLSpanElement>> = (props) => (
-  <span
-    {...props}
-    style={{
-      color: "var(--text-normal)",
-      ...props.style,
-    }}
-  />
-);
 
 type DividerProps = {
   mt?: boolean | string;

@@ -12,6 +12,7 @@ import {
   openModal,
   showToast,
   IconUpload,
+  ModalSizes,
 } from "@uwu/shelter-ui";
 import { Component, createMemo, createSignal, Match, onCleanup, Show, Switch, untrack } from "solid-js";
 import {
@@ -117,7 +118,7 @@ const PluginEditModal = (props: {
   };
 
   return (
-    <ModalRoot>
+    <ModalRoot size={ModalSizes.MEDIUM}>
       <ModalHeader close={props.close}>
         <Show keyed={false} when={props.editId} fallback={"Add plugin"}>
           Edit {lName()}
@@ -156,7 +157,7 @@ const PluginEditModal = (props: {
               {/* TODO: monaco */}
               <TextArea
                 mono
-                style="height: 150px"
+                style="height: 250px"
                 resize-y
                 placeholder={`{
   onLoad() {

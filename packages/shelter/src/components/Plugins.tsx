@@ -160,7 +160,7 @@ export const PluginCard: Component<{
         </Show>
       </div>
 
-      <span class={classes.desc}>{props.plugin.manifest.description}</span>
+      <div class={classes.desc}>{props.plugin.manifest.description}</div>
     </div>
   );
 };
@@ -192,7 +192,7 @@ export default (): JSX.Element => {
 
   return (
     <div class={classes.list}>
-      <Header tag={HeaderTags.EYEBROW}>{`Plugins (${visiblePlugins().length})`}</Header>
+      <Header tag={HeaderTags.H3}>{`Plugins (${visiblePlugins().length})`}</Header>
       <div class={classes.bar}>
         <TextBox value={searchTerm()} onInput={setSearchTerm} placeholder="Search plugins..." />
         <Button
