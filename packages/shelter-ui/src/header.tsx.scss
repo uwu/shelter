@@ -1,11 +1,15 @@
 // discord calls this `title` but w/e
 .h {
-  margin-bottom: 20px;
   color: var(--header-primary);
   font-family: var(--font-display);
   // what is this for in discord's original styles?
   //flex: 1;
   cursor: default;
+}
+
+// tasky: margin because some places have it and some places don't, I don't know. But it's annoying and stupid and this hack will do for now to rework SettingsPanel to visual refresh. FUCK THIS.
+.margin {
+  margin-bottom: 20px;
 }
 
 .h1 {

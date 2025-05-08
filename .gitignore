@@ -254,3 +254,12 @@ _metadata
 
 # stop ANNOYING ME
 injectors/desktop/app/app
+
+# Nitro (nitro.build) folder
+.nitro
+.output
+.dev.vars
+
+# Cloudflare Workers
+.wrangler
+dev.sqlite

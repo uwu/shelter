@@ -30,17 +30,18 @@ export const HeaderWeights = {
 type HeaderProps = {
   tag: string;
   weight?: string;
+  margin?: boolean;
 };
 
 export const Header: NativeExtendingComponent<HeaderProps, JSX.HTMLAttributes<HTMLHeadingElement>> = (props) => {
   ensureInternalStyle(css);
 
-  const [local, headerProps] = splitProps(props, ["tag", "weight", "class"]);
+  const [local, headerProps] = splitProps(props, ["tag", "weight", "class", "margin"]);
 
   return (
     <Dynamic
       component={[HeaderTags.H5, HeaderTags.EYEBROW].includes(local.tag) ? "h3" : "h2"}
-      class={`${local.class ?? ""} ${local.tag ?? HeaderTags.H3} ${local.weight ?? HeaderWeights.semibold} ${classes.h}`}
+      class={`${local.class ?? ""} ${local.tag ?? HeaderTags.H3} ${local.weight ?? HeaderWeights.semibold} ${classes.h} ${local.margin !== false ? classes.margin : ""}`}
       {...headerProps}
     />
   );
