@@ -56,8 +56,26 @@
 }
 
 .sectionopened {
-  max-height: 220px;
+  max-height: 320px;
   margin-top: var(--spacing-16);
   padding-top: var(--spacing-16);
   border-top: 1px solid var(--background-modifier-accent);
+}
+
+/// Styles for `full-motion` aka Not Reduced Motion, because people should be able to enjoy beautiful motions:tm: (and not die).
+:global(.full-motion) {
+  .container {
+    transition: margin-bottom .5s cubic-bezier(.16, 1, .3, 1);
+  }
+
+  .caret {
+    transition: transform .5s cubic-bezier(.16, 1, .3, 1);
+  }
+
+  .section {
+    transition:
+      max-height .5s cubic-bezier(.16, 1, .3, 1),
+      padding-top .5s cubic-bezier(.16, 1, .3, 1),
+      margin-top .5s cubic-bezier(.16, 1, .3, 1);
+  }
 }

@@ -11,10 +11,6 @@ export default (props: { fullVersion?: boolean }) => {
 
   return (
     <>
-      <Show when={props.fullVersion}>
-        <Header tag={HeaderTags.H3}>Developer Tools</Header>
-      </Show>
-
       <SwitchItem checked={dbStore.logDispatch} onChange={(v) => (dbStore.logDispatch = v)}>
         Log FluxDispatcher events to the console
       </SwitchItem>
