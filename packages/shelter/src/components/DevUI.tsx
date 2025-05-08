@@ -10,18 +10,14 @@ export default (props: { fullVersion?: boolean }) => {
   const devModeOn = createMemo(() => devModeReservedId in installedPlugins());
 
   return (
-    <div>
-      <Show when={props.fullVersion}>
-        <Header tag={HeaderTags.H3}>Developer Tools</Header>
-      </Show>
-
-      <SwitchItem value={dbStore.logDispatch} onChange={(v) => (dbStore.logDispatch = v)}>
+    <>
+      <SwitchItem checked={dbStore.logDispatch} onChange={(v) => (dbStore.logDispatch = v)}>
         Log FluxDispatcher events to the console
       </SwitchItem>
 
       <SwitchItem
         hideBorder
-        value={devModeOn()}
+        checked={devModeOn()}
         onChange={(val) =>
           val
             ? enableDevmode().catch((e) =>
@@ -62,10 +58,9 @@ export default (props: { fullVersion?: boolean }) => {
         {(plugin) => <PluginCard id={devModeReservedId} plugin={plugin} />}
       </Show>
 
-      <Divider mt mb />
-
       <Show when={props.fullVersion}>
         <SwitchItem
+          hideBorder={true}
           checked={dbStore.alwaysDevMenu}
           onChange={(v) => (dbStore.alwaysDevMenu = v)}
           note={
@@ -75,6 +70,6 @@ export default (props: { fullVersion?: boolean }) => {
           Always show developer tools menu icon
         </SwitchItem>
       </Show>
-    </div>
+    </>
   );
 };

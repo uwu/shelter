@@ -148,9 +148,7 @@ const triggerImport = async () => {
 };
 
 export const DataManagement = () => (
-  // TODO: when sync is added to this section, make it collapsible.
   <div>
-    <Header tag={HeaderTags.H3}>Data Management</Header>
     <div style={{ display: "grid", "grid-auto-flow": "column", gap: "1rem" }}>
       <Button size={ButtonSizes.SMALL} color={ButtonColors.SECONDARY} grow onClick={() => openModal(ExportModal)}>
         Export Data

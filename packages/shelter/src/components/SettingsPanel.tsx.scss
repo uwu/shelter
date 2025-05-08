@@ -1,0 +1,81 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  margin-top: var(--spacing-24);
+  padding: var(--spacing-16);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background-color: var(--background-surface-highest);
+  text-align: left;
+}
+
+.containeropened {
+  margin-bottom: var(--spacing-24);
+}
+
+.header {
+  gap: var(--spacing-16);
+  cursor: pointer;
+}
+
+.icon {
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-xl);
+  background-color: var(--background-tertiary);
+  color: var(--interactive-normal);
+}
+
+.header,
+.icon {
+  display: flex;
+  align-items: center;
+}
+
+.title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.caret {
+  margin-left: auto;
+  color: var(--interactive-normal);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  max-height: 0;
+  margin: 0;
+  padding-top: 0;
+  overflow: hidden;
+  gap: var(--spacing-16);
+  border-width: 0;
+}
+
+.sectionopened {
+  max-height: 320px;
+  margin-top: var(--spacing-16);
+  padding-top: var(--spacing-16);
+  border-top: 1px solid var(--background-modifier-accent);
+}
+
+/// Styles for `full-motion` aka Not Reduced Motion, because people should be able to enjoy beautiful motions:tm: (and not die).
+:global(.full-motion) {
+  .container {
+    transition: margin-bottom .5s cubic-bezier(.16, 1, .3, 1);
+  }
+
+  .caret {
+    transition: transform .5s cubic-bezier(.16, 1, .3, 1);
+  }
+
+  .section {
+    transition:
+      max-height .5s cubic-bezier(.16, 1, .3, 1),
+      padding-top .5s cubic-bezier(.16, 1, .3, 1),
+      margin-top .5s cubic-bezier(.16, 1, .3, 1);
+  }
+}
