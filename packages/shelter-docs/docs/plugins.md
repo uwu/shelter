@@ -3,7 +3,7 @@ aside: false
 ---
 
 <script setup>
-import PluginListing from "./components/PluginListing.vue";
+import PluginListing from "./.vitepress/theme/components/PluginListing.vue";
 </script>
 
 # Plugins

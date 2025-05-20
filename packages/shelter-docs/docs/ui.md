@@ -3,7 +3,7 @@ outline: [2, 3]
 ---
 
 <script setup>
-  import Pill from "./components/Pill.vue";
+  import Pill from "./.vitepress/theme/components/Pill.vue";
 </script>
 
 # shelter UI Documentation
