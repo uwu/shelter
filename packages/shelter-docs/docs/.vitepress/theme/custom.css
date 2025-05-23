@@ -1,4 +1,45 @@
 :root {
+  --vp-c-default-1: #ccffed;
+  --vp-c-default-2: #9fdcc9;
+  --vp-c-default-3: #4a6b6b;
+  --vp-c-default-soft: rgba(44, 91, 83, .2);
+  --vp-c-brand-1: #2bfaac;
+  --vp-c-brand-2: #33d9a0;
+  --vp-c-brand-3: #2a3b4b;
+  --vp-c-brand-soft: rgba(43, 250, 172, .15);
+  --vp-c-tip-1: var(--vp-c-brand-1);
+  --vp-c-tip-2: var(--vp-c-brand-2);
+  --vp-c-tip-3: var(--vp-c-brand-3);
+  --vp-c-tip-soft: var(--vp-c-brand-soft);
+  --vp-c-warning-1: #ffe08a;
+  --vp-c-warning-2: #ffd34f;
+  --vp-c-warning-3: #ccae2d;
+  --vp-c-warning-soft: rgba(255, 224, 138, .2);
+  --vp-c-danger-1: #ff9d9d;
+  --vp-c-danger-2: #ff6b6b;
+  --vp-c-danger-3: #d84343;
+  --vp-c-danger-soft: rgba(255, 107, 107, .15);
+}
+
+:root {
+  --vp-button-brand-text: var(--vp-c-bg);
+  --vp-button-brand-bg: var(--vp-c-brand-2);
+  --vp-button-brand-hover-text: var(--vp-c-bg);
+  --vp-button-brand-hover-bg: var(--vp-c-brand-1);
+  --vp-button-brand-active-text: var(--vp-c-bg);
+  --vp-button-brand-active-bg: var(--vp-c-brand-1);
+  --vp-button-alt-border: var(--vp-c-default-3);
+  --vp-button-alt-text: var(--vp-c-text-1);
+  --vp-button-alt-bg: transparent;
+  --vp-button-alt-hover-border: var(--vp-c-default-1);
+  --vp-button-alt-hover-text: var(--vp-c-text-1);
+  --vp-button-alt-hover-bg: transparent;
+  --vp-button-alt-active-border: var(--vp-c-default-1);
+  --vp-button-alt-active-text: var(--vp-c-text-1);
+  --vp-button-alt-active-bg: transparent;
+}
+
+:root {
   /* shelter gradient goes from #2a3b4b to #2a7267
    * these colours are that lightened by 17 in GIMP brightness-contrast
    * so that they are more appropriate for use as foreground text colours, for the title.
