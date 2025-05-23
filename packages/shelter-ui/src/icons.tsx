@@ -1,4 +1,4 @@
-import { type Component, type JSX } from "solid-js";
+import { type JSX } from "solid-js";
 import { type NativeExtendingComponent } from "./wrapperTypes";
 
 type IconProps = {
@@ -41,7 +41,7 @@ export const SyncIcon: IconComponent = (props) => (
   </svg>
 );
 
-export const IconClose: Component = (props: JSX.SvgSVGAttributes<SVGSVGElement>) => (
+export const IconClose: IconComponent = (props) => (
   <svg width="24" height="24" viewBox="0 0 24 24" {...props}>
     <path
       fill="currentColor"

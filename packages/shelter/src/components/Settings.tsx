@@ -1,13 +1,14 @@
 import ShelterKawaiiSvg from "shelter-assets/svg/banner-kawaii.svg";
 import ShelterSvg from "shelter-assets/svg/banner.svg";
-import { injectCss, Button, ButtonColors, LocalIcon, DevIcon } from "@uwu/shelter-ui";
+import { injectCss, Button, ButtonColors, LocalIcon, DevIcon, SyncIcon } from "@uwu/shelter-ui";
 import { classes, css } from "./Settings.tsx.scss";
 import { createSignal } from "solid-js";
 import { dbStore } from "../storage";
 import Plugins from "./Plugins";
 import DevUi from "./DevUI";
-import { DataManagement } from "./DataManagement";
+import { LocalDataManagement } from "./DataManagement";
 import { SettingsPanel } from "./SettingsPanel";
+import { SyncMangement } from "./SyncManagement";
 
 let injectedCss = false;
 
@@ -58,7 +59,14 @@ export default () => {
             icon={LocalIcon}
             description="Manage your local client data, including backups and data reset options."
           >
-            <DataManagement />
+            <LocalDataManagement />
+          </SettingsPanel>
+          <SettingsPanel
+            title="Shelter Sync"
+            icon={SyncIcon}
+            description="Configure Shelter Sync to backup and sync your settings across devices."
+          >
+            <SyncMangement />
           </SettingsPanel>
           <SettingsPanel
             title="Developer Tools"
