@@ -113,8 +113,8 @@ importers:
         specifier: 1.6.16
         version: 1.6.16
       spitroast:
-        specifier: ^2.1.4
-        version: 2.1.6
+        specifier: 2.1.4
+        version: 2.1.4
     devDependencies:
       '@types/superagent':
         specifier: ^4.1.20
@@ -4407,6 +4407,9 @@ packages:
   speakingurl@14.0.1:
     resolution: {integrity: sha512-1POYv7uv2gXoyGFpBCmpDVSNV74IfsWlDW216UPjbWufNf+bSU6GdbDsxdcxtfwb4xlI3yxzOTKClUosxARYrQ==}
     engines: {node: '>=0.10.0'}
+
+  spitroast@2.1.4:
+    resolution: {integrity: sha512-IA987I3wS8RbrKrgag+NsxLUAttrqONF7UGOL+uQFmLLXlMhZl42LomTAltBQaev0jUXIaRiqShZ3hnJYT7OCQ==}
 
   spitroast@2.1.6:
     resolution: {integrity: sha512-xil2XeVh8WQoBlG8Lm8jT6ifqWGmSgTGq2clRcq2roycb0kg1h4fv5ydoiBId9kIQp4Y12PK/cjVzD8xpWXZvg==}
@@ -9199,6 +9202,8 @@ snapshots:
       os-shim: 0.1.3
 
   speakingurl@14.0.1: {}
+
+  spitroast@2.1.4: {}
 
   spitroast@2.1.6: {}
 
