@@ -6,7 +6,7 @@
   border: 1px solid var(--button-danger-background);
   border-radius: 8px;
   background: var(--background-surface-high);
-  color: var(--text-normal);
+  color: var(--text-default);
   font-family: var(--font-display);
 }
 
@@ -17,7 +17,7 @@
 }
 
 .errboundcode {
-  background-color: var(--background-secondary);
+  background-color: var(--background-surface-highest);
   font-family: var(--font-code);
   user-select: text;
 }

@@ -1,7 +1,7 @@
 :root {
   /* all CSS vars required by shelter-UI components */
   --saturation-factor: 1;
-  --text-normal: #dbdee1;
+  --text-default: #dbdee1;
   --text-link: #00a8fc;
   --brand-400: #7983f5;
   --brand-500: #5865f2;

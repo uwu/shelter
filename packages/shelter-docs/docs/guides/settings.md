@@ -62,7 +62,7 @@ And add some CSS:
   font-weight: 600;
   border-radius: 5px;
   padding: 0 3px;
-  background: var(--background-secondary);
+  background: var(--background-surface-highest);
 }
 ```
 ```js

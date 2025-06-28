@@ -143,12 +143,12 @@ export const ButtonColors = {
     ],
     [
       "none",
-      "var(--text-normal)",
+      "var(--text-default)",
       "none",
       "var(--button--outline--transparent-background-active",
       "var(--primary-200)",
     ],
-    "var(--text-normal)",
+    "var(--text-default)",
   ],
   // Alias of transparent for backwards compatibility
   BLACK: [
@@ -161,12 +161,12 @@ export const ButtonColors = {
     ],
     [
       "none",
-      "var(--text-normal)",
+      "var(--text-default)",
       "none",
       "var(--button--outline--transparent-background-active",
       "var(--primary-200)",
     ],
-    "var(--text-normal)",
+    "var(--text-default)",
   ],
 } satisfies Record<string, ButtonColor>;
 
