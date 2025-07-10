@@ -22,7 +22,7 @@ Install the kernel package from [here](https://github.com/uwu/shelter/tree/main/
 Assuming you are not using Kernel,
 [download the shelter installer](https://github.com/uwu/shelter-installer/releases/latest) and run that.
 
-It will install shelter using an injection method called sheltupdate.
+It will install shelter using an injection method called [sheltupdate](https://github.com/uwu/sheltupdate).
 This works on all platforms and channels, does not require root access, and should never break due to a discord update.
 
 ![Screenshot of the shelter installer](https://i.uwu.network/61318cfbc.png)
@@ -36,24 +36,32 @@ you may have to do a manual installation instead, please see [this page](/guides
 If the installer is unable to remove your existing legacy injector installation,
 it may ask you to do a manual uninstall. The instructions for this are [below](#manual-legacy-uninstall).
 
-### Switching Branches
+### Configuring Branches
 
-sheltupdate supports multiple "branches", which is the mods that are injected into Discord. These are currently:
+sheltupdate supports multiple "branches", which are mods and tweaks that are injected into Discord. These are currently:
 
-| Branch Name     | Description                                                                                           |
-|-----------------|-------------------------------------------------------------------------------------------------------|
-| `shelter`       | Injects shelter                                                                                       |
-| `vencord`       | Injects Vencord; do not expect support from the Vencord authors while using this                      |
-| `betterdiscord` | Injects BetterDiscord                                                                                 |
-| `reactdevtools` | Adds the [React Developer Tools](https://github.com/facebook/react/tree/main/packages/react-devtools) |
+| Branch Name            | Description                                                                                                                                 |
+|------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| `shelter`              | Injects shelter                                                                                                                             |
+| `vencord`              | Injects [Vencord](https://github.com/vendicated/vencord)<br>⚠️ Not an officially supported Vencord installation method                      |
+| `betterdiscord`        | Injects [BetterDiscord](https://github.com/betterdiscord/betterdiscord)<br>⚠️ Not an officially supported BetterDiscord installation method |
+| `moonlight`            | Injects [Moonlight](https://github.com/moonlight-mod/moonlight)<br>⚠️ Not an officially supported Moonlight installation method             |
+| `reactdevtools`        | Adds the [React Developer Tools](https://github.com/facebook/react/tree/main/packages/react-devtools)                                       |
+| `spotify_embed_volume` | Adds a volume slider to Spotify embeds                                                                                                      |
+| `yt_ad_block`          | Blocks ads in YouTube embeds                                                                                                                |
+| `yt_embed_fix`         | Makes more YouTube videos viewable from within Discord                                                                                      |
+| `native_titlebar`      | Replaces Discord's custom titlebar with Windows' native one                                                                                 |
 
-In the future, we plan to add a UI to toggle these on and off, either within the app or installer.
-Watch this space for information on that, when it becomes available. For now, you'll need to do it yourself.
+After installing shelter via the installer you will see a section called `Client Mods` in your Discord settings.
+There, you can configure additional branches that should be loaded alongside shelter. In order for them to apply, you will need to restart Discord fully.
 
-You can install multiple branches by concatenating the names with `+`s,
-like: `shelter+vencord`, `vencord+shelter+reactdevtools`.
+#### Using branches but without shelter
 
-To change these branches, you need to find your `settings.json` file,
+If you want to, you can also make use of the branches without having to run shelter as well. But this requires you to configure your branches manually.
+
+This is because the `Client Mods` section in the settings depends on shelter.
+
+To configure your branches manually, you need to find your `settings.json` file,
 and modify the `UPDATE_ENDPOINT` and `NEW_UPDATE_ENDPOINT` keys:
 
 | OS              | Path                                                             |
@@ -63,13 +71,21 @@ and modify the `UPDATE_ENDPOINT` and `NEW_UPDATE_ENDPOINT` keys:
 | Linux           | `~/.config/discord/settings.json`                                |
 | Linux (Flatpak) | `~/.var/app/com.discordapp.Discord/config/discord/settings.json` |
 
-You should be able to identify that you are in the right place quite easily, it should look like
+On a fresh install it should look like this:
+
 ```json
 "UPDATE_ENDPOINT": "https://inject.shelter.uwu.network/shelter",
-"NEW_UPDATE_ENDPOINT": "https://inject.shelter.uwu.network/shelter/"
+"NEW_UPDATE_ENDPOINT": "https://inject.shelter.uwu.network/shelter/",
 ```
 
-Ensure you leave a `/` on the end of the new endpoint, and do not put one on the old endpoint.
+Replace `shelter` with the combination of branches that you want.
+
+You can install multiple branches by concatenating them with `+`s,
+like: `shelter+vencord`, `moonlight+yt_ad_block+spotify_embed_volume`.
+
+::: warning
+Ensure you leave a `/` at the end of the new endpoint, and do not put one on the old endpoint.
+:::
 
 ### Manual Legacy Uninstall
 
