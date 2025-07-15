@@ -2,6 +2,7 @@
 
 import { getDispatcher } from "./flux";
 import { awaitDispatch, getFiber, getFiberOwner, reactFiberWalker } from "./util";
+import { observe } from "./observer";
 import { Component } from "solid-js";
 import { SolidInReactBridge } from "./bridges";
 import Settings from "./components/Settings";
@@ -48,23 +49,32 @@ export async function initSettings() {
 
   let canceled = false;
   let unpatch;
-  let isFirst = true;
+  let stopPrevious;
 
   const cb = async () => {
-    if (!isFirst) return;
-    isFirst = false;
+    stopPrevious?.();
 
     // wait for lazy loading on initial user settings open
-    await awaitDispatch((p) => p.type === "TRACK" && p.event === "settings_pane_viewed");
+    const sidebar = await new Promise<Element | void>((res) => {
+      const trackCallback = (p: any) => {
+        if (p.event === "settings_pane_viewed" && p.properties.settings_type === "user") {
+          res(document.querySelector("nav > [role=tablist]"));
+        }
+      };
+      FluxDispatcher.subscribe("TRACK", trackCallback);
 
-    // I <3 async
-    if (canceled) return;
+      // fallback in case track dispatches are disabled (e.g. BD's DoNotTrack)
+      const unobserve = observe("nav > [role=tablist]", res);
+      setTimeout(unobserve, 3_000);
 
-    const sidebar = document.querySelector(`nav > [role=tablist]`);
-    if (!sidebar) {
-      isFirst = true;
-      return;
-    }
+      stopPrevious = () => {
+        FluxDispatcher.unsubscribe("TRACK", trackCallback);
+        unobserve();
+        res();
+      };
+    });
+
+    if (!sidebar || canceled) return;
 
     const f = reactFiberWalker(
       getFiber(sidebar),
@@ -72,10 +82,7 @@ export async function initSettings() {
       true,
     );
 
-    if (typeof f?.type !== "function") {
-      isFirst = true;
-      return;
-    }
+    if (typeof f?.type !== "function") return;
 
     unpatch = after("getPredicateSections", f.type.prototype, (args, ret: any[]) => {
       const changelogIdx = ret.findIndex((s) => s.section === "changelog");
