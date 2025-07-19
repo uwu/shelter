@@ -31,7 +31,7 @@ export const SettingsPanel = (props: SettingsPanelProps) => {
       >
         <div class={classes.icon}>{() => <props.icon />}</div>
         <div class={classes.title}>
-          <Header margin={false} tag={HeaderTags.H5}>
+          <Header margin={false} tag={HeaderTags.H5} style="cursor: pointer">
             {props.title}
           </Header>
           <Text
