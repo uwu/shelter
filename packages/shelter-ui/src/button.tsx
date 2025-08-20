@@ -129,7 +129,7 @@ export const ButtonColors = {
       "var(--button-filled-white-background-active)",
       "var(--opacity-8)",
     ],
-    ["none", "var(--white)", "none", "var(--button-outline-white-background-active)", "var(--white)"],
+    ["none", "var(--white)", "none", "var(--control-border-overlay-primary-active)", "var(--white)"],
     "var(--white)",
   ],
 

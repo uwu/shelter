@@ -4,7 +4,7 @@
   max-width: 190px;
   border: 1px solid var(--border-subtle);
   border-radius: 8px;
-  background: var(--background-floating);
+  background: var(--background-surface-high);
   box-shadow: var(--elevation-high);
   color: var(--text-default);
   font-weight: 500;
@@ -30,7 +30,7 @@
   height: 0;
   margin-left: -5px;
   border: 5px solid transparent;
-  border-top-color: var(--background-floating);
+  border-top-color: var(--background-surface-high);
 
   &.under {
     top: unset;

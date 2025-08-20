@@ -37,7 +37,7 @@ export const Divider: NativeExtendingComponent<DividerProps, JSX.HTMLAttributes<
         "margin-bottom": typeof local.mb === "string" ? local.mb : local.mb ? "20px" : "",
         width: "100%",
         height: "1px",
-        "border-top": "thin solid var(--background-modifier-accent)",
+        "border-top": "thin solid var(--border-subtle)",
         ...local.style,
       }}
     />

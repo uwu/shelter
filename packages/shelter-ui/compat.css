@@ -15,8 +15,8 @@
     Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono",
     "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
   --background-secondary: #2b2d31;
-  --background-floating: #111214;
-  --background-modifier-accent: #4e5058;
+  --background-surface-high: #393a41;
+  --border-subtle: #97979f1f;
   --input-background: #1e1f22;
   --modal-background: #313338;
   --modal-footer-background: var(--background-secondary);
