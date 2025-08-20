@@ -16,7 +16,7 @@ export default (props: { fullVersion?: boolean }) => {
       </SwitchItem>
 
       <SwitchItem
-        hideBorder
+        hideBorder={!!installedPlugins()[devModeReservedId]}
         checked={devModeOn()}
         onChange={(val) =>
           val
@@ -55,12 +55,16 @@ export default (props: { fullVersion?: boolean }) => {
       </SwitchItem>
 
       <Show when={installedPlugins()[devModeReservedId]} keyed>
-        {(plugin) => <PluginCard id={devModeReservedId} plugin={plugin} />}
+        {(plugin) => (
+          <>
+            <PluginCard id={devModeReservedId} plugin={plugin} />
+            <Divider mt />
+          </>
+        )}
       </Show>
 
       <Show when={props.fullVersion}>
         <SwitchItem
-          hideBorder={true}
           checked={dbStore.alwaysDevMenu}
           onChange={(v) => (dbStore.alwaysDevMenu = v)}
           note={
