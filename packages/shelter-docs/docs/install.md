@@ -44,6 +44,7 @@ sheltupdate supports multiple "branches", which are mods and tweaks that are inj
 |------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
 | `shelter`              | Injects shelter                                                                                                                             |
 | `vencord`              | Injects [Vencord](https://github.com/vendicated/vencord)<br>⚠️ Not an officially supported Vencord installation method                      |
+| `equicord`              | Injects [Equicord](https://github.com/equicord/equicord)<br>⚠️ Not an officially supported Equicord installation method                      |
 | `betterdiscord`        | Injects [BetterDiscord](https://github.com/betterdiscord/betterdiscord)<br>⚠️ Not an officially supported BetterDiscord installation method |
 | `moonlight`            | Injects [Moonlight](https://github.com/moonlight-mod/moonlight)<br>⚠️ Not an officially supported Moonlight installation method             |
 | `reactdevtools`        | Adds the [React Developer Tools](https://github.com/facebook/react/tree/main/packages/react-devtools)                                       |
