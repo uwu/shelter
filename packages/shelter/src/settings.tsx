@@ -8,10 +8,16 @@ import { SolidInReactBridge } from "./bridges";
 import Settings from "./components/Settings";
 import { after } from "spitroast";
 
+type Extras = {
+  icon?: Component | (() => void);
+  badgeCount?: number;
+  customDecoration?: Component | (() => void);
+};
+
 type SettingsSection =
   | ["divider"]
   | ["header", string]
-  | ["section", string, string, Component, object?]
+  | ["section", string, string, Component, Extras?]
   | ["button", string, string, () => void];
 
 const shelterSections: SettingsSection[] = [
@@ -47,27 +53,37 @@ function legacyGeneratePredicateSections() {
 
 const LAYOUT_PREFIX = "shelter";
 
-function internalGenerateLayoutAndMappings(root: any, sectionName: string, sectionItem: SettingsSection) {
+function internalGenerateLayoutAndMappings(sectionItem: SettingsSection, layoutSection: any) {
   const [, id, name, pane] = sectionItem;
 
-  const layoutSection = {
-    key: `${LAYOUT_PREFIX}_${sectionName.toLowerCase()}_section`,
-    layout: [],
-    parent: root,
-    type: 1,
-    useLabel: () => sectionName,
-  };
-
   const layoutSidebarItem = {
-    icon: () => {},
+    icon: sectionItem[4]?.icon ? () => <SolidInReactBridge comp={sectionItem[4].icon} /> : () => {},
+    trailing: undefined,
     key: `${LAYOUT_PREFIX}_${id}_sidebar_item`,
-    trailing: { type: 1 },
     layout: [],
     legacySearchKey: `${LAYOUT_PREFIX}_${id.toUpperCase()}`,
     parent: layoutSection,
     type: 2,
     useTitle: () => name,
   };
+
+  // TODO: can sanely support BADGE_NEW?
+
+  if (sectionItem[4]?.badgeCount) {
+    layoutSidebarItem.trailing = {
+      type: 2, // BADGE_COUNT
+      useCount: () => sectionItem[4].badgeCount,
+    };
+  }
+
+  if (sectionItem[4]?.customDecoration) {
+    layoutSidebarItem.trailing = {
+      type: 3, // STRONGLY_DISCOURAGED_CUSTOM
+      useDecoration: (visibleContent, isSelected) => (
+        <SolidInReactBridge comp={sectionItem[4].customDecoration} props={{ visibleContent, isSelected }} />
+      ),
+    };
+  }
 
   const layoutPanel = {
     key: `${LAYOUT_PREFIX}_${id}_panel`,
@@ -111,21 +127,32 @@ function internalGenerateLayoutAndMappings(root: any, sectionName: string, secti
   return { layout: layoutSection, mapping };
 }
 
+function generateSectionLayout(root: any, sectionName: string) {
+  return {
+    key: `${LAYOUT_PREFIX}_${sectionName.toLowerCase()}_section`,
+    layout: [],
+    parent: root,
+    type: 1,
+    useLabel: () => sectionName,
+  };
+}
+
 function generateLayoutsAndMappings(root: any) {
-  const layouts = [];
+  const layouts = {};
   const mappings = {};
-  let currentSectionHeader = "Unknown";
+  let layoutSection = generateSectionLayout(root, "Unknown");
 
   for (const s of [...injectorSections, ...shelterSections, ...externalSections]) {
     if (s[0] === "header") {
-      currentSectionHeader = s[1];
+      layoutSection = generateSectionLayout(root, s[1]);
       continue;
     }
 
     if (s[0] === "section") {
-      const { layout, mapping } = internalGenerateLayoutAndMappings(root, currentSectionHeader, s);
-      layouts.push(layout);
+      const { layout, mapping } = internalGenerateLayoutAndMappings(s, layoutSection);
       Object.assign(mappings, mapping);
+      layouts[layout.key] = layout;
+
       continue;
     }
   }
@@ -264,11 +291,14 @@ async function injectSettings() {
 
           // remove shelter sections that were unregistered
           settings.root.layout = settings.root.layout.filter(
-            ({ key }) => !key.startsWith(LAYOUT_PREFIX) || layouts.some((other) => other.key === key),
+            ({ key }) =>
+              !key.startsWith(LAYOUT_PREFIX) || Object.values(layouts).some((other: any) => other.key === key),
           );
 
           // ignore duplicates
-          const filteredLayouts = layouts.filter(({ key }) => !settings.root.layout.some((other) => other.key === key));
+          const filteredLayouts = Object.values(layouts).filter(
+            ({ key }) => !settings.root.layout.some((other) => other.key === key),
+          );
 
           // insert layout after activity section, otherwise before the log out button
           const activityIndex = settings.root.layout.findIndex(({ key }) => key === "activity_section");
