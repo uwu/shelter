@@ -10,5 +10,13 @@ id = "648ec2e863644b98a32aa51ce436bff5"
 binding = "OVERRIDES"
 id = "42d29600915447858596507798a24597"
 
+[[kv_namespaces]]
+binding = "USERREPOS"
+id = "3f02c8ae546f40dcb7be0394bd968ff0"
+
+[[kv_namespaces]]
+binding = "PENDING"
+id = "0634a64fcc794889a714c8e431eb8e47"
+
 [triggers]
 crons = ["0/10 * * * *"]
