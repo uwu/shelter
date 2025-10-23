@@ -17,6 +17,12 @@ export const getFiber = (n: Element): Fiber => {
   return n[(fiberKey = Object.keys(n).find((key) => key.startsWith("__reactFiber$")) ?? fiberKey)];
 };
 
+let propsKey: string;
+export const getProps = (n: Element): any => {
+  if (propsKey && n[propsKey]) return n[propsKey];
+  return n[(propsKey = Object.keys(n).find((key) => key.startsWith("__reactProps$")) ?? propsKey)];
+};
+
 export const getFiberOwner = (n: Element | Fiber): undefined | null | FiberOwner => {
   const filter = ({ stateNode }: Fiber) => stateNode && !(stateNode instanceof Element);
   return reactFiberWalker(n instanceof Element ? getFiber(n) : n, filter, true)?.stateNode as
