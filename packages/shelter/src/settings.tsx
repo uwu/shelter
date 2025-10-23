@@ -47,6 +47,13 @@ const generatePredicateSections = () =>
 export async function initSettings() {
   const FluxDispatcher = await getDispatcher();
 
+  // Force disable settings redesign experiment until the new injection method works without issues
+  FluxDispatcher.dispatch({
+    type: "APEX_EXPERIMENT_OVERRIDE_CREATE",
+    experimentName: "2025-09-user-settings-redesign-1",
+    variantId: -1,
+  });
+
   let canceled = false;
   let unpatch;
   let stopPrevious;
