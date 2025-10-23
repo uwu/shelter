@@ -343,14 +343,6 @@ Gets a React *fiber* from a DOM node.
 The fiber contains information about the state of the React element that Discord used to render the UI,
 and can be useful to extract, for example, message objects from the DOM.
 
-### `shelter.util.getProps`
-
-```ts
-function getProps(node: DOMNode): any
-```
-
-Gets the React props from a DOM node.
-
 ### `shelter.util.getFiberOwner`
 
 ```ts
