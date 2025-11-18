@@ -112,15 +112,15 @@ function internalGenerateLayoutAndMappings(sectionItem: SettingsSection, layoutS
     },
     [layoutSidebarItem.key]: {
       node: layoutSidebarItem,
-      targetPanel: layoutPanel,
+      targetPanelKey: layoutPanel.key,
     },
     [layoutPanel.key]: {
       node: layoutPanel,
-      targetPanel: layoutPanel,
+      targetPanelKey: layoutPanel.key,
     },
     [layoutPane.key]: {
       node: layoutPane,
-      targetPanel: layoutPanel,
+      targetPanelKey: layoutPanel.key,
     },
   };
 
