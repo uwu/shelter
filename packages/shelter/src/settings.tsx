@@ -1,31 +1,55 @@
 // Injects a section into user settings
 
 import { getDispatcher } from "./flux";
-import { awaitDispatch, getFiber, getFiberOwner, reactFiberWalker } from "./util";
+import { getFiber, getFiberOwner, getProps, reactFiberWalker } from "./util";
 import { observe } from "./observer";
 import { Component } from "solid-js";
 import { SolidInReactBridge } from "./bridges";
 import Settings from "./components/Settings";
 import { after } from "spitroast";
 
+function SettingsIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      enable-background="new 0 0 24 24"
+      height="24px"
+      viewBox="0 0 24 24"
+      width="24px"
+      fill="currentColor"
+    >
+      <g>
+        <path d="M0,0h24v24H0V0z" fill="none" />
+        <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" />
+      </g>
+    </svg>
+  );
+}
+
+type Extras = {
+  icon?: Component | (() => void);
+  badgeCount?: number;
+  customDecoration?: Component | (() => void);
+};
+
 type SettingsSection =
   | ["divider"]
   | ["header", string]
-  | ["section", string, string, Component, object?]
+  | ["section", string, string, Component, Extras?]
   | ["button", string, string, () => void];
 
 const shelterSections: SettingsSection[] = [
   ["divider"],
   ["header", "Shelter"],
-  ["section", "settings", "Settings", Settings],
+  ["section", "settings", "Settings", Settings, { icon: SettingsIcon }],
 ];
 
 let injectorSections: SettingsSection[] = [];
 
 let externalSections: SettingsSection[] = [];
 
-const generatePredicateSections = () =>
-  [...injectorSections, ...shelterSections, ...externalSections].map((s) => {
+function legacyGeneratePredicateSections() {
+  return [...injectorSections, ...shelterSections, ...externalSections].map((s) => {
     switch (s[0]) {
       case "divider":
         return { section: "DIVIDER" };
@@ -43,20 +67,132 @@ const generatePredicateSections = () =>
         };
     }
   });
+}
+
+const LAYOUT_PREFIX = "shelter";
+
+function internalGenerateLayoutAndMappings(sectionItem: SettingsSection, layoutSection: any) {
+  const [, id, name, pane] = sectionItem;
+
+  const layoutSidebarItem = {
+    icon: sectionItem[4]?.icon ? () => <SolidInReactBridge comp={sectionItem[4].icon} /> : () => {},
+    trailing: undefined,
+    key: `${LAYOUT_PREFIX}_${id}_sidebar_item`,
+    layout: [],
+    legacySearchKey: `${LAYOUT_PREFIX}_${id.toUpperCase()}`,
+    parent: layoutSection,
+    type: 2,
+    useTitle: () => name,
+  };
+
+  // TODO: can sanely support BADGE_NEW?
+
+  if (sectionItem[4]?.badgeCount) {
+    layoutSidebarItem.trailing = {
+      type: 2, // BADGE_COUNT
+      useCount: () => sectionItem[4].badgeCount,
+    };
+  }
+
+  if (sectionItem[4]?.customDecoration) {
+    layoutSidebarItem.trailing = {
+      type: 3, // STRONGLY_DISCOURAGED_CUSTOM
+      useDecoration: (visibleContent, isSelected) => (
+        <SolidInReactBridge comp={sectionItem[4].customDecoration} props={{ visibleContent, isSelected }} />
+      ),
+    };
+  }
+
+  const layoutPanel = {
+    key: `${LAYOUT_PREFIX}_${id}_panel`,
+    layout: [],
+    parent: layoutSidebarItem,
+    type: 3,
+    useTitle: () => name,
+  };
+
+  const layoutPane = {
+    key: `${LAYOUT_PREFIX}_${id}_pane`,
+    layout: [],
+    parent: layoutPanel,
+    render: () => <SolidInReactBridge comp={pane} />,
+    type: 4,
+    useTitle: () => name,
+  };
+
+  layoutPanel.layout.push(layoutPane);
+  layoutSidebarItem.layout.push(layoutPanel);
+  layoutSection.layout.push(layoutSidebarItem);
+
+  const mapping = {
+    [layoutSection.key]: {
+      node: layoutSection,
+    },
+    [layoutSidebarItem.key]: {
+      node: layoutSidebarItem,
+      targetPanelKey: layoutPanel.key,
+    },
+    [layoutPanel.key]: {
+      node: layoutPanel,
+      targetPanelKey: layoutPanel.key,
+    },
+    [layoutPane.key]: {
+      node: layoutPane,
+      targetPanelKey: layoutPanel.key,
+    },
+  };
+
+  return { layout: layoutSection, mapping };
+}
+
+function generateSectionLayout(root: any, sectionName: string) {
+  return {
+    key: `${LAYOUT_PREFIX}_${sectionName.toLowerCase()}_section`,
+    layout: [],
+    parent: root,
+    type: 1,
+    useLabel: () => sectionName,
+  };
+}
+
+function generateLayoutsAndMappings(root: any) {
+  const layouts = {};
+  const mappings = {};
+  let layoutSection = generateSectionLayout(root, "Unknown");
+
+  for (const s of [...injectorSections, ...shelterSections, ...externalSections]) {
+    if (s[0] === "header") {
+      layoutSection = generateSectionLayout(root, s[1]);
+      continue;
+    }
+
+    if (s[0] === "section") {
+      const { layout, mapping } = internalGenerateLayoutAndMappings(s, layoutSection);
+      Object.assign(mappings, mapping);
+      layouts[layout.key] = layout;
+
+      continue;
+    }
+  }
+
+  return { layouts, mappings };
+}
 
 export async function initSettings() {
+  const [uninjectLegacySettings, uninjectSettings] = await Promise.all([legacyInjectSettings(), injectSettings()]);
+
+  return () => {
+    uninjectLegacySettings();
+    uninjectSettings();
+  };
+}
+
+async function legacyInjectSettings() {
   const FluxDispatcher = await getDispatcher();
 
-  // Force disable settings redesign experiment until the new injection method works without issues
-  FluxDispatcher.dispatch({
-    type: "APEX_EXPERIMENT_OVERRIDE_CREATE",
-    experimentName: "2025-09-user-settings-redesign-1",
-    variantId: -1,
-  });
-
   let canceled = false;
-  let unpatch;
-  let stopPrevious;
+  let unpatch: () => void;
+  let stopPrevious: () => void;
 
   const cb = async () => {
     stopPrevious?.();
@@ -96,11 +232,11 @@ export async function initSettings() {
       if (changelogIdx === -1) return;
 
       // -1 to go ahead of the divider above it
-      ret.splice(changelogIdx - 1, 0, ...generatePredicateSections());
+      ret.splice(changelogIdx - 1, 0, ...legacyGeneratePredicateSections());
     });
 
     // trigger rerender for first load
-    rerenderSidebar();
+    legacyRerenderSidebar();
 
     FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
   };
@@ -114,7 +250,99 @@ export async function initSettings() {
   };
 }
 
-function rerenderSidebar() {
+async function injectSettings() {
+  const FluxDispatcher = await getDispatcher();
+
+  let canceled = false;
+  let stopPrevious: () => void;
+
+  const cb = async () => {
+    stopPrevious?.();
+
+    // wait for lazy loading on initial user settings open
+    const sidebar = await new Promise<Element | void>((res) => {
+      const trackCallback = (p: any) => {
+        if (p.event === "settings_pane_viewed" && p.properties.settings_type === "user") {
+          res(document.querySelector("[data-list-id=settings-sidebar]"));
+        }
+      };
+      FluxDispatcher.subscribe("TRACK", trackCallback);
+
+      // fallback in case track dispatches are disabled (e.g. BD's DoNotTrack)
+      const unobserve = observe("[data-list-id=settings-sidebar]", res);
+      setTimeout(unobserve, 3_000);
+
+      stopPrevious = () => {
+        FluxDispatcher.unsubscribe("TRACK", trackCallback);
+        unobserve();
+        res();
+      };
+    });
+
+    if (!sidebar || canceled) return;
+
+    const sidebarDirectoryFiber = reactFiberWalker(
+      getFiber(document.querySelector("[data-list-id=settings-sidebar]")),
+      "directory",
+      true,
+    );
+
+    // this function gets assigned by something else later on. That's why patcher wouldn't work here.
+    const originalType = sidebarDirectoryFiber.type as Function;
+    Object.defineProperty(sidebarDirectoryFiber, "type", {
+      get: () =>
+        function () {
+          const settings = arguments[0];
+
+          const { layouts, mappings } = generateLayoutsAndMappings(settings.root);
+
+          for (const [key, val] of Object.entries(mappings)) {
+            settings.directory.map.set(key, val);
+          }
+
+          // remove shelter sections that were unregistered
+          settings.root.layout = settings.root.layout.filter(
+            ({ key }) =>
+              !key.startsWith(LAYOUT_PREFIX) || Object.values(layouts).some((other: any) => other.key === key),
+          );
+
+          // ignore duplicates
+          const filteredLayouts = Object.values(layouts).filter(
+            ({ key }) => !settings.root.layout.some((other) => other.key === key),
+          );
+
+          // insert layout after activity section, otherwise before the log out button
+          const activityIndex = settings.root.layout.findIndex(({ key }) => key === "activity_section");
+          const insertIndex = activityIndex === -1 ? settings.root.layout.length - 1 : activityIndex + 1;
+
+          settings.root.layout.splice(insertIndex, 0, ...filteredLayouts);
+
+          return originalType.apply(this, arguments);
+        },
+      set: () => {},
+    });
+
+    refreshSidebarSections();
+  };
+
+  FluxDispatcher.subscribe("USER_SETTINGS_MODAL_OPEN", cb);
+
+  return () => {
+    FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
+    canceled = true;
+  };
+}
+
+function refreshSidebarSections() {
+  document.querySelectorAll("[class^=searchBarContainer] input").forEach((searchInput) => {
+    const props = getProps(searchInput);
+    const oldValue = props.value;
+    props.onChange({ currentTarget: { value: " " } });
+    setTimeout(() => props.onChange({ currentTarget: { value: oldValue } }));
+  });
+}
+
+function legacyRerenderSidebar() {
   const sidebarParent = document.querySelector(`nav[class^="sidebar"]`);
   getFiberOwner(sidebarParent)?.forceUpdate();
 }
@@ -123,14 +351,16 @@ function registerSectionInternal(sec: SettingsSection, injector: boolean) {
   const secs = injector ? injectorSections : externalSections;
 
   secs.push(sec);
-  rerenderSidebar();
+  legacyRerenderSidebar();
+  refreshSidebarSections();
 
   return () => {
     const idx = secs.indexOf(sec);
     if (idx === -1) return;
 
     secs.splice(idx, 1);
-    rerenderSidebar();
+    legacyRerenderSidebar();
+    refreshSidebarSections();
   };
 }
 
