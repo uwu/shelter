@@ -130,15 +130,18 @@ function internalGenerateLayoutAndMappings(sectionItem: SettingsSection, layoutS
     },
     [layoutSidebarItem.key]: {
       node: layoutSidebarItem,
-      targetPanelKey: layoutPanel.key,
+      targetPanelKey: layoutPanel.key, // These stay here just in case discord decides to rollback since they're so indecisive on what to name this
+      parentPanelKey: layoutPanel.key,
     },
     [layoutPanel.key]: {
       node: layoutPanel,
       targetPanelKey: layoutPanel.key,
+      parentPanelKey: layoutPanel.key,
     },
     [layoutPane.key]: {
       node: layoutPane,
       targetPanelKey: layoutPanel.key,
+      parentPanelKey: layoutPanel.key,
     },
   };
 
