@@ -2,8 +2,8 @@ import type { Command } from ".";
 
 import { hrtime } from "process";
 import { resolve } from "path";
-import { existsSync } from "fs";
-import { readdir, rm } from "fs/promises";
+import { existsSync, read } from "fs";
+import { writeFile, readFile, readdir, rm } from "fs/promises";
 import { buildPlugin } from "../builder";
 import { loadCfg, loadNearestCfgOrDefault } from "../config.js";
 
@@ -43,6 +43,8 @@ Options:
     const pluginsDir = resolve(dir, (args.repoSubDir as string) ?? "plugins");
     const pluginDirs = await readdir(pluginsDir);
 
+    const repoManifest = {};
+
     let successes = 0;
     let errors = 0;
 
@@ -51,12 +53,16 @@ Options:
       try {
         const cfg = specifiedCfg ?? (await loadNearestCfgOrDefault(dir));
         await buildPlugin(dir, resolve(distDir, plug), cfg, (args.dev as boolean) ?? cfg.minify);
+        const pluginManifest = await readFile(resolve(dir, "plugin.json"), "utf-8");
+        repoManifest[plug] = JSON.parse(pluginManifest);
         successes++;
       } catch (e) {
         console.error(`Building ${plug} failed: ${e.message}`);
         errors++;
       }
     }
+
+    await writeFile(resolve(distDir, "plugins.json"), JSON.stringify(repoManifest));
 
     const timeAfter = hrtime.bigint();
 
