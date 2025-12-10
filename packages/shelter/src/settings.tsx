@@ -154,7 +154,7 @@ function generateSectionLayout(root: any, sectionName: string) {
     layout: [],
     parent: root,
     type: 1,
-    useLabel: () => sectionName,
+    useTitle: () => sectionName,
   };
 }
 
