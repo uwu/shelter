@@ -1,12 +1,13 @@
 // Injects a section into user settings
 
 import { getDispatcher } from "./flux";
-import { getFiber, getFiberOwner, getProps, reactFiberWalker } from "./util";
+import { getFiber, getFiberOwner, reactFiberWalker } from "./util";
 import { observe } from "./observer";
 import { Component } from "solid-js";
 import { SolidInReactBridge } from "./bridges";
 import Settings from "./components/Settings";
 import { after } from "spitroast";
+import exfiltrate from "./exfiltrate";
 
 function SettingsIcon() {
   return (
@@ -71,7 +72,7 @@ function legacyGeneratePredicateSections() {
 
 const LAYOUT_PREFIX = "shelter";
 
-function internalGenerateLayoutAndMappings(sectionItem: SettingsSection, layoutSection: any) {
+function internalGenerateLayout(sectionItem: SettingsSection, layoutSection: any) {
   const [, id, name, pane] = sectionItem;
 
   const layoutSidebarItem = {
@@ -80,7 +81,6 @@ function internalGenerateLayoutAndMappings(sectionItem: SettingsSection, layoutS
     key: `${LAYOUT_PREFIX}_${id}_sidebar_item`,
     layout: [],
     getLegacySearchKey: () => `${LAYOUT_PREFIX}_${id.toUpperCase()}`,
-    parent: layoutSection,
     type: 2,
     useTitle: () => name,
   };
@@ -106,77 +106,42 @@ function internalGenerateLayoutAndMappings(sectionItem: SettingsSection, layoutS
   const layoutPanel = {
     key: `${LAYOUT_PREFIX}_${id}_panel`,
     layout: [],
-    parent: layoutSidebarItem,
     type: 3,
     useTitle: () => name,
     StronglyDiscouragedCustomComponent: () => <SolidInReactBridge comp={pane} />,
   };
 
-  // const layoutPane = {
-  //   key: `${LAYOUT_PREFIX}_${id}_pane`,
-  //   layout: [],
-  //   parent: layoutPanel,
-  //   render: () => <SolidInReactBridge comp={pane} />,
-  //   type: 4,
-  //   useTitle: () => name,
-  // };
-
-  // layoutPanel.layout.push(layoutPane);
   layoutSidebarItem.layout.push(layoutPanel);
-  layoutSection.layout.push(layoutSidebarItem);
-
-  const mapping = {
-    [layoutSection.key]: {
-      node: layoutSection,
-    },
-    [layoutSidebarItem.key]: {
-      node: layoutSidebarItem,
-      parentPanelKey: layoutPanel.key,
-    },
-    [layoutPanel.key]: {
-      node: layoutPanel,
-      parentPanelKey: layoutPanel.key,
-    },
-    // [layoutPane.key]: {
-    //   node: layoutPane,
-    //   parentPanelKey: layoutPanel.key,
-    // },
-  };
-
-  return { layout: layoutSection, mapping };
+  return layoutSidebarItem;
 }
 
-function generateSectionLayout(root: any, sectionName: string) {
+function generateSectionLayout(sectionName: string) {
   return {
     key: `${LAYOUT_PREFIX}_${sectionName.toLowerCase()}_section`,
     layout: [],
-    parent: root,
     type: 1,
     useTitle: () => sectionName,
   };
 }
 
-function generateLayoutsAndMappings(root: any) {
-  const layouts = {};
-  const mappings = {};
-  let layoutSection = generateSectionLayout(root, "Unknown");
+function buildLayout() {
+  const layout = [];
+  let layoutSection = generateSectionLayout("Unknown");
 
   for (const s of [...injectorSections, ...shelterSections, ...externalSections]) {
     if (s[0] === "header") {
-      layoutSection = generateSectionLayout(root, s[1]);
+      layoutSection = generateSectionLayout(s[1]);
+      layout.push(layoutSection);
       continue;
     }
 
     if (s[0] === "section") {
-      const { layout, mapping } = internalGenerateLayoutAndMappings(s, layoutSection);
-      Object.assign(mappings, mapping);
-      layouts[layout.key] = layout;
-
+      layoutSection.layout.push(internalGenerateLayout(s, layoutSection));
       continue;
     }
   }
 
-  return { layouts, mappings };
+  return layout;
 }
 
 export async function initSettings() {
@@ -252,118 +217,17 @@ async function legacyInjectSettings() {
 }
 
 async function injectSettings() {
-  const FluxDispatcher = await getDispatcher();
+  const partialRoot = await exfiltrate("buildLayout", true, (v) => v.key === "$Root");
+  const unpatch = after("buildLayout", partialRoot, function (args, layout) {
+    // insert layout after activity section, otherwise before the log out button
+    const activityIndex = layout.findIndex(({ key }) => key === "activity_section");
+    const insertIndex = activityIndex === -1 ? layout.length - 1 : activityIndex + 1;
 
-  let canceled = false;
-  let stopPrevious: () => void;
-
-  const cb = async () => {
-    stopPrevious?.();
-
-    // wait for lazy loading on initial user settings open
-    const sidebar = await new Promise<Element | void>((res) => {
-      const trackCallback = (p: any) => {
-        if (p.event === "settings_pane_viewed" && p.properties.settings_type === "user") {
-          res(document.querySelector("[data-list-id=settings-sidebar]"));
-        }
-      };
-      FluxDispatcher.subscribe("TRACK", trackCallback);
-
-      // fallback in case track dispatches are disabled (e.g. BD's DoNotTrack)
-      const unobserve = observe("[data-list-id=settings-sidebar]", res);
-      setTimeout(unobserve, 3_000);
-
-      stopPrevious = () => {
-        FluxDispatcher.unsubscribe("TRACK", trackCallback);
-        unobserve();
-        res();
-      };
-    });
-
-    if (!sidebar || canceled) return;
-
-    const sidebarDirectoryFiber = reactFiberWalker(
-      getFiber(document.querySelector("[data-list-id=settings-sidebar]")),
-      "root",
-      true,
-    );
-
-    const directoryFiber = getFiber(
-      document.querySelector("[data-list-id=settings-sidebar]").parentElement.parentElement,
-    ).return;
-
-    // this function gets assigned by something else later on. That's why patcher wouldn't work here.
-    const originalType = sidebarDirectoryFiber.type as Function;
-    Object.defineProperty(sidebarDirectoryFiber, "type", {
-      get: () =>
-        function () {
-          const settings = arguments[0];
-
-          const { layouts, mappings } = generateLayoutsAndMappings(settings.root);
-
-          // for (const [key, val] of Object.entries(mappings)) {
-          //   settings.directory.map.set(key, val);
-          // }
-
-          // remove shelter sections that were unregistered
-          settings.root.layout = settings.root.layout.filter(
-            ({ key }) =>
-              !key.startsWith(LAYOUT_PREFIX) || Object.values(layouts).some((other: any) => other.key === key),
-          );
-
-          // ignore duplicates
-          const filteredLayouts = Object.values(layouts).filter(
-            ({ key }) => !settings.root.layout.some((other) => other.key === key),
-          );
-
-          // insert layout after activity section, otherwise before the log out button
-          const activityIndex = settings.root.layout.findIndex(({ key }) => key === "activity_section");
-          const insertIndex = activityIndex === -1 ? settings.root.layout.length - 1 : activityIndex + 1;
-
-          settings.root.layout.splice(insertIndex, 0, ...filteredLayouts);
-
-          return originalType.apply(this, arguments);
-        },
-      set: () => {},
-    });
-
-    // const originalDirectoryType = directoryFiber.type as Function;
-    // Object.defineProperty(directoryFiber, "type", {
-    //   get: () =>
-    //     function () {
-    //       console.log("myPatch", arguments);
-
-    //       const settings = arguments[0];
-
-    //       const { layouts, mappings } = generateLayoutsAndMappings(settings.root);
-    //       for (const [key, val] of Object.entries(mappings)) {
-    //         settings.accessibleDirectory.map.set(key, val);
-    //         settings.visibleDirectory.map.set(key, val);
-    //       }
-
-    //       return originalDirectoryType.apply(this, arguments);
-    //     },
-    //   set: () => {},
-    // });
-
-    refreshSidebarSections();
-  };
-
-  FluxDispatcher.subscribe("USER_SETTINGS_MODAL_OPEN", cb);
-
-  return () => {
-    FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
-    canceled = true;
-  };
-}
-
-function refreshSidebarSections() {
-  document.querySelectorAll("[class^=searchBarContainer] input").forEach((searchInput) => {
-    const props = getProps(searchInput);
-    const oldValue = props.value;
-    props.onChange({ currentTarget: { value: " " } });
-    setTimeout(() => props.onChange({ currentTarget: { value: oldValue } }));
+    layout.splice(insertIndex, 0, ...buildLayout());
+    return layout;
   });
+
+  return () => unpatch?.();
 }
 
 function legacyRerenderSidebar() {
@@ -376,7 +240,6 @@ function registerSectionInternal(sec: SettingsSection, injector: boolean) {
 
   secs.push(sec);
   legacyRerenderSidebar();
-  refreshSidebarSections();
 
   return () => {
     const idx = secs.indexOf(sec);
@@ -384,7 +247,6 @@ function registerSectionInternal(sec: SettingsSection, injector: boolean) {
 
     secs.splice(idx, 1);
     legacyRerenderSidebar();
-    refreshSidebarSections();
   };
 }
 
