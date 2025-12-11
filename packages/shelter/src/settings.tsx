@@ -79,7 +79,7 @@ function internalGenerateLayoutAndMappings(sectionItem: SettingsSection, layoutS
     trailing: undefined,
     key: `${LAYOUT_PREFIX}_${id}_sidebar_item`,
     layout: [],
-    legacySearchKey: `${LAYOUT_PREFIX}_${id.toUpperCase()}`,
+    getLegacySearchKey: () => `${LAYOUT_PREFIX}_${id.toUpperCase()}`,
     parent: layoutSection,
     type: 2,
     useTitle: () => name,
@@ -89,15 +89,15 @@ function internalGenerateLayoutAndMappings(sectionItem: SettingsSection, layoutS
 
   if (sectionItem[4]?.badgeCount) {
     layoutSidebarItem.trailing = {
-      type: 2, // BADGE_COUNT
+      type: 1, // BADGE_COUNT
       useCount: () => sectionItem[4].badgeCount,
     };
   }
 
   if (sectionItem[4]?.customDecoration) {
     layoutSidebarItem.trailing = {
-      type: 3, // STRONGLY_DISCOURAGED_CUSTOM
-      useDecoration: (visibleContent, isSelected) => (
+      type: 2, // STRONGLY_DISCOURAGED_CUSTOM
+      useCustomDecoration: (visibleContent, isSelected) => (
         <SolidInReactBridge comp={sectionItem[4].customDecoration} props={{ visibleContent, isSelected }} />
       ),
     };
@@ -109,18 +109,19 @@ function internalGenerateLayoutAndMappings(sectionItem: SettingsSection, layoutS
     parent: layoutSidebarItem,
     type: 3,
     useTitle: () => name,
+    StronglyDiscouragedCustomComponent: () => <SolidInReactBridge comp={pane} />,
   };
 
-  const layoutPane = {
-    key: `${LAYOUT_PREFIX}_${id}_pane`,
-    layout: [],
-    parent: layoutPanel,
-    render: () => <SolidInReactBridge comp={pane} />,
-    type: 4,
-    useTitle: () => name,
-  };
+  // const layoutPane = {
+  //   key: `${LAYOUT_PREFIX}_${id}_pane`,
+  //   layout: [],
+  //   parent: layoutPanel,
+  //   render: () => <SolidInReactBridge comp={pane} />,
+  //   type: 4,
+  //   useTitle: () => name,
+  // };
 
-  layoutPanel.layout.push(layoutPane);
+  // layoutPanel.layout.push(layoutPane);
   layoutSidebarItem.layout.push(layoutPanel);
   layoutSection.layout.push(layoutSidebarItem);
 
@@ -130,16 +131,16 @@ function internalGenerateLayoutAndMappings(sectionItem: SettingsSection, layoutS
     },
     [layoutSidebarItem.key]: {
       node: layoutSidebarItem,
-      targetPanelKey: layoutPanel.key,
+      parentPanelKey: layoutPanel.key,
     },
     [layoutPanel.key]: {
       node: layoutPanel,
-      targetPanelKey: layoutPanel.key,
+      parentPanelKey: layoutPanel.key,
     },
-    [layoutPane.key]: {
-      node: layoutPane,
-      targetPanelKey: layoutPanel.key,
-    },
+    // [layoutPane.key]: {
+    //   node: layoutPane,
+    //   parentPanelKey: layoutPanel.key,
+    // },
   };
 
   return { layout: layoutSection, mapping };
@@ -151,7 +152,7 @@ function generateSectionLayout(root: any, sectionName: string) {
     layout: [],
     parent: root,
     type: 1,
-    useLabel: () => sectionName,
+    useTitle: () => sectionName,
   };
 }
 
@@ -283,9 +284,13 @@ async function injectSettings() {
 
     const sidebarDirectoryFiber = reactFiberWalker(
       getFiber(document.querySelector("[data-list-id=settings-sidebar]")),
-      "directory",
+      "root",
       true,
     );
+
+    const directoryFiber = getFiber(
+      document.querySelector("[data-list-id=settings-sidebar]").parentElement.parentElement,
+    ).return;
 
     // this function gets assigned by something else later on. That's why patcher wouldn't work here.
     const originalType = sidebarDirectoryFiber.type as Function;
@@ -296,9 +301,9 @@ async function injectSettings() {
 
           const { layouts, mappings } = generateLayoutsAndMappings(settings.root);
 
-          for (const [key, val] of Object.entries(mappings)) {
-            settings.directory.map.set(key, val);
-          }
+          // for (const [key, val] of Object.entries(mappings)) {
+          //   settings.directory.map.set(key, val);
+          // }
 
           // remove shelter sections that were unregistered
           settings.root.layout = settings.root.layout.filter(
@@ -321,6 +326,25 @@ async function injectSettings() {
         },
       set: () => {},
     });
+
+    // const originalDirectoryType = directoryFiber.type as Function;
+    // Object.defineProperty(directoryFiber, "type", {
+    //   get: () =>
+    //     function () {
+    //       console.log("myPatch", arguments);
+
+    //       const settings = arguments[0];
+
+    //       const { layouts, mappings } = generateLayoutsAndMappings(settings.root);
+    //       for (const [key, val] of Object.entries(mappings)) {
+    //         settings.accessibleDirectory.map.set(key, val);
+    //         settings.visibleDirectory.map.set(key, val);
+    //       }
+
+    //       return originalDirectoryType.apply(this, arguments);
+    //     },
+    //   set: () => {},
+    // });
 
     refreshSidebarSections();
   };
