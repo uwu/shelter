@@ -24,7 +24,7 @@
   height: 40px;
   border-radius: var(--radius-xl);
   background-color: var(--background-base-lowest);
-  color: var(--interactive-normal);
+  color: var(--interactive-text-default);
 }
 
 .header,
@@ -41,7 +41,7 @@
 
 .caret {
   margin-left: auto;
-  color: var(--interactive-normal);
+  color: var(--interactive-text-default);
 }
 
 .section {

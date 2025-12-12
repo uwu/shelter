@@ -31,7 +31,8 @@
 
 .tbox:focus,
 .tarea:focus {
-  border-color: var(--text-link);
+  outline: 2px solid var(--input-border-active);
+  outline-offset: -2px;
 }
 
 .tarea {

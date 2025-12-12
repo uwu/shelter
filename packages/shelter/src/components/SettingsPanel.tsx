@@ -38,7 +38,7 @@ export const SettingsPanel = (props: SettingsPanelProps) => {
             tag={TextTags.textSM}
             weight={TextWeights.medium}
             style={{
-              color: "var(--interactive-normal)",
+              color: "var(--interactive-text-default)",
             }}
           >
             {props.description}
