@@ -3,7 +3,6 @@ import { classes } from "./modals.tsx.scss";
 import { Header, HeaderTags } from "./header";
 import { Button, ButtonColors, ButtonLooks, ButtonSizes } from "./button";
 import { openModal } from "./openModal";
-import { IconClose } from "./icons";
 import { focusring } from "./focusring";
 import { tooltip } from "./tooltip";
 false && focusring;

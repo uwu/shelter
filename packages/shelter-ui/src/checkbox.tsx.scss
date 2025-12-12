@@ -40,8 +40,8 @@
   color: transparent;
 
   &.active {
-    border-color: var(--checkbox-border-checked);
-    background: var(--checkbox-background-checked);
+    border-color: var(--checkbox-border-default); // Why do they set this again? who knows.
+    background: var(--checkbox-background-selected-default);
     color: var(--white);
   }
 }

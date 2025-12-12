@@ -9,166 +9,121 @@ false && tooltip;
 
 export const ButtonLooks = {
   FILLED: classes.filled,
-  INVERTED: classes.inverted,
-  OUTLINED: classes.outlined,
-  LINK: classes.link,
-  //BLANK,
+  INVERTED: classes.filled, // alias for filled for backwards compatibility
+  OUTLINED: classes.filled, // all these do not exist in the current design system (Mana)
+  LINK: classes.filled, // This is handled by LinkButton instead
 };
 
-/**
- * [[background, color, hover:background, active:background, border-color], [background, color, hover:background, active:background, border-color]]
- */
-type ButtonColor = [[string, string, string, string, string], [string, string, string, string, string], string];
+type ButtonColor = {
+  backgroundDefault: string;
+  backgroundHover: string;
+  backgroundActive: string;
+  textColorDefault: string;
+  textColorHover: string;
+  textColorActive: string;
+  borderColorDefault: string;
+  borderColorHover: string;
+  borderColorActive: string;
+};
 
-// discord actually has `null` as the bg for white & link hovers which is funny
-// also they have tons of overloads for red and green which is equally funny
-// and the only thing better than a brand coloured buttons is a brand_new coloured button!!! -- sink
-export const ButtonColors = {
-  // COLOUR: [filled][bg, fg, hover, active, border], [outline][bg, fg, hover, active, border], [link]
-  BRAND: [
-    [
-      "var(--button-filled-brand-background)",
-      "var(--button-filled-brand-text)",
-      "var(--button-filled-brand-background-hover)",
-      "var(--button-filled-brand-background-active)",
-      "var(--button-filled-brand-border)",
-    ],
-    [
-      "var(--button-outline-brand-background)",
-      "var(--button-outline-brand-text)",
-      "var(--button-outline-brand-background-hover)",
-      "var(--button-outline-brand-background-active)",
-      "var(--button-outline-brand-border)",
-    ],
-    "var(--brand-500)",
-  ],
-
-  RED: [
-    [
-      "var(--button-danger-background)",
-      "var(--white)",
-      "var(--button-danger-background-hover)",
-      "var(--button-danger-background-active)",
-      "var(--button-danger-border)",
-    ],
-    [
-      "var(--button-outline-danger-background)",
-      "var(--button-outline-danger-text)",
-      "var(--button-outline-danger-background-hover)",
-      "var(--button-outline-danger-background-active)",
-      "var(--button-outline-danger-border)",
-    ],
-    "var(--text-danger)",
-  ],
-
-  GREEN: [
-    [
-      "var(--button-positive-background)",
-      "var(--white)",
-      "var(--button-positive-background-hover)",
-      "var(--button-positive-background-active)",
-      "var(--button-positive-border)",
-    ],
-    [
-      "none",
-      "var(--button-outline-positive-text)",
-      "var(--button-outline-positive-background-hover)",
-      "var(--button-outline-positive-background-active)",
-      "var(--button-outline-positive-border)",
-    ],
-    "var(--green-360)",
-  ],
-
-  PRIMARY: [
-    [
-      "var(--button-secondary-background)",
-      "var(--button-secondary-text)",
-      "var(--button-secondary-background-hover)",
-      "var(--button-secondary-background-active)",
-      "var(--border-faint)",
-    ],
-    [
-      "none",
-      "var(--button-outline-primary-text)",
-      "var(--button-outline-primary-background-hover)",
-      "var(--button-outline-primary-background-active)",
-      "var(--button-outline-primary-border)",
-    ],
-    "var(--brand-360)",
-  ],
-  // Alias of primary for backwards compatibility
-  SECONDARY: [
-    [
-      "var(--button-secondary-background)",
-      "var(--button-secondary-text)",
-      "var(--button-secondary-background-hover)",
-      "var(--button-secondary-background-active)",
-      "var(--border-faint)",
-    ],
-    [
-      "none",
-      "var(--button-outline-primary-text)",
-      "var(--button-outline-primary-background-hover)",
-      "var(--button-outline-primary-background-active)",
-      "var(--button-outline-primary-border)",
-    ],
-    "var(--brand-360)",
-  ],
-
-  LINK: [
-    ["var(--text-link)", "var(--white)", "var(--blue-500)", "var(--blue-530)", "var(--opacity-white-8)"],
-    ["none", "var(--text-link)", "none", "none", "var(--text-link)"],
-    "var(--brand-360)",
-  ],
-
-  WHITE: [
-    [
-      "var(--button-filled-white-background)",
-      "var(--button-filled-white-text)",
-      "var(--button-filled-white-background-hover)",
-      "var(--button-filled-white-background-active)",
-      "var(--opacity-8)",
-    ],
-    ["none", "var(--white)", "none", "var(--control-border-overlay-primary-active)", "var(--white)"],
-    "var(--white)",
-  ],
-
-  TRANSPARENT: [
-    [
-      "var(--button-transparent-background)",
-      "var(--button-transparent-text)",
-      "var(--button-transparent-background-hover)",
-      "var(--button-transparent-background-active)",
-      "var(--border-faint)",
-    ],
-    [
-      "none",
-      "var(--text-default)",
-      "none",
-      "var(--button--outline--transparent-background-active",
-      "var(--primary-200)",
-    ],
-    "var(--text-default)",
-  ],
-  // Alias of transparent for backwards compatibility
-  BLACK: [
-    [
-      "var(--button-transparent-background)",
-      "var(--button-transparent-text)",
-      "var(--button-transparent-background-hover)",
-      "var(--button-transparent-background-active)",
-      "var(--border-faint)",
-    ],
-    [
-      "none",
-      "var(--text-default)",
-      "none",
-      "var(--button--outline--transparent-background-active",
-      "var(--primary-200)",
-    ],
-    "var(--text-default)",
-  ],
+const InternalButtonColors = {
+  PRIMARY: {
+    backgroundDefault: "var(--control-primary-background-default)",
+    backgroundHover: "var(--control-primary-background-hover)",
+    backgroundActive: "var(--control-primary-background-active)",
+    textColorDefault: "var(--control-primary-text-default)",
+    textColorHover: "var(--control-primary-text-hover)",
+    textColorActive: "var(--control-primary-text-active)",
+    borderColorDefault: "var(--control-primary-border-default)",
+    borderColorHover: "var(--control-primary-border-hover)",
+    borderColorActive: "var(--control-primary-border-active)",
+  },
+  SECONDARY: {
+    backgroundDefault: "var(--control-secondary-background-default)",
+    backgroundHover: "var(--control-secondary-background-hover)",
+    backgroundActive: "var(--control-secondary-background-active)",
+    textColorDefault: "var(--control-secondary-text-default)",
+    textColorHover: "var(--control-secondary-text-hover)",
+    textColorActive: "var(--control-secondary-text-active)",
+    borderColorDefault: "var(--control-secondary-border-default)",
+    borderColorHover: "var(--control-secondary-border-hover)",
+    borderColorActive: "var(--control-secondary-border-active)",
+  },
+  CRITICAL_PRIMARY: {
+    backgroundDefault: "var(--control-critical-primary-background-default)",
+    backgroundHover: "var(--control-critical-primary-background-hover)",
+    backgroundActive: "var(--control-critical-primary-background-active)",
+    textColorDefault: "var(--control-critical-primary-text-default)",
+    textColorHover: "var(--control-critical-primary-text-hover)",
+    textColorActive: "var(--control-critical-primary-text-active)",
+    borderColorDefault: "var(--control-critical-primary-border-default)",
+    borderColorHover: "var(--control-critical-primary-border-hover)",
+    borderColorActive: "var(--control-critical-primary-border-active)",
+  },
+  CRITICAL_SECONDARY: {
+    backgroundDefault: "var(--control-critical-secondary-background-default)",
+    backgroundHover: "var(--control-critical-secondary-background-hover)",
+    backgroundActive: "var(--control-critical-secondary-background-active)",
+    textColorDefault: "var(--control-critical-secondary-text-default)",
+    textColorHover: "var(--control-critical-secondary-text-hover)",
+    textColorActive: "var(--control-critical-secondary-text-active)",
+    borderColorDefault: "var(--control-critical-secondary-border-default)",
+    borderColorHover: "var(--control-critical-secondary-border-hover)",
+    borderColorActive: "var(--control-critical-secondary-border-active)",
+  },
+  ACTIVE: {
+    backgroundDefault: "var(--control-connect-background-default)",
+    backgroundHover: "var(--control-connect-background-hover)",
+    backgroundActive: "var(--control-connect-background-active)",
+    textColorDefault: "var(--control-connect-text-default)",
+    textColorHover: "var(--control-connect-text-hover)",
+    textColorActive: "var(--control-connect-text-active)",
+    borderColorDefault: "var(--control-connect-border-default)",
+    borderColorHover: "var(--control-connect-border-hover)",
+    borderColorActive: "var(--control-connect-border-active)",
+  },
+  OVERLAY_PRIMARY: {
+    backgroundDefault: "var(--control-overlay-primary-background-default)",
+    backgroundHover: "var(--control-overlay-primary-background-hover)",
+    backgroundActive: "var(--control-overlay-primary-background-active)",
+    textColorDefault: "var(--control-overlay-primary-text-default)",
+    textColorHover: "var(--control-overlay-primary-text-hover)",
+    textColorActive: "var(--control-overlay-primary-text-active)",
+    borderColorDefault: "var(--control-overlay-primary-border-default)",
+    borderColorHover: "var(--control-overlay-primary-border-hover)",
+    borderColorActive: "var(--control-overlay-primary-border-active)",
+  },
+  OVERLAY_SECONDARY: {
+    backgroundDefault: "var(--control-overlay-secondary-background-default)",
+    backgroundHover: "var(--control-overlay-secondary-background-hover)",
+    backgroundActive: "var(--control-overlay-secondary-background-active)",
+    textColorDefault: "var(--control-overlay-secondary-text-default)",
+    textColorHover: "var(--control-overlay-secondary-text-hover)",
+    textColorActive: "var(--control-overlay-secondary-text-active)",
+    borderColorDefault: "var(--control-overlay-secondary-border-default)",
+    borderColorHover: "var(--control-overlay-secondary-border-hover)",
+    borderColorActive: "var(--control-overlay-secondary-border-active)",
+  },
 } satisfies Record<string, ButtonColor>;
+
+export const ButtonColors = {
+  PRIMARY: "PRIMARY",
+  SECONDARY: "SECONDARY",
+  CRITICAL_PRIMARY: "CRITICAL_PRIMARY",
+  CRITICAL_SECONDARY: "CRITICAL_SECONDARY",
+  ACTIVE: "ACTIVE",
+  OVERLAY_PRIMARY: "OVERLAY_PRIMARY",
+  OVERLAY_SECONDARY: "OVERLAY_SECONDARY",
+
+  // Aliases for old design system
+  BRAND: "PRIMARY",
+  RED: "CRITICAL_PRIMARY",
+  GREEN: "ACTIVE",
+  LINK: "PRIMARY", // This really doesnt map to anything. Just use PRIMARY cause its basically blue?
+  WHITE: "OVERLAY_PRIMARY",
+  TRANSPARENT: "SECONDARY",
+  BLACK: "OVERLAY_SECONDARY",
+} satisfies Record<string, string>;
 
 /**
  * [width, height, class]
@@ -190,7 +145,7 @@ export const ButtonSizes = {
 
 type ButtonProps = {
   look?: string;
-  color?: ButtonColor;
+  color?: string;
   size?: ButtonSize;
   /**
    * Fill width
@@ -240,8 +195,7 @@ export const Button: NativeExtendingComponent<ButtonProps, JSX.ButtonHTMLAttribu
 
   ensureInternalStyle(css);
 
-  const isOutlined = local.look === ButtonLooks.OUTLINED ? 1 : 0;
-  const isLink = local.look === ButtonLooks.LINK; // toon link
+  const colorVars = InternalButtonColors[local.color];
 
   return (
     <button
@@ -251,11 +205,18 @@ export const Button: NativeExtendingComponent<ButtonProps, JSX.ButtonHTMLAttribu
       style={{
         "--shltr-btn-w": local.size[0],
         "--shltr-btn-h": local.size[1],
-        "--shltr-btn-bg": local.color[isOutlined][0],
-        "--shltr-btn-col": isLink ? local.color[2] : local.color[isOutlined][1],
-        "--shltr-btn-bg-hov": local.color[isOutlined][2],
-        "--shltr-btn-bg-act": local.color[isOutlined][3],
-        "--shltr-btn-border": local.color[isOutlined][4],
+
+        "--shltr-btn-bg": colorVars.backgroundDefault,
+        "--shltr-btn-bg-hov": colorVars.backgroundHover,
+        "--shltr-btn-bg-act": colorVars.backgroundActive,
+
+        "--shltr-btn-col": colorVars.textColorDefault,
+        "--shltr-btn-col-hov": colorVars.textColorHover,
+        "--shltr-btn-col-act": colorVars.textColorActive,
+
+        "--shltr-btn-border": colorVars.borderColorDefault,
+        "--shltr-btn-border-hov": colorVars.borderColorHover,
+        "--shltr-btn-border-act": colorVars.borderColorActive,
         ...local.style,
       }}
       {...buttonProps}

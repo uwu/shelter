@@ -7,7 +7,7 @@
   height: var(--shltr-btn-h);
   min-height: var(--shltr-btn-h);
   padding: 2px 16px;
-  border: 1px solid var(--opacity-white-8);
+  border: 1px solid transparent;
   border-radius: 8px;
   background: none;
   font-weight: 500;
@@ -15,60 +15,38 @@
   line-height: 16px;
   white-space: nowrap;
   cursor: pointer;
-  // note: the base button uses --custom-button-transition-duration (170ms), but it is later overridden to 200ms anyway
-  transition:
-    background-color var(--custom-button-transition-duration) ease,
-    color var(--custom-button-transition-duration) ease;
-  transition-duration: .2s; // pls discord why
+  transition: background-color 50ms ease-in, color 50ms ease-in, border-color 50ms ease-in, opacity 50ms ease-in;
   user-select: none;
 
   &[disabled] {
     cursor: not-allowed;
     opacity: .5;
+    pointer-events: none;
   }
 
   &.grow {
     width: auto;
   }
 
-  &.filled,
-  &.outlined {
+  &:hover {
+    transition: background-color .15s ease-out, color .15s ease-out, border-color .15s ease-out, opacity .15s ease-out;
+  }
+
+  &.filled {
     border-color: var(--shltr-btn-border);
     background: var(--shltr-btn-bg);
     color: var(--shltr-btn-col);
 
     &:hover:not([disabled]) {
+      border-color: var(--shltr-btn-border-hov);
       background: var(--shltr-btn-bg-hov);
+      color: var(--shltr-btn-col-hov);
     }
 
     &:active {
+      border-color: var(--shltr-btn-border-act) !important;
       background: var(--shltr-btn-bg-act) !important;
-    }
-  }
-
-  // This is wrong, inverted doesn't exist as a button color anymore, but we should still respect it for backwards compatibility
-  &.inverted {
-    border-color: var(--shltr-btn-border);
-    background: var(--shltr-btn-col);
-    color: var(--shltr-btn-bg);
-
-    &:hover:not([disabled]) {
-      background: var(--button-filled-white-background-hover);
-    }
-
-    &:active {
-      background: var(--button-filled-white-background-active) !important;
-    }
-  }
-
-  &.link {
-    border-color: transparent;
-    background: transparent;
-    color: var(--shltr-btn-col);
-
-    &:hover {
-      text-decoration: underline;
-      text-decoration-color: var(--shltr-btn-col);
+      color: var(--shltr-btn-col-act) !important;
     }
   }
 
@@ -93,7 +71,7 @@
 }
 
 .linkbutton {
-  color: var(--text-link);
+  color: var(--text-brand);
 
   &:hover {
     text-decoration: underline;

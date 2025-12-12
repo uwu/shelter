@@ -17,7 +17,7 @@ const FocusRing: Component<{ x: number; y: number; width: number; height: number
       top: props.y + "px",
       width: props.width + "px",
       height: props.height + "px",
-      outline: "var(--focus-primary) solid",
+      outline: "var(--focus-primary, #00b0f4) solid", // why not just use the CSS variable??? discord please :sob:
       "pointer-events": "none",
       "outline-offset": "3px",
       "border-radius": props.rad + "px",
