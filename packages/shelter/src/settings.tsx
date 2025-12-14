@@ -7,6 +7,8 @@ import { Component, createMemo, createSignal, For, createEffect } from "solid-js
 import Settings from "./components/Settings";
 import { createPersistenceHelper } from "@uwu/shelter-ui";
 
+//#region section management and setup
+
 function SettingsIcon() {
   return (
     <svg
@@ -79,6 +81,10 @@ export function removeAllSections() {
   setExternalSectionsSig([]);
 }
 
+//#endregion
+
+//#region settings item component
+
 // cache these!
 const [templatesReady, setTemplatesReady] = createSignal(false);
 let buttonTemplate: Element;
@@ -113,7 +119,11 @@ function SettingsItem(props: { type: "divider" | "header" | "section"; children?
   return node;
 }
 
+//#endregion
+
 export async function initSettings() {
+  //#region init flux code
+
   const FluxDispatcher = await getDispatcher();
 
   let canceled = false;
@@ -128,6 +138,8 @@ export async function initSettings() {
     unpatch?.();
   };
 
+  //#endregion
+
   // this function is called each time flux fires for a settings open
   async function openModalCb() {
     debugger;
@@ -139,6 +151,8 @@ export async function initSettings() {
     createEffect(() => {
       console.log("updated selected shelter settings section to", selectedShelterSection());
     });
+
+    //#region sidebar injection
 
     const filteredSections = createMemo(() => {
       if (!currentSearchTerm()) return allSections();
@@ -267,6 +281,8 @@ export async function initSettings() {
       const gennedSections = generatedSettingsSections();
       targetSeparator.before((<PersistenceHelper />) as Element, gennedSections);
     });
+
+    //#endregion
 
     await injectSidebar();
   }
