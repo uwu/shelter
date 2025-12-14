@@ -1,7 +1,7 @@
 {
   "name": "@uwu/shelter-ui",
   "description": "Discord components remade for shelter",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "author": "uwu.network",
   "homepage": "https://shelter.uwu.network/",
   "repository": "github:uwu/shelter",
@@ -10,7 +10,7 @@
   "module": "dist/index.jsx",
   "types": "dist/index.d.ts",
   "scripts": {
-    "prepare": "tsc && node esbuild.mjs"
+    "prepare": "rimraf dist && tsc && node esbuild.mjs"
   },
   "devDependencies": {
     "esbuild": "^0.20.1",
