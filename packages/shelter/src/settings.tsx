@@ -1,13 +1,11 @@
 // Injects a section into user settings
 
 import { getDispatcher } from "./flux";
-import { getFiber, getFiberOwner, reactFiberWalker } from "./util";
+import { log } from "./util";
 import { observe } from "./observer";
-import { Component } from "solid-js";
-import { SolidInReactBridge } from "./bridges";
+import { Component, createMemo, createSignal, For, createEffect } from "solid-js";
 import Settings from "./components/Settings";
-import { after } from "spitroast";
-import exfiltrate from "./exfiltrate";
+import { createPersistenceHelper } from "@uwu/shelter-ui";
 
 function SettingsIcon() {
   return (
@@ -45,215 +43,26 @@ const shelterSections: SettingsSection[] = [
   ["section", "settings", "Settings", Settings, { icon: SettingsIcon }],
 ];
 
-let injectorSections: SettingsSection[] = [];
+const [injectorSections, setInjectorSectionsSig] = createSignal<SettingsSection[]>([], { equals: false });
 
-let externalSections: SettingsSection[] = [];
+const [externalSections, setExternalSectionsSig] = createSignal<SettingsSection[]>([], { equals: false });
 
-function legacyGeneratePredicateSections() {
-  return [...injectorSections, ...shelterSections, ...externalSections].map((s) => {
-    switch (s[0]) {
-      case "divider":
-        return { section: "DIVIDER" };
-      case "header":
-        return { section: "HEADER", label: s[1] };
-      case "button":
-        return { section: s[1], label: s[2], onClick: s[3] };
-
-      case "section":
-        return {
-          section: s[1],
-          label: s[2],
-          element: () => <SolidInReactBridge comp={s[3]} />,
-          ...(s[4] ?? {}),
-        };
-    }
-  });
-}
-
-const LAYOUT_PREFIX = "shelter";
-
-function internalGenerateLayout(sectionItem: SettingsSection, layoutSection: any) {
-  const [, id, name, pane] = sectionItem;
-
-  const layoutSidebarItem = {
-    icon: sectionItem[4]?.icon ? () => <SolidInReactBridge comp={sectionItem[4].icon} /> : () => {},
-    trailing: undefined,
-    key: `${LAYOUT_PREFIX}_${id}_sidebar_item`,
-    layout: [],
-    getLegacySearchKey: () => `${LAYOUT_PREFIX}_${id.toUpperCase()}`,
-    type: 2,
-    useTitle: () => name,
-  };
-
-  // TODO: can sanely support BADGE_NEW?
-
-  if (sectionItem[4]?.badgeCount) {
-    layoutSidebarItem.trailing = {
-      type: 1, // BADGE_COUNT
-      useCount: () => sectionItem[4].badgeCount,
-    };
-  }
-
-  if (sectionItem[4]?.customDecoration) {
-    layoutSidebarItem.trailing = {
-      type: 2, // STRONGLY_DISCOURAGED_CUSTOM
-      useCustomDecoration: (visibleContent, isSelected) => (
-        <SolidInReactBridge comp={sectionItem[4].customDecoration} props={{ visibleContent, isSelected }} />
-      ),
-    };
-  }
-
-  const layoutPanel = {
-    key: `${LAYOUT_PREFIX}_${id}_panel`,
-    layout: [],
-    type: 3,
-    useTitle: () => name,
-    StronglyDiscouragedCustomComponent: () => <SolidInReactBridge comp={pane} />,
-  };
-
-  layoutSidebarItem.layout.push(layoutPanel);
-  return layoutSidebarItem;
-}
-
-function generateSectionLayout(sectionName: string) {
-  return {
-    key: `${LAYOUT_PREFIX}_${sectionName.toLowerCase()}_section`,
-    layout: [],
-    type: 1,
-    useTitle: () => sectionName,
-  };
-}
-
-function buildLayout() {
-  const layout = [];
-  let layoutSection = generateSectionLayout("Unknown");
-
-  for (const s of [...injectorSections, ...shelterSections, ...externalSections]) {
-    if (s[0] === "header") {
-      layoutSection = generateSectionLayout(s[1]);
-      layout.push(layoutSection);
-      continue;
-    }
-
-    if (s[0] === "section") {
-      layoutSection.layout.push(internalGenerateLayout(s, layoutSection));
-      continue;
-    }
-  }
-
-  return layout;
-}
-
-export async function initSettings() {
-  const [uninjectLegacySettings, uninjectSettings] = await Promise.all([legacyInjectSettings(), injectSettings()]);
-
-  return () => {
-    uninjectLegacySettings();
-    uninjectSettings();
-  };
-}
-
-async function legacyInjectSettings() {
-  const FluxDispatcher = await getDispatcher();
-
-  // Force disable settings redesign experiment until the new injection method works without issues
-  FluxDispatcher.dispatch({
-    type: "APEX_EXPERIMENT_OVERRIDE_CREATE",
-    experimentName: "2025-09-user-settings-redesign-1",
-    variantId: -1,
-  });
-
-  let canceled = false;
-  let unpatch: () => void;
-  let stopPrevious: () => void;
-
-  const cb = async () => {
-    stopPrevious?.();
-
-    // wait for lazy loading on initial user settings open
-    const sidebar = await new Promise<Element | void>((res) => {
-      const trackCallback = (p: any) => {
-        if (p.event === "settings_pane_viewed" && p.properties.settings_type === "user") {
-          res(document.querySelector("nav > [role=tablist]"));
-        }
-      };
-      FluxDispatcher.subscribe("TRACK", trackCallback);
-
-      // fallback in case track dispatches are disabled (e.g. BD's DoNotTrack)
-      const unobserve = observe("nav > [role=tablist]", res);
-      setTimeout(unobserve, 3_000);
-
-      stopPrevious = () => {
-        FluxDispatcher.unsubscribe("TRACK", trackCallback);
-        unobserve();
-        res();
-      };
-    });
-
-    if (!sidebar || canceled) return;
-
-    const f = reactFiberWalker(
-      getFiber(sidebar),
-      (node) => typeof node?.type === "function" && node.type.prototype.getPredicateSections,
-      true,
-    );
-
-    if (typeof f?.type !== "function") return;
-
-    unpatch = after("getPredicateSections", f.type.prototype, (args, ret: any[]) => {
-      const changelogIdx = ret.findIndex((s) => s.section === "changelog");
-      if (changelogIdx === -1) return;
-
-      // -1 to go ahead of the divider above it
-      ret.splice(changelogIdx - 1, 0, ...legacyGeneratePredicateSections());
-    });
-
-    // trigger rerender for first load
-    legacyRerenderSidebar();
-
-    FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
-  };
-
-  FluxDispatcher.subscribe("USER_SETTINGS_MODAL_OPEN", cb);
-
-  return () => {
-    FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
-    canceled = true;
-    unpatch?.();
-  };
-}
-
-async function injectSettings() {
-  const partialRoot = await exfiltrate("buildLayout", true, (v) => v.key === "$Root");
-  const unpatch = after("buildLayout", partialRoot, function (args, layout) {
-    // insert layout after activity section, otherwise before the log out button
-    const activityIndex = layout.findIndex(({ key }) => key === "activity_section");
-    const insertIndex = activityIndex === -1 ? layout.length - 1 : activityIndex + 1;
-
-    layout.splice(insertIndex, 0, ...buildLayout());
-    return layout;
-  });
-
-  return () => unpatch?.();
-}
-
-function legacyRerenderSidebar() {
-  const sidebarParent = document.querySelector(`nav[class^="sidebar"]`);
-  getFiberOwner(sidebarParent)?.forceUpdate();
-}
+const allSections = createMemo(() => [...injectorSections(), ...shelterSections, ...externalSections()]);
 
 function registerSectionInternal(sec: SettingsSection, injector: boolean) {
-  const secs = injector ? injectorSections : externalSections;
+  const [target, setter] = injector
+    ? [injectorSections, setInjectorSectionsSig]
+    : [externalSections, setExternalSectionsSig];
 
-  secs.push(sec);
-  legacyRerenderSidebar();
+  target().push(sec);
+  setter(target());
 
   return () => {
-    const idx = secs.indexOf(sec);
+    const idx = target().indexOf(sec);
     if (idx === -1) return;
 
-    secs.splice(idx, 1);
-    legacyRerenderSidebar();
+    target().splice(idx, 1);
+    setter(target());
   };
 }
 
@@ -263,9 +72,202 @@ export const registerSection = (...sec: SettingsSection) => registerSectionInter
 export const registerInjSection = (...sec: SettingsSection) => registerSectionInternal(sec, true);
 
 export function setInjectorSections(secs: SettingsSection[]) {
-  injectorSections = secs;
+  setInjectorSectionsSig(secs);
 }
 
 export function removeAllSections() {
-  externalSections = [];
+  setExternalSectionsSig([]);
+}
+
+// cache these!
+const [templatesReady, setTemplatesReady] = createSignal(false);
+let buttonTemplate: Element;
+let buttonTemplateSelected: Element;
+let headerTemplate: Element;
+let dividerTemplate: Element;
+
+function SettingsItem(props: { type: "divider" | "header" | "section"; children?: string; onClick?: () => void }) {
+  const template = { divider: dividerTemplate, header: headerTemplate, section: buttonTemplate }[props.type];
+
+  const node = template.cloneNode(true) as Element;
+
+  if (props.type === "divider") return node;
+
+  if (props.type === "section") {
+    node.ariaLabel = props.children;
+    node.addEventListener("click", props.onClick);
+  }
+
+  // find the text node's parent
+  const childrenRec = node.querySelectorAll("*");
+  for (const child of childrenRec) {
+    if (child.firstChild instanceof Text) {
+      child.firstChild.textContent = props.children;
+      break;
+    }
+  }
+
+  // no element children? assign.
+  if (childrenRec.length === 0) node.textContent = props.children;
+
+  return node;
+}
+
+export async function initSettings() {
+  const FluxDispatcher = await getDispatcher();
+
+  let canceled = false;
+  let unpatch: () => void;
+  let stopPreviousLazyLoadWait: () => void;
+
+  FluxDispatcher.subscribe("USER_SETTINGS_MODAL_OPEN", openModalCb);
+
+  return () => {
+    FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", openModalCb);
+    canceled = true;
+    unpatch?.();
+  };
+
+  // this function is called each time flux fires for a settings open
+  async function openModalCb() {
+    debugger;
+
+    // hold all state for the current settings instance here, but don't do any injection here
+    const [currentSearchTerm, setCurrentSearchTerm] = createSignal<string>();
+    const [selectedShelterSection, setSelectedShelterSection] = createSignal<Component | undefined>();
+
+    createEffect(() => {
+      console.log("updated selected shelter settings section to", selectedShelterSection());
+    });
+
+    const filteredSections = createMemo(() => {
+      if (!currentSearchTerm()) return allSections();
+
+      return allSections().filter(
+        (sect) =>
+          (sect[0] === "section" || sect[0] === "button") &&
+          sect[2].toLowerCase().includes(currentSearchTerm().toLowerCase()),
+      );
+    });
+
+    // generate settings sections
+    const generatedSettingsSections = createMemo(() => {
+      if (!templatesReady()) return "";
+
+      return (
+        <div style="display: contents">
+          <For each={filteredSections()}>
+            {(section) => {
+              switch (section[0]) {
+                case "divider":
+                  return <SettingsItem type={section[0]} />;
+
+                case "header":
+                  const [, headerText] = section;
+                  return <SettingsItem type={section[0]}>{headerText}</SettingsItem>;
+
+                case "section":
+                  const [, _id, sectionText, sectionComponent, extras] = section;
+
+                  const sectionOnClick = () => setSelectedShelterSection(() => sectionComponent);
+
+                  return (
+                    <SettingsItem type={section[0]} onClick={sectionOnClick}>
+                      {sectionText}
+                    </SettingsItem>
+                  );
+
+                case "button":
+                  const [, _id2, btnText, btnOnClick] = section;
+                  return (
+                    <SettingsItem type="section" onClick={btnOnClick}>
+                      {btnText}
+                    </SettingsItem>
+                  );
+              }
+            }}
+          </For>
+        </div>
+      ) as HTMLDivElement;
+    });
+
+    // this function does the actual injection, and automatically reruns if react rips our shit off the DOM.
+    // add <PersistenceHelper /> instances wherever necessary
+    const injectSidebar = createPersistenceHelper(async (PersistenceHelper: Component) => {
+      debugger;
+
+      // wait for lazy loading on initial user settings open
+      stopPreviousLazyLoadWait?.();
+
+      const sidebar = await new Promise<HTMLElement | undefined>((res) => {
+        const obsCb = (e?: HTMLElement) => {
+          unobserve();
+          res(e);
+        };
+
+        const unobserve = observe("nav > [role=tablist]", obsCb);
+        setTimeout(unobserve, 5000);
+
+        stopPreviousLazyLoadWait = obsCb;
+      });
+
+      if (!sidebar || canceled) return;
+
+      sidebar.append((<PersistenceHelper />) as HTMLElement);
+
+      // get search bar
+      const searchBar = sidebar.querySelector("input");
+
+      if (searchBar) searchBar.oninput = () => setCurrentSearchTerm(searchBar.value);
+
+      // if we have a search injection, just put us at the top
+      // we don't need to find templates here because there should already
+      // have been an injection with no search term first
+      if (currentSearchTerm() && filteredSections().length) {
+        const searchResultsHeader = searchBar.nextElementSibling;
+
+        searchResultsHeader?.after((<PersistenceHelper />) as Element, generatedSettingsSections());
+
+        return;
+      }
+
+      // steal one of each element type
+      if (!templatesReady()) {
+        buttonTemplate ||= sidebar.querySelector("[role=tab]:not([class*=selected])") as HTMLElement;
+        buttonTemplateSelected ||= sidebar.querySelector("[role=tab][class*=selected]") as HTMLElement;
+        headerTemplate ||= sidebar.querySelector("[class*=header]") as HTMLElement;
+        dividerTemplate ||= sidebar.querySelector("[class*=separator]") as HTMLElement;
+
+        if (!buttonTemplate || !buttonTemplateSelected || !headerTemplate || !dividerTemplate) {
+          log(
+            [
+              "[Settings injection] Failed to find a template, bailing",
+              buttonTemplate,
+              buttonTemplateSelected,
+              headerTemplate,
+              dividerTemplate,
+            ],
+            "error",
+          );
+          return;
+        }
+        setTemplatesReady(true);
+      }
+
+      // we want to inject just before "What's New",
+      // the last separator is after log out, second to last is before it, third to last is before what's new
+
+      const targetSeparator = sidebar.querySelector(":nth-last-child(3 of [class*=separator])");
+
+      if (!targetSeparator) {
+        log("[Settings injection] Failed to find target separator, bailing", "error");
+        return;
+      }
+
+      const gennedSections = generatedSettingsSections();
+      targetSeparator.before((<PersistenceHelper />) as Element, gennedSections);
+    });
+
+    await injectSidebar();
+  }
 }
