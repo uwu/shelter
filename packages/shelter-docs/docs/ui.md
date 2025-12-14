@@ -54,6 +54,46 @@ solid.Component<{ children: JSX.Element }>
 elem.append(<ReactiveRoot>{/* ... */}</ReactiveRoot>);
 ```
 
+You won't always need it - for example inside of shelter settings and modals you won't need one, and if your elements
+do not have any lifecycle they might be fine,
+but if you're inserting solid elements directly into the document, and reactivity is being weird, wrap your inserted
+elements in one of these.
+
+### `createPersistenceHelper`
+
+::: details Type Signature
+```ts
+<T>(inject: (PersistenceHelper: solid.Component) => T): () => T
+```
+:::
+
+`createPersistenceHelper` helps you take advantage of the [cleanup reinsertion](/guides/patterns#cleanup-reinsertion)
+pattern, by giving you a `<PersistenceHelper />` component that you can place into the document as many times as you
+like, that will cause `inject` to be re-run if it gets removed.
+
+The example from the patterns page would look like this:
+
+```jsx
+function MyComponent() {
+  // ReactiveRoot optional but recommended if you
+  // encounter any weird reactivity issues without it
+  return (
+    <ReactiveRoot>
+      <h1>My Header</h1>
+    </ReactiveRoot>
+  )
+}
+
+const insertComponent = createPersistenceHelper((PersistenceHelper) => {
+  // see warning below
+  if (!isPluginEnabled) return;
+
+  const parent = document.querySelector(`[class*="whatever"]`)
+  parent?.append(<PersistenceHelper />, <MyComponent />)
+  // you should still probably handle the case where `parent` is missing...
+});
+```
+
 ### `injectCss`
 
 ::: details Type Signature

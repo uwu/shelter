@@ -206,6 +206,9 @@ function insertComponent() {
 }
 ```
 
+There's also a helper utility in shelter-ui called [createPersistenceHelper](/ui#createpersistencehelper) that makes
+this pattern slightly easier, especially for more complex manipulations than just adding one component to the page.
+
 ::: warning
 When using recursive methods in your plugins, make sure to check whether your instance of the plugin is still enabled otherwise it will continue to run after disabling the plugin.
 :::
