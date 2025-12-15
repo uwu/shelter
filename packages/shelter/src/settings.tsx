@@ -4,7 +4,7 @@ import { getDispatcher } from "./flux";
 import { getFiber, getFiberOwner, reactFiberWalker } from "./util";
 import { observe } from "./observer";
 import { Component } from "solid-js";
-import { SolidInReactBridge } from "./bridges";
+import { renderSolidInReact } from "./bridges";
 import Settings from "./components/Settings";
 import { after } from "spitroast";
 import exfiltrate from "./exfiltrate";
@@ -63,7 +63,7 @@ function legacyGeneratePredicateSections() {
         return {
           section: s[1],
           label: s[2],
-          element: () => <SolidInReactBridge comp={s[3]} />,
+          element: () => renderSolidInReact(s[3]),
           ...(s[4] ?? {}),
         };
     }
@@ -76,7 +76,7 @@ function internalGenerateLayout(sectionItem: SettingsSection, layoutSection: any
   const [, id, name, pane] = sectionItem;
 
   const layoutSidebarItem = {
-    icon: sectionItem[4]?.icon ? () => <SolidInReactBridge comp={sectionItem[4].icon} /> : () => {},
+    icon: sectionItem[4]?.icon ? () => renderSolidInReact(sectionItem[4].icon as Component) : () => {},
     trailing: undefined,
     key: `${LAYOUT_PREFIX}_${id}_sidebar_item`,
     layout: [],
@@ -97,9 +97,8 @@ function internalGenerateLayout(sectionItem: SettingsSection, layoutSection: any
   if (sectionItem[4]?.customDecoration) {
     layoutSidebarItem.trailing = {
       type: 2, // STRONGLY_DISCOURAGED_CUSTOM
-      useCustomDecoration: (visibleContent, isSelected) => (
-        <SolidInReactBridge comp={sectionItem[4].customDecoration} props={{ visibleContent, isSelected }} />
-      ),
+      useCustomDecoration: (visibleContent, isSelected) =>
+        renderSolidInReact(sectionItem[4].customDecoration as Component, { visibleContent, isSelected }),
     };
   }
 
@@ -108,7 +107,7 @@ function internalGenerateLayout(sectionItem: SettingsSection, layoutSection: any
     layout: [],
     type: 3,
     useTitle: () => name,
-    StronglyDiscouragedCustomComponent: () => <SolidInReactBridge comp={pane} />,
+    StronglyDiscouragedCustomComponent: () => renderSolidInReact(pane as Component),
   };
 
   layoutSidebarItem.layout.push(layoutPanel);
