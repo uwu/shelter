@@ -92,31 +92,45 @@ let buttonTemplateSelected: Element;
 let headerTemplate: Element;
 let dividerTemplate: Element;
 
-function SettingsItem(props: { type: "divider" | "header" | "section"; children?: string; onClick?: () => void }) {
-  const template = { divider: dividerTemplate, header: headerTemplate, section: buttonTemplate }[props.type];
+function SettingsItem(props: {
+  type: "divider" | "header" | "section";
+  children?: string;
+  onClick?: () => void;
+  selected?: boolean;
+}) {
+  // i do not love this memo but idk it feels necessary given how im ABUSING solid here
+  const node = createMemo(() => {
+    const template = {
+      divider: dividerTemplate,
+      header: headerTemplate,
+      section: props.selected ? buttonTemplateSelected : buttonTemplate,
+    }[props.type];
 
-  const node = template.cloneNode(true) as Element;
+    const node = template.cloneNode(true) as Element;
 
-  if (props.type === "divider") return node;
+    if (props.type === "divider") return node;
 
-  if (props.type === "section") {
-    node.ariaLabel = props.children;
-    node.addEventListener("click", props.onClick);
-  }
-
-  // find the text node's parent
-  const childrenRec = node.querySelectorAll("*");
-  for (const child of childrenRec) {
-    if (child.firstChild instanceof Text) {
-      child.firstChild.textContent = props.children;
-      break;
+    if (props.type === "section") {
+      node.ariaLabel = props.children;
+      node.addEventListener("click", props.onClick);
     }
-  }
 
-  // no element children? assign.
-  if (childrenRec.length === 0) node.textContent = props.children;
+    // find the text node's parent
+    const childrenRec = node.querySelectorAll("*");
+    for (const child of childrenRec) {
+      if (child.firstChild instanceof Text) {
+        child.firstChild.textContent = props.children;
+        break;
+      }
+    }
 
-  return node;
+    // no element children? assign.
+    if (childrenRec.length === 0) node.textContent = props.children;
+
+    return node;
+  });
+
+  return <>{node()}</>;
 }
 
 //#endregion
@@ -186,7 +200,11 @@ export async function initSettings() {
                   const sectionOnClick = () => setSelectedShelterSection(() => sectionComponent);
 
                   return (
-                    <SettingsItem type={section[0]} onClick={sectionOnClick}>
+                    <SettingsItem
+                      type={section[0]}
+                      onClick={sectionOnClick}
+                      selected={selectedShelterSection() === sectionComponent}
+                    >
                       {sectionText}
                     </SettingsItem>
                   );
@@ -205,10 +223,23 @@ export async function initSettings() {
       ) as HTMLDivElement;
     });
 
+    let buttonsToDisableSelectedStateOf: Element[];
+    let selectedClass: string;
+    let previouslySelectedButton: Element;
+
+    // do this outside of the persistence helper to prevent a memory leak
+    createEffect(() => {
+      if (selectedShelterSection() && selectedClass)
+        // there's other relevant differences than just the class but this works visually.
+        (previouslySelectedButton = buttonsToDisableSelectedStateOf?.find((b) =>
+          b.classList.contains(selectedClass),
+        ))?.classList.remove(selectedClass);
+    });
+
     // this function does the actual injection, and automatically reruns if react rips our shit off the DOM.
     // add <PersistenceHelper /> instances wherever necessary
     const injectSidebar = createPersistenceHelper(async (PersistenceHelper: Component) => {
-      debugger;
+      //debugger;
 
       // wait for lazy loading on initial user settings open
       stopPreviousLazyLoadWait?.();
@@ -220,7 +251,7 @@ export async function initSettings() {
         };
 
         const unobserve = observe("nav > [role=tablist]", obsCb);
-        setTimeout(unobserve, 5000);
+        setTimeout(unobserve, 15_000);
 
         stopPreviousLazyLoadWait = obsCb;
       });
@@ -237,49 +268,71 @@ export async function initSettings() {
       // if we have a search injection, just put us at the top
       // we don't need to find templates here because there should already
       // have been an injection with no search term first
+      let inject: () => void;
       if (currentSearchTerm() && filteredSections().length) {
         const searchResultsHeader = searchBar.nextElementSibling;
 
-        searchResultsHeader?.after((<PersistenceHelper />) as Element, generatedSettingsSections());
+        inject = () => searchResultsHeader?.after((<PersistenceHelper />) as Element, generatedSettingsSections());
+      } else {
+        // steal one of each element type
+        if (!templatesReady()) {
+          buttonTemplate ||= sidebar.querySelector("[role=tab]:not([class*=selected])").cloneNode(true) as HTMLElement;
+          buttonTemplateSelected ||= sidebar
+            .querySelector("[role=tab][class*=selected]")
+            .cloneNode(true) as HTMLElement;
+          headerTemplate ||= sidebar.querySelector("[class*=header]").cloneNode(true) as HTMLElement;
+          dividerTemplate ||= sidebar.querySelector("[class*=separator]").cloneNode(true) as HTMLElement;
 
-        return;
-      }
+          if (!buttonTemplate || !buttonTemplateSelected || !headerTemplate || !dividerTemplate) {
+            log(
+              [
+                "[Settings injection] Failed to find a template, bailing",
+                buttonTemplate,
+                buttonTemplateSelected,
+                headerTemplate,
+                dividerTemplate,
+              ],
+              "error",
+            );
+            return;
+          }
+          setTemplatesReady(true);
+        }
 
-      // steal one of each element type
-      if (!templatesReady()) {
-        buttonTemplate ||= sidebar.querySelector("[role=tab]:not([class*=selected])") as HTMLElement;
-        buttonTemplateSelected ||= sidebar.querySelector("[role=tab][class*=selected]") as HTMLElement;
-        headerTemplate ||= sidebar.querySelector("[class*=header]") as HTMLElement;
-        dividerTemplate ||= sidebar.querySelector("[class*=separator]") as HTMLElement;
+        // we want to inject just before "What's New",
+        // the last separator is after log out, second to last is before it, third to last is before what's new
 
-        if (!buttonTemplate || !buttonTemplateSelected || !headerTemplate || !dividerTemplate) {
-          log(
-            [
-              "[Settings injection] Failed to find a template, bailing",
-              buttonTemplate,
-              buttonTemplateSelected,
-              headerTemplate,
-              dividerTemplate,
-            ],
-            "error",
-          );
+        const targetSeparator = sidebar.querySelector(":nth-last-child(3 of [class*=separator])");
+
+        if (!targetSeparator) {
+          log("[Settings injection] Failed to find target separator, bailing", "error");
           return;
         }
-        setTemplatesReady(true);
+
+        inject = () => targetSeparator.before((<PersistenceHelper />) as Element, generatedSettingsSections());
       }
 
-      // we want to inject just before "What's New",
-      // the last separator is after log out, second to last is before it, third to last is before what's new
+      //debugger;
 
-      const targetSeparator = sidebar.querySelector(":nth-last-child(3 of [class*=separator])");
-
-      if (!targetSeparator) {
-        log("[Settings injection] Failed to find target separator, bailing", "error");
+      // turn off the currently selected button
+      selectedClass = buttonTemplateSelected.classList.values().find((c) => c.includes("selected"));
+      if (!selectedClass) {
+        log("[Settings injection] Failed to find selected item class, bailing", "error");
         return;
       }
 
-      const gennedSections = generatedSettingsSections();
-      targetSeparator.before((<PersistenceHelper />) as Element, gennedSections);
+      // find all buttons that arent ours and make them turn off our selected state
+      // we do this outside of the persistence helper function to prevent memory leaks.
+      buttonsToDisableSelectedStateOf = Array.from(sidebar.querySelectorAll("[role=tab]"));
+
+      buttonsToDisableSelectedStateOf.forEach((b) =>
+        b.addEventListener("click", function (this: Element) {
+          setSelectedShelterSection(undefined);
+          if (this === previouslySelectedButton) this.classList.add(selectedClass);
+        }),
+      );
+
+      inject();
     });
 
     //#endregion
