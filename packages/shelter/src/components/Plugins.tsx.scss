@@ -1,5 +1,3 @@
-$DIM: hsl(216, calc(var(--saturation-factor, 1) * 3.7%), 73.5%);
-
 .list {
   color: var(--text-default);
 }
@@ -23,7 +21,7 @@ $DIM: hsl(216, calc(var(--saturation-factor, 1) * 3.7%), 73.5%);
 .row {
   display: flex;
   align-items: center;
-  color: $DIM;
+  color: var(--text-subtle);
 
   strong,
   .author {
@@ -34,7 +32,7 @@ $DIM: hsl(216, calc(var(--saturation-factor, 1) * 3.7%), 73.5%);
 
 .desc {
   margin-top: 4px;
-  color: $DIM;
+  color: var(--text-subtle);
   font-size: .9em;
   line-height: 1.25;
 }
