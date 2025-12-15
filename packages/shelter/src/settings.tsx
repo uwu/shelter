@@ -3,7 +3,7 @@
 import { getDispatcher } from "./flux";
 import { log } from "./util";
 import { observe } from "./observer";
-import { Component, createMemo, createSignal, For, createEffect } from "solid-js";
+import { Component, createEffect, createMemo, createSignal, For } from "solid-js";
 import Settings from "./components/Settings";
 import { createPersistenceHelper } from "@uwu/shelter-ui";
 
@@ -159,7 +159,7 @@ export async function initSettings() {
     debugger;
 
     // hold all state for the current settings instance here, but don't do any injection here
-    const [currentSearchTerm, setCurrentSearchTerm] = createSignal<string>();
+    const [currentSearchTerm, setCurrentSearchTerm] = createSignal<string>("");
     const [selectedShelterSection, setSelectedShelterSection] = createSignal<Component | undefined>();
 
     createEffect(() => {
@@ -180,7 +180,7 @@ export async function initSettings() {
 
     // generate settings sections
     const generatedSettingsSections = createMemo(() => {
-      if (!templatesReady()) return "";
+      if (!templatesReady()) return (<div style="display: none" />) as HTMLDivElement;
 
       return (
         <div style="display: contents">
@@ -236,10 +236,12 @@ export async function initSettings() {
         ))?.classList.remove(selectedClass);
     });
 
+    let cancelPrevious: () => void;
+
     // this function does the actual injection, and automatically reruns if react rips our shit off the DOM.
     // add <PersistenceHelper /> instances wherever necessary
     const injectSidebar = createPersistenceHelper(async (PersistenceHelper: Component) => {
-      //debugger;
+      cancelPrevious?.();
 
       // wait for lazy loading on initial user settings open
       stopPreviousLazyLoadWait?.();
@@ -268,71 +270,101 @@ export async function initSettings() {
       // if we have a search injection, just put us at the top
       // we don't need to find templates here because there should already
       // have been an injection with no search term first
-      let inject: () => void;
-      if (currentSearchTerm() && filteredSections().length) {
-        const searchResultsHeader = searchBar.nextElementSibling;
+      let uninject: () => void;
 
-        inject = () => searchResultsHeader?.after((<PersistenceHelper />) as Element, generatedSettingsSections());
-      } else {
-        // steal one of each element type
-        if (!templatesReady()) {
-          buttonTemplate ||= sidebar.querySelector("[role=tab]:not([class*=selected])").cloneNode(true) as HTMLElement;
-          buttonTemplateSelected ||= sidebar
-            .querySelector("[role=tab][class*=selected]")
-            .cloneNode(true) as HTMLElement;
-          headerTemplate ||= sidebar.querySelector("[class*=header]").cloneNode(true) as HTMLElement;
-          dividerTemplate ||= sidebar.querySelector("[class*=separator]").cloneNode(true) as HTMLElement;
+      let cancel = false;
+      cancelPrevious = () => (cancel = true);
 
-          if (!buttonTemplate || !buttonTemplateSelected || !headerTemplate || !dividerTemplate) {
-            log(
-              [
-                "[Settings injection] Failed to find a template, bailing",
-                buttonTemplate,
-                buttonTemplateSelected,
-                headerTemplate,
-                dividerTemplate,
-              ],
-              "error",
-            );
+      // effect to handle searching
+      createEffect(() => {
+        if (cancel) return;
+
+        uninject?.();
+
+        // find and add listener to cancel button
+        if (currentSearchTerm().length)
+          // queueMicrotask appears to be too fast here :(
+          setTimeout(() =>
+            searchBar.parentElement
+              .querySelector("[role=button]")
+              ?.addEventListener("click", () => setCurrentSearchTerm("")),
+          );
+
+        let inject: () => void;
+        // i do not enjoy this but so be it
+        setTimeout(() => {
+          if (currentSearchTerm().length >= 2) {
+            const searchResultsHeader = sidebar.querySelector("[class*=header]");
+
+            const toInj = generatedSettingsSections();
+            uninject = () => toInj.remove();
+            inject = () => searchResultsHeader?.after(toInj);
+            searchResultsHeader?.after((<PersistenceHelper />) as Element);
+          } else {
+            // steal one of each element type
+            if (!templatesReady()) {
+              buttonTemplate ||= sidebar
+                .querySelector("[role=tab]:not([class*=selected])")
+                .cloneNode(true) as HTMLElement;
+              buttonTemplateSelected ||= sidebar
+                .querySelector("[role=tab][class*=selected]")
+                .cloneNode(true) as HTMLElement;
+              headerTemplate ||= sidebar.querySelector("[class*=header]").cloneNode(true) as HTMLElement;
+              dividerTemplate ||= sidebar.querySelector("[class*=separator]").cloneNode(true) as HTMLElement;
+
+              if (!buttonTemplate || !buttonTemplateSelected || !headerTemplate || !dividerTemplate) {
+                log(
+                  [
+                    "[Settings injection] Failed to find a template, bailing",
+                    buttonTemplate,
+                    buttonTemplateSelected,
+                    headerTemplate,
+                    dividerTemplate,
+                  ],
+                  "error",
+                );
+                return;
+              }
+              setTemplatesReady(true);
+            }
+
+            // we want to inject just before "What's New",
+            // the last separator is after log out, second to last is before it, third to last is before what's new
+
+            const targetSeparator = sidebar.querySelector(":nth-last-child(3 of [class*=separator])");
+
+            if (!targetSeparator) {
+              log("[Settings injection] Failed to find target separator, bailing", "error");
+              return;
+            }
+
+            const toInj = generatedSettingsSections();
+            uninject = () => toInj.remove();
+            inject = () => targetSeparator.before(toInj);
+            targetSeparator.before((<PersistenceHelper />) as Element);
+          }
+
+          // turn off the currently selected button
+          selectedClass = buttonTemplateSelected.classList.values().find((c) => c.includes("selected"));
+          if (!selectedClass) {
+            log("[Settings injection] Failed to find selected item class, bailing", "error");
             return;
           }
-          setTemplatesReady(true);
-        }
 
-        // we want to inject just before "What's New",
-        // the last separator is after log out, second to last is before it, third to last is before what's new
+          // find all buttons that arent ours and make them turn off our selected state
+          // we do this outside of the persistence helper function to prevent memory leaks.
+          buttonsToDisableSelectedStateOf = Array.from(sidebar.querySelectorAll("[role=tab]"));
 
-        const targetSeparator = sidebar.querySelector(":nth-last-child(3 of [class*=separator])");
+          buttonsToDisableSelectedStateOf.forEach((b) =>
+            b.addEventListener("click", function (this: Element) {
+              setSelectedShelterSection(undefined);
+              if (this === previouslySelectedButton) this.classList.add(selectedClass);
+            }),
+          );
 
-        if (!targetSeparator) {
-          log("[Settings injection] Failed to find target separator, bailing", "error");
-          return;
-        }
-
-        inject = () => targetSeparator.before((<PersistenceHelper />) as Element, generatedSettingsSections());
-      }
-
-      //debugger;
-
-      // turn off the currently selected button
-      selectedClass = buttonTemplateSelected.classList.values().find((c) => c.includes("selected"));
-      if (!selectedClass) {
-        log("[Settings injection] Failed to find selected item class, bailing", "error");
-        return;
-      }
-
-      // find all buttons that arent ours and make them turn off our selected state
-      // we do this outside of the persistence helper function to prevent memory leaks.
-      buttonsToDisableSelectedStateOf = Array.from(sidebar.querySelectorAll("[role=tab]"));
-
-      buttonsToDisableSelectedStateOf.forEach((b) =>
-        b.addEventListener("click", function (this: Element) {
-          setSelectedShelterSection(undefined);
-          if (this === previouslySelectedButton) this.classList.add(selectedClass);
-        }),
-      );
-
-      inject();
+          inject();
+        });
+      });
     });
 
     //#endregion
