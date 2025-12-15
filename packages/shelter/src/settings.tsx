@@ -4,8 +4,9 @@ import { getDispatcher } from "./flux";
 import { log } from "./util";
 import { observe } from "./observer";
 import { Component, createEffect, createMemo, createSignal, For } from "solid-js";
+import { Dynamic } from "solid-js/web";
 import Settings from "./components/Settings";
-import { createPersistenceHelper } from "@uwu/shelter-ui";
+import { createPersistenceHelper, ReactiveRoot } from "@uwu/shelter-ui";
 
 //#region section management and setup
 
@@ -92,6 +93,8 @@ let buttonTemplateSelected: Element;
 let headerTemplate: Element;
 let dividerTemplate: Element;
 
+const [mainTabPanelClasses, setMainTabPanelClasses] = createSignal<string>();
+
 function SettingsItem(props: {
   type: "divider" | "header" | "section";
   children?: string;
@@ -156,15 +159,11 @@ export async function initSettings() {
 
   // this function is called each time flux fires for a settings open
   async function openModalCb() {
-    debugger;
+    //debugger;
 
     // hold all state for the current settings instance here, but don't do any injection here
     const [currentSearchTerm, setCurrentSearchTerm] = createSignal<string>("");
     const [selectedShelterSection, setSelectedShelterSection] = createSignal<Component | undefined>();
-
-    createEffect(() => {
-      console.log("updated selected shelter settings section to", selectedShelterSection());
-    });
 
     //#region sidebar injection
 
@@ -236,12 +235,12 @@ export async function initSettings() {
         ))?.classList.remove(selectedClass);
     });
 
-    let cancelPrevious: () => void;
+    let cancelPreviousSidebarEffect: () => void;
 
     // this function does the actual injection, and automatically reruns if react rips our shit off the DOM.
     // add <PersistenceHelper /> instances wherever necessary
     const injectSidebar = createPersistenceHelper(async (PersistenceHelper: Component) => {
-      cancelPrevious?.();
+      cancelPreviousSidebarEffect?.();
 
       // wait for lazy loading on initial user settings open
       stopPreviousLazyLoadWait?.();
@@ -273,7 +272,7 @@ export async function initSettings() {
       let uninject: () => void;
 
       let cancel = false;
-      cancelPrevious = () => (cancel = true);
+      cancelPreviousSidebarEffect = () => (cancel = true);
 
       // effect to handle searching
       createEffect(() => {
@@ -370,5 +369,77 @@ export async function initSettings() {
     //#endregion
 
     await injectSidebar();
+
+    //#region main pane injection
+
+    // find template for tab panel if missing
+    if (!mainTabPanelClasses()) {
+      const unobs = observe("[class*=contentRegionScroller] > [role=tabpanel]", (el) => {
+        unobs();
+        setMainTabPanelClasses(el.className);
+      });
+      setTimeout(unobs, 15_000);
+    }
+
+    let uninjectMainPane: () => void;
+    let elementsToCleanUp: Element[] = [];
+
+    // we only want the effect below to fire on truthiness changes, not component changes,
+    // since those are handled by reactivity in <Dynamic />, so just use a memo :)
+    const isAnyShelterSection = createMemo(() => !!selectedShelterSection());
+
+    createEffect(() => {
+      if (!isAnyShelterSection()) {
+        uninjectMainPane?.();
+
+        elementsToCleanUp.forEach((e) => e.remove());
+        elementsToCleanUp = [];
+
+        return;
+      }
+
+      let reAddDisplay: () => void;
+
+      const inject = createPersistenceHelper(async (PersistenceHelper: Component) => {
+        const injectionTarget = document.querySelector(
+          "[class*=contentRegionScroller] > [role=tabpanel]",
+        )?.parentElement;
+        if (!injectionTarget) {
+          log("[Settings injection] Failed to find main pane, bailing", "error");
+          return;
+        }
+
+        if (!mainTabPanelClasses()) {
+          log("[Settings injection] Failed to find main pane classes, bailing", "error");
+          return;
+        }
+
+        const tabPanel = injectionTarget.firstElementChild as HTMLElement;
+        tabPanel.style.display = "none";
+
+        reAddDisplay = () => (tabPanel.style.display = "unset");
+
+        const sectionToRender = (
+          <ReactiveRoot>
+            <div class={mainTabPanelClasses()} tabindex={-1}>
+              <Dynamic component={selectedShelterSection() ?? (() => <></>)} />
+            </div>
+          </ReactiveRoot>
+        ) as Element;
+
+        const ph = (<PersistenceHelper />) as Element;
+
+        elementsToCleanUp.push(ph, sectionToRender);
+
+        tabPanel.after(ph, sectionToRender);
+      });
+
+      inject();
+      uninjectMainPane = () => {
+        inject.cancel();
+        reAddDisplay?.();
+      };
+    });
+    //#endregion
   }
 }
