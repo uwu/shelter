@@ -42,7 +42,7 @@ type SettingsSection =
 const shelterSections: SettingsSection[] = [
   ["divider"],
   ["header", "Shelter"],
-  ["section", "settings", "Settings", Settings, { icon: SettingsIcon }],
+  ["section", "shelter-settings", "Settings", Settings, { icon: SettingsIcon }],
 ];
 
 let injectorSections: SettingsSection[] = [];
