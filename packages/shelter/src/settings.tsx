@@ -237,7 +237,7 @@ async function injectSettings() {
 }
 
 function legacyRerenderSidebar() {
-  const sidebarParent = document.querySelector(`nav[class^="sidebar"]`);
+  const sidebarParent = document.querySelector(`nav:has([role=tablist])`);
   getFiberOwner(sidebarParent)?.forceUpdate();
 }
 
