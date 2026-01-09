@@ -7,4 +7,4 @@ export let React, ReactDOM;
 // RDT does not replace react-dom
 
 exfiltrate("useId", false, (r) => r?.version && !r.version.includes("experimental"), true).then((v) => (React = v));
-exfiltrate("findDOMNode", false).then((v) => (ReactDOM = v));
+exfiltrate("createPortal", false).then((v) => (ReactDOM = v));
