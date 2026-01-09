@@ -33,7 +33,7 @@ export const renderSolidInReact = (comp: Component<any>, props?: any) => {
     }
 
     render() {
-      return React.createElement("div", { ref: this.divRef });
+      return React.createElement("div", { ref: this.divRef, style: "display:contents" });
     }
 
     componentDidMount() {
