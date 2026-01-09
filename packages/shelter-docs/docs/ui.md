@@ -192,36 +192,12 @@ solid.Component<{ comp: React.ComponentType<TProps>, props: TProps }>
 ```
 :::
 
-Renders a React component in Solid.
+Renders a React component in Solid. Prop updates cause rerenders as expected.
 
 ```jsx
 const ComponentFromDiscord = webpack.findByProps("...").default;
 
 <ReactInSolidBridge comp={ComponentFromDiscord} props={{ className: "reactelem", tag: "H1" }} />;
-```
-
-### `SolidInReactBridge` <Pill col="shelter">shelter only</Pill>
-
-::: details Type Signature
-```ts
-React.ComponentType<{ comp: solid.Component<TProps>, props: TProps }>
-```
-:::
-
-Renders a Solid component in React.
-Using this directly is not recommended as you will need to provide your own React instance.
-
-```jsx
-function SolidCounter(props) {
-  const [count, setCount] = solid.createSignal(0);
-  return <button class={props.className} onClick={() => setCount(count() + 1)}>yep {count()}</button>;
-}
-
-React.createElement(SolidInReactBridge, {
-  comp: SolidCounter,
-  props: {className: "solidelem"},
-});
-// if you were using React JSX: <SolidInReactBridge comp={SolidCounter} props={{className: "solidelem"}} />
 ```
 
 ### `renderSolidInReact` <Pill col="shelter">shelter only</Pill>
@@ -232,18 +208,24 @@ React.createElement(SolidInReactBridge, {
 ````
 :::
 
-Just a wrapper to `React.createElement(SolidInReactBridge, {comp, props})`
+Renders a Solid component in React. This component will *never* be rerendered by React,
+however prop or component updates passed in from the React host will be applied to the Solid child via reactivity.
 
 ```jsx
-function Component(props) {
+function MyCoolComponent(props) {
   const [count, setCount] = solid.createSignal(0);
   return <button class={props.className} onClick={() => setCount(count() + 1)}>yep {count()}</button>;
 }
 
 // Get a Discord component using React fiber or something
 
-component.render = () => renderSolidInReact(Component, { className: "solidelem" });
+component.render = () => renderSolidInReact(MyCoolComponent, { className: "solidelem" });
 ```
+
+::: warning
+Previously, a React component called `SolidInReactBridge` was exposed. This has been removed from the shelter-ui API.
+Use this function instead.
+:::
 
 ### `<ErrorBoundary />`
 

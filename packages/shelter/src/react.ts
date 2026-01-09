@@ -1,6 +1,14 @@
 import exfiltrate from "./exfiltrate";
 
-export let React, ReactDOM, ReactDOMClient;
+import * as _R from "react";
+import * as _RDOM from "react-dom";
+import * as _RDOMClient from "react-dom/client";
+
+type TReact = typeof _R;
+type TRDOM = typeof _RDOM;
+type TRDOMClient = typeof _RDOMClient;
+
+export let React: TReact, ReactDOM: TRDOM, ReactDOMClient: TRDOMClient;
 
 // react developer tools' React is an experimental build, Discord's is not
 // we need to queuemicrotask the filter & cleanup for this as otherwise react does not actually set the version in time
