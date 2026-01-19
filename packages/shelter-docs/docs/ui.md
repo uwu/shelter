@@ -269,16 +269,6 @@ showToast({
 
 ![](/ui/showToast.webp)
 
-### `initToasts` <Pill col="red">standalone only</Pill>
-
-::: details Type Signature
-```ts
-() => void
-```
-:::
-
-Sets up necessary things for toasts to work. You must call this if you are using toasts and are not using shelter.
-
 ### `niceScrollbarsClass`
 
 ::: details Type Signature
@@ -383,6 +373,32 @@ openConfirmationModal({
 ```
 
 ![](/ui/confirmmodal.webp)
+
+### `initToasts` <Pill col="red">standalone only</Pill>
+
+::: details Type Signature
+```ts
+() => void
+```
+:::
+
+Sets up necessary things for toasts to work. You must call this if you are using toasts and are not using shelter.
+
+### `injectInternalStyles` <Pill col="red">standalone only</Pill>
+
+::: details Type Signature
+```ts
+() => void
+```
+:::
+
+Inserts internal shelter-ui styles onto the page. If you are not using shelter and do not call this,
+components will be unstyled.
+
+Only call this once.
+
+You should use `injectInternalStyles()` if you are using shelter-ui in the main document, and you should inject
+`<InternalStyles />` (this component) in style-isolated contexts like Shadow DOMs.
 
 ## Components
 
@@ -861,6 +877,22 @@ If `tick` is not passed, no ticks show.
 
 ![](/ui/slider.webp)
 
+
+### `InternalStyles` <Pill col="red">standalone only</Pill>
+
+::: details Type Signature
+```ts
+solid.Component<{}>
+```
+:::
+
+Internal shelter-ui styles as a `<style>`. If you are not using shelter and do not use this,
+components will be unstyled.
+
+You should use `injectInternalStyles()` if you are using shelter-ui in the main document, and you should inject
+`<InternalStyles />` (this component) in style-isolated contexts like Shadow DOMs.
+
+
 ## Standalone usage
 
 shelter UI can be used outside of Discord. There are a few things that must be taken into consideration for this:
@@ -896,9 +928,10 @@ They are also listed here:
 
 shelter-only:
  - `ReactInSolidBridge`
- - `SolidInReactBridge`
  - `renderSolidInReact`
 
 standalone-only:
  - `cleanupCss`
  - `initToasts`
+ - `injectInternalStyles`
+ - `InternalStyles`

@@ -72,7 +72,7 @@ const windowApi = async (unloads) => {
     ),
     observeDom: observe,
     ui: {
-      ...without(ui, "cleanupCss", "initToasts"),
+      ...without(ui, "cleanupCss", "initToasts", "injectInternalStyles", "InternalStyles"),
       ...bridges,
     },
     settings: {
