@@ -7,22 +7,22 @@
   },
   "dependencies": {
     "@uwu/shelter-ui": "workspace:*",
-    "fuse.js": "^7.0.0",
-    "htm": "^3.1.1",
-    "idb": "^7.1.0",
+    "fuse.js": "catalog:",
+    "htm": "catalog:",
+    "idb": "catalog:",
     "shelter-assets": "workspace:*",
-    "solid-js": "1.6.16",
-    "spitroast": "2.1.4"
+    "solid-js": "catalog:",
+    "spitroast": "catalog:"
   },
   "devDependencies": {
-    "@types/react": "19.1.0",
-    "@types/react-dom": "19.1.0",
-    "@types/superagent": "^4.1.20",
-    "esbuild": "^0.15.10",
-    "esbuild-plugin-solid": "^0.4.2",
-    "esbuild-sass-plugin-ysink": "^2.3.3",
-    "merge-source-map": "^1.1.0",
-    "postcss": "^8.4.17",
-    "postcss-modules": "^5.0.0"
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@types/superagent": "catalog:",
+    "esbuild": "catalog:",
+    "esbuild-plugin-solid": "catalog:",
+    "esbuild-sass-plugin-ysink": "catalog:",
+    "merge-source-map": "catalog:",
+    "postcss": "catalog:",
+    "postcss-modules": "catalog:"
   }
 }

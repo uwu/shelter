@@ -13,12 +13,12 @@
     "prepare": "rimraf dist && tsc && node esbuild.mjs"
   },
   "devDependencies": {
-    "esbuild": "^0.20.1",
-    "esbuild-sass-plugin-ysink": "^2.3.3",
-    "postcss": "^8.4.35",
-    "postcss-modules": "^6.0.0",
-    "solid-js": "1.6.16",
-    "typescript": "^5.6.2"
+    "esbuild": "catalog:",
+    "esbuild-sass-plugin-ysink": "catalog:",
+    "postcss": "catalog:",
+    "postcss-modules": "catalog:",
+    "solid-js": "catalog:",
+    "typescript": "catalog:"
   },
   "peerDependencies": {
     "solid-js": "^1.6.16"

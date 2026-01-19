@@ -7,7 +7,7 @@
     "dprint": "^0.47.2",
     "husky": "^9.1.6",
     "rimraf": "^4.4.1",
-    "typescript": "^5.6.2"
+    "typescript": "catalog:"
   },
   "overrides": {
     "babel-plugin-jsx-dom-expressions": "0.35.23",

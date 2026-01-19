@@ -2,3 +2,29 @@ packages:
   - .
   - packages/*
   - injectors/*
+
+# this catalog is for shelter, shelter-ui, shelter-defs, et cetera - the shelter cinematic universe
+# the documentation site is standalone and generally does not follow this catalog.
+catalog:
+  # our deps
+  solid-js: 1.6.16
+  spitroast: 2.1.4
+  idb: ^7.1.0
+  htm: ^3.1.1
+  fuse.js: ^7.0.0
+
+  # build tools
+  typescript: ^5.9.3
+  esbuild: ^0.27.2
+  esbuild-sass-plugin-ysink: ^2.3.3
+  postcss: ^8.4.35
+  postcss-modules: ^6.0.0
+  esbuild-plugin-solid: ^0.4.2
+  merge-source-map: ^1.1.0
+
+  # discord included deps
+  react: 19.1.0
+  react-dom: 19.1.0
+  "@types/react": 19.1.0
+  "@types/react-dom": 19.1.0
+  "@types/superagent": ^4.1.20
