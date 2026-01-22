@@ -29,6 +29,15 @@ const deepWrapValtioStorage = <T extends object>(unwrapped: T, flush: () => void
 
       return sig();
     },
+
+    set(target, property, value, receiver) {
+      // unwrap shelter storages
+      if (isShelterStorage(value)) {
+        value = underlyingValtioProxy(value);
+      }
+
+      return Reflect.set(target, property, value, receiver);
+    },
   });
 
 export const isShelterStorage = (shelterProxy: object) => !!shelterProxy[isShelterProxySymbol];
