@@ -1,0 +1,15 @@
+{
+  "include": ["./src/**/*"],
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "node",
+
+    "noEmit": true,
+    "strictFunctionTypes": true,
+
+    "skipDefaultLibCheck": true,
+    "isolatedModules": true,
+    "composite": true
+  }
+}

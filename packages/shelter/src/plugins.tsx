@@ -1,6 +1,5 @@
-import { dbStore, isInited, signalOf, solidMutWithSignal, storage, waitInit } from "./storage";
+import { storage, unbacked, flush as flushShelterStorage, signalOf } from "./storage";
 import { Component, onCleanup } from "solid-js";
-import { createMutable } from "solid-js/store";
 import { createScopedApiInternal, log, prettifyError } from "./util";
 import {
   ModalBody,
@@ -46,9 +45,18 @@ export type EvaledPlugin = {
   scopedDispose(): void;
 };
 
-const internalData = storage<StoredPlugin>("plugins-internal");
-const pluginStorages = storage("plugins-data");
-const [internalLoaded, loadedPlugins] = solidMutWithSignal(createMutable({} as Record<string, EvaledPlugin>));
+let internalData: Record<string, StoredPlugin>;
+const internalDataInited = storage("plugins-internal").then((store) => {
+  internalData = store;
+});
+
+let pluginStorages: Record<string, any>;
+const pluginStoragesInited = storage("plugins-data").then((store) => {
+  pluginStorages = store;
+});
+
+const internalLoaded = unbacked() as Record<string, EvaledPlugin>;
+const loadedPlugins = signalOf(internalLoaded);
 
 // dear god do not let these go anywhere other than data.ts
 export { internalData as UNSAFE_internalData, pluginStorages as UNSAFE_pluginStorages };
@@ -57,28 +65,12 @@ export const installedPlugins = signalOf(internalData);
 export { loadedPlugins };
 
 function createStorage(pluginId: string): [Record<string, any>, () => void] {
-  if (!isInited(pluginStorages))
+  if (!pluginStorages)
     throw new Error("to keep data persistent, plugin storages must not be created until connected to IDB");
 
-  const data = createMutable((pluginStorages[pluginId] ?? {}) as Record<string, any>);
+  const data = (pluginStorages[pluginId] ??= {});
 
-  const flush = () => {
-    pluginStorages[pluginId] = { ...data };
-  };
-
-  return [
-    new Proxy(data, {
-      set(t, p, v, r) {
-        queueMicrotask(flush);
-        return Reflect.set(t, p, v, r);
-      },
-      deleteProperty(t, p) {
-        queueMicrotask(flush);
-        return Reflect.deleteProperty(t, p);
-      },
-    }),
-    flush,
-  ];
+  return [data, () => flushShelterStorage(data)];
 }
 
 function createPluginApi(pluginId: string, { manifest, injectorIntegration }: StoredPlugin) {
@@ -220,7 +212,7 @@ const stopAllPlugins = () => Object.keys(internalData).forEach(stopPlugin);
 
 export async function startAllPlugins() {
   // allow plugin stores to connect to IDB, as we need to read persisted data from them straight away
-  await Promise.all([waitInit(internalData), waitInit(pluginStorages)]);
+  await Promise.all([internalDataInited, pluginStoragesInited]);
 
   const allPlugins = Object.keys(internalData);
 
@@ -329,7 +321,7 @@ export function showSettingsFor(id: string) {
 // this is used by shelter to install plugins with loader superpowers
 export async function ensureLoaderPlugin(id: string, plugin: [string, LoaderIntegrationOpts] | StoredPlugin) {
   // allow internalData to connect to IDB, as we need to read plugin-internals
-  await Promise.all([waitInit(internalData), waitInit(pluginStorages)]);
+  await Promise.all([internalDataInited, pluginStoragesInited]);
 
   const isRemote = Array.isArray(plugin);
   const integration = isRemote ? plugin?.[1] : plugin?.injectorIntegration;

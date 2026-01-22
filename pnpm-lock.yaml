@@ -51,6 +51,12 @@ catalogs:
     typescript:
       specifier: ^5.9.3
       version: 5.9.3
+    valtio:
+      specifier: ^2.3.0
+      version: 2.3.0
+    valtio-persist:
+      specifier: ^2.2.4
+      version: 2.2.4
 
 overrides:
   babel-plugin-jsx-dom-expressions: 0.35.23
@@ -142,6 +148,9 @@ importers:
 
   packages/shelter:
     dependencies:
+      '@uwu/shelter-storage':
+        specifier: workspace:*
+        version: link:../shelter-storage
       '@uwu/shelter-ui':
         specifier: workspace:*
         version: link:../shelter-ui
@@ -268,6 +277,22 @@ importers:
       wrangler:
         specifier: ^3.0.0
         version: 3.114.8(@cloudflare/workers-types@4.20250505.0)
+
+  packages/shelter-storage:
+    dependencies:
+      valtio:
+        specifier: 'catalog:'
+        version: 2.3.0(@types/react@19.1.0)
+      valtio-persist:
+        specifier: 'catalog:'
+        version: 2.2.4(@types/react@19.1.0)
+    devDependencies:
+      solid-js:
+        specifier: 'catalog:'
+        version: 1.6.16
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
 
   packages/shelter-ui:
     devDependencies:
@@ -4042,6 +4067,9 @@ packages:
   proto-list@1.2.4:
     resolution: {integrity: sha512-vtK/94akxsTMhe0/cbfpR+syPuszcuwhqVjJq26CuNDgFGj682oRBXOP5MJpv2r7JtE8MsiepGIqvvOTBwn2vA==}
 
+  proxy-compare@3.0.1:
+    resolution: {integrity: sha512-V9plBAt3qjMlS1+nC8771KNf6oJ12gExvaxnNzN/9yVRLdTv/lc+oJlnSzrdYDAvBfTStPCoiaCOTmTs0adv7Q==}
+
   psl@1.15.0:
     resolution: {integrity: sha512-JZd3gMVBAVQkSs6HdNZo9Sdo0LNcQeMNP3CozBJb3JYC/QUYZTnKxP+f8oWRX4rHP5EurWxqAHTSwUCjlNKa1w==}
 
@@ -4642,6 +4670,35 @@ packages:
 
   validate-html-nesting@1.2.1:
     resolution: {integrity: sha512-T1ab131NkP3BfXB7KUSgV7Rhu81R2id+L6NaJ7NypAAG5iV6gXnPpQE5RK1fvb+3JYsPTL+ihWna5sr5RN9gaQ==}
+
+  valtio-persist@2.2.4:
+    resolution: {integrity: sha512-1jRmqtgB4on0pCccDcHY3FzJvyzdS4WyQ+dSGLLBJ0mJtXaAwDSb808K9WGzdQExGl2OC/nfQwBHaQFLQottUw==}
+    peerDependencies:
+      '@react-native-async-storage/async-storage': ^2.1.2
+      expo-file-system: '*'
+      expo-secure-store: '*'
+      react-native-keychain: '*'
+    peerDependenciesMeta:
+      '@react-native-async-storage/async-storage':
+        optional: true
+      expo-file-system:
+        optional: true
+      expo-secure-store:
+        optional: true
+      react-native-keychain:
+        optional: true
+
+  valtio@2.3.0:
+    resolution: {integrity: sha512-1MfKNcmOIdBSatiJsYgw420n6jnD+jeoI0V+RkOQbCB0ElLh6GKUfPr0hc9uq/KBGeghivDEarRsKFFdSQQnKw==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      react: '>=18.0.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      react:
+        optional: true
 
   verror@1.10.0:
     resolution: {integrity: sha512-ZZKSmDAEFOijERBLkmYfJ+vmk3w+7hOLYDNkRCuRuMJGEmqYNCNLyBBFwWKVMhfwaEF3WOd0Zlw86U/WC/+nYw==}
@@ -8657,6 +8714,8 @@ snapshots:
 
   proto-list@1.2.4: {}
 
+  proxy-compare@3.0.1: {}
+
   psl@1.15.0:
     dependencies:
       punycode: 2.3.1
@@ -9373,6 +9432,20 @@ snapshots:
   uuid@8.3.2: {}
 
   validate-html-nesting@1.2.1: {}
+
+  valtio-persist@2.2.4(@types/react@19.1.0):
+    dependencies:
+      proxy-compare: 3.0.1
+      valtio: 2.3.0(@types/react@19.1.0)
+    transitivePeerDependencies:
+      - '@types/react'
+      - react
+
+  valtio@2.3.0(@types/react@19.1.0):
+    dependencies:
+      proxy-compare: 3.0.1
+    optionalDependencies:
+      '@types/react': 19.1.0
 
   verror@1.10.0:
     dependencies:

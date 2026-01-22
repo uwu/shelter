@@ -1,8 +1,12 @@
 import { blockedSym, getDispatcher, modifiedSym } from ".";
 import { log } from "../util";
-import { dbStore, defaults } from "../storage";
+import { dbStore, dbStoreInited } from "../storage";
 
-defaults(dbStore, { logDispatch: false });
+// TODO: proper init handling
+// defaults(dbStore, { logDispatch: false });
+dbStoreInited.then(() => {
+  dbStore.logDispatch ??= false;
+});
 
 export const initDispatchLogger = async () => {
   const dispatcher = await getDispatcher();
