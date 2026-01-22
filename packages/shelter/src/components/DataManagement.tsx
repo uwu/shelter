@@ -1,11 +1,8 @@
 import {
   Button,
   ButtonColors,
-  ButtonLooks,
   ButtonSizes,
   Checkbox,
-  Header,
-  HeaderTags,
   injectCss,
   ModalBody,
   ModalConfirmFooter,
@@ -20,7 +17,7 @@ import { exportData, importData, importWouldConflict, verifyData } from "../data
 import { installedPlugins } from "../plugins";
 import { createSignal, For, untrack } from "solid-js";
 import { classes, css } from "./DataManagement.tsx.scss";
-import { deleteDB } from "idb";
+import { queueDatabaseDeletion } from "@uwu/shelter-storage";
 
 let injectedCss = false;
 
@@ -171,7 +168,7 @@ export const DataManagement = () => (
             confirmText: "Reset shelter",
           }).then(() => {
             // will delete the db as soon as connections are closed
-            deleteDB("shelter");
+            queueDatabaseDeletion();
             // try to move to a different tab
             (
               document.querySelector("[class*=layers] > :last-child [role=tablist] > div[role=tab]") as HTMLDivElement

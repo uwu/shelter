@@ -54,9 +54,6 @@ catalogs:
     valtio:
       specifier: ^2.3.0
       version: 2.3.0
-    valtio-persist:
-      specifier: ^2.2.4
-      version: 2.2.4
 
 overrides:
   babel-plugin-jsx-dom-expressions: 0.35.23
@@ -160,9 +157,6 @@ importers:
       htm:
         specifier: 'catalog:'
         version: 3.1.1
-      idb:
-        specifier: 'catalog:'
-        version: 7.1.1
       shelter-assets:
         specifier: workspace:*
         version: link:../shelter-assets
@@ -280,19 +274,16 @@ importers:
 
   packages/shelter-storage:
     dependencies:
+      idb:
+        specifier: 'catalog:'
+        version: 7.1.1
       solid-js:
         specifier: 'catalog:'
         version: 1.6.16
       valtio:
         specifier: 'catalog:'
         version: 2.3.0(@types/react@19.1.0)
-      valtio-persist:
-        specifier: 'catalog:'
-        version: 2.2.4(@types/react@19.1.0)
     devDependencies:
-      esbuild:
-        specifier: 'catalog:'
-        version: 0.27.2
       typescript:
         specifier: 'catalog:'
         version: 5.9.3
@@ -4673,23 +4664,6 @@ packages:
 
   validate-html-nesting@1.2.1:
     resolution: {integrity: sha512-T1ab131NkP3BfXB7KUSgV7Rhu81R2id+L6NaJ7NypAAG5iV6gXnPpQE5RK1fvb+3JYsPTL+ihWna5sr5RN9gaQ==}
-
-  valtio-persist@2.2.4:
-    resolution: {integrity: sha512-1jRmqtgB4on0pCccDcHY3FzJvyzdS4WyQ+dSGLLBJ0mJtXaAwDSb808K9WGzdQExGl2OC/nfQwBHaQFLQottUw==}
-    peerDependencies:
-      '@react-native-async-storage/async-storage': ^2.1.2
-      expo-file-system: '*'
-      expo-secure-store: '*'
-      react-native-keychain: '*'
-    peerDependenciesMeta:
-      '@react-native-async-storage/async-storage':
-        optional: true
-      expo-file-system:
-        optional: true
-      expo-secure-store:
-        optional: true
-      react-native-keychain:
-        optional: true
 
   valtio@2.3.0:
     resolution: {integrity: sha512-1MfKNcmOIdBSatiJsYgw420n6jnD+jeoI0V+RkOQbCB0ElLh6GKUfPr0hc9uq/KBGeghivDEarRsKFFdSQQnKw==}
@@ -9435,14 +9409,6 @@ snapshots:
   uuid@8.3.2: {}
 
   validate-html-nesting@1.2.1: {}
-
-  valtio-persist@2.2.4(@types/react@19.1.0):
-    dependencies:
-      proxy-compare: 3.0.1
-      valtio: 2.3.0(@types/react@19.1.0)
-    transitivePeerDependencies:
-      - '@types/react'
-      - react
 
   valtio@2.3.0(@types/react@19.1.0):
     dependencies:

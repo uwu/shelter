@@ -6,10 +6,9 @@ export {
   flush,
   createUnbackedStorage as unbacked,
   getSnapshotSignal as signalOf,
+  defaults,
+  isInited,
+  waitInit,
 } from "@uwu/shelter-storage";
 
-export let dbStore: Record<string, any>;
-// TODO: this isn't great, bring back init buffering or something? maybe?
-export let dbStoreInited = storage("dbstore").then((store) => {
-  dbStore = store;
-});
+export const dbStore: Record<string, any> = storage("dbstore");

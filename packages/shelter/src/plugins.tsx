@@ -1,5 +1,5 @@
-import { storage, unbacked, flush as flushShelterStorage, signalOf } from "./storage";
-import { Component, createEffect, createSignal, onCleanup } from "solid-js";
+import { storage, unbacked, flush as flushShelterStorage, signalOf, waitInit } from "./storage";
+import { Component, onCleanup } from "solid-js";
 import { createScopedApiInternal, log, prettifyError } from "./util";
 import {
   ModalBody,
@@ -45,15 +45,9 @@ export type EvaledPlugin = {
   scopedDispose(): void;
 };
 
-let internalData: Record<string, StoredPlugin>;
-const internalDataInited = storage("plugins-internal").then((store) => {
-  internalData = store;
-});
+const internalData = storage("plugins-internal") as Record<string, StoredPlugin>;
 
-let pluginStorages: Record<string, any>;
-const pluginStoragesInited = storage("plugins-data").then((store) => {
-  pluginStorages = store;
-});
+const pluginStorages = storage("plugins-data") as Record<string, any>;
 
 const internalLoaded = unbacked() as Record<string, EvaledPlugin>;
 const loadedPlugins = signalOf(internalLoaded);
@@ -61,11 +55,7 @@ const loadedPlugins = signalOf(internalLoaded);
 // dear god do not let these go anywhere other than data.ts
 export { internalData as UNSAFE_internalData, pluginStorages as UNSAFE_pluginStorages };
 
-export const [installedPlugins, setInstalledPlugins] = createSignal(); //signalOf(internalData);
-internalDataInited.then(() => {
-  const sig = signalOf(internalData);
-  createEffect(() => setInstalledPlugins(sig()));
-});
+export const installedPlugins = signalOf(internalData);
 export { loadedPlugins };
 
 function createStorage(pluginId: string): [Record<string, any>, () => void] {
@@ -216,7 +206,7 @@ const stopAllPlugins = () => Object.keys(internalData).forEach(stopPlugin);
 
 export async function startAllPlugins() {
   // allow plugin stores to connect to IDB, as we need to read persisted data from them straight away
-  await Promise.all([internalDataInited, pluginStoragesInited]);
+  await Promise.all([waitInit(internalData), waitInit(pluginStorages)]);
 
   const allPlugins = Object.keys(internalData);
 
@@ -325,7 +315,7 @@ export function showSettingsFor(id: string) {
 // this is used by shelter to install plugins with loader superpowers
 export async function ensureLoaderPlugin(id: string, plugin: [string, LoaderIntegrationOpts] | StoredPlugin) {
   // allow internalData to connect to IDB, as we need to read plugin-internals
-  await Promise.all([internalDataInited, pluginStoragesInited]);
+  await Promise.all([waitInit(internalData), waitInit(pluginStorages)]);
 
   const isRemote = Array.isArray(plugin);
   const integration = isRemote ? plugin?.[1] : plugin?.injectorIntegration;

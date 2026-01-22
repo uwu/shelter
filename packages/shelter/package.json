@@ -10,7 +10,6 @@
     "@uwu/shelter-storage": "workspace:*",
     "fuse.js": "catalog:",
     "htm": "catalog:",
-    "idb": "catalog:",
     "shelter-assets": "workspace:*",
     "solid-js": "catalog:",
     "spitroast": "catalog:"

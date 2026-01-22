@@ -1,5 +1,5 @@
 {
-  "include": ["index.ts"],
+  "include": ["*.ts"],
   "compilerOptions": {
     "target": "ESNext",
     "module": "NodeNext",
@@ -10,6 +10,7 @@
     "strictFunctionTypes": true,
 
     "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
     "isolatedModules": true,
     "composite": true
   }

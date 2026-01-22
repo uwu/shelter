@@ -6,19 +6,14 @@
   "homepage": "https://shelter.uwu.network/",
   "repository": "github:uwu/shelter",
   "type": "module",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "prepare": "rimraf dist tsconfig.tsbuildinfo && esbuild --bundle --format=esm index.ts --outdir=dist --external:react --external:solid-js && tsc"
-  },
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "devDependencies": {
-    "typescript": "catalog:",
-    "esbuild": "catalog:"
+    "typescript": "catalog:"
   },
   "dependencies": {
+    "idb": "catalog:",
     "solid-js": "catalog:",
-    "valtio": "catalog:",
-    "valtio-persist": "catalog:"
+    "valtio": "catalog:"
   }
 }
