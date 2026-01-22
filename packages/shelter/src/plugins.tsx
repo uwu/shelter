@@ -1,5 +1,5 @@
 import { storage, unbacked, flush as flushShelterStorage, signalOf } from "./storage";
-import { Component, onCleanup } from "solid-js";
+import { Component, createEffect, createSignal, onCleanup } from "solid-js";
 import { createScopedApiInternal, log, prettifyError } from "./util";
 import {
   ModalBody,
@@ -61,7 +61,11 @@ const loadedPlugins = signalOf(internalLoaded);
 // dear god do not let these go anywhere other than data.ts
 export { internalData as UNSAFE_internalData, pluginStorages as UNSAFE_pluginStorages };
 
-export const installedPlugins = signalOf(internalData);
+export const [installedPlugins, setInstalledPlugins] = createSignal(); //signalOf(internalData);
+internalDataInited.then(() => {
+  const sig = signalOf(internalData);
+  createEffect(() => setInstalledPlugins(sig()));
+});
 export { loadedPlugins };
 
 function createStorage(pluginId: string): [Record<string, any>, () => void] {
