@@ -1,6 +1,6 @@
 import { proxy, snapshot, subscribe } from "valtio/vanilla";
 import { persist } from "valtio-persist";
-import { IndexedDBStrategy } from "valtio-persist/src/storage/indexedDb"; // lol valtio-persist/indexed-db is broken
+import { IndexedDBStrategy } from "valtio-persist/indexed-db";
 import { createSignal, onCleanup } from "solid-js";
 
 const getValtioSymbol = Symbol();
