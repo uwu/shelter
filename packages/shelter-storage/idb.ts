@@ -4,21 +4,19 @@ const dbName = "shelter";
 
 let currentDatabase: IDBPDatabase | undefined;
 
-// operations to buffer until the database opens
-// used initially and also if we need to reopen the db
-const whenOpenedQueue: (() => void)[] = [];
-let databaseIsReady = false;
+// used to queue / buffer operations initially and also if we need to close and reopen the db
+let dbReadyPromise: Promise<void>;
 
+// used so multiple calls to ensureDbReady immediately after each other only do one db open/close/upgrade/open cycle
+// rather than having to open/close the db many times
 let storesToAdd: string[] = [];
-let getDbPromise: Promise<void>;
 
-export function ensureDbReady(storeName: string): Promise<void> {
-  if (currentDatabase?.objectStoreNames.contains(storeName)) return;
+export function ensureDbReady(storeName: string) {
+  if (currentDatabase?.objectStoreNames.contains(storeName)) return Promise.resolve();
 
-  databaseIsReady = false;
   storesToAdd.push(storeName);
 
-  if (storesToAdd.length > 1) return getDbPromise;
+  if (storesToAdd.length > 1) return dbReadyPromise;
 
   const openProm = (async () => {
     if (currentDatabase) {
@@ -51,24 +49,12 @@ export function ensureDbReady(storeName: string): Promise<void> {
     });
   })();
 
-  return (getDbPromise = openProm.then((db) => {
+  return (dbReadyPromise = openProm.then((db) => {
     currentDatabase = db;
-
-    for (const item of whenOpenedQueue) item();
-    whenOpenedQueue.splice(0, whenOpenedQueue.length);
-    databaseIsReady = true;
   }));
 }
 
-function executeDbOperation<TRet>(fn: () => TRet) {
-  if (databaseIsReady) return fn();
-
-  return new Promise<TRet>((res) =>
-    whenOpenedQueue.push(() => {
-      res(fn());
-    }),
-  );
-}
+const executeDbOperation = <TRet>(fn: () => TRet) => dbReadyPromise.then(() => fn());
 
 export const get = async (storeName: string, key: string) =>
   executeDbOperation(() => currentDatabase.get(storeName, key));
