@@ -107,7 +107,10 @@ export function createShelterStorage(backingName: string) {
   ensureDbReady(backingName)
     .then(() => entries(backingName))
     .then((entries) => {
-      Object.assign(store, Object.fromEntries(entries));
+      for (const [k, v] of entries as [string, unknown][]) {
+        if (!(k in store)) store[k] = v;
+      }
+
       initRes();
       initState[1] = true;
 

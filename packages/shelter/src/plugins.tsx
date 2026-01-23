@@ -1,4 +1,4 @@
-import { storage, unbacked, flush as flushShelterStorage, signalOf, waitInit } from "./storage";
+import { storage, unbacked, flush as flushShelterStorage, signalOf, waitInit, isInited } from "./storage";
 import { Component, onCleanup } from "solid-js";
 import { createScopedApiInternal, log, prettifyError } from "./util";
 import {
@@ -59,7 +59,7 @@ export const installedPlugins = signalOf(internalData);
 export { loadedPlugins };
 
 function createStorage(pluginId: string): [Record<string, any>, () => void] {
-  if (!pluginStorages)
+  if (!isInited(pluginStorages))
     throw new Error("to keep data persistent, plugin storages must not be created until connected to IDB");
 
   const data = (pluginStorages[pluginId] ??= {});
