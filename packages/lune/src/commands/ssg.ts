@@ -47,24 +47,24 @@ Options:
 
     const distDir = resolve(dir, (args.to as string) ?? "dist");
 
-    const specifiedCfg = await loadCfg(args.cfg as string);
+    const repoCfg = (await loadCfg(args.cfg as string)) ?? (await loadNearestCfgOrDefault(dir));
 
     if (isCi) {
       const pluginsDir = resolve(dir, (args.repoSubDir as string) ?? "plugins");
       const pluginNames = await readdir(pluginsDir);
 
-      await buildIndexAndStyles(dir, pluginsDir, pluginNames, distDir, specifiedCfg?.ssg ?? {});
+      await buildIndexAndStyles(dir, pluginsDir, pluginNames, distDir, repoCfg?.ssg ?? {});
 
       // build plugin pages
       for (const plug of pluginNames) {
         const plugDir = resolve(pluginsDir, plug);
-        const cfg = specifiedCfg ?? (await loadNearestCfgOrDefault(plugDir));
+        const pluginCfg = repoCfg ?? (await loadNearestCfgOrDefault(plugDir));
 
-        await buildPluginPage(plugDir, resolve(distDir, plug), cfg?.ssg ?? {}, true, relative(plugDir, dir));
+        await buildPluginPage(plugDir, resolve(distDir, plug), pluginCfg?.ssg ?? {}, true, relative(plugDir, dir));
       }
     } else {
       // just build the one!
-      await buildPluginPage(dir, distDir, specifiedCfg?.ssg ?? {}, false);
+      await buildPluginPage(dir, distDir, repoCfg?.ssg ?? {}, false);
     }
 
     console.log(`Built static site to ${relative(process.cwd(), distDir)}`);
