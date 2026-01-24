@@ -1,0 +1,20 @@
+<script>
+{
+  const placeholders = document.getElementsByClassName("plugin-link-placeholder");
+
+  let href = window.location.href;
+  if (href.endsWith("/")) href = href.slice(0, -1);
+
+  for (const placeholder of placeholders) {
+    const pluginName = placeholder.dataset.name;
+
+    if (!pluginName) placeholder.innerText = href;
+    else {
+      let href2 = href;
+      if (href2.endsWith("/" + pluginName)) href2 = href2.slice(0, -pluginName.length);
+
+      placeholder.innerText = href2 + "/" + pluginName;
+    }
+  }
+}
+</script>

@@ -32,6 +32,7 @@ export default defineConfig({
           items: [
             { text: "Getting Started", link: "/guides/" },
             { text: "Lune", link: "/guides/lune" },
+            { text: "Lune SSG", link: "/guides/lune-ssg" },
             { text: "Your First Plugin", link: "/guides/plugin" },
             { text: "Settings, Storage & UI", link: "/guides/settings" },
             { text: "Patterns", link: "/guides/patterns" },
