@@ -63,7 +63,7 @@ something boring like "shelter-plugins".
 
 You may want to have more interesting content on the plugin pages than just the shelter manifest description.
 You can easily achieve this by adding the file `shelter-plugins/plugins/my-plugin-name/lune-ssg/description.html`.
-The manifest description text can be used via the `{{description}}` expression.
+The manifest description text can be used via the <code v-pre>{{description}}</code> expression.
 
 ## List of default partials
 
@@ -81,6 +81,7 @@ The default website's list of partials is:
  - `main_index`: The main content for the index page. Override this instead of `main`.
  - `main_plugin`: The main content for plugin pages. Override this instead of `main`.
  - `footer`: Website footer - "Built with Lune at [date] on commit [hash]"
+ - `description` The main description content of the plugin page. By default, just the manifest `description` key.
  - `pre_index`: Content injected before the plugin list in the default `main_index`.
  - `post_index`: Content injected after the plugin list but before the footer in the default `main_index`.
  - `pre_plugin`: Content injected before the plugin description in the default `main_plugin`.
@@ -95,7 +96,8 @@ The default website's list of partials is:
 Of these, `scripts`, `pre`/`post`-`index`/`plugin`, and `description` are there purely
 for you to extend or slightly modify the page, and are not actually used substantially by the default site.
 
-Overriding the rest may require more substantial content, but you can always copy and modify the defaults as a base!
+Overriding the rest may require more substantial content, but you can always copy and modify the defaults as a
+[base](https://github.com/uwu/shelter/tree/main/packages/lune/ssg-defaults)!
 
 Visually, the default partials look like this:
 
@@ -110,7 +112,7 @@ The templating engine is passed a data object that is used to populate the site 
 For all pages, the following info is populated:
 
 ```ts
-type CommonSsgData = {
+const commonSsgData = {
   build: {
     time: "2026-01-24 20:49:36",
     version: "1.6.0",
@@ -135,14 +137,16 @@ empty string. [Probably you want to override this](#recommended-customisations).
 
 `plugin_title` is the pretty name of the plugin when building plugin pages, and the empty string when building index.
 
-`cond_infix_colon` and `cond_infix_bar` have the contents `: ` and ` | ` if and only if the SSG is generating a plugin
-page in a monorepo. An expression like `{{repo_name}}{{cond_infix_colon}}{{plugin_title}}` will generate
+`cond_infix_colon` and `cond_infix_bar` have the contents `: ` and ` | ` if the SSG is generating a plugin
+page in a monorepo. An expression like <code v-pre>{{repo_name}}{{cond_infix_colon}}{{plugin_title}}</code> will generate
 `shelter-plugins: plugin-name` in a monorepo, `plugin-name` in an individual page build, and `shelter-plugins` in an
 index page build.
 
-_On the index page only_, there is also:
+### Index page only
+
 ```ts
-type IndexPageSsgData = CommonSsgData & {
+const indexPageSsgData = {
+  ...commonSsgData,
   plugins: [
     {
       name: "My Plugin",
@@ -157,9 +161,16 @@ type IndexPageSsgData = CommonSsgData & {
 `plugin.json` files and use them here, if you want to add extra properties to the plugin manifest that your custom
 templates can use.
 
-_On the plugin page only_, there is also:
+If you do an <code v-pre>{{#each plugins}} {{/each}}</code>, you can use components inside the each block as if
+they were on a plugin page, as the plugin's manifest content will then be available on the top level.
+For example, you could import <code v-pre>{{>plugin_card}}</code> on a plugin page and it would work the same as when
+inside of the `#each` on the index page.
+
+### Plugin page only
+
 ```ts
-type PluginPageSsgData = CommonSsgData & {
+const pluginPageSsgData = {
+  ...commonSsgData,
   name: "My Plugin",
   description: "My cool plugin that like does a thing or something",
   author: "My name!"
