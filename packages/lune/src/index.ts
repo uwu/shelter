@@ -4,6 +4,8 @@ import { helptext } from "./help.js";
 import { commands } from "./commands/index.js";
 import pkg from "../package.json" assert { type: "json" };
 
+import "./ssg";
+
 const topLevelParsed = argparse(
   {
     help: "bool",

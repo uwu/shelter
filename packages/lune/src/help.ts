@@ -6,6 +6,7 @@ Commands:
   dev:   develop a plugin with hot reloading
   ci:    builds all plugins in a monorepo (hint: use the template!)
   init:  creates a new plugin
+  ssg:   builds a static site for your plugin or monorepo
 
 Options (call --help with a command to see more)
   --help:    Show this help text

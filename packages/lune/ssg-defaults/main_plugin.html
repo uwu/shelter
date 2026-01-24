@@ -1,0 +1,11 @@
+<div class="autosize plugin-main">
+  {{>pre_plugin}}
+
+  <div class="plugin-desc">{{>description}}</div>
+
+  <div class="plugin-link" onclick="navigator.clipboard.writeText(this.innerText)">
+    {{>resolved_plugin_url}} {{>copy_icon}}
+  </div>
+
+  {{>post_plugin}} {{>footer}}
+</div>

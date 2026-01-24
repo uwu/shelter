@@ -2,6 +2,7 @@ import dev from "./dev.js";
 import init from "./init.js";
 import build from "./build.js";
 import ci from "./ci.js";
+import ssg from "./ssg.js";
 
 export interface Command {
   argSchema: Record<string, "bool" | "str">;
@@ -9,4 +10,4 @@ export interface Command {
   helpText: string;
 }
 
-export const commands: Record<string, Command> = { dev, init, build, ci };
+export const commands: Record<string, Command> = { dev, init, build, ci, ssg };

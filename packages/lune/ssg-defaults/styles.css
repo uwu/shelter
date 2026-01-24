@@ -1,0 +1,81 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap");
+
+body {
+  background: #fff;
+  color: #3c3c43;
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+a {
+  color: #169767;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background: #1b1b1f;
+    color: #dfdfd6;
+  }
+
+  a {
+    color: #2bfaac;
+  }
+}
+
+body, html {
+  margin: 0;
+}
+nav, main {
+  padding: 0 1rem;
+}
+
+nav {
+  margin-bottom: 1rem;
+  border-bottom: 1px solid gray;
+}
+
+.autosize {
+  max-width: 960px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.a-reset {
+  color: inherit;
+  text-decoration: none;
+}
+
+.footer {
+  margin-top: 5rem;
+  text-align: center;
+  opacity: .5;
+}
+
+.plugin {
+  margin: .5rem 0;
+  padding: .5rem;
+  border: 1px solid gray;
+  border-radius: .5rem;
+}
+
+.plugin-title {
+  font-weight: bold;
+  font-size: large;
+}
+
+.plugin-link {
+  cursor: pointer;
+  opacity: .6;
+}
+
+.plugin-main .plugin-desc {
+  margin-bottom: 1rem;
+}
+
+.plugin-page-after {
+  margin-top: 1rem;
+}
+
+.icon {
+  height: 1em;
+  transform: translateY(2px);
+}

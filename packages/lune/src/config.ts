@@ -16,6 +16,12 @@ export type LuneCfg = {
    * @default false
    */
   minify?: boolean;
+  /**
+   * Override default data injected into SSG templates.
+   * See the docs for how to customise the templates.
+   * @default {}
+   */
+  ssg?: object;
 } & (
   | {
       /**

@@ -1,0 +1,9 @@
+<a class="a-reset" href="{{this.url}}">
+  <div class="plugin">
+    <div class="plugin-title">{{name}}</div>
+    <div class="plugin-desc">{{>description}}</div>
+    <div class="plugin-link" onclick="navigator.clipboard.writeText(this.innerText)">
+      {{>resolved_plugin_url}} {{>copy_icon}}
+    </div>
+  </div>
+</a>
