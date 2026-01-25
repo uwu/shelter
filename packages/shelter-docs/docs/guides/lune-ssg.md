@@ -35,6 +35,7 @@ your per-monorepo _and_ per-plugin partials.
 Custom partials go in the `lune-ssg` folder either in your monorepo root, and/or in the invidiual plugin's folder.
 
 You can also put your own `styles.css` in `lune-ssg`, which will override the default stylesheet.
+Note the templating engine is not ran on stylesheets.
 
 The three special partials are `layout`, `index_main`, and `index_plugin`. More details below.
 
@@ -54,12 +55,18 @@ I recommend you add a lune.config.js with:
 import { defineConfig } from "@uwu/lune";
 
 export default defineConfig({
-  ssg: { repo_name: "Name Here's Plugins" }
+  ssg: {
+    repo_name: "Name Here's Plugins",
+    base_url: "https://your.site/shelter-plugins"
+  }
 });
 ```
 
-Otherwise, your plugin site will be generated with the name of the folder as the site name, which is likely to be
-something boring like "shelter-plugins".
+Without `repo_name`, your plugin site will be generated with the name of the folder as the site name,
+which is likely to be something boring like "shelter-plugins".
+
+Without `base_url`, the copyable plugin links will be generated on the client side with Javascript.
+Setting this will allow them to be statically generated. [More info](#optional-template-data).
 
 You may want to have more interesting content on the plugin pages than just the shelter manifest description.
 You can easily achieve this by adding the file `shelter-plugins/plugins/my-plugin-name/lune-ssg/description.html`.
@@ -90,8 +97,10 @@ The default website's list of partials is:
  - `resolved_plugin_url`: A span that will be populated with the absolute URL to your plugin at runtime
     (e.g. https://your.site/shelter-plugins/my-plugin-name). You really don't get a lot out of overriding this,
     I don't suggest you bother.
+    If `base_url` is defined [(see below)](#optional-template-data), this won't be a span, but just a plain string.
  - `copy_icon`: A copy to clipboard icon SVG. This feels like a good place to remind you that these partial names are
     not special, you can add as many custom partials as you want to componentise your site. That's what this one is!
+ - `back_icon`: Self explanatory
 
 Of these, `scripts`, `pre`/`post`-`index`/`plugin`, and `description` are there purely
 for you to extend or slightly modify the page, and are not actually used substantially by the default site.
@@ -123,6 +132,7 @@ const commonSsgData = {
   plugin_title: "my-plugin",
   cond_infix_colon: ": ",
   cond_infix_bar: " | ",
+  has_index: true,
   ...luneConfigSsg
 }
 ```
@@ -141,6 +151,8 @@ empty string. [Probably you want to override this](#recommended-customisations).
 page in a monorepo. An expression like <code v-pre>{{repo_name}}{{cond_infix_colon}}{{plugin_title}}</code> will generate
 `shelter-plugins: plugin-name` in a monorepo, `plugin-name` in an individual page build, and `shelter-plugins` in an
 index page build.
+
+`has_index` is true when building a monorepo, or false when building a single plugin page.
 
 ### Index page only
 
@@ -179,3 +191,23 @@ const pluginPageSsgData = {
 
 The contents of the plugin manifest for the current plugin are available directly in the template.
 Additional properties from the manifest are of course also appended here.
+
+
+### Optional template data
+
+You can add whatever extra template data you want via your Lune config file. The default website template can pick up
+the following if you define them, but they will be undefined by default:
+
+```ts
+const optionalSsgData = {
+  base_url: "https://your.site/shelter-plugins"
+}
+```
+
+`base_url` is the URL you intend to host the index of your website at, without a trailing `/`.
+If supplied, the plugin links will not require shipping any Javascript to generate and will be statically output.
+If you serve your site from many URLs and want it to be dynamic, don't set this.
+
+This is required to make <code v-pre>{{>resolved_plugin_url}}</code> be a plain string rather than a `<span>`,
+so if you want to use the resolved plugin URL in an attribute, for example
+<code v-pre>href="{{>resolved_plugin_url}}"</code>, you HAVE to provide this.

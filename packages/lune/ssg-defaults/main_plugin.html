@@ -1,10 +1,14 @@
 <div class="autosize plugin-main">
-  {{>pre_plugin}}
+  {{#if has_index}}
+  <p><a href="..">{{>back_icon}} Back to index</a></p>
+  {{/if}} {{>pre_plugin}}
 
   <div class="plugin-desc">{{>description}}</div>
 
   <div class="plugin-link" onclick="navigator.clipboard.writeText(this.innerText)">
-    {{>resolved_plugin_url}} {{>copy_icon}}
+    <p>
+      {{>resolved_plugin_url}} {{>copy_icon}}
+    </p>
   </div>
 
   {{>post_plugin}} {{>footer}}

@@ -7,7 +7,7 @@ import { readFile, writeFile } from "fs/promises";
 import { copyFile } from "node:fs/promises";
 
 function performTemplating(templates: Record<string, string>, name: string, meta: object) {
-  const template = compile(templates[name], { noEscape: true });
+  const template = compile(templates[name], { noEscape: true, compat: true });
 
   const partials = Object.fromEntries(Object.entries(templates).map(([name, template]) => [name, template])) as any;
 
@@ -54,6 +54,7 @@ export async function buildIndexAndStyles(
     cond_infix_colon: "",
     cond_infix_bar: "",
     styles: "styles.css",
+    has_index: true,
     ...cfg,
   };
 
@@ -111,6 +112,7 @@ export async function buildPluginPage(pluginDir: string, outDir: string, cfg: ob
     cond_infix_colon: repoDir ? ": " : "",
     cond_infix_bar: repoDir ? " | " : "",
     styles: isCi ? "../styles.css" : "styles.css",
+    has_index: isCi,
     ...cfg,
   };
 

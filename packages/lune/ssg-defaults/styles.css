@@ -1,3 +1,7 @@
+/* default Lune SSG stylesheet; uwu.network 2026
+ * colours and the like are modeled on the shelter documentation site.
+ */
+
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100..700;1,100..700&display=swap");
 
 body {
@@ -19,6 +23,10 @@ a {
   a {
     color: #2bfaac;
   }
+
+  nav {
+    border-bottom-color: gray !important;
+  }
 }
 
 body, html {
@@ -30,7 +38,7 @@ nav, main {
 
 nav {
   margin-bottom: 1rem;
-  border-bottom: 1px solid gray;
+  border-bottom: 1px solid #e2e2e3;
 }
 
 .autosize {
@@ -44,17 +52,33 @@ nav {
   text-decoration: none;
 }
 
+.header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  height: 2rem;
+  padding: 1rem;
+}
+
+.header h1 {
+  margin: 0;
+  line-height: 1;
+}
+
+.header img {
+  height: 2rem;
+}
+
 .footer {
   margin-top: 5rem;
+  margin-bottom: 1rem;
   text-align: center;
-  opacity: .5;
 }
 
 .plugin {
   margin: .5rem 0;
   padding: .5rem;
-  border: 1px solid gray;
   border-radius: .5rem;
+  background: rgba(44, 91, 83, .2);
 }
 
 .plugin-title {
@@ -67,15 +91,10 @@ nav {
   opacity: .6;
 }
 
-.plugin-main .plugin-desc {
-  margin-bottom: 1rem;
-}
-
-.plugin-page-after {
-  margin-top: 1rem;
+.plugin p {
+  margin: .3rem 0;
 }
 
 .icon {
-  height: 1em;
   transform: translateY(2px);
 }
