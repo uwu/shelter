@@ -79,7 +79,6 @@ export const setAllFromObject = async (storeName: string, obj: object) =>
   executeDbOperation(async () => {
     const tx = currentDatabase.transaction(storeName, "readwrite");
 
-    console.log(obj);
     // copy object in
     await Promise.all(Object.keys(obj).map((k) => tx.store.put(obj[k], k)));
 
