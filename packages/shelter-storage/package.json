@@ -1,0 +1,19 @@
+{
+  "name": "@uwu/shelter-storage",
+  "description": "shelter's deeply reactive IDB-backed storage system",
+  "private": true,
+  "author": "uwu.network",
+  "homepage": "https://shelter.uwu.network/",
+  "repository": "github:uwu/shelter",
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "devDependencies": {
+    "typescript": "catalog:"
+  },
+  "dependencies": {
+    "idb": "catalog:",
+    "solid-js": "catalog:",
+    "valtio": "catalog:"
+  }
+}

@@ -1,6 +1,5 @@
-import { dbStore, isInited, signalOf, solidMutWithSignal, storage, waitInit } from "./storage";
+import { storage, unbacked, flush as flushShelterStorage, signalOf, waitInit, isInited } from "./storage";
 import { Component, onCleanup } from "solid-js";
-import { createMutable } from "solid-js/store";
 import { createScopedApiInternal, log, prettifyError } from "./util";
 import {
   ModalBody,
@@ -46,9 +45,12 @@ export type EvaledPlugin = {
   scopedDispose(): void;
 };
 
-const internalData = storage<StoredPlugin>("plugins-internal");
-const pluginStorages = storage("plugins-data");
-const [internalLoaded, loadedPlugins] = solidMutWithSignal(createMutable({} as Record<string, EvaledPlugin>));
+const internalData = storage("plugins-internal") as Record<string, StoredPlugin>;
+
+const pluginStorages = storage("plugins-data") as Record<string, any>;
+
+const internalLoaded = unbacked() as Record<string, EvaledPlugin>;
+const loadedPlugins = signalOf(internalLoaded);
 
 // dear god do not let these go anywhere other than data.ts
 export { internalData as UNSAFE_internalData, pluginStorages as UNSAFE_pluginStorages };
@@ -60,25 +62,9 @@ function createStorage(pluginId: string): [Record<string, any>, () => void] {
   if (!isInited(pluginStorages))
     throw new Error("to keep data persistent, plugin storages must not be created until connected to IDB");
 
-  const data = createMutable((pluginStorages[pluginId] ?? {}) as Record<string, any>);
+  const data = (pluginStorages[pluginId] ??= {});
 
-  const flush = () => {
-    pluginStorages[pluginId] = { ...data };
-  };
-
-  return [
-    new Proxy(data, {
-      set(t, p, v, r) {
-        queueMicrotask(flush);
-        return Reflect.set(t, p, v, r);
-      },
-      deleteProperty(t, p) {
-        queueMicrotask(flush);
-        return Reflect.deleteProperty(t, p);
-      },
-    }),
-    flush,
-  ];
+  return [data, () => flushShelterStorage(data)];
 }
 
 function createPluginApi(pluginId: string, { manifest, injectorIntegration }: StoredPlugin) {

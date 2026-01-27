@@ -1,0 +1,17 @@
+{
+  "include": ["*.ts"],
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+
+    "outDir": "dist",
+    "emitDeclarationOnly": true,
+    "strictFunctionTypes": true,
+
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
+    "isolatedModules": true,
+    "composite": true
+  }
+}

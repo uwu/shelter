@@ -11,7 +11,6 @@ import * as bridges from "./bridges";
 import * as util from "./util";
 import * as plugins from "./plugins";
 import { registerSection } from "./settings";
-import * as storage from "./storage";
 import { observe } from "./observer";
 import http from "./http";
 
