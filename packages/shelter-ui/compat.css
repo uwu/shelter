@@ -1,47 +1,136 @@
 :root {
-  /* all CSS vars required by shelter-UI components */
-  --saturation-factor: 1;
-  --text-default: #dbdee1;
-  --text-link: #00a8fc;
-  --brand-400: #7983f5;
-  --brand-500: #5865f2;
-  --brand-560: #4752c4;
-  --brand-experiment: var(--brand-500);
-  --interactive-active: var(--white-500);
-  --interactive-normal: #b5bac1;
-  --interactive-hover: #dbdee1;
-  --font-display: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --background-surface-high: color-mix(in oklab, hsl(232.5 calc(1 * 6.557%) 23.922% / 1) 100%, #000 0%);
+  --blurple-50: hsl(234.935 calc(1 * 85.556%) 64.706% / 1);
+  --border-normal: color-mix(in oklab, hsl(240 calc(1 * 4%) 60.784% / .2) 100%, hsl(0 0% 0% / .2) 0%);
+  --border-subtle: color-mix(
+    in oklab,
+    hsl(240 calc(1 * 4%) 60.784% / .12156862745098039) 100%,
+    hsl(0 0% 0% / .12156862745098039) 0%
+  );
+  --checkbox-background-default: hsl(0 calc(1 * 0%) 0% / .0784313725490196);
+  --checkbox-background-selected-default: hsl(234.935 calc(1 * 85.556%) 64.706% / 1);
+  --checkbox-border-default: hsl(240 calc(1 * 4%) 60.784% / .6392156862745098);
+  --control-connected-background-active: hsl(150.316 calc(1 * 100%) 18.627% / 1);
+  --control-connected-background-default: hsl(151.128 calc(1 * 100%) 26.078% / 1);
+  --control-connected-background-hover: hsl(150.556 calc(1 * 100%) 21.176% / 1);
+  --control-connected-border-active: hsl(0 calc(1 * 0%) 100% / .0784313725490196);
+  --control-connected-border-default: hsl(0 calc(1 * 0%) 100% / .0784313725490196);
+  --control-connected-border-hover: hsl(0 calc(1 * 0%) 100% / .0784313725490196);
+  --control-connected-text-active: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-connected-text-default: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-connected-text-hover: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-critical-primary-background-active: hsl(354.59 calc(1 * 67.778%) 35.294% / 1);
+  --control-critical-primary-background-default: hsl(355.636 calc(1 * 64.706%) 50% / 1);
+  --control-critical-primary-background-hover: hsl(355.075 calc(1 * 65.686%) 40% / 1);
+  --control-critical-primary-border-active: hsl(0 calc(1 * 0%) 100% / .0784313725490196);
+  --control-critical-primary-border-default: hsl(0 calc(1 * 0%) 100% / .0784313725490196);
+  --control-critical-primary-border-hover: hsl(0 calc(1 * 0%) 100% / .0784313725490196);
+  --control-critical-primary-text-active: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-critical-primary-text-default: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-critical-primary-text-hover: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-critical-secondary-background-active: hsl(240 calc(1 * 4%) 60.784% / .2);
+  --control-critical-secondary-background-default: hsl(240 calc(1 * 4%) 60.784% / .0784313725490196);
+  --control-critical-secondary-background-hover: hsl(240 calc(1 * 4%) 60.784% / .1607843137254902);
+  --control-critical-secondary-border-active: hsl(240 calc(1 * 4%) 60.784% / .0392156862745098);
+  --control-critical-secondary-border-default: hsl(240 calc(1 * 4%) 60.784% / .0392156862745098);
+  --control-critical-secondary-border-hover: hsl(240 calc(1 * 4%) 60.784% / .0392156862745098);
+  --control-critical-secondary-text-active: hsl(2.655 calc(1 * 100%) 77.843% / 1);
+  --control-critical-secondary-text-default: hsl(2.655 calc(1 * 100%) 77.843% / 1);
+  --control-critical-secondary-text-hover: hsl(2.655 calc(1 * 100%) 77.843% / 1);
+  --control-overlay-primary-background-active: hsl(240 calc(1 * 4.274%) 77.059% / 1);
+  --control-overlay-primary-background-default: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-overlay-primary-background-hover: hsl(240 calc(1 * 5.085%) 88.431% / 1);
+  --control-overlay-primary-border-active: hsl(240 calc(1 * 4%) 60.784% / .12156862745098039);
+  --control-overlay-primary-border-default: hsl(240 calc(1 * 4%) 60.784% / .12156862745098039);
+  --control-overlay-primary-border-hover: hsl(240 calc(1 * 4%) 60.784% / .12156862745098039);
+  --control-overlay-primary-text-active: hsl(0 calc(1 * 0%) 0% / 1);
+  --control-overlay-primary-text-default: hsl(0 calc(1 * 0%) 0% / 1);
+  --control-overlay-primary-text-hover: hsl(0 calc(1 * 0%) 0% / 1);
+  --control-overlay-secondary-background-active: hsl(0 calc(1 * 0%) 0% / .47843137254901963);
+  --control-overlay-secondary-background-default: hsl(0 calc(1 * 0%) 0% / .5215686274509804);
+  --control-overlay-secondary-background-hover: hsl(0 calc(1 * 0%) 0% / .6392156862745098);
+  --control-overlay-secondary-border-active: hsl(240 calc(1 * 4%) 60.784% / .0392156862745098);
+  --control-overlay-secondary-border-default: hsl(240 calc(1 * 4%) 60.784% / .0392156862745098);
+  --control-overlay-secondary-border-hover: hsl(240 calc(1 * 4%) 60.784% / .0392156862745098);
+  --control-overlay-secondary-text-active: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-overlay-secondary-text-default: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-overlay-secondary-text-hover: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-primary-background-active: hsl(232 calc(1 * 47.511%) 43.333% / 1);
+  --control-primary-background-default: hsl(234.935 calc(1 * 85.556%) 64.706% / 1);
+  --control-primary-background-hover: hsl(232.941 calc(1 * 46.667%) 50% / 1);
+  --control-primary-border-active: hsl(0 calc(1 * 0%) 100% / .0784313725490196);
+  --control-primary-border-default: hsl(0 calc(1 * 0%) 100% / .0784313725490196);
+  --control-primary-border-hover: hsl(0 calc(1 * 0%) 100% / .0784313725490196);
+  --control-primary-text-active: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-primary-text-default: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-primary-text-hover: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-secondary-background-active: hsl(240 calc(1 * 4%) 60.784% / .2);
+  --control-secondary-background-default: hsl(240 calc(1 * 4%) 60.784% / .0784313725490196);
+  --control-secondary-background-hover: hsl(240 calc(1 * 4%) 60.784% / .1607843137254902);
+  --control-secondary-border-active: color-mix(
+    in oklab,
+    hsl(240 calc(1 * 4%) 60.784% / .0392156862745098) 100%,
+    hsl(0 0% 0% / .0392156862745098) 0%
+  );
+  --control-secondary-border-default: color-mix(
+    in oklab,
+    hsl(240 calc(1 * 4%) 60.784% / .0392156862745098) 100%,
+    hsl(0 0% 0% / .0392156862745098) 0%
+  );
+  --control-secondary-border-hover: hsl(240 calc(1 * 4%) 60.784% / .0392156862745098);
+  --control-secondary-text-active: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-secondary-text-default: hsl(0 calc(1 * 0%) 100% / 1);
+  --control-secondary-text-hover: hsl(0 calc(1 * 0%) 100% / 1);
+  --elevation-high: 0 8px 16px hsl(0 calc(1 * 0%) 0% / .24);
+  /* --focus-primary: NOT FOUND */
   --font-code:
-    Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter", "DejaVu Sans Mono",
-    "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier, monospace;
-  --background-secondary: #2b2d31;
-  --background-surface-high: #393a41;
-  --border-subtle: #97979f1f;
-  --input-background: #1e1f22;
-  --modal-background: #313338;
-  --modal-footer-background: var(--background-secondary);
-  --header-primary: #f2f3f5;
-  --header-secondary: var(--interactive-normal);
-  --scrollbar-thin-thumb: #1a1b1e;
-  --scrollbar-thin-track: hsl(var(--black-500-hsl) / 0);
-  --elevation-high: 0 8px 16px hsl(var(--black-500-hsl) / .24);
-  --button-danger-background: #da373c;
-  --button-danger-background-hover: #8f2022;
-  --button-positive-background: #248046;
-  --button-positive-background-hover: #1a6334;
-  --button-secondary-background: var(--primary-500);
-  --button-secondary-background-hover: #6d6f78;
-  --button-secondary-text: var(--white-500);
-  --button-filled-brand-text: var(--white-500);
-  --primary-500: #4e5058;
-  --primary-200: #e3e5e8;
-  --white-500: #ffffff;
-  --black-500-hsl: 0 0% 0%;
-  /* nice-to-haves */
+    "gg mono", "Source Code Pro", Consolas, "Andale Mono WT", "Andale Mono", "Lucida Console", "Lucida Sans Typewriter",
+    "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Liberation Mono", "Nimbus Mono L", Monaco, "Courier New", Courier,
+    monospace;
+  --font-display: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-headline: "ABC Ginto Nord", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --font-primary: "gg sans", "Noto Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --background-primary: #313338;
+  /* --header-secondary: NOT FOUND */
+  --input-background-default: color-mix(
+    in oklab,
+    hsl(0 calc(1 * 0%) 0% / .0784313725490196) 100%,
+    hsl(0 0% 0% / .0784313725490196) 0%
+  );
+  --input-border-active: color-mix(in oklab, hsl(234.935 calc(1 * 85.556%) 64.706% / 1) 100%, #000 0%);
+  --input-border-default: color-mix(in oklab, hsl(240 calc(1 * 4%) 60.784% / .2) 100%, hsl(0 0% 0% / .2) 0%);
+  --interactive-muted: color-mix(in oklab, hsl(234.545 calc(1 * 6.509%) 33.137% / 1) 100%, #000 0%);
+  --modal-background: color-mix(in oklab, hsl(232.5 calc(1 * 6.557%) 23.922% / 1) 100%, #000 0%);
+  --modal-footer-background: color-mix(in oklab, hsl(232.5 calc(1 * 6.557%) 23.922% / 1) 100%, #000 0%);
+  --modal-horizontal-padding: 24px;
+  --modal-vertical-padding: 16px;
+  --modal-width-large: 800px;
+  --modal-width-medium: 602px;
+  --modal-width-small: 442px;
+  --notice-background-critical: hsl(352.277 calc(1 * 78.295%) 25.294% / 1);
+  --notice-background-positive: hsl(146.866 calc(1 * 100%) 13.137% / 1);
+  --notice-background-warning: hsl(25.714 calc(1 * 100%) 19.216% / 1);
+  --notice-text-critical: hsl(1.765 calc(1 * 100%) 93.333% / 1);
+  --notice-text-info: hsl(216.923 calc(1 * 100%) 94.902% / 1);
+  --notice-text-positive: hsl(136.271 calc(1 * 90.769%) 87.255% / 1);
+  --notice-text-warning: hsl(30 calc(1 * 100%) 90.588% / 1);
+  --radius-md: 12px;
+  --radius-xl: 24px;
+  --scrollbar-thin-thumb: color-mix(in oklab, hsl(234 calc(1 * 4.065%) 48.235% / 1) 100%, #000 0%);
+  --scrollbar-thin-track: color-mix(in oklab, hsl(0 calc(1 * 0%) 0% / 0) 100%, hsl(0 0% 0% / 0) 0%);
+  --shadow-high: 0 12px 24px 0 hsl(none 0% 0% / .24);
+  --shadow-low: 0 1px 4px 0 hsl(none 0% 0% / .14);
+  --shadow-medium: 0 4px 8px 0 hsl(none 0% 0% / .16);
+  --space-12: 12px;
+  --space-16: 16px;
+  --space-8: 8px;
+  --text-brand: color-mix(in oklab, hsl(228.785 calc(1 * 100%) 79.02% / 1) 100%, #000 0%);
+  --text-default: color-mix(in oklab, hsl(240 calc(1 * 4.478%) 86.863% / 1) 100%, #000 0%);
+  --text-muted: color-mix(in oklab, hsl(231.429 calc(1 * 4.348%) 68.431% / 1) 100%, #000 0%);
+  /* --text-secondary: NOT FOUND */
+  --text-strong: color-mix(in oklab, hsl(0 calc(1 * 0%) 100% / 1) 100%, #000 0%);
+  --text-subtle: color-mix(in oklab, hsl(228 calc(1 * 4.505%) 78.235% / 1) 100%, #000 0%);
+  --white: hsl(0 calc(1 * 0%) 100% / 1);
 }
-
 /* discord fonts */
 @font-face {
   font-style: normal;
