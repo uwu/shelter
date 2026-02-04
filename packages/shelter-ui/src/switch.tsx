@@ -138,7 +138,7 @@ export const Switch: NativeExtendingComponent<SwitchProps, JSX.InputHTMLAttribut
       class={`${classes.switch} ${other.disabled ? classes.disabled : ""}`}
       style={{
         "--shltr-sw-col": checked() ? COL_ENABLED : COL_DISABLED,
-        "--shltr-sw-border:": checked() ? COL_BORDER : "transparent",
+        "--shltr-sw-border": checked() ? COL_BORDER : "transparent",
         "--shltr-sw-dur": DURATION + "ms",
       }}
     >
