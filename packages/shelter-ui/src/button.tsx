@@ -1,4 +1,4 @@
-import { type JSX, mergeProps, splitProps } from "solid-js";
+import { type JSX, createMemo, mergeProps, splitProps } from "solid-js";
 import { classes, css } from "./button.tsx.scss";
 import { focusring } from "./focusring";
 import { tooltip } from "./tooltip";
@@ -195,7 +195,7 @@ export const Button: NativeExtendingComponent<ButtonProps, JSX.ButtonHTMLAttribu
 
   ensureInternalStyle(css);
 
-  const colorVars = InternalButtonColors[local.color];
+  const colorVars = createMemo(() => InternalButtonColors[local.color]);
 
   return (
     <button
@@ -206,17 +206,17 @@ export const Button: NativeExtendingComponent<ButtonProps, JSX.ButtonHTMLAttribu
         "--shltr-btn-w": local.size[0],
         "--shltr-btn-h": local.size[1],
 
-        "--shltr-btn-bg": colorVars.backgroundDefault,
-        "--shltr-btn-bg-hov": colorVars.backgroundHover,
-        "--shltr-btn-bg-act": colorVars.backgroundActive,
+        "--shltr-btn-bg": colorVars().backgroundDefault,
+        "--shltr-btn-bg-hov": colorVars().backgroundHover,
+        "--shltr-btn-bg-act": colorVars().backgroundActive,
 
-        "--shltr-btn-col": colorVars.textColorDefault,
-        "--shltr-btn-col-hov": colorVars.textColorHover,
-        "--shltr-btn-col-act": colorVars.textColorActive,
+        "--shltr-btn-col": colorVars().textColorDefault,
+        "--shltr-btn-col-hov": colorVars().textColorHover,
+        "--shltr-btn-col-act": colorVars().textColorActive,
 
-        "--shltr-btn-border": colorVars.borderColorDefault,
-        "--shltr-btn-border-hov": colorVars.borderColorHover,
-        "--shltr-btn-border-act": colorVars.borderColorActive,
+        "--shltr-btn-border": colorVars().borderColorDefault,
+        "--shltr-btn-border-hov": colorVars().borderColorHover,
+        "--shltr-btn-border-act": colorVars().borderColorActive,
         ...local.style,
       }}
       {...buttonProps}
