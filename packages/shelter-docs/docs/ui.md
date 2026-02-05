@@ -4,6 +4,7 @@ outline: [2, 3]
 
 <script setup>
   import Pill from "./.vitepress/theme/components/Pill.vue";
+  import ShelterDemo from "./.vitepress/theme/components/ShelterDemo.vue";
 </script>
 
 # shelter UI Documentation
@@ -170,7 +171,7 @@ It returns a function that removes your modal.
 You can open multiple modals, and focus trapping as well as clicking outside to close are automatic.
 
 ```js
-const remove = openModal((p) => <button onclick={p}>Hi!</button>);
+const remove = openModal((p) => <button onclick={p.close}>Hi!</button>);
 remove();
 ```
 
@@ -181,8 +182,6 @@ You can use the [modal components](#modal-components) to style your modals like 
 ::: tip
 You can listen for your modal being closed using [onCleanup](https://www.solidjs.com/tutorial/lifecycles_oncleanup).
 :::
-
-<video src="/ui/openModal.webm" loop autoplay controls></video>
 
 ### `<ReactInSolidBridge />` <Pill col="shelter">shelter only</Pill>
 
@@ -244,6 +243,7 @@ Safely catches any errors that occur during rendering, displays the error, and h
 ({
   title?: string,
   content?: string,
+  color?: string,
   onClick?(): void,
   class?: string,
   duration?: number
@@ -256,18 +256,25 @@ Returns a function to remove it instantly.
 
 The default duration is `3000`.
 
+The `color` prop accepts values from `ToastColors`:
+- `ToastColors.INFO` - Blue info style (default)
+- `ToastColors.SUCCESS` - Green success style
+- `ToastColors.WARNING` - Orange warning style
+- `ToastColors.CRITICAL` - Red critical/error style
+
 ```js
 // all of these props are optional
 showToast({
   title: "title!",
   content: "a cool toast",
+  color: ToastColors.SUCCESS,
   onClick() {},
   class: "my-cool-toast",
   duration: 3000,
 });
 ```
 
-![](/ui/showToast.webp)
+<ShelterDemo demo="toast" />
 
 ### `niceScrollbarsClass`
 
@@ -283,7 +290,7 @@ A getter that gets a class to add to an element to give it a Discord-style scrol
 <div class={`myclass myclass2 ${niceScrollbarsClass()}`} />
 ```
 
-![](/ui/niceScrollbarsClass.webp)
+<ShelterDemo demo="scrollbar" />
 
 ### `use:focusring`
 
@@ -309,7 +316,7 @@ so if you are using those, this is not necessary.
 <input use:focusring={6} type="checkbox" />
 ```
 
-![](/ui/focusring.webp)
+<ShelterDemo demo="focusring" />
 
 ### `use:tooltip`
 
@@ -321,14 +328,14 @@ You can pass any JSX element type, including strings and elements.
 
 If you pass undefined, it will do nothing.
 
-You can pass an of the form `[true, JSX.Element]` to render it underneath instead of on top of the element.
+You can pass an array of the form `[true, JSX.Element]` to render it underneath instead of on top of the element.
 
 ```jsx
 <button use:tooltip="Delete"><DeleteIcon /></button>
 <button use:tooltip={[true, "Delete but underneath"]}><DeleteIcon /></button>
 ```
 
-![](/ui/tooltip.webp)
+<ShelterDemo demo="tooltip" />
 
 ### `<Space />`
 
@@ -372,17 +379,17 @@ openConfirmationModal({
 );
 ```
 
-![](/ui/confirmmodal.webp)
-
 ### `initToasts` <Pill col="red">standalone only</Pill>
 
 ::: details Type Signature
 ```ts
-() => void
+(mountPoint: HTMLElement) => () => void
 ```
 :::
 
 Sets up necessary things for toasts to work. You must call this if you are using toasts and are not using shelter.
+
+Pass the element where toasts should be mounted. Returns a cleanup function.
 
 ### `injectInternalStyles` <Pill col="red">standalone only</Pill>
 
@@ -428,7 +435,7 @@ The `weight` prop controls the font weight, using values from `TextWeights`. If 
 <Text tag={TextTags.displayMD}>Medium display title</Text>
 ```
 
-![Variants](/ui/text-variants.webp){width=500,height=300}
+<ShelterDemo demo="text-variants" />
 
 #### `TextTags`
 
@@ -455,12 +462,16 @@ Type: `Record<string, string>`
 - `TextWeights.bold`: Bold weight (700)
 - `TextWeights.extrabold`: Extra bold weight (800)
 
+<ShelterDemo demo="text-weights" />
+
 ### `<Header>`
 
 ::: details Type Signature
 ```ts
 solid.Component<{
   tag: string,
+  weight?: string,
+  margin?: boolean,
   children: JSX.Element,
   class?: string,
   id?: string
@@ -470,20 +481,39 @@ solid.Component<{
 
 Header is, well, a header. It has a few styles, chosen by the `tag` prop.
 
+The `weight` prop allows overriding the font weight using values from `HeaderWeights`.
+
+The `margin` prop controls whether to include bottom margin (defaults to `true`).
+
 ```jsx
-<Header tag={HeaderTags.H1}>My cool page</Header>
+<Header tag={HeaderTags.HeadingXXL}>My cool page</Header>
 ```
 
-![](/ui/headers.webp)
+<ShelterDemo demo="headers" />
 
 #### `HeaderTags`
 
-- `HeaderTags.H1`: A nice big header - like the ones at the top of user settings sections.
-- `HeaderTags.H2`: A slightly smaller header, with allcaps text.
-- `HeaderTags.H3`: A smaller again header - like "Gifts you purchased" in settings.
-- `HeaderTags.H4`: Smaller again, allcaps text.
-- `HeaderTags.H5`: Small, allcaps text, default - like "sms backup authentication" in settings.
+- `HeaderTags.HeadingXXL`: A nice big header - like the ones at the top of user settings sections.
+- `HeaderTags.HeadingXL`: A slightly smaller header.
+- `HeaderTags.HeadingLG`: A smaller again header - like "Gifts you purchased" in settings.
+- `HeaderTags.HeadingMD`: Smaller again.
+- `HeaderTags.HeadingSM`: Small.
+
+Legacy aliases (for backwards compatibility):
+- `HeaderTags.H1` → `HeaderTags.HeadingXXL`
+- `HeaderTags.H2` → `HeaderTags.HeadingXL`
+- `HeaderTags.H3` → `HeaderTags.HeadingLG`
+- `HeaderTags.H4` → `HeaderTags.HeadingMD`
+- `HeaderTags.H5` → `HeaderTags.HeadingSM`
 - `HeaderTags.EYEBROW`: A descriptive keyword or phrase placed above the main headline.
+
+#### `HeaderWeights`
+
+- `HeaderWeights.normal`: Normal weight (400)
+- `HeaderWeights.medium`: Medium weight (500)
+- `HeaderWeights.semibold`: Semi-bold weight (600, default)
+- `HeaderWeights.bold`: Bold weight (700)
+- `HeaderWeights.extrabold`: Extra bold weight (800)
 
 ### `<Divider />`
 
@@ -505,7 +535,7 @@ When set true, `20px` is used.
 <Divider mt mb="30px" /> // 20px on top, 30px on bottom.
 ```
 
-![](/ui/divider.webp)
+<ShelterDemo demo="divider" />
 
 ### `<Button>`
 
@@ -513,7 +543,7 @@ When set true, `20px` is used.
 ```ts
 solid.Component<{
   look?: string,       // default ButtonLooks.FILLED
-  color?: ButtonColor, // default ButtonColors.BRAND
+  color?: string,      // default ButtonColors.PRIMARY
   size?: ButtonSize,   // default ButtonSizes.SMALL
   grow?: boolean,      // default false, adds width: auto
   disabled?: boolean,
@@ -521,48 +551,58 @@ solid.Component<{
   style?: JSX.CSSProperties,
   class?: string,
   onClick?(): void,
-  onDoubleClick?(): void,
-  children?: JSX.Element
-  tooltip?: string
+  onDblClick?(): void,
+  children?: JSX.Element,
+  tooltip?: JSX.Element
 }>
 ```
 :::
 
 Button is a, well, button, using Discord's styles.
 
-![](/ui/buttoncolors.webp)
-![](/ui/buttonlooks.webp)
-![](/ui/buttonsizes.webp)
+<ShelterDemo demo="button-colors" />
+
+<ShelterDemo demo="button-sizes" margin="1.5rem" />
 
 #### `ButtonLooks`
 
 Type: `Record<string, string>`
 
-- `ButtonLooks.FILLED`: the standard Discord button like you see all over user settings
-- `ButtonLooks.INVERTED`: swaps the bg and fg colours
-- `ButtonLooks.OUTLINED`: only outline and text is coloured, until hover when bg fills in
-- `ButtonLooks.LINK`: removes the background and unsets the colour - looks like a link!
+- `ButtonLooks.FILLED`: the standard Discord button (all other looks are aliased to this in the current design system)
+
+::: info
+In Discord's 2025 visual refresh (Mana design system), `INVERTED`, `OUTLINED`, and `LINK` looks no longer exist as separate styles. They are aliased to `FILLED` for backwards compatibility.
+:::
 
 #### `ButtonColors`
 
-Type: `Record<string, ButtonColor>`
+Type: `Record<string, string>`
 
-- `ButtonColors.BRAND`: blurple / primary button
-- `ButtonColors.RED`
-- `ButtonColors.GREEN`
-- `ButtonColors.SECONDARY`: gray background
-- `ButtonColors.LINK`: blue like a proper `<a>`-style link.
-- `ButtonColors.WHITE`: looks inverted
-- `ButtonColors.BLACK`
-- `ButtonColors.TRANSPARENT`
+Current colors:
+- `ButtonColors.PRIMARY`: Brand primary button
+- `ButtonColors.SECONDARY`: Gray background
+- `ButtonColors.CRITICAL_PRIMARY`: Red/danger filled button
+- `ButtonColors.CRITICAL_SECONDARY`: Red/danger secondary button
+- `ButtonColors.ACTIVE`: Green/success button
+- `ButtonColors.OVERLAY_PRIMARY`: White button
+- `ButtonColors.OVERLAY_SECONDARY`: Dark button
+
+Legacy aliases (for backwards compatibility):
+- `ButtonColors.BRAND` → `PRIMARY`
+- `ButtonColors.RED` → `CRITICAL_PRIMARY`
+- `ButtonColors.GREEN` → `ACTIVE`
+- `ButtonColors.LINK` → `PRIMARY`
+- `ButtonColors.WHITE` → `OVERLAY_PRIMARY`
+- `ButtonColors.BLACK` → `OVERLAY_SECONDARY`
+- `ButtonColors.TRANSPARENT` → `SECONDARY`
 
 #### `ButtonSizes`
 
 Type: `Record<string, ButtonSize>`
 
 - `ButtonSizes.NONE`: does not attempt to set sizing on the button
-- `ButtonSizes.TINY`: 53x24
-- `ButtonSizes.SMALL`: 50x32
+- `ButtonSizes.TINY`: 52x24
+- `ButtonSizes.SMALL`: 60x32
 - `ButtonSizes.MEDIUM`: 96x38
 - `ButtonSizes.LARGE`: 130x44
 - `ButtonSizes.XLARGE`: 148x50, increases font size & padding
@@ -578,8 +618,9 @@ solid.Component<{
   style?: JSX.CSSProperties,
   class?: string,
   href?: string,
+  target?: string,
   "aria-label"?: string,
-  tooltip?: string,
+  tooltip?: JSX.Element,
   children?: JSX.Element
 }>
 ```
@@ -587,9 +628,9 @@ solid.Component<{
 
 A link (`<a>`) that fits with Discord's UI.
 
-It will open the href in a new tab / in your system browser.
+It will open the href in a new tab / in your system browser by default.
 
-![](/ui/linkbutton.webp)
+<ShelterDemo demo="link-button" />
 
 ### `<Switch />`
 
@@ -616,17 +657,17 @@ The `id` prop sets the id of the `<input>`.
 
 ```jsx
 const [switchState, setSwitchState] = createSignal(false);
-<Switch checked={switchState} onChange={setSwitchState} />;
+<Switch checked={switchState()} onChange={setSwitchState} />;
 ```
 
-<video src="/ui/switch.webm" loop autoplay></video>
+<ShelterDemo demo="switch" />
 
 ### `<SwitchItem>`
 
 ::: details Type Signature
 ```ts
 solid.Component<{
-  value: boolean,
+  checked: boolean,
   disabled?: boolean,
   onChange?(boolean): void,
   children: JSX.Element,
@@ -640,7 +681,7 @@ solid.Component<{
 
 An item with an option name, a switch, and optionally some extra info.
 
-`value` sets the value of the switch, `disabled` and `onChange` work as you'd expect.
+`checked` sets the value of the switch, `disabled` and `onChange` work as you'd expect.
 
 `note`, if passed, sets the extra info to be displayed under the title and switch.
 
@@ -651,10 +692,10 @@ The child elements of the component is the title displayed next to the switch.
 `tooltip`, if set, adds a tooltip.
 
 ```jsx
-<SwitchItem note="Does cool things" value={/*...*/}>A cool option</SwitchItem>
+<SwitchItem note="Does cool things" checked={/*...*/}>A cool option</SwitchItem>
 ```
 
-![](/ui/switchitem.webp)
+<ShelterDemo demo="switch-item" />
 
 ### `<Checkbox />`
 
@@ -673,7 +714,7 @@ solid.Component<{
 
 Like `<Switch />` but its a checkbox.
 
-[//]: # (TODO: once the styles are fixed, add an img)
+<ShelterDemo demo="checkbox" />
 
 ### `<CheckboxItem>`
 
@@ -694,7 +735,7 @@ solid.Component<{
 Like `<SwitchItem>` but its a checkbox.
 Takes an extra `mt` prop which enables a top margin. No note or divider.
 
-[//]: # (TODO: as above)
+<ShelterDemo demo="checkbox-item" />
 
 ### Modal Components
 
@@ -703,13 +744,13 @@ Also see [`openModal()`](#openmodal)
 
 ```jsx
 <ModalRoot size={ModalSizes.SMALL}>
-  <ModalHeader /* noClose */ close={closeFn}>My cool modal</ModalHeader>
+  <ModalHeader close={closeFn}>My cool modal</ModalHeader>
   <ModalBody>Look mom! I'm on the shelter-ui modal!</ModalBody>
   <ModalFooter>Uhhhhh idk this is the footer ig, its a good place for buttons!</ModalFooter>
 </ModalRoot>
 ```
 
-![](/ui/modal.webp)
+<ShelterDemo demo="modal" />
 
 #### `<ModalRoot>`
 
@@ -736,8 +777,10 @@ All provided child parts of the modal (header, body, footer) are optional.
 
 Type: `Record<string, string>`
 
-- `ModalSizes.SMALL`: 440 wide, 200~720 tall
-- `ModalSizes.MEDIUM`: 600 wide, 400~800 tall
+- `ModalSizes.SMALL`: 442px wide
+- `ModalSizes.MEDIUM`: 602px wide
+- `ModalSizes.LARGE`: 800px wide
+- `ModalSizes.DYNAMIC`: Fits content
 
 #### `<ModalHeader>`
 
@@ -771,7 +814,7 @@ solid.Component<{
   close(): void,
   confirmText?: string,                    // default "Confirm"
   cancelText?: string,                     // default "Cancel"
-  type?: "neutral" | "danger" | "confirm", // default "neutral"
+  type?: "neutral" | "danger" | "confirm", // default "confirm"
   onConfirm?(): void,
   onCancel?(): void,
   disabled?: boolean,
@@ -786,7 +829,7 @@ The `type` prop controls the colour of the confirm button.
 
 The `disabled` prop affects the confirm button, and the `cancelDisabled` prop affects the cancel button.
 
-![](/ui/confirmfooter.webp)
+<ShelterDemo demo="confirm-footer" />
 
 ### `<TextBox />`
 
@@ -795,7 +838,7 @@ The `disabled` prop affects the confirm button, and the `cancelDisabled` prop af
 solid.Component<{
   value?: string,
   placeholder?: string,
-  maxLength?: number,
+  maxlength?: number,
   id?: string,
   "aria-label"?: string,
   onInput?(string): void
@@ -805,11 +848,11 @@ solid.Component<{
 
 A discord style textbox.
 
-Takes value, placeholder, maxLength, and onInput.
+Takes value, placeholder, maxlength, and onInput.
 
 All optional. onInput called every keystroke and passed the full current value.
 
-![](/ui/textbox.webp)
+<ShelterDemo demo="textbox" />
 
 ### `<TextArea />`
 
@@ -818,24 +861,25 @@ All optional. onInput called every keystroke and passed the full current value.
 solid.Component<{
   value?: string,
   placeholder?: string,
-  maxLength?: number,
+  maxlength?: number,
   id?: string,
   "aria-label"?: string,
-  onInput?(string): void
-  width?: string,
-  height?: string,
+  onInput?(string): void,
   "resize-x"?: boolean,
   "resize-y"?: boolean,
-  mono?: boolean
+  mono?: boolean,
+  counter?: boolean
 }>
 ```
 :::
 
 Like `<TextBox />` but its a textarea.
 
-The size can be set, user resizing can be toggled, and you can apply a monospace font.
+User resizing can be toggled with `resize-x` and `resize-y`, and you can apply a monospace font with `mono`.
 
-![](/ui/textarea.webp)
+The `counter` prop shows a character counter.
+
+<ShelterDemo demo="textarea" />
 
 ### `<Slider />`
 
@@ -875,7 +919,7 @@ If `tick` is not passed, no ticks show.
 />
 ```
 
-![](/ui/slider.webp)
+<ShelterDemo demo="slider" />
 
 
 ### `InternalStyles` <Pill col="red">standalone only</Pill>
@@ -915,7 +959,7 @@ correctly.
 
 If you are using shelter UI within your main page, you should then import and call `injectInternalStyles()`.
 This will add a style tag to your page to make the components look correct.
-If you want to use toasts, you must call `initToasts()`.
+If you want to use toasts, you must call `initToasts(mountPoint)` passing the element where toasts should appear.
 
 If you are using shelter UI within a shadow root or some other isolated context where this won't work, you should import
 and render `<InternalStyles />` somewhere within the relevant context.

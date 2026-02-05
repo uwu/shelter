@@ -19,6 +19,7 @@
   },
   "include": [
     "docs/.vitepress/**/*.ts",
+    "docs/.vitepress/**/*.tsx",
     "docs/.vitepress/**/*.mts",
     "docs/.vitepress/**/*.vue",
     "docs/**/*.md",
