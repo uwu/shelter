@@ -10,7 +10,8 @@
   "module": "dist/index.jsx",
   "types": "dist/index.d.ts",
   "scripts": {
-    "prepare": "rimraf dist tsconfig.tsbuildinfo && tsc && node esbuild.mjs"
+    "prepare": "rimraf dist tsconfig.tsbuildinfo && tsc && node esbuild.mjs",
+    "generate-compat-vars": "NODE_PATH=$(pnpm -c --package=puppeteer dlx 'which puppeteer | xargs dirname | xargs dirname') node generate-compat-vars.mjs"
   },
   "devDependencies": {
     "esbuild": "catalog:",
