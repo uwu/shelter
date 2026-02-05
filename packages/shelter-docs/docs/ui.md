@@ -25,6 +25,49 @@ shelter-ui has been updated to Discord's 2025 visual refresh redesign. Changes o
 Deprecated styles have been aliased to new styles, as to not break existing plugins: the styles might not be perfectly matching anymore and **an update to plugins is recommended**.
 :::
 
+## Standalone usage
+
+shelter UI can be used outside of Discord. There are a few things that must be taken into consideration for this:
+ - components may be affected by lack of Discord's stylesheets (css reset, etc.)
+ - components may be affected by your own stylesheets
+ - you must use the compatibility stylesheet
+ - you must inject the shelter UI internal styles
+ - you must be using Solid, or have some way of using Solid components in your page
+ - some APIs available on `shelter.ui` are not available in `@uwu/shelter-ui`, and vice versa.
+
+To get started in your Solid app/site, install `@uwu/shelter-ui`. It is a rolling release package, not semver, the
+version numbers simply increment each release. This is because shelter itself is rolling release and has no versioning.
+
+You must inject `@uwu/shelter-ui/compat.css` somewhere in your app.
+This does two things. First, it sets CSS variables
+on `:root` that the components rely on to look correct. The reason we use these variables at all instead of hardcoding
+their values is so that themes apply to shelter UI inside of Discord.
+Second, it adds `@font-face` rules for the custom fonts used by Discord, so that relevant fonts (gg sans, etc) load
+correctly.
+
+If you are using shelter UI within your main page, you should then import and call `injectInternalStyles()`.
+This will add a style tag to your page to make the components look correct.
+If you want to use toasts, you must call `initToasts(mountPoint)` passing the element where toasts should appear.
+
+If you are using shelter UI within a shadow root or some other isolated context where this won't work, you should import
+and render `<InternalStyles />` somewhere within the relevant context.
+
+APIs that are only available in shelter will have this badge next to them in these
+docs: <Pill col="shelter">shelter only</Pill>,
+and the APIs only available standalone will have this one: <Pill col="red">standalone only</Pill>
+
+They are also listed here:
+
+shelter-only:
+ - `ReactInSolidBridge`
+ - `renderSolidInReact`
+
+standalone-only:
+ - `cleanupCss`
+ - `initToasts`
+ - `injectInternalStyles`
+ - `InternalStyles`
+
 ## Accessibility
 
 All efforts are taken to support users of
@@ -37,375 +80,6 @@ This entails a few blanket behaviours across shelter-ui:
   * Labels are usually sensibly picked, eg the button and switchitem children prop
 - Relevant interactive elements (checkboxes, switches, textboxes) take an id prop to use with a `<label>`.
 
-## Utils
-
-Not components, but UI utils used in shelter.
-
-### `<ReactiveRoot>`
-
-::: details Type Signature
-```ts
-solid.Component<{ children: JSX.Element }>
-```
-:::
-
-`ReactiveRoot` creates a solid reactive root, to ensure that `onCleanup` works, and fix some reactivity bugs.
-
-```jsx
-elem.append(<ReactiveRoot>{/* ... */}</ReactiveRoot>);
-```
-
-You won't always need it - for example inside of shelter settings and modals you won't need one, and if your elements
-do not have any lifecycle they might be fine,
-but if you're inserting solid elements directly into the document, and reactivity is being weird, wrap your inserted
-elements in one of these.
-
-### `createPersistenceHelper`
-
-::: details Type Signature
-```ts
-<T>(inject: (PersistenceHelper: solid.Component) => T): () => T
-```
-:::
-
-`createPersistenceHelper` helps you take advantage of the [cleanup reinsertion](/guides/patterns#cleanup-reinsertion)
-pattern, by giving you a `<PersistenceHelper />` component that you can place into the document as many times as you
-like, that will cause `inject` to be re-run if it gets removed.
-
-The example from the patterns page would look like this:
-
-```jsx
-function MyComponent() {
-  // ReactiveRoot optional but recommended if you
-  // encounter any weird reactivity issues without it
-  return (
-    <ReactiveRoot>
-      <h1>My Header</h1>
-    </ReactiveRoot>
-  )
-}
-
-const insertComponent = createPersistenceHelper((PersistenceHelper) => {
-  // see warning below
-  if (!isPluginEnabled) return;
-
-  const parent = document.querySelector(`[class*="whatever"]`)
-  parent?.append(<PersistenceHelper />, <MyComponent />)
-  // you should still probably handle the case where `parent` is missing...
-});
-```
-
-### `injectCss`
-
-::: details Type Signature
-```ts
-(string, Node?) => (string?) => void
-```
-:::
-
-`injectCss`, as the name says, injects CSS.
-
-It returns a callback which, if passed another string, changes the injected CSS.
-If this callback is passed `undefined`, the CSS is removed from the page.
-At this point, you cannot pass another string into this callback to re-add some styles.
-
-```js
-const modify = injectCss(" .myClass { color: red } ");
-modify(" .myClass { color: green } "); // modifies the css
-modify(); // removes the css
-modify(" .myClass { color: blue } "); // no-op
-```
-
-### `cleanupCss` <Pill col="red">standalone only</Pill>
-
-::: details Type Signature
-```ts
-() => void
-```
-:::
-
-Removes all injected css.
-
-### `genId`
-
-::: details Type Signature
-```ts
-() => string
-```
-:::
-
-`genId` generates a random ID.
-
-This is useful in cases where you need to link elements together by ID,
-but don't actually need a meaningful ID.
-
-```jsx
-export default () => {
-  const id = genId();
-
-  return (
-    <>
-      <label for={id}>A useful input</label>
-      <input id={id} />
-    </>
-  );
-};
-```
-
-### `openModal`
-
-::: details Type Signature
-```ts
-(
-  (() => void) => JSX.Element
-) => () => void
-```
-:::
-
-`openModal` opens the given component in a fullscreen popup modal.
-
-It passes your component one prop, `close`, which is a function that closes the modal.
-
-It returns a function that removes your modal.
-
-You can open multiple modals, and focus trapping as well as clicking outside to close are automatic.
-
-```js
-const remove = openModal((p) => <button onclick={p.close}>Hi!</button>);
-remove();
-```
-
-::: tip
-You can use the [modal components](#modal-components) to style your modals like Discord easily.
-:::
-
-::: tip
-You can listen for your modal being closed using [onCleanup](https://www.solidjs.com/tutorial/lifecycles_oncleanup).
-:::
-
-### `<ReactInSolidBridge />` <Pill col="shelter">shelter only</Pill>
-
-::: details Type Signature
-```ts
-solid.Component<{ comp: React.ComponentType<TProps>, props: TProps }>
-```
-:::
-
-Renders a React component in Solid. Prop updates cause rerenders as expected.
-
-```jsx
-const ComponentFromDiscord = webpack.findByProps("...").default;
-
-<ReactInSolidBridge comp={ComponentFromDiscord} props={{ className: "reactelem", tag: "H1" }} />;
-```
-
-### `renderSolidInReact` <Pill col="shelter">shelter only</Pill>
-
-::: details Type Signature
-```ts
-(solid.Component<TProps>, TProps) => React.ElementType
-````
-:::
-
-Renders a Solid component in React. This component will *never* be rerendered by React,
-however prop or component updates passed in from the React host will be applied to the Solid child via reactivity.
-
-```jsx
-function MyCoolComponent(props) {
-  const [count, setCount] = solid.createSignal(0);
-  return <button class={props.className} onClick={() => setCount(count() + 1)}>yep {count()}</button>;
-}
-
-// Get a Discord component using React fiber or something
-
-component.render = () => renderSolidInReact(MyCoolComponent, { className: "solidelem" });
-```
-
-::: warning
-Previously, a React component called `SolidInReactBridge` was exposed. This has been removed from the shelter-ui API.
-Use this function instead.
-:::
-
-### `<ErrorBoundary />`
-
-::: details Type Signature
-```ts
-solid.Component<{ children: JSX.Element }>
-```
-:::
-
-Safely catches any errors that occur during rendering, displays the error, and has a button to retry.
-
-### `showToast`
-
-::: details Type Signature
-```ts
-({
-  title?: string,
-  content?: string,
-  color?: string,
-  onClick?(): void,
-  class?: string,
-  duration?: number
-}) => () => void
-```
-:::
-
-Shows a toast notification.
-Returns a function to remove it instantly.
-
-The default duration is `3000`.
-
-The `color` prop accepts values from `ToastColors`:
-- `ToastColors.INFO` - Blue info style (default)
-- `ToastColors.SUCCESS` - Green success style
-- `ToastColors.WARNING` - Orange warning style
-- `ToastColors.CRITICAL` - Red critical/error style
-
-```js
-// all of these props are optional
-showToast({
-  title: "title!",
-  content: "a cool toast",
-  color: ToastColors.SUCCESS,
-  onClick() {},
-  class: "my-cool-toast",
-  duration: 3000,
-});
-```
-
-<ShelterDemo demo="toast" />
-
-### `niceScrollbarsClass`
-
-::: details Type Signature
-```ts
-() => string
-```
-:::
-
-A getter that gets a class to add to an element to give it a Discord-style scrollbar.
-
-```jsx
-<div class={`myclass myclass2 ${niceScrollbarsClass()}`} />
-```
-
-<ShelterDemo demo="scrollbar" />
-
-### `use:focusring`
-
-Adds a visible ring around your element when focused via keyboard (tab key),
-to aid with accessibility.
-
-Optionally takes a border radius.
-
-`focusring` must be in scope, either via an import from shelter-ui,
-or otherwise (e.g. `const { focusring } = shelter.ui`).
-
-::: warning
-Be careful - some tooling incorrectly tree shakes this if imported using ESM.
-You can use `false && focusring` to prevent the tree shaking (it will be minified away).
-If getting via destructuring in shelter, you should be fine.
-:::
-
-The focusring is included for you on interactive shelter-ui components,
-so if you are using those, this is not necessary.
-
-```jsx
-<button use:focusring>do a thing</button>
-<input use:focusring={6} type="checkbox" />
-```
-
-<ShelterDemo demo="focusring" />
-
-### `use:tooltip`
-
-Shows a Discord-style tooltip when you hover over the element.
-
-Same scope rules apply as focusring.
-
-You can pass any JSX element type, including strings and elements.
-
-If you pass undefined, it will do nothing.
-
-You can pass an array of the form `[true, JSX.Element]` to render it underneath instead of on top of the element.
-
-```jsx
-<button use:tooltip="Delete"><DeleteIcon /></button>
-<button use:tooltip={[true, "Delete but underneath"]}><DeleteIcon /></button>
-```
-
-<ShelterDemo demo="tooltip" />
-
-### `<Space />`
-
-::: details Type Signature
-```ts
-solid.Component
-```
-:::
-
-A spacebar character that will never be collapsed out of your JSX. Useful in flexboxes etc.
-
-### `openConfirmationModal`
-
-::: details Type Signature
-```ts
-({
-  body: solid.Component,
-  header: solid.Component,
-  confirmText?: string,
-  cancelText?: string,
-  type?: ModalTypes,
-  size?: string,
-}) => Promise<void>
-```
-:::
-
-`openConfirmationModal` shows a premade modal with a header, body, and confirm and cancel buttons.
-
-It returns a promise that resolves on confirm, and rejects on cancel or close.
-
-```js
-openConfirmationModal({
-  header: () => "Are you sure????",
-  body: () => "Really destroy your entire hard disk? You sure? What?",
-  type: "danger",
-  confirmText: "Yes, really.",
-  cancelText: "Oh shoot!"
-}).then(
-  () => console.log("let's delete!"),
-  () => console.log("chicken.")
-);
-```
-
-### `initToasts` <Pill col="red">standalone only</Pill>
-
-::: details Type Signature
-```ts
-(mountPoint: HTMLElement) => () => void
-```
-:::
-
-Sets up necessary things for toasts to work. You must call this if you are using toasts and are not using shelter.
-
-Pass the element where toasts should be mounted. Returns a cleanup function.
-
-### `injectInternalStyles` <Pill col="red">standalone only</Pill>
-
-::: details Type Signature
-```ts
-() => void
-```
-:::
-
-Inserts internal shelter-ui styles onto the page. If you are not using shelter and do not call this,
-components will be unstyled.
-
-Only call this once.
-
-You should use `injectInternalStyles()` if you are using shelter-ui in the main document, and you should inject
-`<InternalStyles />` (this component) in style-isolated contexts like Shadow DOMs.
 
 ## Components
 
@@ -564,16 +238,6 @@ Button is a, well, button, using Discord's styles.
 
 <ShelterDemo demo="button-sizes" margin="1.5rem" />
 
-#### `ButtonLooks`
-
-Type: `Record<string, string>`
-
-- `ButtonLooks.FILLED`: the standard Discord button (all other looks are aliased to this in the current design system)
-
-::: info
-In Discord's 2025 visual refresh (Mana design system), `INVERTED`, `OUTLINED`, and `LINK` looks no longer exist as separate styles. They are aliased to `FILLED` for backwards compatibility.
-:::
-
 #### `ButtonColors`
 
 Type: `Record<string, string>`
@@ -609,6 +273,16 @@ Type: `Record<string, ButtonSize>`
 - `ButtonSizes.MIN`: as small as the content allows, increases padding, `display: inline`
 - `ButtonSizes.MAX`: as large as the container allows, increases font size
 - `ButtonSizes.ICON`: unset width, as high as the container allows, increases padding
+
+#### `ButtonLooks`
+
+Type: `Record<string, string>`
+
+- `ButtonLooks.FILLED`: the standard Discord button (all other looks are aliased to this in the current design system)
+
+::: info
+In Discord's 2025 visual refresh (Mana design system), `INVERTED`, `OUTLINED`, and `LINK` looks no longer exist as separate styles. They are aliased to `FILLED` for backwards compatibility.
+:::
 
 ### `<LinkButton>`
 
@@ -737,100 +411,6 @@ Takes an extra `mt` prop which enables a top margin. No note or divider.
 
 <ShelterDemo demo="checkbox-item" />
 
-### Modal Components
-
-Components for Discord-styled modals.
-Also see [`openModal()`](#openmodal)
-
-```jsx
-<ModalRoot size={ModalSizes.SMALL}>
-  <ModalHeader close={closeFn}>My cool modal</ModalHeader>
-  <ModalBody>Look mom! I'm on the shelter-ui modal!</ModalBody>
-  <ModalFooter>Uhhhhh idk this is the footer ig, its a good place for buttons!</ModalFooter>
-</ModalRoot>
-```
-
-<ShelterDemo demo="modal" />
-
-#### `<ModalRoot>`
-
-::: details Type Signature
-```ts
-solid.Component<{
-  size?: string,
-  children?: JSX.Element,
-  class?: string,
-  style?: JSX.CSSProperties | string
-}>
-```
-:::
-
-The root component of a discord-styled modal.
-
-Takes a `size` from `ModalSizes` and some child elements.
-
-`size` defaults to `ModalSizes.SMALL`.
-
-All provided child parts of the modal (header, body, footer) are optional.
-
-#### `ModalSizes`
-
-Type: `Record<string, string>`
-
-- `ModalSizes.SMALL`: 442px wide
-- `ModalSizes.MEDIUM`: 602px wide
-- `ModalSizes.LARGE`: 800px wide
-- `ModalSizes.DYNAMIC`: Fits content
-
-#### `<ModalHeader>`
-
-Type: `solid.Component<{ noClose?: boolean, close(): void, children?: JSX.Element }>`
-
-The header of a discord-styled modal.
-
-Takes a prop, `close`, which is the function that closes the modal.
-
-Also has an optional boolean prop `noClose` which hides the close button.
-
-#### `<ModalBody>`
-
-Type: `solid.Component<{ children?: JSX.Element }>`
-
-The body of a discord-styled modal.
-
-Has nice discord scrollbars and plays well with the header and footer when overflowed.
-
-#### `<ModalFooter>`
-
-Type: `solid.Component<{ children: JSX.Element }>`
-
-The footer of a Discord-styled modal, good for buttons!
-
-#### `<ModalConfirmFooter />`
-
-::: details Type Signature
-```ts
-solid.Component<{
-  close(): void,
-  confirmText?: string,                    // default "Confirm"
-  cancelText?: string,                     // default "Cancel"
-  type?: "neutral" | "danger" | "confirm", // default "confirm"
-  onConfirm?(): void,
-  onCancel?(): void,
-  disabled?: boolean,
-  cancelDisabled?: boolean
-}>
-```
-:::
-
-A modal footer with configurable confirm and cancel buttons, the most common type of modal footer.
-
-The `type` prop controls the colour of the confirm button.
-
-The `disabled` prop affects the confirm button, and the `cancelDisabled` prop affects the cancel button.
-
-<ShelterDemo demo="confirm-footer" />
-
 ### `<TextBox />`
 
 ::: details Type Signature
@@ -921,6 +501,456 @@ If `tick` is not passed, no ticks show.
 
 <ShelterDemo demo="slider" />
 
+## Modals
+
+Components for Discord-styled modals.
+Also see [`openModal()`](#openmodal)
+
+```jsx
+<ModalRoot size={ModalSizes.SMALL}>
+  <ModalHeader close={closeFn}>My cool modal</ModalHeader>
+  <ModalBody>Look mom! I'm on the shelter-ui modal!</ModalBody>
+  <ModalFooter>Uhhhhh idk this is the footer ig, its a good place for buttons!</ModalFooter>
+</ModalRoot>
+```
+
+### `<ModalRoot>`
+
+::: details Type Signature
+```ts
+solid.Component<{
+  size?: string,
+  children?: JSX.Element,
+  class?: string,
+  style?: JSX.CSSProperties | string
+}>
+```
+:::
+
+The root component of a discord-styled modal.
+
+Takes a `size` from `ModalSizes` and some child elements.
+
+`size` defaults to `ModalSizes.SMALL`.
+
+All provided child parts of the modal (header, body, footer) are optional.
+
+#### `ModalSizes`
+
+Type: `Record<string, string>`
+
+- `ModalSizes.SMALL`: 442px wide
+- `ModalSizes.MEDIUM`: 602px wide
+- `ModalSizes.LARGE`: 800px wide
+- `ModalSizes.DYNAMIC`: Fits content
+
+### `<ModalHeader>`
+
+Type: `solid.Component<{ noClose?: boolean, close(): void, children?: JSX.Element }>`
+
+The header of a discord-styled modal.
+
+Takes a prop, `close`, which is the function that closes the modal.
+
+Also has an optional boolean prop `noClose` which hides the close button.
+
+### `<ModalBody>`
+
+Type: `solid.Component<{ children?: JSX.Element }>`
+
+The body of a discord-styled modal.
+
+Has nice discord scrollbars and plays well with the header and footer when overflowed.
+
+### `<ModalFooter>`
+
+Type: `solid.Component<{ children: JSX.Element }>`
+
+The footer of a Discord-styled modal, good for buttons!
+
+### `<ModalConfirmFooter />`
+
+::: details Type Signature
+```ts
+solid.Component<{
+  close(): void,
+  confirmText?: string,                    // default "Confirm"
+  cancelText?: string,                     // default "Cancel"
+  type?: "neutral" | "danger" | "confirm", // default "confirm"
+  onConfirm?(): void,
+  onCancel?(): void,
+  disabled?: boolean,
+  cancelDisabled?: boolean
+}>
+```
+:::
+
+A modal footer with configurable confirm and cancel buttons, the most common type of modal footer.
+
+The `type` prop controls the colour of the confirm button.
+
+The `disabled` prop affects the confirm button, and the `cancelDisabled` prop affects the cancel button.
+
+<ShelterDemo demo="confirm-footer" />
+
+
+## Utils
+
+Not components, but UI utils used in shelter.
+
+### `<ReactiveRoot>`
+
+::: details Type Signature
+```ts
+solid.Component<{ children: JSX.Element }>
+```
+:::
+
+`ReactiveRoot` creates a solid reactive root, to ensure that `onCleanup` works, and fix some reactivity bugs.
+
+```jsx
+elem.append(<ReactiveRoot>{/* ... */}</ReactiveRoot>);
+```
+
+You won't always need it - for example inside of shelter settings and modals you won't need one, and if your elements
+do not have any lifecycle they might be fine,
+but if you're inserting solid elements directly into the document, and reactivity is being weird, wrap your inserted
+elements in one of these.
+
+### `createPersistenceHelper`
+
+::: details Type Signature
+```ts
+<T>(inject: (PersistenceHelper: solid.Component) => T): () => T
+```
+:::
+
+`createPersistenceHelper` helps you take advantage of the [cleanup reinsertion](/guides/patterns#cleanup-reinsertion)
+pattern, by giving you a `<PersistenceHelper />` component that you can place into the document as many times as you
+like, that will cause `inject` to be re-run if it gets removed.
+
+The example from the patterns page would look like this:
+
+```jsx
+function MyComponent() {
+  // ReactiveRoot optional but recommended if you
+  // encounter any weird reactivity issues without it
+  return (
+    <ReactiveRoot>
+      <h1>My Header</h1>
+    </ReactiveRoot>
+  )
+}
+
+const insertComponent = createPersistenceHelper((PersistenceHelper) => {
+  // see warning below
+  if (!isPluginEnabled) return;
+
+  const parent = document.querySelector(`[class*="whatever"]`)
+  parent?.append(<PersistenceHelper />, <MyComponent />)
+  // you should still probably handle the case where `parent` is missing...
+});
+```
+
+### `injectCss`
+
+::: details Type Signature
+```ts
+(string, Node?) => (string?) => void
+```
+:::
+
+`injectCss`, as the name says, injects CSS.
+
+It returns a callback which, if passed another string, changes the injected CSS.
+If this callback is passed `undefined`, the CSS is removed from the page.
+At this point, you cannot pass another string into this callback to re-add some styles.
+
+```js
+const modify = injectCss(" .myClass { color: red } ");
+modify(" .myClass { color: green } "); // modifies the css
+modify(); // removes the css
+modify(" .myClass { color: blue } "); // no-op
+```
+
+### `genId`
+
+::: details Type Signature
+```ts
+() => string
+```
+:::
+
+`genId` generates a random ID.
+
+This is useful in cases where you need to link elements together by ID,
+but don't actually need a meaningful ID.
+
+```jsx
+export default () => {
+  const id = genId();
+
+  return (
+    <>
+      <label for={id}>A useful input</label>
+      <input id={id} />
+    </>
+  );
+};
+```
+
+<ShelterDemo demo="gen-id" />
+
+### `openModal`
+
+::: details Type Signature
+```ts
+(
+  (() => void) => JSX.Element
+) => () => void
+```
+:::
+
+`openModal` opens the given component in a fullscreen popup modal.
+
+It passes your component one prop, `close`, which is a function that closes the modal.
+
+It returns a function that removes your modal.
+
+You can open multiple modals, and focus trapping as well as clicking outside to close are automatic.
+
+```js
+const remove = openModal((p) => <button onclick={p.close}>Hi!</button>);
+remove();
+```
+
+::: tip
+You can use the [modal components](#modal-components) to style your modals like Discord easily.
+:::
+
+::: tip
+You can listen for your modal being closed using [onCleanup](https://www.solidjs.com/tutorial/lifecycles_oncleanup).
+:::
+
+<ShelterDemo demo="open-modal" />
+
+### `openConfirmationModal`
+
+::: details Type Signature
+```ts
+({
+  body: solid.Component,
+  header: solid.Component,
+  confirmText?: string,
+  cancelText?: string,
+  type?: ModalTypes,
+  size?: string,
+}) => Promise<void>
+```
+:::
+
+`openConfirmationModal` shows a premade modal with a header, body, and confirm and cancel buttons.
+
+It returns a promise that resolves on confirm, and rejects on cancel or close.
+
+```js
+openConfirmationModal({
+  header: () => "Are you sure????",
+  body: () => "Really destroy your entire hard disk? You sure? What?",
+  type: "danger",
+  confirmText: "Yes, really.",
+  cancelText: "Oh shoot!"
+}).then(
+  () => console.log("let's delete!"),
+  () => console.log("chicken.")
+);
+```
+
+<ShelterDemo demo="confirmation-modal" />
+
+### `showToast`
+
+::: details Type Signature
+```ts
+({
+  title?: string,
+  content?: string,
+  color?: string,
+  onClick?(): void,
+  class?: string,
+  duration?: number
+}) => () => void
+```
+:::
+
+Shows a toast notification.
+Returns a function to remove it instantly.
+
+The default duration is `3000`.
+
+The `color` prop accepts values from `ToastColors`:
+- `ToastColors.INFO` - Blue info style (default)
+- `ToastColors.SUCCESS` - Green success style
+- `ToastColors.WARNING` - Orange warning style
+- `ToastColors.CRITICAL` - Red critical/error style
+
+```js
+// all of these props are optional
+showToast({
+  title: "title!",
+  content: "a cool toast",
+  color: ToastColors.SUCCESS,
+  onClick() {},
+  class: "my-cool-toast",
+  duration: 3000,
+});
+```
+
+<ShelterDemo demo="toast" />
+
+### `niceScrollbarsClass`
+
+::: details Type Signature
+```ts
+() => string
+```
+:::
+
+A getter that gets a class to add to an element to give it a Discord-style scrollbar.
+
+```jsx
+<div class={`myclass myclass2 ${niceScrollbarsClass()}`} />
+```
+
+<ShelterDemo demo="scrollbar" />
+
+### `use:focusring`
+
+Adds a visible ring around your element when focused via keyboard (tab key),
+to aid with accessibility.
+
+Optionally takes a border radius.
+
+`focusring` must be in scope, either via an import from shelter-ui,
+or otherwise (e.g. `const { focusring } = shelter.ui`).
+
+::: warning
+Be careful - some tooling incorrectly tree shakes this if imported using ESM.
+You can use `false && focusring` to prevent the tree shaking (it will be minified away).
+If getting via destructuring in shelter, you should be fine.
+:::
+
+The focusring is included for you on interactive shelter-ui components,
+so if you are using those, this is not necessary.
+
+```jsx
+<button use:focusring>do a thing</button>
+<input use:focusring={6} type="checkbox" />
+```
+
+<ShelterDemo demo="focusring" />
+
+### `use:tooltip`
+
+Shows a Discord-style tooltip when you hover over the element.
+
+Same scope rules apply as focusring.
+
+You can pass any JSX element type, including strings and elements.
+
+If you pass undefined, it will do nothing.
+
+You can pass an array of the form `[true, JSX.Element]` to render it underneath instead of on top of the element.
+
+```jsx
+<button use:tooltip="Delete"><DeleteIcon /></button>
+<button use:tooltip={[true, "Delete but underneath"]}><DeleteIcon /></button>
+```
+
+<ShelterDemo demo="tooltip" />
+
+### `<ErrorBoundary />`
+
+::: details Type Signature
+```ts
+solid.Component<{ children: JSX.Element }>
+```
+:::
+
+Safely catches any errors that occur during rendering, displays the error, and has a button to retry.
+
+<ShelterDemo demo="error-boundary" />
+
+### `<Space />`
+
+::: details Type Signature
+```ts
+solid.Component
+```
+:::
+
+A spacebar character that will never be collapsed out of your JSX. Useful in flexboxes etc.
+
+
+### `<ReactInSolidBridge />` <Pill col="shelter">shelter only</Pill>
+
+::: details Type Signature
+```ts
+solid.Component<{ comp: React.ComponentType<TProps>, props: TProps }>
+```
+:::
+
+Renders a React component in Solid. Prop updates cause rerenders as expected.
+
+```jsx
+const ComponentFromDiscord = webpack.findByProps("...").default;
+
+<ReactInSolidBridge comp={ComponentFromDiscord} props={{ className: "reactelem", tag: "H1" }} />;
+```
+
+### `renderSolidInReact` <Pill col="shelter">shelter only</Pill>
+
+::: details Type Signature
+```ts
+(solid.Component<TProps>, TProps) => React.ElementType
+````
+:::
+
+Renders a Solid component in React. This component will *never* be rerendered by React,
+however prop or component updates passed in from the React host will be applied to the Solid child via reactivity.
+
+```jsx
+function MyCoolComponent(props) {
+  const [count, setCount] = solid.createSignal(0);
+  return <button class={props.className} onClick={() => setCount(count() + 1)}>yep {count()}</button>;
+}
+
+// Get a Discord component using React fiber or something
+
+component.render = () => renderSolidInReact(MyCoolComponent, { className: "solidelem" });
+```
+
+::: warning
+Previously, a React component called `SolidInReactBridge` was exposed. This has been removed from the shelter-ui API.
+Use this function instead.
+:::
+
+### `injectInternalStyles` <Pill col="red">standalone only</Pill>
+
+::: details Type Signature
+```ts
+() => void
+```
+:::
+
+Inserts internal shelter-ui styles onto the page. If you are not using shelter and do not call this,
+components will be unstyled.
+
+Only call this once.
+
+You should use `injectInternalStyles()` if you are using shelter-ui in the main document, and you should inject
+`<InternalStyles />` in style-isolated contexts like Shadow DOMs.
+
 
 ### `InternalStyles` <Pill col="red">standalone only</Pill>
 
@@ -936,46 +966,24 @@ components will be unstyled.
 You should use `injectInternalStyles()` if you are using shelter-ui in the main document, and you should inject
 `<InternalStyles />` (this component) in style-isolated contexts like Shadow DOMs.
 
+### `initToasts` <Pill col="red">standalone only</Pill>
 
-## Standalone usage
+::: details Type Signature
+```ts
+(mountPoint: HTMLElement) => () => void
+```
+:::
 
-shelter UI can be used outside of Discord. There are a few things that must be taken into consideration for this:
- - components may be affected by lack of Discord's stylesheets (css reset, etc.)
- - components may be affected by your own stylesheets
- - you must use the compatibility stylesheet
- - you must inject the shelter UI internal styles
- - you must be using Solid, or have some way of using Solid components in your page
- - some APIs available on `shelter.ui` are not available in `@uwu/shelter-ui`, and vice versa.
+Sets up necessary things for toasts to work. You must call this if you are using toasts and are not using shelter.
 
-To get started in your Solid app/site, install `@uwu/shelter-ui`. It is a rolling release package, not semver, the
-version numbers simply increment each release. This is because shelter itself is rolling release and has no versioning.
+Pass the element where toasts should be mounted. Returns a cleanup function.
 
-You must inject `@uwu/shelter-ui/compat.css` somewhere in your app.
-This does two things. First, it sets CSS variables
-on `:root` that the components rely on to look correct. The reason we use these variables at all instead of hardcoding
-their values is so that themes apply to shelter UI inside of Discord.
-Second, it adds `@font-face` rules for the custom fonts used by Discord, so that relevant fonts (gg sans, etc) load
-correctly.
+### `cleanupCss` <Pill col="red">standalone only</Pill>
 
-If you are using shelter UI within your main page, you should then import and call `injectInternalStyles()`.
-This will add a style tag to your page to make the components look correct.
-If you want to use toasts, you must call `initToasts(mountPoint)` passing the element where toasts should appear.
+::: details Type Signature
+```ts
+() => void
+```
+:::
 
-If you are using shelter UI within a shadow root or some other isolated context where this won't work, you should import
-and render `<InternalStyles />` somewhere within the relevant context.
-
-APIs that are only available in shelter will have this badge next to them in these
-docs: <Pill col="shelter">shelter only</Pill>,
-and the APIs only available standalone will have this one: <Pill col="red">standalone only</Pill>
-
-They are also listed here:
-
-shelter-only:
- - `ReactInSolidBridge`
- - `renderSolidInReact`
-
-standalone-only:
- - `cleanupCss`
- - `initToasts`
- - `injectInternalStyles`
- - `InternalStyles`
+Removes all injected css.

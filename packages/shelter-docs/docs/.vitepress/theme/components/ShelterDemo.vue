@@ -38,4 +38,8 @@ onUnmounted(() => {
 
 <style>
 @import "@uwu/shelter-ui/compat.css";
+.shltr-modal-rroot {
+  color: var(--text-default);
+  font-family: var(--font-primary);
+}
 </style>
