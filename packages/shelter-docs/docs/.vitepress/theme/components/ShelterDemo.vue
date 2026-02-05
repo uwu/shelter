@@ -20,8 +20,9 @@ const containerStyle = computed(() => ({
 watch(containerRef, async (el) => {
   if (!el) return;
 
-  const { renderDemo } = await import("./demos");
-  dispose = renderDemo(props.demo, el);
+  // Dynamically import the pre-built demos bundle
+  const { mountDemo } = await import("../../../../demos/dist/demos.js");
+  dispose = mountDemo(props.demo, el);
 });
 
 onUnmounted(() => {
@@ -35,6 +36,6 @@ onUnmounted(() => {
   </ClientOnly>
 </template>
 
-<style id="#shltr-styles">
+<style>
 @import "@uwu/shelter-ui/compat.css";
 </style>

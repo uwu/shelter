@@ -252,12 +252,24 @@ importers:
       '@shikijs/vitepress-twoslash':
         specifier: ^3.4.0
         version: 3.4.0(typescript@5.9.3)
+      esbuild:
+        specifier: 'catalog:'
+        version: 0.27.2
+      esbuild-plugin-solid:
+        specifier: ^0.6.0
+        version: 0.6.0(esbuild@0.27.2)(solid-js@1.6.16)
+      esbuild-sass-plugin-ysink:
+        specifier: 'catalog:'
+        version: 2.3.4
+      postcss:
+        specifier: 'catalog:'
+        version: 8.5.3
+      postcss-modules:
+        specifier: 'catalog:'
+        version: 6.0.1(postcss@8.5.3)
       unocss:
         specifier: ^66.1.0
         version: 66.1.0(postcss@8.5.3)(vite@5.4.19(@types/node@22.15.3)(lightningcss@1.29.3)(sass@1.87.0))(vue@3.5.13(typescript@5.9.3))
-      vite-plugin-solid:
-        specifier: ^2.10.1
-        version: 2.11.6(solid-js@1.6.16)(vite@5.4.19(@types/node@22.15.3)(lightningcss@1.29.3)(sass@1.87.0))
       vitepress:
         specifier: ^1.6.3
         version: 1.6.3(@algolia/client-search@5.24.0)(@types/node@22.15.3)(fuse.js@7.1.0)(lightningcss@1.29.3)(postcss@8.5.3)(sass@1.87.0)(search-insights@2.17.3)(typescript@5.9.3)
@@ -2740,6 +2752,12 @@ packages:
     resolution: {integrity: sha512-ITK6n+0ayGFeDVUZWNMxX+vLsasEN1ILrg4pISsNOQ+mq4ljlJJiuXotInd+HE0MzwTcA9wExT1yzDE2hsqPsg==}
     peerDependencies:
       esbuild: '>=0.12'
+      solid-js: '>= 1.0'
+
+  esbuild-plugin-solid@0.6.0:
+    resolution: {integrity: sha512-V1FvDALwLDX6K0XNYM9CMRAnMzA0+Ecu55qBUT9q/eAJh1KIDsTMFoOzMSgyHqbOfvrVfO3Mws3z7TW2GVnIZA==}
+    peerDependencies:
+      esbuild: '>=0.20'
       solid-js: '>= 1.0'
 
   esbuild-sass-plugin-ysink@2.3.4:
@@ -7196,6 +7214,16 @@ snapshots:
       '@babel/preset-typescript': 7.27.1(@babel/core@7.27.1)
       babel-preset-solid: 1.6.16(@babel/core@7.27.1)
       esbuild: 0.17.19
+      solid-js: 1.6.16
+    transitivePeerDependencies:
+      - supports-color
+
+  esbuild-plugin-solid@0.6.0(esbuild@0.27.2)(solid-js@1.6.16):
+    dependencies:
+      '@babel/core': 7.27.1
+      '@babel/preset-typescript': 7.27.1(@babel/core@7.27.1)
+      babel-preset-solid: 1.6.16(@babel/core@7.27.1)
+      esbuild: 0.27.2
       solid-js: 1.6.16
     transitivePeerDependencies:
       - supports-color

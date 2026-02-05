@@ -1,5 +1,6 @@
-import { createSignal } from "solid-js";
+import { createSignal, lazy, type Component } from "solid-js";
 import { render } from "solid-js/web";
+import compatCss from "virtual:compat-css";
 import {
   Button,
   ButtonColors,
@@ -38,23 +39,43 @@ import {
 false && focusring;
 false && tooltip;
 
-function ShadowIsolatedDemo(props: { children: any }) {
-  const stylesCopy = document.getElementById("shltr-styles");
+// CSS for shadow DOM isolation
+const baseCss = `
+  :host {
+    display: block;
+    font-family: var(--font-primary);
+    color: var(--text-default);
+  }
+  input, button, textarea, select {
+    font: inherit;
+  }
+`;
+
+// Create a stylesheet that can be adopted by shadow roots
+let cachedStyleSheet: CSSStyleSheet | null = null;
+function getStyleSheet(): CSSStyleSheet {
+  if (!cachedStyleSheet) {
+    cachedStyleSheet = new CSSStyleSheet();
+    cachedStyleSheet.replaceSync(baseCss + "\n" + compatCss);
+  }
+  return cachedStyleSheet;
+}
+
+function ShadowWrapper(props: { children: any }) {
   return (
-    <div style={{ "font-family": "var(--font-primary)", color: "var(--text-default)" }}>
-      <style>{"input, button, textarea, select { font: inherit; } "}</style>
-      {stylesCopy && <style>{stylesCopy.innerHTML}</style>}
+    <>
       <InternalStyles />
       {props.children}
-    </div>
+    </>
   );
 }
 
+// Demo components
 function ButtonColorsDemo() {
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <div style={{ display: "flex", gap: "8px", "flex-wrap": "wrap" }}>
-        <Button color={ButtonColors.PRIMARY} size={ButtonSizes.MIN}>
+        <Button color={ButtonColors.PRIMARY} size={ButtonSizes.LARGE}>
           Primary
         </Button>
         <Button color={ButtonColors.SECONDARY} size={ButtonSizes.LARGE}>
@@ -70,13 +91,13 @@ function ButtonColorsDemo() {
           Active
         </Button>
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function ButtonSizesDemo() {
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <div style={{ display: "flex", gap: "8px", "flex-wrap": "wrap", "align-items": "center" }}>
         <Button size={ButtonSizes.TINY}>Tiny</Button>
         <Button size={ButtonSizes.SMALL}>Small</Button>
@@ -84,13 +105,13 @@ function ButtonSizesDemo() {
         <Button size={ButtonSizes.LARGE}>Large</Button>
         <Button size={ButtonSizes.XLARGE}>XLarge</Button>
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function HeadersDemo() {
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <div style={{ display: "flex", "flex-direction": "column", gap: "8px" }}>
         <Header tag={HeaderTags.HeadingXXL}>HeadingXXL</Header>
         <Header tag={HeaderTags.HeadingXL}>HeadingXL</Header>
@@ -99,13 +120,13 @@ function HeadersDemo() {
         <Header tag={HeaderTags.HeadingSM}>HeadingSM</Header>
         <Header tag={HeaderTags.EYEBROW}>EYEBROW</Header>
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function TextVariantsDemo() {
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <div style={{ display: "flex", "flex-direction": "column", gap: "8px" }}>
         <Text tag={TextTags.textXXS}>textXXS</Text>
         <Text tag={TextTags.textXS}>textXS</Text>
@@ -118,13 +139,13 @@ function TextVariantsDemo() {
         <Text tag={TextTags.displayMD}>displayMD</Text>
         <Text tag={TextTags.displayLG}>displayLG</Text>
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function TextWeightsDemo() {
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <div style={{ display: "flex", "flex-direction": "column", gap: "4px" }}>
         <Text weight={TextWeights.normal}>Normal (400)</Text>
         <Text weight={TextWeights.medium}>Medium (500)</Text>
@@ -132,81 +153,81 @@ function TextWeightsDemo() {
         <Text weight={TextWeights.bold}>Bold (700)</Text>
         <Text weight={TextWeights.extrabold}>Extrabold (800)</Text>
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function DividerDemo() {
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <div style={{ width: "100%" }}>
         <Text>Content above</Text>
         <Divider mt mb />
         <Text>Content below</Text>
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function SwitchDemo() {
   const [checked, setChecked] = createSignal(false);
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <div style={{ display: "flex", gap: "16px", "align-items": "center" }}>
         <Switch checked={checked()} onChange={setChecked} />
         <Text>{checked() ? "On" : "Off"}</Text>
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function SwitchItemDemo() {
   const [checked, setChecked] = createSignal(true);
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <SwitchItem checked={checked()} onChange={setChecked} note="This is a helpful description of the option">
         A Cool Option
       </SwitchItem>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function CheckboxDemo() {
   const [checked, setChecked] = createSignal(false);
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <div style={{ display: "flex", gap: "16px", "align-items": "center" }}>
         <Checkbox checked={checked()} onChange={setChecked} />
         <Text>{checked() ? "Checked" : "Unchecked"}</Text>
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function CheckboxItemDemo() {
   const [checked, setChecked] = createSignal(true);
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <CheckboxItem checked={checked()} onChange={setChecked}>
         Accept terms and conditions
       </CheckboxItem>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function TextboxDemo() {
   const [value, setValue] = createSignal("");
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <TextBox placeholder="Type something..." value={value()} onInput={setValue} />
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function TextareaDemo() {
   const [value, setValue] = createSignal("");
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <TextArea
         placeholder="Type a longer message..."
         value={value()}
@@ -214,24 +235,24 @@ function TextareaDemo() {
         resize-y
         style={{ width: "100%", "min-height": "100px" }}
       />
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function SliderDemo() {
   const [value, setValue] = createSignal(5);
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <div style={{ width: "100%" }}>
         <Slider min={0} max={10} step={1} tick value={value()} onInput={setValue} />
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function ModalDemo() {
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <div style={{ position: "relative" }}>
         <ModalRoot size={ModalSizes.SMALL} style={{ position: "relative", "max-width": "100%" }}>
           <ModalHeader close={() => {}} noClose>
@@ -243,13 +264,13 @@ function ModalDemo() {
           </ModalFooter>
         </ModalRoot>
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function ConfirmFooterDemo() {
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <div style={{ display: "flex", "flex-direction": "column", gap: "12px" }}>
         <Text weight={TextWeights.semibold}>Neutral:</Text>
         <ModalConfirmFooter close={() => {}} type="neutral" />
@@ -258,24 +279,21 @@ function ConfirmFooterDemo() {
         <Text weight={TextWeights.semibold}>Confirm:</Text>
         <ModalConfirmFooter close={() => {}} type="confirm" />
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function LinkButtonDemo() {
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <LinkButton href="https://github.com/uwu/shelter">Visit shelter on GitHub</LinkButton>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function ToastDemo() {
-  injectInternalStyles();
-  initToasts(document.body);
-
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <div style={{ display: "flex", gap: "8px", "flex-wrap": "wrap" }}>
         <Button
           color={ButtonColors.PRIMARY}
@@ -326,13 +344,13 @@ function ToastDemo() {
           Critical
         </Button>
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function ScrollbarDemo() {
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <div
         class={niceScrollbarsClass()}
         style={{
@@ -349,13 +367,13 @@ function ScrollbarDemo() {
           <Text>:3</Text>
         </div>
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function FocusringDemo() {
   return (
-    <ShadowIsolatedDemo>
+    <ShadowWrapper>
       <div style={{ display: "flex", gap: "8px" }}>
         <button
           use:focusring
@@ -370,29 +388,51 @@ function FocusringDemo() {
           Custom button with focusring
         </button>
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
 function TooltipDemo() {
   return (
-    <ShadowIsolatedDemo>
-      <div style={{ display: "flex", gap: "8px" }}>
-        <button use:tooltip="Delete" style={{ background: "transparent", border: "none", cursor: "pointer" }}>
+    <ShadowWrapper>
+      <div style={{ display: "flex", gap: "8px", "justify-content": "center", "align-items": "center" }}>
+        <button
+          use:tooltip="Delete"
+          style={{
+            background: "var(--input-background-default)",
+            border: "1px solid var(--input-border-default)",
+            cursor: "pointer",
+            padding: "8px 16px",
+            "border-radius": "var(--radius-md)",
+            display: "flex",
+            "align-items": "center",
+            "justify-content": "center",
+          }}
+        >
           <IconClose />
         </button>
         <button
           use:tooltip={[true, "Delete but underneath"]}
-          style={{ background: "transparent", border: "none", cursor: "pointer" }}
+          style={{
+            background: "var(--input-background-default)",
+            border: "1px solid var(--input-border-default)",
+            cursor: "pointer",
+            padding: "8px 16px",
+            "border-radius": "var(--radius-md)",
+            display: "flex",
+            "align-items": "center",
+            "justify-content": "center",
+          }}
         >
           <IconClose />
         </button>
+        <Text>Try hovering the buttons!</Text>
       </div>
-    </ShadowIsolatedDemo>
+    </ShadowWrapper>
   );
 }
 
-const demos: Record<string, () => any> = {
+const demos: Record<string, Component> = {
   "button-colors": ButtonColorsDemo,
   "button-sizes": ButtonSizesDemo,
   headers: HeadersDemo,
@@ -415,44 +455,31 @@ const demos: Record<string, () => any> = {
   tooltip: TooltipDemo,
 };
 
-class ShelterDemoElement extends HTMLElement {
-  private dispose?: () => void;
-  private demoName: string = "";
-
-  connectedCallback() {
-    this.demoName = this.getAttribute("demo") || "";
-    this.renderDemo();
-  }
-
-  disconnectedCallback() {
-    this.dispose?.();
-  }
-
-  private renderDemo() {
-    const Demo = demos[this.demoName];
-    if (!Demo) {
-      this.textContent = `Unknown demo: ${this.demoName}`;
-      return;
-    }
-
-    const shadow = this.attachShadow({ mode: "open" });
-
-    this.dispose = render(() => <Demo />, shadow);
-  }
-}
-
-if (!customElements.get("shelter-demo")) {
-  customElements.define("shelter-demo", ShelterDemoElement);
-}
-
-export function renderDemo(demoName: string, container: HTMLElement): () => void {
-  const demoEl = document.createElement("shelter-demo");
-  demoEl.setAttribute("demo", demoName);
-  container.appendChild(demoEl);
-
-  return () => {
-    demoEl.remove();
-  };
-}
-
 export type DemoName = keyof typeof demos;
+
+export function getAvailableDemos(): string[] {
+  return Object.keys(demos);
+}
+
+export function mountDemo(demoName: string, container: HTMLElement): () => void {
+  const Demo = demos[demoName];
+  if (!Demo) {
+    container.textContent = `Unknown demo: ${demoName}`;
+    return () => {};
+  }
+
+  const shadow = container.attachShadow({ mode: "open" });
+
+  shadow.adoptedStyleSheets = [getStyleSheet()];
+
+  if (document.head.dataset["demos"] !== "true") {
+    injectInternalStyles();
+    initToasts(document.body);
+
+    document.head.dataset["demos"] = "true";
+  }
+
+  const dispose = render(() => <Demo />, shadow);
+
+  return dispose;
+}

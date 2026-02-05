@@ -6,8 +6,6 @@
     "target": "esnext",
     "lib": ["DOM", "ESNext"],
     "strict": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "solid-js",
     "esModuleInterop": true,
     "skipLibCheck": true,
     "moduleResolution": "Bundler",
@@ -19,13 +17,12 @@
   },
   "include": [
     "docs/.vitepress/**/*.ts",
-    "docs/.vitepress/**/*.tsx",
     "docs/.vitepress/**/*.mts",
     "docs/.vitepress/**/*.vue",
     "docs/**/*.md",
     "../../globals.d.ts"
   ],
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "demos"],
   "vueCompilerOptions": {
     "vitePressExtensions": [".md"]
   }

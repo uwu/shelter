@@ -2,15 +2,20 @@
   "name": "docs",
   "private": true,
   "scripts": {
-    "dev": "vitepress dev docs",
-    "build": "vitepress build docs",
+    "build:demos": "node demos/build.mjs",
+    "dev": "pnpm build:demos && vitepress dev docs",
+    "build": "pnpm build:demos && vitepress build docs",
     "preview": "vitepress preview docs"
   },
   "devDependencies": {
     "@iconify-json/carbon": "^1.2.8",
     "@shikijs/vitepress-twoslash": "^3.4.0",
+    "esbuild": "catalog:",
+    "esbuild-plugin-solid": "^0.6.0",
+    "esbuild-sass-plugin-ysink": "catalog:",
+    "postcss": "catalog:",
+    "postcss-modules": "catalog:",
     "unocss": "^66.1.0",
-    "vite-plugin-solid": "^2.10.1",
     "vitepress": "^1.6.3"
   },
   "dependencies": {
