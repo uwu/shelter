@@ -144,10 +144,11 @@ function buildLayout() {
 }
 
 export async function initSettings() {
-  const [uninjectLegacySettings] = await Promise.all([legacyInjectSettings()]); // TODO: add normal settings injection back
+  const [uninjectLegacySettings, uninjectSettings] = await Promise.all([legacyInjectSettings(), injectSettings()]);
 
   return () => {
     uninjectLegacySettings();
+    uninjectSettings();
   };
 }
 
@@ -222,17 +223,31 @@ async function legacyInjectSettings() {
 }
 
 async function injectSettings() {
-  const partialRoot = await exfiltrate("buildLayout", true, (v) => v.key === "$Root");
-  const unpatch = after("buildLayout", partialRoot, function (args, layout) {
-    // insert layout after activity section, otherwise before the log out button
+  const patchSym = Symbol();
+
+  function patchLayout(layout) {
     const activityIndex = layout.findIndex(({ key }) => key === "activity_section");
     const insertIndex = activityIndex === -1 ? layout.length - 1 : activityIndex + 1;
-
     layout.splice(insertIndex, 0, ...buildLayout());
-    return layout;
+  }
+
+  Object.defineProperty(Object.prototype, "buildLayout", {
+    configurable: true,
+    enumerable: false,
+    get() {
+      queueMicrotask(() => {
+        let root = this;
+        while (root.parent) root = root.parent;
+
+        if (root[patchSym]) return;
+        root[patchSym] = true;
+
+        patchLayout(root.layout);
+      });
+    },
   });
 
-  return () => unpatch?.();
+  return () => delete Object.prototype["buildLayout"];
 }
 
 function legacyRerenderSidebar() {
