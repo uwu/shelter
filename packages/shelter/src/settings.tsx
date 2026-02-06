@@ -144,11 +144,10 @@ function buildLayout() {
 }
 
 export async function initSettings() {
-  const [uninjectLegacySettings, uninjectSettings] = await Promise.all([legacyInjectSettings(), injectSettings()]);
+  const [uninjectLegacySettings] = await Promise.all([legacyInjectSettings()]); // TODO: add normal settings injection back
 
   return () => {
     uninjectLegacySettings();
-    uninjectSettings();
   };
 }
 
