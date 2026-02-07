@@ -1,6 +1,6 @@
 import type { Component } from "solid-js";
 import { render } from "solid-js/web";
-import compatCss from "virtual:compat-css";
+import compatCss from "@uwu/shelter-ui/compat.css?raw";
 import { InternalStyles, initToasts, injectInternalStyles } from "@uwu/shelter-ui";
 
 import ButtonColorsDemo from "./demos/ButtonColorsDemo";

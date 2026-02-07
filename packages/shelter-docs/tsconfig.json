@@ -19,6 +19,7 @@
     "docs/.vitepress/**/*.ts",
     "docs/.vitepress/**/*.mts",
     "docs/.vitepress/**/*.vue",
+    "docs/.vitepress/**/*.d.ts",
     "docs/**/*.md",
     "../../globals.d.ts"
   ],

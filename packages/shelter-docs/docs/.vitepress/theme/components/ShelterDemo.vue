@@ -20,8 +20,8 @@ const containerStyle = computed(() => ({
 watch(containerRef, async (el) => {
   if (!el) return;
 
-  // Dynamically import the pre-built demos bundle
-  const { mountDemo } = await import("../../../../demos/dist/demos.js");
+  // Dynamically import the virtual demos bundle provided by Vite plugin
+  const { mountDemo } = await import("virtual:shelter-demos");
   dispose = mountDemo(props.demo, el);
 });
 
