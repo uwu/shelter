@@ -224,6 +224,7 @@ async function legacyInjectSettings() {
 
 async function injectSettings() {
   const patchSym = Symbol();
+  const valSym = Symbol();
 
   function patchLayout(layout) {
     const activityIndex = layout.findIndex(({ key }) => key === "activity_section");
@@ -239,11 +240,17 @@ async function injectSettings() {
         let root = this;
         while (root.parent) root = root.parent;
 
-        if (root[patchSym]) return;
+        if (root[patchSym] || root.key !== "$Root") return;
         root[patchSym] = true;
 
         patchLayout(root.layout);
+        delete Object.prototype["buildLayout"];
       });
+      return this[valSym];
+    },
+    set(v) {
+      if (this === Object.prototype) return;
+      this[valSym] = v;
     },
   });
 
