@@ -1,0 +1,55 @@
+{
+  "manifest_version": 3,
+
+  "name": "shelter injector",
+  "version": "1.5",
+  "homepage_url": "https://github.com/uwu/shelter",
+  "description": "Loads shelter on Discord",
+
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{21bfdee5-51a4-487e-a472-c251a26fc5a4}",
+      "data_collection_permissions": {
+        "required": ["none"]
+      }
+    },
+    "gecko_android": {}
+  },
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "64": "icons/icon64.png",
+    "128": "icons/icon128.png"
+  },
+
+  "permissions": ["storage", "scripting", "declarativeNetRequestWithHostAccess"],
+  "host_permissions": [
+    "https://discord.com/*",
+    "https://ptb.discord.com/*",
+    "https://canary.discord.com/*",
+    "https://raw.githubusercontent.com/uwu/shelter-builds/*"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "csp",
+        "enabled": true,
+        "path": "dnr.json"
+      }
+    ]
+  },
+
+  "background": {
+    "scripts": ["background.js"],
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://discord.com/*", "https://ptb.discord.com/*", "https://canary.discord.com/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
