@@ -224,13 +224,20 @@ async function legacyInjectSettings() {
 
 async function injectSettings() {
   const patchSym = Symbol();
-  const valSym = Symbol();
 
   function patchLayout(layout) {
     const activityIndex = layout.findIndex(({ key }) => key === "activity_section");
     const insertIndex = activityIndex === -1 ? layout.length - 1 : activityIndex + 1;
     layout.splice(insertIndex, 0, ...buildLayout());
   }
+
+  // Targets `("buildLayout" in node && "function" == typeof node.buildLayout)`
+  // If the setter is invoked on anything other than the prototype, simply set
+  // the property as normal; while Discord does not do this, other mods do.
+  // The enclosing function is called recursively over the entire settings tree,
+  // eventually a leaf node without a `buildLayout` property is hit, causing the
+  // getter to execute, a microtask is queued to continue after the walker is done.
+  // As this getter is called multiple times, a symbol is used to patch only once.
 
   Object.defineProperty(Object.prototype, "buildLayout", {
     configurable: true,
@@ -244,13 +251,16 @@ async function injectSettings() {
         root[patchSym] = true;
 
         patchLayout(root.layout);
-        delete Object.prototype["buildLayout"];
       });
-      return this[valSym];
     },
     set(v) {
       if (this === Object.prototype) return;
-      this[valSym] = v;
+      Object.defineProperty(this, "buildLayout", {
+        configurable: true,
+        enumerable: true,
+        writable: true,
+        value: v,
+      });
     },
   });
 
