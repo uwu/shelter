@@ -8,7 +8,7 @@
 
   "browser_specific_settings": {
     "gecko": {
-      "id": "@shelter.uwu.network",
+      "id": "{21bfdee5-51a4-487e-a472-c251a26fc5a4}",
       "data_collection_permissions": {
         "required": ["none"]
       }
