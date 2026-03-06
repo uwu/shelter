@@ -23,7 +23,7 @@
 
 :root:not(.dark) {
   --vp-c-brand-1: #169767;
-  --vp-code-bg: rgba(44, 91, 83, .1) --vp-code-bg: rgba(44, 91, 83, .1);
+  --vp-code-bg: rgba(44, 91, 83, .1);
 }
 
 :root {
