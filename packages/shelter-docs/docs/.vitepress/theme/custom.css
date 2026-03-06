@@ -21,6 +21,11 @@
   --vp-c-danger-soft: rgba(255, 107, 107, .15);
 }
 
+:root:not(.dark) {
+  --vp-c-brand-1: #169767;
+  --vp-code-bg: rgba(44, 91, 83, .1) --vp-code-bg: rgba(44, 91, 83, .1);
+}
+
 :root {
   --vp-button-brand-text: var(--vp-c-bg);
   --vp-button-brand-bg: var(--vp-c-brand-2);
