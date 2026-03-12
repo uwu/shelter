@@ -102,12 +102,23 @@ function internalGenerateLayout(sectionItem: SettingsSection, layoutSection: any
     };
   }
 
+  const layoutSetting = {
+    key: `${LAYOUT_PREFIX}_${id}_setting`,
+    Component: () => renderSolidInReact(pane as Component),
+    type: 19,
+  };
+
+  const layoutCategory = {
+    key: `${LAYOUT_PREFIX}_${id}_category`,
+    layout: [layoutSetting],
+    type: 5,
+  };
+
   const layoutPanel = {
     key: `${LAYOUT_PREFIX}_${id}_panel`,
-    layout: [],
+    layout: [layoutCategory],
     type: 3,
     useTitle: () => name,
-    StronglyDiscouragedCustomComponent: () => renderSolidInReact(pane as Component),
   };
 
   layoutSidebarItem.layout.push(layoutPanel);
