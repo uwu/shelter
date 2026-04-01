@@ -71,10 +71,9 @@ const plugins = computed(() => (search.value ? results.value.map((i) => i.item) 
   <div text-center v-else-if="plugins.length === 0">
     No plugins found.. <span font-mono tracking-tight ml-2>( • ᴖ • ｡)</span>
   </div>
-  <div v-else flex="~ wrap" gap-3 items-center justify-center>
+  <div v-else class="plugin-grid">
     <div
       v-for="plugin in plugins"
-      w-20rem
       h-44
       px-4
       py-3
@@ -135,3 +134,20 @@ const plugins = computed(() => (search.value ? results.value.map((i) => i.item) 
     </div>
   </div>
 </template>
+
+<style scoped>
+.plugin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+  gap: .75rem;
+}
+
+@media (min-width: 960px) {
+  .plugin-grid {
+    margin-right: calc(-50vw + 50%);
+    margin-left: calc(-50vw + 50%);
+    padding-right: 2rem;
+    padding-left: 2rem;
+  }
+}
+</style>
