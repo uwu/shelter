@@ -134,12 +134,12 @@ export function startPlugin(pluginId: string) {
 
     internalData[pluginId] = { ...data, on: true };
   } catch (e) {
-    log([`plugin ${pluginId} errored while loading and will be unloaded`, e], "error");
+    log([`plugin "${pluginId}" errored while loading and will be unloaded:`, prettifyError(e)], "error");
 
     try {
       internalLoaded[pluginId]?.onUnload?.();
     } catch (e2) {
-      log([`plugin ${pluginId} errored while unloading`, e2], "error");
+      log([`plugin "${pluginId}" errored while unloading:`, prettifyError(e2)], "error");
     }
 
     delete internalLoaded[pluginId];
@@ -156,12 +156,12 @@ export function stopPlugin(pluginId: string) {
   try {
     loadedData.onUnload?.();
   } catch (e) {
-    log([`plugin ${pluginId} errored while unloading`, e], "error");
+    log([`plugin "${pluginId}" errored while unloading:`, prettifyError(e)], "error");
   }
   try {
     loadedData.scopedDispose();
   } catch (e) {
-    log([`plugin ${pluginId} errored while unloading scoped APIs`, e], "error");
+    log([`plugin "${pluginId}" errored while unloading scoped APIs:`, prettifyError(e)], "error");
   }
 
   delete internalLoaded[pluginId];
@@ -218,7 +218,11 @@ export async function startAllPlugins() {
     allPlugins.filter((id) => internalData[id].update && !internalData[id].local).map(updatePlugin),
   );
 
-  for (const res of results) if (res.status === "rejected") log(res.reason, "error");
+  for (const res of results) {
+    if (res.status === "rejected") {
+      log(["Failed to update plugin:", prettifyError(res.reason)], "error");
+    }
+  }
 
   const toStart = allPlugins.filter((id) => internalData[id].on && id !== devModeReservedId);
 

@@ -1,4 +1,4 @@
-import { type Accessor, type Component, createEffect, createSignal, type JSX, onCleanup } from "solid-js";
+import { type Accessor, type Component, createEffect, createSignal, type JSX, onCleanup, onMount } from "solid-js";
 import { getRoot } from "./util";
 import { classes, css } from "./tooltip.tsx.scss";
 import { ensureInternalStyle } from "./internalstyles";
@@ -28,15 +28,28 @@ const ToolTip: Component<{
   // we will need to actually measure content
   const [tooltipWidth, setTooltipWidth] = createSignal(190);
 
-  createEffect(() => {
-    props.children; // sub
+  let resizeObserver: ResizeObserver;
 
-    // 24px to account for content padding, plus one because otherwise sometimes it wraps anyway. idk man.
-    setTimeout(() =>
-      setTooltipWidth(
-        25 + ((contentWrapRef.firstElementChild as HTMLElement)?.offsetWidth ?? contentWrapRef.offsetWidth),
-      ),
-    );
+  onMount(() => {
+    if (!contentWrapRef) return;
+
+    resizeObserver = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        const contentWidth = entry.contentRect.width;
+        setTooltipWidth(25 + Math.ceil(contentWidth));
+      }
+    });
+
+    const target = contentWrapRef.firstElementChild ?? contentWrapRef;
+    resizeObserver.observe(target);
+  });
+
+  onCleanup(() => {
+    resizeObserver?.disconnect();
+  });
+
+  createEffect(() => {
+    props.children; // sub - trigger re-measurement when content changes
   });
 
   return (
@@ -45,13 +58,15 @@ const ToolTip: Component<{
         [classes.tooltip]: true,
         [classes.active]: props.active,
       }}
-      style={{
-        width: tooltipWidth() ? tooltipWidth() + "px" : undefined,
-        left: props.left + props.width / 2 - tooltipWidth() / 2 + "px",
-        top: props.under ? props.bottom + verticalOffset + "px" : undefined,
-        bottom: !props.under ? window.innerHeight - props.top + verticalOffset + "px" : undefined,
-        "transform-origin": `50% ${props.under ? 0 : 100}%`,
-      }}
+      style={
+        {
+          width: tooltipWidth() ? tooltipWidth() + "px" : undefined,
+          left: props.left + props.width / 2 - tooltipWidth() / 2 + "px",
+          top: props.under ? props.bottom + verticalOffset + "px" : undefined,
+          bottom: !props.under ? window.innerHeight - props.top + verticalOffset + "px" : undefined,
+          "transform-origin": `50% ${props.under ? 0 : 100}%`, // SolidJS supports hyphenated CSS properties
+        } as JSX.CSSProperties
+      }
     >
       <div class={`${classes.pointer} ${props.under ? classes.under : ""}`} />
       <div class={classes.content} ref={contentWrapRef}>
@@ -139,10 +154,10 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
     exitHandler();
   };
 
-  window.addEventListener("wheel", wheelHandler);
+  window.addEventListener("wheel", wheelHandler, { passive: true });
   window.addEventListener("resize", updateRect);
 
-  window.addEventListener("mousemove", mouseMoveHandler);
+  window.addEventListener("mousemove", mouseMoveHandler, { passive: true });
 
   onCleanup(() => {
     window.removeEventListener("wheel", wheelHandler);

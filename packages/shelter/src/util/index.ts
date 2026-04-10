@@ -116,24 +116,35 @@ export const storeAssign = <T>(store: T, toApply: T) => batch(() => Object.assig
 export const sleep = (ms = 0) => new Promise((r) => setTimeout(r, ms));
 
 // pretty-print an error
-export function prettifyError(e: any) {
-  if (typeof e !== "object") return `[Unknown Error]: ${e}`;
+export function prettifyError(e: unknown): string {
+  if (typeof e !== "object" || e === null) return `[Unknown Error]: ${String(e)}`;
 
-  // yes, Error.prototype.name exists, however other types may not use it e.g.
-  const errorNameRaw = e.constructor?.name;
-  const errorName = !errorNameRaw || errorNameRaw === "Object" ? "[Unknown Error]" : errorNameRaw;
+  if (e instanceof Error) {
+    const errorName = e.name || "[Unknown Error]";
+    const message = e.message || "";
 
-  // are we a real error object? we should have a stack trace!
-  if (typeof e.stack === "string") {
-    // are we on a chromium browser? if so, the stack already contains the error
-    if (e.stack.startsWith(errorName)) return e.stack;
+    if (typeof e.stack === "string") {
+      if (e.stack.startsWith(errorName)) return e.stack;
 
-    // add the error to the start of the stack trace, to match chromium behaviour:
-    return `${errorName}: ${e.message ?? e + ""}\n${e.stack}`;
+      return `${errorName}: ${message}\n${e.stack}`;
+    }
+
+    return `${errorName}: ${message}`;
   }
 
-  // okay, we don't have a stack, let's just print the thing
-  return `${errorName}: ${e.message ?? e + ""}`;
+  const err = e as Record<string, unknown>;
+  const errorName =
+    typeof err.constructor?.name === "string" && err.constructor.name !== "Object"
+      ? err.constructor.name
+      : "[Unknown Error]";
+
+  const message = typeof err.message === "string" ? err.message : String(e);
+
+  if (typeof err.stack === "string") {
+    return `${errorName}: ${message}\n${err.stack}`;
+  }
+
+  return `${errorName}: ${message}`;
 }
 
 export * from "./scopedApi";
