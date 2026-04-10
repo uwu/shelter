@@ -49,7 +49,7 @@ const ToolTip: Component<{
   });
 
   createEffect(() => {
-    props.children; // sub - trigger re-measurement when content changes
+    props.children; 
   });
 
   return (
@@ -64,7 +64,7 @@ const ToolTip: Component<{
           left: props.left + props.width / 2 - tooltipWidth() / 2 + "px",
           top: props.under ? props.bottom + verticalOffset + "px" : undefined,
           bottom: !props.under ? window.innerHeight - props.top + verticalOffset + "px" : undefined,
-          "transform-origin": `50% ${props.under ? 0 : 100}%`, // SolidJS supports hyphenated CSS properties
+          "transform-origin": `50% ${props.under ? 0 : 100}%`,
         } as JSX.CSSProperties
       }
     >
