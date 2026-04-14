@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "web-ext": "^9.2.0"
+  },
+  "webExt": {
+    "ignoreFiles": ["_metadata", "package.json"]
+  }
+}

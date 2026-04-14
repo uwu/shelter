@@ -1,5 +1,5 @@
 import { Dispatcher, FluxStore } from "../types";
-import exfiltrate from "../exfiltrate";
+import { after } from "spitroast";
 
 declare global {
   interface Object {
@@ -7,31 +7,30 @@ declare global {
   }
 }
 
-let dispatcher: Promise<Dispatcher>;
+let resolveDispatcher: (value: Dispatcher) => void;
+const dispatcher: Promise<Dispatcher> = new Promise((res) => (resolveDispatcher = res));
 
 export async function getDispatcher() {
-  if (dispatcher) return dispatcher;
-
-  // Promises bubble up, this is fine.
-  return (dispatcher = exfiltrate("_dispatcher", true).then((fluxstore) => fluxstore._dispatcher as Dispatcher));
+  return dispatcher;
 }
 
 export const stores: Record<string, FluxStore | FluxStore[]> = {};
 
-// noinspection JSIgnoredPromiseFromCall
-exfiltrate("_dispatchToken", true, (store: FluxStore) => {
-  const name = store.getName();
-  if (!stores[name]) {
-    stores[name] = store;
-    onStoreFound(store);
-  } else {
-    if (Array.isArray(stores[name])) (stores[name] as FluxStore[]).push(store);
-    else stores[name] = [stores[name] as FluxStore, store];
+const unpatchPush = after("push", Array.prototype, function ([element]) {
+  if (element?._dispatcher && element?._dispatchToken) {
+    resolveDispatcher(element._dispatcher);
+    unpatchPush();
+    after("push", this, ([store]) => {
+      const name = store.getName();
+      if (!stores[name]) {
+        stores[name] = store;
+        onStoreFound(store);
+      } else {
+        if (Array.isArray(stores[name])) (stores[name] as FluxStore[]).push(store);
+        else stores[name] = [stores[name] as FluxStore, store];
+      }
+    });
   }
-
-  // abusing the "filter" to just steal all the stores
-  // but why not?
-  return false;
 });
 
 // I would make this pass `any` but IDE support is always nice!
