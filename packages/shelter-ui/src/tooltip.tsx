@@ -86,7 +86,7 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
 
     ensureInternalStyle(css);
 
-    toolTipElem?.remove();
+    toolTipElem?.remove?.();
     toolTipElem = (
       <ToolTip active={active()} under={underneath()} {...rect()}>
         {content()}

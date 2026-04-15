@@ -1,14 +1,15 @@
 import { defineConfig } from "vitepress";
 import { fileURLToPath } from "node:url";
 import UnoCSS from "unocss/vite";
-import Solid from "vite-plugin-solid";
+import solid from "vite-plugin-solid";
+import shelterDemosPlugin from "./plugins/shelterDemos";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "shelter",
   description: "an attempt to prepare for the worst",
   vite: {
-    plugins: [UnoCSS(fileURLToPath(new URL("./unocss.config.ts", import.meta.url))), Solid()],
+    plugins: [UnoCSS(fileURLToPath(new URL("./unocss.config.ts", import.meta.url))), solid(), shelterDemosPlugin()],
     optimizeDeps: { exclude: ["@vueuse/integrations"] },
   },
   head: [["link", { rel: "icon", type: "image/svg+xml", href: "/logo.svg" }]],

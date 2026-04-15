@@ -1,7 +1,9 @@
-import { readdirSync, readFileSync } from "fs";
-import { join } from "path";
+import { readdirSync, readFileSync, writeFileSync } from "fs";
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
 
-const srcDir = new URL("./src", import.meta.url).pathname;
+const outDir = dirname(fileURLToPath(import.meta.url));
+const srcDir = join(outDir, "src");
 
 const INTERNAL_SLIDER_VARS = new Set(["--bar-offset", "--bar-size", "--grabber-size", "--track-bg", "--upper-half"]);
 
@@ -49,37 +51,7 @@ function extractCssVariables(files) {
   return filteredVars.sort();
 }
 
-const files = getAllFiles(srcDir);
-const cssVariables = extractCssVariables(files);
-
-const consoleScript = `
-(function() {
-  const styles = getComputedStyle(document.documentElement);
-  const variables = ${JSON.stringify(cssVariables, null, 2)};
-
-  const results = {};
-  const notFound = [];
-
-  variables.forEach(varName => {
-    const value = styles.getPropertyValue(varName).trim();
-    if (value) {
-      results[varName] = value;
-    } else {
-      notFound.push(varName);
-    }
-  });
-
-  let cssOutput = ':root {\\n';
-
-  variables.forEach(varName => {
-    if (results[varName]) {
-      cssOutput += '  ' + varName + ': ' + results[varName] + ';\\n';
-    } else {
-      cssOutput += '  /* ' + varName + ': NOT FOUND */\\n';
-    }
-  });
-
-  cssOutput += \`}
+const FONT_FACES = `
 /* discord fonts */
 @font-face {
   font-style: normal;
@@ -271,15 +243,73 @@ const consoleScript = `
   src: url(https://cdn.jsdelivr.net/gh/uwu/shelter@main/packages/shelter-assets/discord-fonts-mirror/cbb17c40dc4d56e70d10.woff2)
     format("woff2");
   font-family: "Source Code Pro";
-}\`;
+}`;
 
+async function main() {
+  const puppeteer = await import(join(process.env.NODE_PATH, "puppeteer/lib/esm/puppeteer/puppeteer.js"));
 
-  if (notFound.length > 0) {
-    console.warn("Variables not found:\\n", notFound.join('\\n'));
+  const files = getAllFiles(srcDir);
+  const cssVariables = extractCssVariables(files);
+
+  console.log("Launching browser...");
+
+  const browser = await puppeteer.launch({
+    headless: true,
+  });
+
+  const page = await browser.newPage();
+
+  console.log("Loading https://discord.com/login ...");
+  await page.goto("https://discord.com/login", {
+    waitUntil: "networkidle2",
+    timeout: 60000,
+  });
+
+  console.log("Extracting CSS variables...");
+
+  const result = await page.evaluate((variables) => {
+    const styles = getComputedStyle(document.documentElement);
+    const results = {};
+    const notFound = [];
+
+    variables.forEach((varName) => {
+      const value = styles.getPropertyValue(varName).trim();
+      if (value) {
+        results[varName] = value;
+      } else {
+        notFound.push(varName);
+      }
+    });
+
+    return { results, notFound };
+  }, cssVariables);
+
+  await browser.close();
+
+  let cssOutput = ":root {\n";
+
+  cssVariables.forEach((varName) => {
+    if (result.results[varName]) {
+      cssOutput += `  ${varName}: ${result.results[varName]};\n`;
+    } else {
+      cssOutput += `  /* ${varName}: NOT FOUND */\n`;
+    }
+  });
+
+  cssOutput += "}\n" + FONT_FACES + "\n";
+
+  const outputPath = join(outDir, "compat.css");
+  writeFileSync(outputPath, cssOutput);
+
+  console.log(`\nWritten to ${outputPath}`);
+
+  if (result.notFound.length > 0) {
+    console.warn("\nVariables not found:");
+    result.notFound.forEach((v) => console.warn(`  ${v}`));
   }
+}
 
-  console.log(cssOutput);
-})();
-`;
-
-console.log(consoleScript);
+main().catch((err) => {
+  console.error("Error:", err);
+  process.exit(1);
+});

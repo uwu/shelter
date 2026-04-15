@@ -36,7 +36,7 @@ export function focusring(el: Element, rad: Accessor<number>) {
     if (lastFocused || !isFocused() || ev.code !== "Tab") return;
     lastFocused = true;
 
-    focusRingEl?.remove();
+    focusRingEl?.remove?.();
     focusRingEl = (
       <FocusRing rad={typeof rad() === "number" ? rad() : 3} {...el.getBoundingClientRect()} />
     ) as HTMLDivElement;
