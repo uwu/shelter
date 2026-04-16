@@ -1,5 +1,14 @@
 ---
-// TODO
+// just a shim component
+
+import ShelterDemo from "./Internal_ShelterDemo.tsx";
+
+interface Props {
+  demo: string;
+  margin?: string;
+}
+
+const { demo, margin } = Astro.props;
 ---
 
-<div></div>
+<ShelterDemo client:only="solid-js" demo={demo} margin={margin} />

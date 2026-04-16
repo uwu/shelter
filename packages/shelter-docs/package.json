@@ -8,8 +8,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/starlight": "^0.38.3",
-    "@astrojs/vue": "^6.0.1",
+    "@uwu/shelter-ui": "workspace:*",
     "@vueuse/core": "^13.1.0",
     "@vueuse/integrations": "^13.1.0",
     "astro": "^6.0.1",
@@ -20,6 +19,9 @@
     "vue": "^3.5.32"
   },
   "devDependencies": {
+    "@astrojs/solid-js": "^6.0.1",
+    "@astrojs/starlight": "^0.38.3",
+    "@astrojs/vue": "^6.0.1",
     "unocss": "^66.1.0"
   }
 }

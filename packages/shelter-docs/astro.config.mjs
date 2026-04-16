@@ -5,13 +5,15 @@ import shelterLogo from "shelter-assets/png/banner.png";
 import shelterIcon from "shelter-assets/png/logo.png";
 
 import UnoCSS from "unocss/astro";
-
 import vue from "@astrojs/vue";
+import solidJs from "@astrojs/solid-js";
 
 // https://astro.build/config
 export default defineConfig({
   integrations: [
     UnoCSS({}),
+    vue(),
+    solidJs(),
     starlight({
       logo: {
         src: shelterLogo,
@@ -23,7 +25,7 @@ export default defineConfig({
         { icon: "github", label: "GitHub", href: "https://github.com/uwu/shelter" },
         { icon: "discord", label: "Discord", href: "https://discord.gg/FhHQQrVs7U" },
       ],
-      customCss: ["./src/styles/custom.css"],
+      customCss: ["./src/styles/custom.css", "./src/styles/shelter-demo.css"],
       sidebar: [
         {
           label: "Install",
@@ -58,6 +60,5 @@ export default defineConfig({
         },
       ],
     }),
-    vue(),
   ],
 });
