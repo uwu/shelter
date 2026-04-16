@@ -1,0 +1,26 @@
+{
+  "name": "docs",
+  "private": true,
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "preview": "vitepress preview docs"
+  },
+  "devDependencies": {
+    "@iconify-json/carbon": "^1.2.8",
+    "@shikijs/vitepress-twoslash": "^3.4.0",
+    "babel-preset-solid": "1.6.16",
+    "unocss": "^66.1.0",
+    "vite-plugin-solid": "^2.10.1",
+    "vitepress": "^1.6.3"
+  },
+  "dependencies": {
+    "@uwu/shelter-ui": "workspace:^",
+    "@vueuse/core": "^13.1.0",
+    "@vueuse/integrations": "^13.1.0",
+    "fuse.js": "^7.1.0",
+    "shiki": "^1.1.7",
+    "solid-js": "1.6.16",
+    "vue": "^3.5.13"
+  }
+}
