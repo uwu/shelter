@@ -26,8 +26,7 @@ class ReactiveRootElem extends HTMLElement {
 customElements.define("shltr-rroot", ReactiveRootElem);
 
 export const ReactiveRoot: Component<{ children: JSX.Element }> = (props) => {
-  // @ts-expect-error web components moment
-  const root = (<shltr-rroot></shltr-rroot>) as ReactiveRootElem;
+  const root = document.createElement("shltr-rroot") as ReactiveRootElem;
   root.c = () => props.children;
   return root;
 };
