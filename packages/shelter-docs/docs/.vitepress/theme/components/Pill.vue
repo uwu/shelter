@@ -15,7 +15,7 @@ const colour = computed(
 </script>
 
 <template>
-  <div class="inline-block text-sm mx-2 px-2.5 py-1 font-semibold rounded-full" :style="{ background: colour }">
+  <span class="inline-block text-sm mx-2 px-2.5 py-1 font-semibold rounded-full" :style="{ background: colour }">
     <slot />
-  </div>
+  </span>
 </template>

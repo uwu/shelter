@@ -913,7 +913,7 @@ const ComponentFromDiscord = webpack.findByProps("...").default;
 ::: details Type Signature
 ```ts
 (solid.Component<TProps>, TProps) => React.ElementType
-````
+```
 :::
 
 Renders a Solid component in React. This component will *never* be rerendered by React,
