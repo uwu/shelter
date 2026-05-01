@@ -468,7 +468,7 @@ The `counter` prop shows a character counter.
 solid.Component<{
   min: number,
   max: number,
-  tick?: boolean | number,
+  tick?: boolean | number | number[],
   step?: number | "any",
   class?: string,
   style?: JSX.CSSProperties,
@@ -485,8 +485,8 @@ Set `min` and `max` as needed.
 
 `step` controls the size of the actual steps the slider is locked to.
 
-`tick` controls the spacing between ticks to show. This must be an even divisor of (min - max), but plans are to fix this
-in the future.
+`tick` controls the ticks shown below the slider. If `true` or a number, it sets the spacing between evenly distributed ticks.
+If an array of numbers is passed, each number is used as an exact tick position instead.
 
 If `tick` is not passed, no ticks show.
 
