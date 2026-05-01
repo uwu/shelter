@@ -84,11 +84,8 @@
 }
 
 .sticks {
-  display: flex;
   z-index: 1;
   position: absolute;
-  align-items: center;
-  justify-content: space-between;
   width: 100%;
   height: 100%;
   pointer-events: none;
@@ -97,11 +94,13 @@
 .stick {
   display: flex;
   z-index: 1;
+  position: absolute;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   width: 24px;
   height: 100%;
+  transform: translateX(-50%);
 }
 
 .sticktext {

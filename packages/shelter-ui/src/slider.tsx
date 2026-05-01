@@ -8,7 +8,7 @@ type SliderProps = {
 
   min: number;
   max: number;
-  tick?: boolean | number;
+  tick?: boolean | number | number[];
   step?: number | "any";
   value?: number;
 
@@ -32,6 +32,7 @@ export const Slider: NativeExtendingComponent<SliderProps, JSX.InputHTMLAttribut
   );
 
   const ticks = () => {
+    if (Array.isArray(other.tick)) return other.tick;
     if (!other.tick || typeof other.step !== "number") {
       return [];
     }
@@ -56,15 +57,14 @@ export const Slider: NativeExtendingComponent<SliderProps, JSX.InputHTMLAttribut
         }
         onInput={(e) => local.onInput?.(parseFloat((e.target as HTMLInputElement).value))}
       />
-      <div
-        class={classes.sticks}
-        style={{
-          "margin-left": `-${ticks().length / 2}px`,
-          width: `calc(100% + ${ticks().length}px)`,
-        }}
-      >
+      <div class={classes.sticks}>
         {ticks().map((t) => (
-          <div class={classes.stick}>
+          <div
+            class={classes.stick}
+            style={{
+              left: `${((t - other.min) / (other.max - other.min)) * 100}%`,
+            }}
+          >
             <span class={classes.sticktext}>{t}</span>
             <div class={classes.stickline}></div>
           </div>
