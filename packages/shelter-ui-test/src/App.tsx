@@ -190,6 +190,14 @@ export default function App() {
       <p>value: {slide()}</p>
       <SU.Slider min={0} max={120} step={5} tick={20} value={slide()} onInput={setSlide} />
 
+      <h3>Slider with array ticks</h3>
+      <p>Custom tick positions: [0, 15, 35, 60, 85, 120]</p>
+      <SU.Slider min={0} max={120} step={5} tick={[0, 15, 35, 60, 85, 120]} value={slide()} onInput={setSlide} />
+
+      <h3>Slider with boolean ticks</h3>
+      <p>Boolean tick (uses step):</p>
+      <SU.Slider min={0} max={100} step={10} tick={true} value={50} onInput={setSlide} />
+
       <h2>Switch</h2>
       <p>on: {toggle() ? "yes" : "no"}</p>
       <SU.Switch onChange={setToggle} checked={toggle()} />
