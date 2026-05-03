@@ -198,6 +198,10 @@ export default function App() {
       <p>Boolean tick (uses step):</p>
       <SU.Slider min={0} max={100} step={10} tick={true} value={50} onInput={setSlide} />
 
+      <h3>Slider with non-zero min/max</h3>
+      <p>min=50, max=125, tick=25 (should show 50, 75, 100, 125)</p>
+      <SU.Slider min={50} max={125} step={5} tick={25} value={slide()} onInput={setSlide} />
+
       <h2>Switch</h2>
       <p>on: {toggle() ? "yes" : "no"}</p>
       <SU.Switch onChange={setToggle} checked={toggle()} />

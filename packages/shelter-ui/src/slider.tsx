@@ -39,7 +39,7 @@ export const Slider: NativeExtendingComponent<SliderProps, JSX.InputHTMLAttribut
 
     const spacing = other.tick === true ? other.step : other.tick;
     return Object.keys(Array(Math.floor((other.max - other.min) / spacing) + 1).fill(0)).map(
-      (v) => parseInt(v) * spacing,
+      (v) => other.min + parseInt(v) * spacing,
     );
   };
 
