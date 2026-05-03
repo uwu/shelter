@@ -188,7 +188,7 @@ export default function App() {
 
       <h2>Slider</h2>
       <p>value: {slide()}</p>
-      <SU.Slider min={0} max={120} step={5} tick={20} value={slide()} onInput={setSlide} />
+      <SU.Slider min={50} max={125} step={5} tick={25} value={slide()} onInput={setSlide} />
 
       <h2>Switch</h2>
       <p>on: {toggle() ? "yes" : "no"}</p>
