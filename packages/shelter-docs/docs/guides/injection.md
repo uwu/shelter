@@ -32,8 +32,9 @@ You can choose between many branches, e.g. `/shelter`, `/vencord+reactdevtools`,
 of the branches listed in the [sheltupdate readme](https://github.com/uwu/sheltupdate) will work.
 
 Note that this introduces a dependency on a server, https://inject.shelter.uwu.network, but you can self host, and we
-do endeavour to keep the uptime and reliability of this service as good as we can possibly manage.
-If this server is down, your app may not open.
+do endeavour to keep the uptime and reliability of this service as good as we can possibly manage -
+indeed, we have a high availability setup for this system.
+If this server is down, your app likely will not open.
 
 The paths of these settings.json files are:
 
@@ -52,7 +53,30 @@ traditional installer, but with a few tweaks:
  - you are running AFTER `app.whenReady()`, which is fine for shelter but not some other mods
  - you need not bother with host update resistance
 
-## Desktop: traditional
+## Browser: MV2
+
+On the browser, we can inject shelter from a content script.
+
+We store shelter in extension storage, and at page load, grab it out of extension storage and run it.
+
+Then, we fetch shelter, and if its different, store it and reload.
+This usually happens very quickly and isn't noticeable, but is necessary as if we fetch then run, we're too late.
+
+Finally, we use a background script to remove CSP.
+
+## Browser: MV3
+
+This works similarly but subtly differently to the MV2 injector.
+
+First, we use declarative net request to remove CSP as necessary.
+
+Then, we use a content script to inject a script tag to the page that does the actual injection.
+
+That then uses localStorage pretty much identically to the MV2 content script.
+
+## Deprecated methods
+
+### Desktop: traditional
 
 The traditional injection method works by manually replacing the `app.asar` file that is the electron entrypoint for
 the application.
@@ -117,42 +141,24 @@ Then this `preload.js` we injected needs to:
  - Use IPC to ask the node side for the shelter JS, and then execute that in the webFrame
  - Use IPC to ask the node side for the original Discord preload, then chainload it.
 
-## Desktop: `alpm-hooks`
+### Desktop: `alpm-hooks`
 
 On Linux, some package managers support scripts that run upon certain operations.
 
-We have a set of scripts that can install, uninstall, etc. shelter automatically, and provide hooks for Arch Linux's
+We had a set of scripts that can install, uninstall, etc. shelter automatically, and provide hooks for Arch Linux's
 pacman to automatically reinject shelter after a host update.
 
-These inject the traditional installer automatically, to provide host update resistance.
+These injected the traditional installer automatically, to provide host update resistance.
 
-They are provided by [the `shelter` AUR package](https://aur.archlinux.org/packages/shelter).
+They were provided by [the `shelter` AUR package](https://aur.archlinux.org/packages/shelter).
 
-## Desktop: Kernel
+Since host 1.0.136, the host location changed to be in users' home directories, not system wide,
+so we no longer have scripts that can automatically install the traditional injector. This package is just a no-op now.
+
+### Desktop: Kernel
 
 [Kernel](https://kernel.fish) is a generic electron mod.
 
 Once setup, you can install the [shelter loader package](https://github.com/uwu/shelter/tree/main/injectors/kernel),
 which works almost identically to the traditional installer,
 but kernel manages loading our preload and chainloading the original preload for us.
-
-## Browser: MV2
-
-On the browser, we can inject shelter from a content script.
-
-We store shelter in extension storage, and at page load, grab it out of extension storage and run it.
-
-Then, we fetch shelter, and if its different, store it and reload.
-This usually happens very quickly and isn't noticeable, but is necessary as if we fetch then run, we're too late.
-
-Finally, we use a background script to remove CSP.
-
-## Browser: MV3
-
-This works similarly but subtly differently to the MV2 injector.
-
-First, we use declarative net request to remove CSP as necessary.
-
-Then, we use a content script to inject a script tag to the page that does the actual injection.
-
-That then uses localStorage pretty much identically to the MV2 content script.
