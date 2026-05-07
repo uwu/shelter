@@ -1,0 +1,8 @@
+#####################################
+#       USER ACTION REQUIRED        #
+#                                   #
+# The shelter AUR package           #
+# no longer works. it is a no-op.   #
+# Please run shelter-installer ASAP #
+# it is included w/ this package.   #
+#####################################

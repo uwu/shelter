@@ -6,4 +6,4 @@ Target = shelter
 [Action]
 Depends = shelter
 When = PreTransaction
-Exec = /usr/share/shelter/remove-auto.sh
+Exec = /usr/share/shelter/hook-warning.sh

@@ -1,3 +1,6 @@
+Deprecated as of linux host 1.0.136, 2026-05.
+
+
 # Shelter Injector ALPM Hooks
 
 `scripts` should be cross-distro.

@@ -10,4 +10,4 @@ Target = discord-ptb
 [Action]
 Depends = shelter
 When = PostTransaction
-Exec = /usr/share/shelter/install-auto.sh
+Exec = /usr/share/shelter/hook-warning.sh

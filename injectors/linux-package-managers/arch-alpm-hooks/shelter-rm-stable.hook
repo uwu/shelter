@@ -6,4 +6,4 @@ Target = discord
 [Action]
 Depends = shelter
 When = PreTransaction
-Exec = /usr/share/shelter/remove.sh "$(/usr/share/shelter/find-resources.sh discord)"
+Exec = /usr/share/shelter/hook-warning.sh

@@ -6,4 +6,4 @@ Target = discord-canary
 [Action]
 Depends = shelter
 When = PreTransaction
-Exec = /usr/share/shelter/remove.sh "$(/usr/share/shelter/find-resources.sh discord-canary)"
+Exec = /usr/share/shelter/hook-warning.sh
