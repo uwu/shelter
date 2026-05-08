@@ -6,11 +6,10 @@
 
 .header {
   display: flex;
-  flex-direction: row;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-evenly;
-  margin-bottom: 12px;
-  gap: 48px;
+  gap: 12px;
 }
 
 .banner {
@@ -26,10 +25,5 @@
 
 .linkwrapper {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: .5rem;
-  > * {
-    width: 100%;
-  }
+  gap: 8px;
 }

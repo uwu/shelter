@@ -20,8 +20,22 @@
 
 .row {
   display: flex;
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
   align-items: center;
+  justify-content: space-between;
+  gap: 4px;
   color: var(--text-subtle);
+
+  .btnSection, .infoSection {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .infoSection {
+    margin-right: auto;
+  }
 
   strong,
   .author {

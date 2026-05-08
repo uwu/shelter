@@ -59,105 +59,108 @@ export const PluginCard: Component<{
   return (
     <div class={classes.plugin}>
       <div class={classes.row}>
-        <strong>{props.plugin.manifest.name}</strong>
-        <Space />
-        by
-        <Space />
-        <span class={classes.author}>{props.plugin.manifest.author}</span>
-        <div style="flex:1" />
-        {/* Some users did not understand where injector plugins came from or why, so explain it to them */}
-        <Show keyed when={ldi}>
-          <div
-            use:tooltip={`This plugin is part of ${ldiName}.`}
-            aria-label={`${props.plugin.manifest.name} is part of ${ldiName}.`}
-            class={classes.btn}
-          >
-            <IconInfo />
-          </div>
-        </Show>
-        <Show keyed when={getSettings(props.id)}>
-          <button
-            use:tooltip="Open settings"
-            aria-label={`open settings for ${props.plugin.manifest.name}`}
-            use:focusring
-            class={classes.btn}
-            style={on() ? "" : "opacity: 0"}
-            onclick={() => showSettingsFor(props.id)}
-          >
-            <IconCog />
-          </button>
-        </Show>
-        <Show keyed when={!isDev() && !props.plugin.local && (!ldi || ldi.allowedActions.update)}>
-          <button
-            use:tooltip="Check for update"
-            aria-label={`update ${props.plugin.manifest.name}`}
-            use:focusring
-            class={classes.btn}
-            onClick={() =>
-              updatePlugin(props.id).then(
-                (updated) =>
-                  showToast({
-                    title: updated
-                      ? `Updated ${props.plugin.manifest.name} successfully`
-                      : `${props.plugin.manifest.name} is already up to date`,
-                    duration: 3000,
-                  }),
-                (error) =>
-                  showToast({
-                    title: `Failed to update ${props.plugin.manifest.name}`,
-                    content: error?.message ?? error + "",
-                    duration: 3000,
-                  }),
-              )
-            }
-          >
-            <IconUpdate />
-          </button>
-        </Show>
-        <Show keyed when={!isDev() && (!ldi || ldi.allowedActions.edit)}>
-          <button
-            use:tooltip="Edit"
-            aria-label={`edit ${props.plugin.manifest.name}`}
-            use:focusring
-            class={classes.btn}
-            onClick={() => editPluginModal(props.id)}
-          >
-            <IconEdit />
-          </button>
-        </Show>
-        <Show keyed when={!isDev() && (!ldi || ldi.allowedActions.delete)}>
-          <button
-            use:tooltip="Delete"
-            aria-label={`delete ${props.plugin.manifest.name}`}
-            use:focusring
-            class={classes.btn}
-            onclick={() =>
-              openConfirmationModal({
-                body: () => `Are you sure you want to delete plugin ${props.plugin.manifest.name}?`,
-                header: () => "Confirm plugin deletion",
-                type: "danger",
-                confirmText: "Delete",
-              }).then(
-                () => removePlugin(props.id),
-                () => {},
-              )
-            }
-          >
-            <IconBin />
-          </button>
-        </Show>
-        <Show keyed when={!ldi || ldi.allowedActions.toggle}>
-          <Switch
-            aria-label={`${on() ? "disable" : "enable"} ${props.plugin.manifest.name}`}
-            checked={on()}
-            onChange={(newVal) => {
-              if (props.plugin.on === newVal) return;
-              setOn(!on());
-              // oh no! i have to save my pretty animations! (this is utterly stupid)
-              setTimeout(() => (newVal ? startPlugin(props.id) : stopPlugin(props.id)), 226);
-            }}
-          />
-        </Show>
+        <div class={classes.btnSection}>
+          <Show keyed when={getSettings(props.id)}>
+            <button
+              use:tooltip="Open settings"
+              aria-label={`open settings for ${props.plugin.manifest.name}`}
+              use:focusring
+              class={classes.btn}
+              style={on() ? "" : "opacity: 0"}
+              onclick={() => showSettingsFor(props.id)}
+            >
+              <IconCog />
+            </button>
+          </Show>
+          <Show keyed when={!isDev() && !props.plugin.local && (!ldi || ldi.allowedActions.update)}>
+            <button
+              use:tooltip="Check for update"
+              aria-label={`update ${props.plugin.manifest.name}`}
+              use:focusring
+              class={classes.btn}
+              onClick={() =>
+                updatePlugin(props.id).then(
+                  (updated) =>
+                    showToast({
+                      title: updated
+                        ? `Updated ${props.plugin.manifest.name} successfully`
+                        : `${props.plugin.manifest.name} is already up to date`,
+                      duration: 3000,
+                    }),
+                  (error) =>
+                    showToast({
+                      title: `Failed to update ${props.plugin.manifest.name}`,
+                      content: error?.message ?? error + "",
+                      duration: 3000,
+                    }),
+                )
+              }
+            >
+              <IconUpdate />
+            </button>
+          </Show>
+          <Show keyed when={!isDev() && (!ldi || ldi.allowedActions.edit)}>
+            <button
+              use:tooltip="Edit"
+              aria-label={`edit ${props.plugin.manifest.name}`}
+              use:focusring
+              class={classes.btn}
+              onClick={() => editPluginModal(props.id)}
+            >
+              <IconEdit />
+            </button>
+          </Show>
+          <Show keyed when={!isDev() && (!ldi || ldi.allowedActions.delete)}>
+            <button
+              use:tooltip="Delete"
+              aria-label={`delete ${props.plugin.manifest.name}`}
+              use:focusring
+              class={classes.btn}
+              onclick={() =>
+                openConfirmationModal({
+                  body: () => `Are you sure you want to delete plugin ${props.plugin.manifest.name}?`,
+                  header: () => "Confirm plugin deletion",
+                  type: "danger",
+                  confirmText: "Delete",
+                }).then(
+                  () => removePlugin(props.id),
+                  () => {},
+                )
+              }
+            >
+              <IconBin />
+            </button>
+          </Show>
+          <Show keyed when={!ldi || ldi.allowedActions.toggle}>
+            <Switch
+              aria-label={`${on() ? "disable" : "enable"} ${props.plugin.manifest.name}`}
+              checked={on()}
+              onChange={(newVal) => {
+                if (props.plugin.on === newVal) return;
+                setOn(!on());
+                // oh no! i have to save my pretty animations! (this is utterly stupid)
+                setTimeout(() => (newVal ? startPlugin(props.id) : stopPlugin(props.id)), 226);
+              }}
+            />
+          </Show>
+        </div>
+        <div class={classes.infoSection}>
+          <strong>{props.plugin.manifest.name}</strong>
+          <Space />
+          by
+          <Space />
+          <span class={classes.author}>{props.plugin.manifest.author}</span>
+          {/* Some users did not understand where injector plugins came from or why, so explain it to them */}
+          <Show keyed when={ldi}>
+            <div
+              use:tooltip={`This plugin is part of ${ldiName}.`}
+              aria-label={`${props.plugin.manifest.name} is part of ${ldiName}.`}
+              class={classes.btn}
+            >
+              <IconInfo />
+            </div>
+          </Show>
+        </div>
       </div>
 
       <div class={classes.desc}>{props.plugin.manifest.description}</div>

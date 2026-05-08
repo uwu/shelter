@@ -39,12 +39,14 @@ export default () => {
           />
           <div class={classes.linkwrapper}>
             <Button
+              grow
               color={ButtonColors.SECONDARY}
               onClick={() => window.open("https://shelter.uwu.network/", "_blank")}
             >
               Documentation
             </Button>
             <Button
+              grow
               color={ButtonColors.SECONDARY}
               onClick={() => window.open("https://github.com/uwu/shelter/", "_blank")}
             >
