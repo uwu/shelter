@@ -70,7 +70,7 @@ export const ModalConfirmFooter: Component<{
       grow
       disabled={props.cancelDisabled}
       size={ButtonSizes.MEDIUM}
-      color={ButtonColors.PRIMARY}
+      color={ButtonColors.SECONDARY}
       onClick={() => {
         props.onCancel?.();
         props.close();
