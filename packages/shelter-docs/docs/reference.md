@@ -667,7 +667,7 @@ function startPlugin(id: string): void
 
 `startPlugin` starts an installed but unloaded plugin.
 
-### `shelter.plugin.stopPlugin`
+### `shelter.plugins.stopPlugin`
 
 ```ts
 function stopPlugin(id: string): void
