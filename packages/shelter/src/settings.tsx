@@ -105,7 +105,7 @@ function internalGenerateLayout(sectionItem: SettingsSection, layoutSection: any
   const layoutSetting = {
     key: `${LAYOUT_PREFIX}_${id}_setting`,
     Component: () => renderSolidInReact(pane as Component),
-    type: 19,
+    type: 20,
   };
 
   const layoutCategory = {
