@@ -92,7 +92,7 @@ export async function buildPluginPage(pluginDir: string, outDir: string, cfg: ob
 
   let parsedManifest: object;
   try {
-    parsedManifest = JSON.parse(manifestData);
+    parsedManifest = { ...JSON.parse(manifestData), url: basename(pluginDir) };
   } catch {
     console.error(`Failed to parse manifest while building website, skipping`);
     return;
