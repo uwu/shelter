@@ -3,7 +3,7 @@ import { intercept as fluxIntercept } from "../flux";
 import { intercept as httpIntercept } from "../http";
 import { observe as observeDom } from "../observer";
 import * as patcher from "spitroast";
-import { registerSection, registerInjSection } from "../settings";
+import { BadgeType, registerSection, registerInjSection } from "../settings";
 import { injectCss } from "@uwu/shelter-ui";
 import { Dispatcher } from "../types";
 
@@ -58,6 +58,7 @@ export function createScopedApiInternal(dispatcher: Dispatcher, injector: boolea
       instead: shimDisposableFn(disposes, patcher.instead),
     },
     settings: {
+      BadgeType,
       registerSection: shimDisposableFn(disposes, injector ? registerInjSection : registerSection),
     },
     ui: {
