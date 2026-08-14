@@ -10,7 +10,7 @@ import * as reacts from "./react";
 import * as bridges from "./bridges";
 import * as util from "./util";
 import * as plugins from "./plugins";
-import { registerSection } from "./settings";
+import { BadgeType, registerSection } from "./settings";
 import { observe } from "./observer";
 import http from "./http";
 
@@ -75,6 +75,7 @@ const windowApi = async (unloads) => {
       ...bridges,
     },
     settings: {
+      BadgeType,
       registerSection,
     },
     unload: () => unloads.forEach((p) => p?.()),

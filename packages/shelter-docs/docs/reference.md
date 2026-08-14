@@ -529,22 +529,52 @@ This is documented separately: [shelter UI](/ui).
 
 shelter provides tools to inject into the user settings page of Discord.
 
-It can inject a divider, a header, a section with a component, or a button with an action.
+It can inject a divider, a header, or a section with a component.
 
 ### `shelter.settings.registerSection`
 
 ```ts
 function registerSection("divider"): () => void
 function registerSection("header",  text: string): () => void
-function registerSection("section", id: string, label: string, comp: solid.Component, extras?: any): () => void
-function registerSection("button",  id: string, label: string, action: () => void): () => void
+function registerSection(
+  "section",
+  id: string,
+  label: string,
+  comp: solid.Component,
+  extras?: SettingsExtras
+): () => void
+enum BadgeType {
+  NEW = 0,
+  BETA = 1,
+  COUNT = 2,
+  WARNING = 3,
+  STRONGLY_DISCOURAGED_CUSTOM = 4
+}
+type SettingsBadge =
+  | { type: BadgeType.NEW }
+  | { type: BadgeType.BETA }
+  | { type: BadgeType.COUNT; count: number }
+  | { type: BadgeType.WARNING }
+  | { type: BadgeType.STRONGLY_DISCOURAGED_CUSTOM; customDecoration: solid.Component }
+interface SettingsExtras {
+  icon?: solid.Component
+  badge?: SettingsBadge
+}
 ```
 
 `registerSection` adds a setting to the user settings.
 
 The returned function, when called, removes the section you injected.
 
-A `section` and can optionally be passed in extra properties, such as a `badgeCount` (or whatever else you find that works):
+A `section` can optionally include an icon and one persistent badge decoration:
+
+- `BadgeType.NEW`: displays a **New** badge.
+- `BadgeType.BETA`: displays a **Beta** badge.
+- `BadgeType.COUNT`: displays a numeric badge.
+- `BadgeType.WARNING`: displays a warning badge.
+- `BadgeType.STRONGLY_DISCOURAGED_CUSTOM`: renders a custom badge component.
+
+`icon` sets the sidebar icon. `BadgeType` is available as `shelter.settings.BadgeType`.
 
 ```ts
 const remove = registerSection(
@@ -553,9 +583,40 @@ const remove = registerSection(
   "Alerts",
   AlertList,
   {
-    badgeCount: 5
+    icon: AlertsIcon,
+    badge: { type: BadgeType.COUNT, count: 5 }
   }
 );
+```
+
+To update a section, call `registerSection` again with the same `id`. The new
+definition replaces the existing section, so pass the complete section definition
+again, including its component and extras. Keep the disposer returned by the
+latest call if you need to remove the section later:
+
+```tsx
+let count = 1;
+
+const TimerSettings = () => <div>This section has a changing badge.</div>;
+const registerTimerSection = () =>
+  registerSection(
+    "section",
+    "timer",
+    "Timer",
+    TimerSettings,
+    { badge: { type: BadgeType.COUNT, count } },
+  );
+
+let remove = registerTimerSection();
+const timer = setInterval(() => {
+  count = count === 10 ? 1 : count + 1;
+  remove = registerTimerSection();
+}, 1000);
+
+export function onUnload() {
+  clearInterval(timer);
+  remove();
+}
 ```
 
 ## `shelter.plugin`

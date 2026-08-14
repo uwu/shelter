@@ -1,13 +1,9 @@
 // Injects a section into user settings
 
-import { getDispatcher } from "./flux";
-import { getFiber, getFiberOwner, reactFiberWalker } from "./util";
-import { observe } from "./observer";
+import { getFiber, reactFiberWalker } from "./util";
 import { Component } from "solid-js";
 import { renderSolidInReact } from "./bridges";
 import Settings from "./components/Settings";
-import { after } from "spitroast";
-import exfiltrate from "./exfiltrate";
 
 function SettingsIcon() {
   return (
@@ -27,17 +23,30 @@ function SettingsIcon() {
   );
 }
 
-type Extras = {
+export enum BadgeType {
+  NEW = 0,
+  BETA = 1,
+  COUNT = 2,
+  WARNING = 3,
+  STRONGLY_DISCOURAGED_CUSTOM = 4,
+}
+
+export type SettingsBadge =
+  | { type: BadgeType.NEW }
+  | { type: BadgeType.BETA }
+  | { type: BadgeType.COUNT; count: number }
+  | { type: BadgeType.WARNING }
+  | { type: BadgeType.STRONGLY_DISCOURAGED_CUSTOM; customDecoration: Component | (() => void) };
+
+export type SettingsExtras = {
   icon?: Component | (() => void);
-  badgeCount?: number;
-  customDecoration?: Component | (() => void);
+  badge?: SettingsBadge;
 };
 
-type SettingsSection =
+export type SettingsSection =
   | ["divider"]
   | ["header", string]
-  | ["section", string, string, Component, Extras?]
-  | ["button", string, string, () => void];
+  | ["section", string, string, Component, SettingsExtras?];
 
 const shelterSections: SettingsSection[] = [
   ["divider"],
@@ -49,199 +58,137 @@ let injectorSections: SettingsSection[] = [];
 
 let externalSections: SettingsSection[] = [];
 
-function legacyGeneratePredicateSections() {
-  return [...injectorSections, ...shelterSections, ...externalSections].map((s) => {
-    switch (s[0]) {
-      case "divider":
-        return { section: "DIVIDER" };
-      case "header":
-        return { section: "HEADER", label: s[1] };
-      case "button":
-        return { section: s[1], label: s[2], onClick: s[3] };
+const LAYOUT_PREFIX = "shelter";
+const LANGUAGE_AND_TIME_PANEL_KEY = "language_and_time_panel";
 
-      case "section":
-        return {
-          section: s[1],
-          label: s[2],
-          element: () => renderSolidInReact(s[3]),
-          ...(s[4] ?? {}),
-        };
-    }
-  });
+type LayoutTemplates = Record<"section" | "sidebarItem" | "panel" | "category" | "setting", any>;
+
+// parse the layout tree from the language and time setting. this should be stable enough
+// and is the simplest one i found in the tree
+function getLayoutTemplates(layout: any[]): LayoutTemplates | undefined {
+  for (const section of layout) {
+    const sidebarItem = (section.layout ?? []).find((item) =>
+      (item.layout ?? []).some((panel) => panel.key === LANGUAGE_AND_TIME_PANEL_KEY),
+    );
+    const panel = sidebarItem?.layout?.find((item) => item.key === LANGUAGE_AND_TIME_PANEL_KEY);
+    const category = panel?.layout?.find((item) => Array.isArray(item.layout));
+    const setting = category?.layout?.find((node) => typeof node.Component === "function");
+
+    if (sidebarItem && panel && category && setting) return { section, sidebarItem, panel, category, setting };
+  }
 }
 
-const LAYOUT_PREFIX = "shelter";
-
-function internalGenerateLayout(sectionItem: SettingsSection, layoutSection: any) {
+function internalGenerateLayout(sectionItem: SettingsSection, templates: LayoutTemplates) {
   const [, id, name, pane] = sectionItem;
+  const extras = sectionItem[4];
 
-  const layoutSidebarItem = {
-    icon: sectionItem[4]?.icon ? () => renderSolidInReact(sectionItem[4].icon as Component) : () => {},
-    trailing: undefined,
+  const layoutSidebarItem: any = {
+    icon: extras?.icon ? () => renderSolidInReact(extras.icon as Component) : () => null,
     key: `${LAYOUT_PREFIX}_${id}_sidebar_item`,
     layout: [],
-    getLegacySearchKey: () => `${LAYOUT_PREFIX}_${id.toUpperCase()}`,
-    type: 2,
+    type: templates.sidebarItem.type,
     useTitle: () => name,
   };
 
-  // TODO: can sanely support BADGE_NEW?
+  const badge = extras?.badge;
+  if (badge?.type === BadgeType.STRONGLY_DISCOURAGED_CUSTOM)
+    layoutSidebarItem.usePersistentBadge = () => ({
+      badgeType: BadgeType.STRONGLY_DISCOURAGED_CUSTOM,
+      customBadge: renderSolidInReact(badge.customDecoration as Component),
+    });
+  else if (badge?.type === BadgeType.COUNT)
+    layoutSidebarItem.usePersistentBadge = () => ({ badgeType: BadgeType.COUNT, count: badge.count });
+  else if (badge?.type === BadgeType.WARNING)
+    layoutSidebarItem.usePersistentBadge = () => ({ badgeType: BadgeType.WARNING });
+  else if (badge?.type === BadgeType.BETA) layoutSidebarItem.usePersistentBadge = () => ({ badgeType: BadgeType.BETA });
+  else if (badge?.type === BadgeType.NEW) layoutSidebarItem.usePersistentBadge = () => ({ badgeType: BadgeType.NEW });
 
-  if (sectionItem[4]?.badgeCount) {
-    layoutSidebarItem.trailing = {
-      type: 1, // BADGE_COUNT
-      useCount: () => sectionItem[4].badgeCount,
-    };
-  }
-
-  if (sectionItem[4]?.customDecoration) {
-    layoutSidebarItem.trailing = {
-      type: 2, // STRONGLY_DISCOURAGED_CUSTOM
-      useCustomDecoration: (visibleContent, isSelected) =>
-        renderSolidInReact(sectionItem[4].customDecoration as Component, { visibleContent, isSelected }),
-    };
-  }
-
-  // TODO: cloning an existing setting item, gutting it out and replacing it with our own isnt such a bad idea
-  const layoutSetting = {
+  const layoutSetting: any = {
+    // search should work again with this instead of legacy search key
+    useSearchTerms: () => [name, id],
     key: `${LAYOUT_PREFIX}_${id}_setting`,
     Component: () => renderSolidInReact(pane as Component),
-    type: 19,
+    type: templates.setting.type,
   };
 
-  const layoutCategory = {
+  const layoutCategory: any = {
     key: `${LAYOUT_PREFIX}_${id}_category`,
     layout: [layoutSetting],
-    type: 5,
+    type: templates.category.type,
   };
 
-  const layoutPanel = {
+  const layoutPanel: any = {
     key: `${LAYOUT_PREFIX}_${id}_panel`,
     layout: [layoutCategory],
-    type: 3,
+    type: templates.panel.type,
     useTitle: () => name,
   };
 
+  // just in case.
+  layoutSetting.parent = layoutCategory;
+  layoutCategory.parent = layoutPanel;
+  layoutPanel.parent = layoutSidebarItem;
   layoutSidebarItem.layout.push(layoutPanel);
   return layoutSidebarItem;
 }
 
-function generateSectionLayout(sectionName: string) {
+function generateSectionLayout(sectionName: string, templates: LayoutTemplates) {
   return {
     key: `${LAYOUT_PREFIX}_${sectionName.toLowerCase()}_section`,
     layout: [],
-    type: 1,
+    type: templates.section.type,
     useTitle: () => sectionName,
   };
 }
 
-function buildLayout() {
+function buildLayout(templates: LayoutTemplates) {
   const layout = [];
-  let layoutSection = generateSectionLayout("Unknown");
+  let layoutSection = generateSectionLayout("Unknown", templates);
+  let layoutSectionAdded = false;
 
   for (const s of [...injectorSections, ...shelterSections, ...externalSections]) {
     if (s[0] === "header") {
-      layoutSection = generateSectionLayout(s[1]);
+      layoutSection = generateSectionLayout(s[1], templates);
       layout.push(layoutSection);
+      layoutSectionAdded = true;
       continue;
     }
 
+    if (!layoutSectionAdded && s[0] === "section") {
+      layout.push(layoutSection);
+      layoutSectionAdded = true;
+    }
+
     if (s[0] === "section") {
-      layoutSection.layout.push(internalGenerateLayout(s, layoutSection));
-      continue;
+      const sidebarItem = internalGenerateLayout(s, templates);
+      sidebarItem.parent = layoutSection;
+      layoutSection.layout.push(sidebarItem);
     }
   }
 
   return layout;
 }
 
-export async function initSettings() {
-  const [uninjectLegacySettings, uninjectSettings] = await Promise.all([legacyInjectSettings(), injectSettings()]);
+function patchLayout(root: any) {
+  const { layout } = root;
+  // steal the template
+  const templates = getLayoutTemplates(layout);
+  if (!templates) return;
 
-  return () => {
-    uninjectLegacySettings();
-    uninjectSettings();
-  };
+  // remove old layout we injected
+  for (let i = layout.length - 1; i >= 0; i--) if (layout[i].key?.startsWith(`${LAYOUT_PREFIX}_`)) layout.splice(i, 1);
+
+  // injecteth
+  const gamesAndAppsIndex = layout.findIndex(({ key }) => key === "games_and_apps_section");
+  const generatedLayout = buildLayout(templates);
+  generatedLayout.forEach((section) => (section.parent = root));
+  layout.splice(gamesAndAppsIndex === -1 ? layout.length : gamesAndAppsIndex + 1, 0, ...generatedLayout);
 }
 
-async function legacyInjectSettings() {
-  const FluxDispatcher = await getDispatcher();
+export { injectSettings as initSettings };
 
-  // Force disable settings redesign experiment until the new injection method works without issues
-  FluxDispatcher.dispatch({
-    type: "APEX_EXPERIMENT_OVERRIDE_CREATE",
-    experimentName: "2025-09-user-settings-redesign-1",
-    variantId: -1,
-  });
-
-  let canceled = false;
-  let unpatch: () => void;
-  let stopPrevious: () => void;
-
-  const cb = async () => {
-    stopPrevious?.();
-
-    // wait for lazy loading on initial user settings open
-    const sidebar = await new Promise<Element | void>((res) => {
-      const trackCallback = (p: any) => {
-        if (p.event === "settings_pane_viewed" && p.properties.settings_type === "user") {
-          res(document.querySelector("nav > [role=tablist]"));
-        }
-      };
-      FluxDispatcher.subscribe("TRACK", trackCallback);
-
-      // fallback in case track dispatches are disabled (e.g. BD's DoNotTrack)
-      const unobserve = observe("nav > [role=tablist]", res);
-      setTimeout(unobserve, 3_000);
-
-      stopPrevious = () => {
-        FluxDispatcher.unsubscribe("TRACK", trackCallback);
-        unobserve();
-        res();
-      };
-    });
-
-    if (!sidebar || canceled) return;
-
-    const f = reactFiberWalker(
-      getFiber(sidebar),
-      (node) => typeof node?.type === "function" && node.type.prototype.getPredicateSections,
-      true,
-    );
-
-    if (typeof f?.type !== "function") return;
-
-    unpatch = after("getPredicateSections", f.type.prototype, (args, ret: any[]) => {
-      const changelogIdx = ret.findIndex((s) => s.section === "changelog");
-      if (changelogIdx === -1) return;
-
-      // -1 to go ahead of the divider above it
-      ret.splice(changelogIdx - 1, 0, ...legacyGeneratePredicateSections());
-    });
-
-    // trigger rerender for first load
-    legacyRerenderSidebar();
-
-    FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
-  };
-
-  FluxDispatcher.subscribe("USER_SETTINGS_MODAL_OPEN", cb);
-
-  return () => {
-    FluxDispatcher.unsubscribe("USER_SETTINGS_MODAL_OPEN", cb);
-    canceled = true;
-    unpatch?.();
-  };
-}
-
-async function injectSettings() {
+function injectSettings() {
   const patchSym = Symbol();
-
-  function patchLayout(layout) {
-    const activityIndex = layout.findIndex(({ key }) => key === "activity_section");
-    const insertIndex = activityIndex === -1 ? layout.length - 1 : activityIndex + 1;
-    layout.splice(insertIndex, 0, ...buildLayout());
-  }
 
   // Targets `("buildLayout" in node && "function" == typeof node.buildLayout)`
   // If the setter is invoked on anything other than the prototype, simply set
@@ -262,7 +209,7 @@ async function injectSettings() {
         if (root[patchSym] || root.key !== "$Root") return;
         root[patchSym] = true;
 
-        patchLayout(root.layout);
+        patchLayout(root);
       });
     },
     set(v) {
@@ -276,26 +223,67 @@ async function injectSettings() {
     },
   });
 
-  return () => delete Object.prototype["buildLayout"];
+  return () => {
+    delete Object.prototype["buildLayout"];
+  };
 }
 
-function legacyRerenderSidebar() {
-  const sidebarParent = document.querySelector(`nav:has([role=tablist])`);
-  getFiberOwner(sidebarParent)?.forceUpdate();
+function rerenderSettings() {
+  const sidebar = document.querySelector(`[data-settings-sidebar-item]`);
+  if (!sidebar) return;
+
+  const getSetStates = (fiber: any) => {
+    const setStates = [];
+    // traverse hooks to find set states
+    for (let hook: any = fiber.memoizedState; hook; hook = hook.next) {
+      if (hook.memoizedState instanceof Set && typeof hook.queue?.dispatch === "function") {
+        setStates.push(hook.queue.dispatch);
+      }
+    }
+    return setStates;
+  };
+
+  const getNormalizedRoot = (fiber: any) => {
+    for (let hook: any = fiber.memoizedState; hook; hook = hook.next) {
+      const value = hook.memoizedState?.[0];
+      if (value?.key === "$Root" && Array.isArray(value.layout)) return value;
+    }
+  };
+
+  // this was fun to figure out.
+  // walk the fiber, and for each fiber search the memoized sets
+  const settingsFiber = reactFiberWalker(
+    getFiber(sidebar),
+    (fiber) => (fiber.pendingProps?.partialRoot ?? fiber.memoizedProps?.partialRoot) && getSetStates(fiber).length >= 2,
+    true,
+  );
+  if (settingsFiber) {
+    const root = getNormalizedRoot(settingsFiber);
+    if (root) patchLayout(root);
+    // just make a new set and react *somehow* doesnt explode, honestly quite incredible
+    getSetStates(settingsFiber)[0]?.((state) => new Set(state));
+  }
+}
+
+function findSectionId(section: SettingsSection) {
+  return section[0] === "section" ? section[1] : undefined;
 }
 
 function registerSectionInternal(sec: SettingsSection, injector: boolean) {
   const secs = injector ? injectorSections : externalSections;
+  const id = findSectionId(sec);
+  const idx = id === undefined ? -1 : secs.findIndex((section) => findSectionId(section) === id);
 
-  secs.push(sec);
-  legacyRerenderSidebar();
+  if (idx === -1) secs.push(sec);
+  else secs[idx] = sec;
+  rerenderSettings();
 
   return () => {
     const idx = secs.indexOf(sec);
     if (idx === -1) return;
 
     secs.splice(idx, 1);
-    legacyRerenderSidebar();
+    rerenderSettings();
   };
 }
 
@@ -306,8 +294,10 @@ export const registerInjSection = (...sec: SettingsSection) => registerSectionIn
 
 export function setInjectorSections(secs: SettingsSection[]) {
   injectorSections = secs;
+  rerenderSettings();
 }
 
 export function removeAllSections() {
   externalSections = [];
+  rerenderSettings();
 }
