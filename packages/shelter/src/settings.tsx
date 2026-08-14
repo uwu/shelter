@@ -102,10 +102,11 @@ function internalGenerateLayout(sectionItem: SettingsSection, layoutSection: any
     };
   }
 
+  // TODO: cloning an existing setting item, gutting it out and replacing it with our own isnt such a bad idea
   const layoutSetting = {
     key: `${LAYOUT_PREFIX}_${id}_setting`,
     Component: () => renderSolidInReact(pane as Component),
-    type: 20,
+    type: 19,
   };
 
   const layoutCategory = {
