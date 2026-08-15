@@ -78,7 +78,7 @@ function getLayoutTemplates(layout: any[]): LayoutTemplates | undefined {
   }
 }
 
-function internalGenerateLayout(sectionItem: SettingsSection, templates: LayoutTemplates) {
+function internalGenerateLayout(sectionItem: SettingsSection, templates?: LayoutTemplates) {
   const [, id, name, pane] = sectionItem;
   const extras = sectionItem[4];
 
@@ -86,7 +86,7 @@ function internalGenerateLayout(sectionItem: SettingsSection, templates: LayoutT
     icon: extras?.icon ? () => renderSolidInReact(extras.icon as Component) : () => null,
     key: `${LAYOUT_PREFIX}_${id}_sidebar_item`,
     layout: [],
-    type: templates.sidebarItem.type,
+    type: templates?.sidebarItem?.type ?? 2,
     useTitle: () => name,
   };
 
@@ -108,19 +108,19 @@ function internalGenerateLayout(sectionItem: SettingsSection, templates: LayoutT
     useSearchTerms: () => [name, id],
     key: `${LAYOUT_PREFIX}_${id}_setting`,
     Component: () => renderSolidInReact(pane as Component),
-    type: templates.setting.type,
+    type: templates?.setting?.type ?? 19,
   };
 
   const layoutCategory: any = {
     key: `${LAYOUT_PREFIX}_${id}_category`,
     layout: [layoutSetting],
-    type: templates.category.type,
+    type: templates?.category?.type ?? 5,
   };
 
   const layoutPanel: any = {
     key: `${LAYOUT_PREFIX}_${id}_panel`,
     layout: [layoutCategory],
-    type: templates.panel.type,
+    type: templates?.panel?.type ?? 3,
     useTitle: () => name,
   };
 
@@ -132,16 +132,16 @@ function internalGenerateLayout(sectionItem: SettingsSection, templates: LayoutT
   return layoutSidebarItem;
 }
 
-function generateSectionLayout(sectionName: string, templates: LayoutTemplates) {
+function generateSectionLayout(sectionName: string, templates?: LayoutTemplates) {
   return {
     key: `${LAYOUT_PREFIX}_${sectionName.toLowerCase()}_section`,
     layout: [],
-    type: templates.section.type,
+    type: templates?.section?.type ?? 1,
     useTitle: () => sectionName,
   };
 }
 
-function buildLayout(templates: LayoutTemplates) {
+function buildLayout(templates?: LayoutTemplates) {
   const layout = [];
   let layoutSection = generateSectionLayout("Unknown", templates);
   let layoutSectionAdded = false;
@@ -173,7 +173,6 @@ function patchLayout(root: any) {
   const { layout } = root;
   // steal the template
   const templates = getLayoutTemplates(layout);
-  if (!templates) return;
 
   // remove old layout we injected
   for (let i = layout.length - 1; i >= 0; i--) if (layout[i].key?.startsWith(`${LAYOUT_PREFIX}_`)) layout.splice(i, 1);
