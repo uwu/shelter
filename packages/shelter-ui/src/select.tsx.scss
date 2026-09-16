@@ -1,0 +1,139 @@
+@import "./scrollbars.scss";
+
+.wrap {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+}
+
+.select {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 44px;
+  padding: 0 10px;
+  border: 1px solid var(--input-border-default);
+  border-radius: 8px;
+  background-color: var(--input-background-default);
+  color: var(--text-default);
+  font-size: 16px;
+  cursor: pointer;
+  transition: border-color .1s ease-in-out;
+}
+
+.value,
+.optionLabel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.placeholder {
+  color: var(--text-muted);
+}
+
+.chevron,
+.check {
+  flex: 0 0 auto;
+  margin-left: 8px;
+}
+
+.chevron {
+  color: var(--text-muted);
+}
+
+.wrap.open .select {
+  border-color: var(--input-border-active);
+}
+
+.wrap.open .chevron {
+  transform: rotate(180deg);
+}
+
+.menu {
+  box-sizing: border-box;
+  visibility: hidden;
+  z-index: 999;
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  left: 0;
+  max-height: 300px;
+  padding: 4px;
+  overflow-y: auto;
+  border: 1px solid var(--border-normal);
+  border-radius: 8px;
+  background-color: var(--background-surface-high);
+  box-shadow: var(--shadow-high);
+  opacity: 0;
+  pointer-events: none;
+
+  @include nice-scrollbars;
+}
+
+.wrap.open .menu {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 4px;
+  color: var(--text-default);
+  font-size: 16px;
+  line-height: 20px;
+  cursor: pointer;
+
+  &:hover,
+  &.focused {
+    background-color: var(--control-secondary-background-hover);
+  }
+
+  &.selected {
+    color: var(--text-strong);
+  }
+}
+
+.optionDisabled,
+.disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+.optionDisabled:hover {
+  background-color: transparent;
+}
+
+.check {
+  color: var(--text-brand);
+}
+
+// SELECT ITEM (SETTINGS ROW) STYLES
+.sitem {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.ititle {
+  margin-bottom: 8px;
+  color: var(--text-strong);
+  font-weight: 500;
+  line-height: 24px;
+  cursor: pointer;
+}
+
+.note {
+  margin-top: 8px;
+  color: var(--text-subtle);
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  cursor: default;
+}

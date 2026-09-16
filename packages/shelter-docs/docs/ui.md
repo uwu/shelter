@@ -501,6 +501,86 @@ If `tick` is not passed, no ticks show.
 
 <ShelterDemo demo="slider" />
 
+### `<Select>`
+
+::: details Type Signature
+```ts
+solid.Component<{
+  value?: string | number,
+  placeholder?: string,
+  disabled?: boolean,
+  onChange?(string | number): void,
+  tooltip?: JSX.Element,
+  "aria-label"?: string,
+  style?: JSX.CSSProperties,
+  children: JSX.Element
+}>
+```
+:::
+
+A Discord-style dropdown select.
+
+`value` is the currently selected value, and the options are passed as children via `<SelectOption>`.
+
+`onChange` is called with the newly selected value.
+
+If no `value` is set, `placeholder` is displayed instead of the selected label.
+
+`disabled` disables the whole select. A single `<SelectOption>` can also be disabled individually.
+
+### `<SelectOption>`
+
+::: details Type Signature
+```ts
+solid.Component<{
+  value: string | number,
+  disabled?: boolean,
+  children: JSX.Element
+}>
+```
+:::
+
+A single option in a `<Select>`. `value` is the value passed to `onChange` when selected, and the children are the label shown in the option list and in the select box when selected.
+
+```jsx
+<Select value={val()} onChange={setVal} placeholder="Pick one">
+  <SelectOption value="a">Option A</SelectOption>
+  <SelectOption value="b">Option B</SelectOption>
+</Select>
+```
+
+<ShelterDemo demo="select" />
+
+### `<SelectItem>`
+
+::: details Type Signature
+```ts
+solid.Component<{
+  value?: string | number,
+  placeholder?: string,
+  disabled?: boolean,
+  onChange?(string | number): void,
+  children: JSX.Element,
+  note?: JSX.Element,
+  hideBorder?: boolean,
+  tooltip?: JSX.Element,
+  "aria-label"?: string
+}>
+```
+:::
+
+An item with an option name and a full width `<Select>`, like `<SwitchItem>` but with a select.
+
+The child elements are the title displayed above the select. `note`, if passed, sets extra info displayed under the select.
+
+Unless `hideBorder` is set, a `<Divider />` is rendered under the component.
+
+```jsx
+<SelectItem value={val()} onChange={setVal} note="Does cool things">
+  A cool option
+</SelectItem>
+```
+ 
 ## Modals
 
 Components for Discord-styled modals.

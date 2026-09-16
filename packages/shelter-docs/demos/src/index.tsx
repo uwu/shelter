@@ -16,6 +16,7 @@ import CheckboxItemDemo from "./demos/CheckboxItemDemo";
 import TextboxDemo from "./demos/TextboxDemo";
 import TextareaDemo from "./demos/TextareaDemo";
 import SliderDemo from "./demos/SliderDemo";
+import SelectDemo from "./demos/SelectDemo";
 import ConfirmFooterDemo from "./demos/ConfirmFooterDemo";
 import LinkButtonDemo from "./demos/LinkButtonDemo";
 import ToastDemo from "./demos/ToastDemo";
@@ -120,6 +121,11 @@ const demos: Record<string, Component> = {
   slider: () => (
     <ShadowWrapper>
       <SliderDemo />
+    </ShadowWrapper>
+  ),
+  select: () => (
+    <ShadowWrapper>
+      <SelectDemo />
     </ShadowWrapper>
   ),
   "confirm-footer": () => (
