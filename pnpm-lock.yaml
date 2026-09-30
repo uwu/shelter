@@ -246,8 +246,8 @@ catalogs:
       specifier: 1.6.16
       version: 1.6.16
     spitroast:
-      specifier: 2.1.7
-      version: 2.1.7
+      specifier: 2.2.0
+      version: 2.2.0
     typescript:
       specifier: ^6.0.3
       version: 6.0.3
@@ -364,7 +364,7 @@ importers:
         version: 1.6.16
       spitroast:
         specifier: 'catalog:'
-        version: 2.1.7
+        version: 2.2.0
     devDependencies:
       '@types/react':
         specifier: 'catalog:'
@@ -406,7 +406,7 @@ importers:
         version: 1.6.16
       spitroast:
         specifier: 'catalog:'
-        version: 2.1.7
+        version: 2.2.0
     devDependencies:
       shelter:
         specifier: workspace:^
@@ -4359,8 +4359,8 @@ packages:
     resolution: {integrity: sha512-1POYv7uv2gXoyGFpBCmpDVSNV74IfsWlDW216UPjbWufNf+bSU6GdbDsxdcxtfwb4xlI3yxzOTKClUosxARYrQ==}
     engines: {node: '>=0.10.0'}
 
-  spitroast@2.1.7:
-    resolution: {integrity: sha512-oIC17iJaS9++S3hkLbblkhK2ylXNnOzMm1TyxDHcrYfpx00jcQy0jMbZ9UwGNy15aRXf1xAqPJlVjo/npWxNpw==}
+  spitroast@2.2.0:
+    resolution: {integrity: sha512-JmfguBiS2ftKdPX6/wASqYT5Wr0tFuaD7l67lXE8QAeWfxgLRxBp5C+2X8ne6dq+EdKplfRQiry8QNSUwpX4GA==}
 
   split2@4.2.0:
     resolution: {integrity: sha512-UcjcJOWknrNkF6PLX83qcHM6KHgVKNkV62Y8a5uYDVv9ydGQVwAHMKqHdJje1VTWpljG0WYpCDhrCdAOYH4TWg==}
@@ -8661,7 +8661,7 @@ snapshots:
 
   speakingurl@14.0.1: {}
 
-  spitroast@2.1.7: {}
+  spitroast@2.2.0: {}
 
   split2@4.2.0: {}
 
