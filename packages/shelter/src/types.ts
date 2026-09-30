@@ -23,9 +23,9 @@ export interface Dispatcher {
 
   setInterceptor(interceptor?: (payload: any) => void | boolean): void;
 
-  subscribe(actionType: string, callback: (payload: any) => void);
+  subscribe(actionType: string, callback: (payload: any) => void): unknown;
 
-  unsubscribe(actionType: string, callback: (payload: any) => void);
+  unsubscribe(actionType: string, callback: (payload: any) => void): unknown;
 
   wait(cb: () => void): void;
 
@@ -121,7 +121,7 @@ export interface HTTPRequest {
   /** Parses the response as a {@link Blob} */
   binary?: boolean;
 
-  oldFormErrors: boolean;
+  oldFormErrors?: boolean;
 
   onRequestCreated?: (request: SuperAgent.Request) => void;
   onRequestProgress?: (this: SuperAgent.Request, event: SuperAgent.ProgressEvent) => void;

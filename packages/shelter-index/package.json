@@ -9,10 +9,10 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240129.0",
-    "typescript": "^5.0.4",
+    "typescript": "catalog:",
     "wrangler": "^3.0.0"
   },
   "dependencies": {
-    "fuse.js": "^7.0.0"
+    "fuse.js": "catalog:"
   }
 }

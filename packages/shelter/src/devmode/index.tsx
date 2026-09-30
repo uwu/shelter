@@ -24,7 +24,7 @@ export const devModeReservedId = "__DEVMODE_PLUGIN_DO_NOT_USE_OR_YOU_WILL_BE_FIR
 const websocketUrl = "ws://127.0.0.1:1211"; // 2022-11-12
 const pluginUrl = "http://127.0.0.1:1112"; // also 22-11-12 lol
 
-let websocket: WebSocket;
+let websocket: WebSocket | undefined;
 
 const devModeIsOn = () => installedPlugins() && devModeReservedId in installedPlugins();
 
@@ -66,7 +66,9 @@ export async function initDevmode() {
     unobs2?.();
 
     if (devModeIsOn() || dbStore.alwaysDevMenu) {
-      unobs1 = observe(`[class*="anchor"]`, (e: HTMLAnchorElement) => {
+      unobs1 = observe(`[class*="anchor"]`, (e_: Element) => {
+        const e = e_ as HTMLAnchorElement;
+
         if (e.href === "https://support.discord.com/") {
           e.href = "#";
           e.target = "";
@@ -79,7 +81,8 @@ export async function initDevmode() {
 
       unobs2 = observe(
         `[class*="layerContainer"] > div > [class*="tooltip"] > [class*="tooltipContent"]`,
-        (e: HTMLElement) => {
+        (e_: Element) => {
+          const e = e_ as HTMLElement;
           if (isDevButtonHovered && e.innerText !== "Dev") {
             e.innerText = "Dev";
           }
@@ -150,6 +153,6 @@ export function stopDevmode() {
   if (!devModeIsOn()) return;
   removePlugin(devModeReservedId);
 
-  websocket.close();
+  websocket?.close();
   websocket = undefined;
 }

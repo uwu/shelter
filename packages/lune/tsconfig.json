@@ -2,8 +2,8 @@
   "include": ["src/**/*.ts", "package.json"],
   "compilerOptions": {
     "target": "ESNext",
-    "module": "ESNext",
-    "moduleResolution": "node",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "declaration": true,
     "outDir": "dist",
     "allowSyntheticDefaultImports": true,

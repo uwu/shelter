@@ -28,7 +28,7 @@ import {
 import { classes } from "./Plugins.tsx.scss";
 
 const JsUploader: Component<{ setCode: (t: string) => void }> = (props) => {
-  let inp: HTMLInputElement;
+  let inp: HTMLInputElement = undefined!;
 
   return (
     <>
@@ -38,7 +38,7 @@ const JsUploader: Component<{ setCode: (t: string) => void }> = (props) => {
         style="display: none"
         accept="text/javascript"
         onChange={() => {
-          const f = inp.files[0];
+          const f = inp.files?.[0];
           if (f) {
             const reader = new FileReader();
             reader.readAsText(f);
@@ -94,7 +94,7 @@ const PluginEditModal = (props: {
   const targetId = createMemo(() => {
     if (props.editId) return props.editId;
 
-    if (!local()) return rSrc().split("://")[1];
+    if (!local()) return (rSrc() ?? "").split("://")[1];
 
     let id = lName()
       .toLowerCase()
@@ -106,7 +106,7 @@ const PluginEditModal = (props: {
 
   const validate = () => {
     try {
-      new URL(rSrc());
+      new URL(rSrc()!);
     } catch {
       if (!local()) return false;
     }
@@ -225,7 +225,7 @@ const PluginEditModal = (props: {
               });
             } else {
               // create new remote plugin
-              await addRemotePlugin(targetId(), rSrc(), rUpdate());
+              await addRemotePlugin(targetId(), rSrc()!, rUpdate());
             }
           } catch (e) {
             return props.reject(e);

@@ -2,7 +2,7 @@
   "include": ["src/**/*.ts", "src/**/*.tsx", "../../globals.d.ts"],
   "compilerOptions": {
     "target": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "noEmit": true,

@@ -126,12 +126,12 @@ export const Select: NativeExtendingComponent<SelectProps, JSX.HTMLAttributes<HT
     add: (v, label) => {
       if (!values.includes(v)) values.push(v);
       labels.set(v, label);
-      bump();
+      bump((b) => b + 1);
     },
     remove: (v) => {
       const i = values.indexOf(v);
       if (i !== -1) values.splice(i, 1);
-      bump();
+      bump((b) => b + 1);
     },
   };
 
@@ -171,7 +171,7 @@ export const Select: NativeExtendingComponent<SelectProps, JSX.HTMLAttributes<HT
         case "ArrowUp": {
           e.preventDefault();
           const delta = e.key === "ArrowDown" ? 1 : -1;
-          const idx = focused() === null ? (delta === 1 ? -1 : values.length) : values.indexOf(focused());
+          const idx = focused() === null ? (delta === 1 ? -1 : values.length) : values.indexOf(focused()!);
           const next = values[(idx + delta + values.length) % values.length];
           if (next !== undefined) setFocused(next);
           break;
@@ -194,7 +194,7 @@ export const Select: NativeExtendingComponent<SelectProps, JSX.HTMLAttributes<HT
     onCleanup(() => document.removeEventListener("mousedown", closeOnOutside));
   });
 
-  let root: HTMLDivElement;
+  let root: HTMLDivElement = undefined!;
 
   const menuId = genId();
 

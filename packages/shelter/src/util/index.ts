@@ -1,6 +1,6 @@
 import { batch, createSignal, onCleanup } from "solid-js";
 import { getDispatcher, intercept } from "../flux";
-import { Fiber, FluxStore, FiberOwner } from "../types";
+import { Fiber, FluxStore, FiberOwner, Dispatcher } from "../types";
 
 declare global {
   interface Element {
@@ -13,18 +13,18 @@ declare global {
 // see https://github.com/facebook/react/blob/2a9f4c04e54294b668e0a2ae11c1930c2e57b248/packages/react-dom-bindings/src/client/ReactDOMComponentTree.js#L39
 let fiberKey: string;
 export const getFiber = (n: Element): Fiber => {
-  if (fiberKey && n[fiberKey]) return n[fiberKey];
-  return n[(fiberKey = Object.keys(n).find((key) => key.startsWith("__reactFiber$")) ?? fiberKey)];
+  if (fiberKey && (n as any)[fiberKey]) return (n as any)[fiberKey];
+  return (n as any)[(fiberKey = Object.keys(n).find((key) => key.startsWith("__reactFiber$")) ?? fiberKey)];
 };
 
 let propsKey: string;
 export const getProps = (n: Element): any => {
-  if (propsKey && n[propsKey]) return n[propsKey];
-  return n[(propsKey = Object.keys(n).find((key) => key.startsWith("__reactProps$")) ?? propsKey)];
+  if (propsKey && (n as any)[propsKey]) return (n as any)[propsKey];
+  return (n as any)[(propsKey = Object.keys(n).find((key) => key.startsWith("__reactProps$")) ?? propsKey)];
 };
 
 export const getFiberOwner = (n: Element | Fiber): undefined | null | FiberOwner => {
-  const filter = ({ stateNode }: Fiber) => stateNode && !(stateNode instanceof Element);
+  const filter = ({ stateNode }: Fiber) => !!stateNode && !(stateNode instanceof Element);
   return reactFiberWalker(n instanceof Element ? getFiber(n) : n, filter, true)?.stateNode as
     | undefined
     | null
@@ -32,7 +32,7 @@ export const getFiberOwner = (n: Element | Fiber): undefined | null | FiberOwner
 };
 
 export function reactFiberWalker(
-  node: Fiber,
+  node: Fiber | undefined | null,
   filter: string | symbol | ((node: Fiber) => boolean),
   goUp = false,
   ignoreStringType = false,
@@ -56,7 +56,7 @@ export function reactFiberWalker(
 
 export const awaitDispatch = (filter: string | ((payload: any) => boolean)) =>
   new Promise<any>(async (res) => {
-    const filterFunc = typeof filter === "string" ? (payload) => payload?.type === filter : filter;
+    const filterFunc = typeof filter === "string" ? (payload: any) => payload?.type === filter : filter;
     const unintercept = intercept((p: any) => {
       if (filterFunc(p)) {
         res(p);
@@ -82,7 +82,7 @@ export function createListener(type: string): () => any {
   const [subData, setSubData] = createSignal();
 
   let cancel = false,
-    dispatcher;
+    dispatcher: Dispatcher | undefined;
   getDispatcher().then((d) => {
     if (cancel) return;
     dispatcher = d;
@@ -111,7 +111,7 @@ export function createSubscription<TState, TStoreData = Record<string, any>>(
   return data;
 }
 
-export const storeAssign = <T>(store: T, toApply: T) => batch(() => Object.assign(store, toApply));
+export const storeAssign = <T extends {}>(store: T, toApply: T) => batch(() => Object.assign(store, toApply));
 
 export const sleep = (ms = 0) => new Promise((r) => setTimeout(r, ms));
 

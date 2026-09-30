@@ -1,16 +1,17 @@
 import { before } from "spitroast";
 
-const documentListenerMap = new WeakMap<EventListener, EventListener>();
-const windowListenerMap = new WeakMap<EventListener, EventListener>();
+const documentListenerMap = new WeakMap<EventListenerOrEventListenerObject, EventListenerOrEventListenerObject>();
+const windowListenerMap = new WeakMap<EventListenerOrEventListenerObject, EventListenerOrEventListenerObject>();
 
-function blockOnModal(listener: EventListener): EventListener {
-  return function (ev: MouseEvent) {
+function blockOnModal(listener: EventListenerOrEventListenerObject): EventListenerOrEventListenerObject {
+  return function (ev: Event) {
     const modalRoot = document.querySelector(".shltr-modal-rroot");
 
     // block if the click target is within a shelter modal
     if (modalRoot && modalRoot.contains(ev.target as Element)) return;
 
-    listener.apply(this, arguments);
+    // @ts-expect-error
+    "handleEvent" in listener ? listener.handleEvent(...arguments) : listener.apply(this, arguments);
   };
 }
 
@@ -28,7 +29,7 @@ export default () => {
       if (!documentListenerMap.has(listener)) {
         documentListenerMap.set(listener, blockOnModal(listener));
       }
-      return [type, documentListenerMap.get(listener)!, options];
+      return [type, documentListenerMap.get(listener)!, options] as any; // ts gets unhappy about the last element existing
     }
   });
 
@@ -43,7 +44,7 @@ export default () => {
       if (!windowListenerMap.has(listener)) {
         windowListenerMap.set(listener, blockOnModal(listener));
       }
-      return [type, windowListenerMap.get(listener)!, options];
+      return [type, windowListenerMap.get(listener)!, options] as any; // ts gets unhappy about the last element existing
     }
   });
 
@@ -53,7 +54,7 @@ export default () => {
     const patched = documentListenerMap.get(listener);
     if (patched) {
       documentListenerMap.delete(listener);
-      return [type, patched, options];
+      return [type, patched, options] as any; // ts gets unhappy about the last element existing
     }
   });
 
@@ -61,7 +62,7 @@ export default () => {
     const patched = windowListenerMap.get(listener);
     if (patched) {
       windowListenerMap.delete(listener);
-      return [type, patched, options];
+      return [type, patched, options] as any; // ts gets unhappy about the last element existing
     }
   });
 

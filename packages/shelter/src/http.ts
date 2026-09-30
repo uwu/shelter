@@ -1,7 +1,7 @@
 import { after, instead } from "spitroast";
 import { DiscordHTTP, HTTPApi, HTTPRequest, HTTPResponse } from "./types";
 
-const methods = ["get", "post", "put", "patch", "del"];
+const methods = ["get", "post", "put", "patch", "del"] as const;
 
 let resolve: () => void;
 export let ready = new Promise<void>((res) => (resolve = res));
@@ -18,6 +18,7 @@ const api: HTTPApi = {
 for (const fun of methods) {
   api[fun] = (...args: any[]) => {
     if (discordHttp === undefined) throw new Error("HTTP method used before API was ready");
+    // @ts-expect-error
     return discordHttp[fun](...args);
   };
 }
@@ -27,11 +28,13 @@ export default api;
 const unpatch = after("bind", Function.prototype, function (args, res) {
   if (args.length !== 2 || args[0] !== null || args[1] !== "get") return;
   unpatch();
-  return function (...args) {
+  return function (...args: any[]) {
+    // @ts-expect-error
+    const _this = this as any;
     // I don't know why, but for the first call `this` is Window
-    if (this && this !== window) {
-      this.get = res;
-      discordHttp = this;
+    if (_this && _this !== window) {
+      _this.get = res;
+      discordHttp = _this;
       Object.assign(api, discordHttp);
       resolve();
     }
@@ -39,7 +42,7 @@ const unpatch = after("bind", Function.prototype, function (args, res) {
   };
 });
 
-export let unpatchHttpHandlers;
+export let unpatchHttpHandlers: undefined | (() => void);
 function patchHttpHandlers() {
   if (unpatchHttpHandlers) return;
   const patches = methods.map((fun) =>
@@ -64,7 +67,7 @@ function patchHttpHandlers() {
             return send(req);
           }
 
-          return intercept(req, sendOnce);
+          return intercept(req, sendOnce as any); // ugh
         }
         return original(req, args[1]);
       }

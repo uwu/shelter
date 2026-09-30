@@ -50,7 +50,7 @@ export function exportData(pluginsToExport: Record<string, boolean>) {
       ];
       if (pluginData) exp.localPlugins[id].push(pluginData);
     } else {
-      exp.remotePlugins[plugin.src] = [
+      exp.remotePlugins[plugin.src!] = [
         {
           update: plugin.update,
           on: plugin.on,
@@ -58,7 +58,7 @@ export function exportData(pluginsToExport: Record<string, boolean>) {
           manifest: plugin.manifest,
         },
       ];
-      if (pluginData) exp.remotePlugins[plugin.src].push(pluginData);
+      if (pluginData) exp.remotePlugins[plugin.src!].push(pluginData);
     }
   }
 
@@ -93,7 +93,7 @@ export function importData(dataToImport: DataExport) {
     const newRemote = dataToImport.remotePlugins[remoteSrc];
 
     // find the plugin id of the one to merge with, and remove copies of plugins with the same src
-    let idToApplyTo: string;
+    let idToApplyTo: string | undefined;
 
     for (const id in installedPlugins())
       if (internalData[id].src === remoteSrc) {
@@ -102,6 +102,8 @@ export function importData(dataToImport: DataExport) {
       }
 
     idToApplyTo ??= remoteSrc.split("://").at(-1);
+
+    if (!idToApplyTo) continue;
 
     if (idToApplyTo in loadedPlugins()) stopPlugin(idToApplyTo);
 

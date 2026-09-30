@@ -53,7 +53,7 @@ Options:
         await buildPlugin(dir, resolve(distDir, plug), cfg, (args.dev as boolean) ?? cfg.minify);
         successes++;
       } catch (e) {
-        console.error(`Building ${plug} failed: ${e.message}`);
+        console.error(`Building ${plug} failed: ${(e as Error).message}`);
         errors++;
       }
     }

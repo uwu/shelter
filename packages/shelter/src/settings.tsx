@@ -65,14 +65,15 @@ type LayoutTemplates = Record<"section" | "sidebarItem" | "panel" | "category" |
 
 // parse the layout tree from the language and time setting. this should be stable enough
 // and is the simplest one i found in the tree
+// I am currently converting the codebase to TS-strict and i guess we just not typing this? sure ig. - sink
 function getLayoutTemplates(layout: any[]): LayoutTemplates | undefined {
   for (const section of layout) {
-    const sidebarItem = (section.layout ?? []).find((item) =>
-      (item.layout ?? []).some((panel) => panel.key === LANGUAGE_AND_TIME_PANEL_KEY),
+    const sidebarItem = (section.layout ?? []).find((item: any) =>
+      (item.layout ?? []).some((panel: any) => panel.key === LANGUAGE_AND_TIME_PANEL_KEY),
     );
-    const panel = sidebarItem?.layout?.find((item) => item.key === LANGUAGE_AND_TIME_PANEL_KEY);
-    const category = panel?.layout?.find((item) => Array.isArray(item.layout));
-    const setting = category?.layout?.find((node) => typeof node.Component === "function");
+    const panel = sidebarItem?.layout?.find((item: any) => item.key === LANGUAGE_AND_TIME_PANEL_KEY);
+    const category = panel?.layout?.find((item: any) => Array.isArray(item.layout));
+    const setting = category?.layout?.find((node: any) => typeof node.Component === "function");
 
     if (sidebarItem && panel && category && setting) return { section, sidebarItem, panel, category, setting };
   }
@@ -135,9 +136,10 @@ function internalGenerateLayout(sectionItem: SettingsSection, templates?: Layout
 function generateSectionLayout(sectionName: string, templates?: LayoutTemplates) {
   return {
     key: `${LAYOUT_PREFIX}_${sectionName.toLowerCase()}_section`,
-    layout: [],
+    layout: [] as unknown[],
     type: templates?.section?.type ?? 1,
     useTitle: () => sectionName,
+    parent: undefined,
   };
 }
 
@@ -178,7 +180,7 @@ function patchLayout(root: any) {
   for (let i = layout.length - 1; i >= 0; i--) if (layout[i].key?.startsWith(`${LAYOUT_PREFIX}_`)) layout.splice(i, 1);
 
   // injecteth
-  const gamesAndAppsIndex = layout.findIndex(({ key }) => key === "games_and_apps_section");
+  const gamesAndAppsIndex = layout.findIndex(({ key }: any) => key === "games_and_apps_section");
   const generatedLayout = buildLayout(templates);
   generatedLayout.forEach((section) => (section.parent = root));
   layout.splice(gamesAndAppsIndex === -1 ? layout.length : gamesAndAppsIndex + 1, 0, ...generatedLayout);
@@ -223,6 +225,7 @@ function injectSettings() {
   });
 
   return () => {
+    // @ts-expect-error
     delete Object.prototype["buildLayout"];
   };
 }
@@ -260,7 +263,7 @@ function rerenderSettings() {
     const root = getNormalizedRoot(settingsFiber);
     if (root) patchLayout(root);
     // just make a new set and react *somehow* doesnt explode, honestly quite incredible
-    getSetStates(settingsFiber)[0]?.((state) => new Set(state));
+    getSetStates(settingsFiber)[0]?.((state: any) => new Set(state));
   }
 }
 

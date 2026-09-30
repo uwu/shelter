@@ -1,6 +1,5 @@
 import { type JSX, splitProps } from "solid-js";
 import { css, classes } from "./text.tsx.scss";
-import { Dynamic } from "solid-js/web";
 import { ensureInternalStyle } from "./internalstyles";
 import { type NativeExtendingComponent } from "./wrapperTypes";
 

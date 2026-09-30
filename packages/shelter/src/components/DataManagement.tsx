@@ -76,8 +76,8 @@ export const ExportModal = ({ close }: { close: () => void }) => {
         confirmText="Export"
         type="confirm"
         onConfirm={() => {
-          const plugins = {};
-          for (const active of pluginsActive()) plugins[active] = pluginsSaveData().get(active);
+          const plugins: Record<string, boolean> = {};
+          for (const active of pluginsActive()) plugins[active] = pluginsSaveData().get(active) ?? false;
 
           const exported = exportData(plugins);
 
@@ -102,7 +102,7 @@ const triggerImport = async () => {
   input.click();
   await p;
 
-  const f = input.files[0];
+  const f = input.files?.[0];
   if (!f) return;
 
   const reader = new FileReader();
@@ -133,7 +133,7 @@ const triggerImport = async () => {
   } catch (e) {
     return showToast({
       title: "Error while importing data export",
-      content: e?.message ?? e + "",
+      content: (e as Error)?.message ?? e + "",
       duration: 3000,
     });
   }
@@ -174,7 +174,7 @@ export const DataManagement = () => (
               document.querySelector("[class*=layers] > :last-child [role=tablist] > div[role=tab]") as HTMLDivElement
             )?.click();
             // unload shelter, delay for modal
-            setTimeout(() => window["shelter"].unload(), 250);
+            setTimeout(() => (window as any)["shelter"].unload(), 250);
           })
         }
       >

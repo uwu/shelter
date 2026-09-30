@@ -22,7 +22,7 @@ const ToolTip: Component<{
   active: boolean;
   under: boolean;
 }> = (props) => {
-  let contentWrapRef: HTMLDivElement;
+  let contentWrapRef: HTMLDivElement = undefined!;
 
   // 190px is just an estimate, as it is equal to max-width
   // we will need to actually measure content
@@ -63,9 +63,17 @@ const ToolTip: Component<{
 
 // TODO: set these up in existing components
 export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean, JSX.Element]>) {
-  const propsIsArr = () => Array.isArray(props()) && typeof props()[0] === "boolean";
-  const content = () => (propsIsArr() ? props()[1] : props());
-  const underneath = () => (propsIsArr() ? props()[0] : false);
+  const propsIsArr = (p: JSX.Element | [boolean, JSX.Element]): p is [boolean, JSX.Element] =>
+    Array.isArray(p) && typeof p[0] === "boolean";
+
+  const content = () => {
+    const p = props();
+    return propsIsArr(p) ? p[1] : p;
+  };
+  const underneath = () => {
+    const p = props();
+    return propsIsArr(p) ? p[0] : false;
+  };
 
   // used for animation
   const [active, setActive] = createSignal(false);
@@ -76,7 +84,7 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
     setRect(el.getBoundingClientRect());
   };
 
-  let toolTipElem: HTMLDivElement;
+  let toolTipElem: HTMLDivElement | undefined;
 
   const enterHandler = () => {
     // use:tooltip is intended to be used a lot - on every shelter-ui element behind a prop
@@ -93,7 +101,7 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
       </ToolTip>
     ) as HTMLDivElement;
 
-    getRoot(el).append(toolTipElem);
+    (getRoot(el) as Element)?.append(toolTipElem);
     setTimeout(() => setActive(true));
   };
 
@@ -108,7 +116,7 @@ export function tooltip(el: HTMLElement, props: Accessor<JSX.Element | [boolean,
     }, 100);
   };
 
-  let isInside;
+  let isInside = false;
 
   const moveHandler = (clientX: number, clientY: number) => {
     const bounding = el.getBoundingClientRect();

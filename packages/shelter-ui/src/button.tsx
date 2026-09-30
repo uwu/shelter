@@ -26,7 +26,7 @@ type ButtonColor = {
   borderColorActive: string;
 };
 
-const InternalButtonColors = {
+const InternalButtonColors: Record<string, ButtonColor> = {
   PRIMARY: {
     backgroundDefault: "var(--control-primary-background-default)",
     backgroundHover: "var(--control-primary-background-hover)",
@@ -104,7 +104,7 @@ const InternalButtonColors = {
     borderColorHover: "var(--control-overlay-secondary-border-hover)",
     borderColorActive: "var(--control-overlay-secondary-border-active)",
   },
-} satisfies Record<string, ButtonColor>;
+};
 
 export const ButtonColors = {
   PRIMARY: "PRIMARY",
@@ -174,7 +174,7 @@ export const Button: NativeExtendingComponent<ButtonProps, JSX.ButtonHTMLAttribu
         color: ButtonColors.BRAND,
         size: ButtonSizes.SMALL,
         grow: false,
-        type: "button",
+        type: "button" as const,
         onDblClick: rawProps.onDoubleClick,
       },
       rawProps,

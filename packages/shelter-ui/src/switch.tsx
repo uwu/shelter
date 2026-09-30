@@ -32,13 +32,13 @@ const X_OFFSETS = [-4, 1, 8, 14];
 //const LERPED_COLS = [COL_DISABLED, "#648e7e", "#3f9b6a", COL_ENABLED];
 
 const Slider: Component<{ state: boolean }> = (props) => {
-  let animateViewBox: SVGAnimateElement;
-  let animatePath1: SVGAnimateElement;
-  let animatePath2: SVGAnimateElement;
-  let animateRectWidth: SVGAnimateElement;
-  let animateRectHeight: SVGAnimateElement;
-  let animateRectX: SVGAnimateElement;
-  let animateRectY: SVGAnimateElement;
+  let animateViewBox: SVGAnimateElement = undefined!;
+  let animatePath1: SVGAnimateElement = undefined!;
+  let animatePath2: SVGAnimateElement = undefined!;
+  let animateRectWidth: SVGAnimateElement = undefined!;
+  let animateRectHeight: SVGAnimateElement = undefined!;
+  let animateRectX: SVGAnimateElement = undefined!;
+  let animateRectY: SVGAnimateElement = undefined!;
 
   // on() lets me use defer to not run on the first call
   createEffect(
@@ -143,7 +143,7 @@ export const Switch: NativeExtendingComponent<SwitchProps, JSX.InputHTMLAttribut
       }}
     >
       {/* the slider */}
-      <Slider state={checked()} />
+      <Slider state={!!checked()} />
       {/* the actual input: useful for accessibility etc */}
       <input
         type="checkbox"

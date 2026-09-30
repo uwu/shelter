@@ -1,4 +1,4 @@
-import { Divider, Header, HeaderTags, LinkButton, showToast, Space, SwitchItem } from "@uwu/shelter-ui";
+import { Divider, LinkButton, showToast, Space, SwitchItem } from "@uwu/shelter-ui";
 import { dbStore } from "../storage";
 import { PluginCard } from "./Plugins";
 import { devModeReservedId, enableDevmode, stopDevmode } from "../devmode";
@@ -20,7 +20,7 @@ export default (props: { fullVersion?: boolean }) => {
         checked={devModeOn()}
         onChange={(val) =>
           val
-            ? enableDevmode().catch((e) =>
+            ? enableDevmode()?.catch((e) =>
                 showToast({
                   title: "Could not enable dev mode",
                   content: e.message,

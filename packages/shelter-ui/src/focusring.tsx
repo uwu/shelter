@@ -30,9 +30,9 @@ export function focusring(el: Element, rad: Accessor<number>) {
   const isFocused = () => el === document.activeElement;
   let lastFocused = isFocused();
 
-  let focusRingEl: HTMLDivElement;
+  let focusRingEl: HTMLDivElement | undefined;
 
-  const keyHandler = (ev) => {
+  const keyHandler = (ev: KeyboardEvent) => {
     if (lastFocused || !isFocused() || ev.code !== "Tab") return;
     lastFocused = true;
 
@@ -41,7 +41,7 @@ export function focusring(el: Element, rad: Accessor<number>) {
       <FocusRing rad={typeof rad() === "number" ? rad() : 3} {...el.getBoundingClientRect()} />
     ) as HTMLDivElement;
 
-    getRoot(el).append(focusRingEl);
+    (getRoot(el) as Element)?.append(focusRingEl);
   };
 
   const blurHandler = () => {
@@ -50,10 +50,12 @@ export function focusring(el: Element, rad: Accessor<number>) {
     focusRingEl = undefined;
   };
 
+  // @ts-ignore
   el.addEventListener("keyup", keyHandler);
   el.addEventListener("blur", blurHandler);
 
   onCleanup(() => {
+    // @ts-ignore
     el.removeEventListener("keyup", keyHandler);
     el.removeEventListener("blur", blurHandler);
 

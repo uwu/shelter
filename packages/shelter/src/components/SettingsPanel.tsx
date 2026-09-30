@@ -6,7 +6,7 @@ let injectedCss = false;
 
 type SettingsPanelProps = {
   title: string;
-  icon: Component<JSX.SvgSVGAttributes<SVGSVGElement>>;
+  icon: IconComponent;
   children: JSX.Element;
   defaultOpen?: boolean;
   description?: string;

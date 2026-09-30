@@ -3,25 +3,49 @@ packages:
   - packages/*
   - injectors/*
 
+allowBuilds:
+  "@parcel/watcher": true
+  dprint: true
+  esbuild: true
+  sharp: true
+  spawn-sync: true
+  ve-builds: true
+  workerd: true
+
 # this catalog is for shelter, shelter-ui, shelter-defs, et cetera - the shelter cinematic universe
 # the documentation site is standalone and generally does not follow this catalog.
 catalog:
   # our deps
   solid-js: 1.6.16
-  spitroast: 2.1.4
-  idb: ^7.1.0
+  spitroast: 2.1.7
+  idb: ^8.0.3
   htm: ^3.1.1
-  fuse.js: ^7.0.0
-  valtio: ^2.3.0
+  fuse.js: ^7.5.0
+  valtio: ^2.3.2
+  date-fns: ^4.1.0
+  ws: ^8.13.0
+  "@types/ws": ^8.13.0
+  "@types/node": ^22.5.5
 
   # build tools
-  typescript: ^5.9.3
-  esbuild: ^0.27.2
+  typescript: ^6.0.3
+  esbuild: ^0.28.2
   esbuild-sass-plugin-ysink: ^2.3.3
-  postcss: ^8.4.35
-  postcss-modules: ^6.0.0
-  esbuild-plugin-solid: ^0.4.2
+  postcss: ^8.5.28
+  postcss-modules: ^9.0.1
+  esbuild-plugin-solid: ^0.5.0
+  babel-preset-solid: 1.6.16
   merge-source-map: ^1.1.0
+  "@babel/core": ^7.26.0
+  "@types/babel__core": ^7.20.5
+  "@babel/preset-typescript": ^7.26.0
+  chokidar: ^3.5.3
+  handlebars: ^4.7.8
+  lightningcss: ^1.28.2
+  resolve: ^1.22.10
+  "@types/resolve": ^1.20.6
+  rolldown: 1.0.0-beta.1
+  sass: ^1.83.0
 
   # discord included deps
   react: 19.1.0
@@ -29,3 +53,6 @@ catalog:
   "@types/react": 19.1.0
   "@types/react-dom": 19.1.0
   "@types/superagent": ^4.1.20
+
+minimumReleaseAgeExclude:
+  - spitroast@2.1.7

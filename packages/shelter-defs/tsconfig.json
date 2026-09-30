@@ -4,6 +4,8 @@
     "rootDir": "..",
     "target": "ESNext",
     "module": "ESNext",
+    // moduleResolution: "bundler" does not work with a quirk of how shelter-ui is typed. TODO.
+    "ignoreDeprecations": "6.0",
     "moduleResolution": "node",
     "declaration": true,
     "emitDeclarationOnly": true,

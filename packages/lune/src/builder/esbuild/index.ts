@@ -7,6 +7,7 @@ export async function createEsbuildBuilder(entryPoint: string, outfile: string, 
     throw new Error("Cannot create esbuild builder with config specifying another builder");
 
   const { build } = await import("esbuild");
+  // @ts-expect-error the types don't resolve anymore with TS7016 because this package has a broken exports: {}, sigh.
   const { solidPlugin } = await import("esbuild-plugin-solid");
 
   if ("input" in cfg || "output" in cfg) {

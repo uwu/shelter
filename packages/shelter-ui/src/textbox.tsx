@@ -1,4 +1,4 @@
-import { type Component, createEffect, type JSX, mergeProps, splitProps, createSignal } from "solid-js";
+import { createEffect, type JSX, mergeProps, splitProps, createSignal } from "solid-js";
 import { css, classes } from "./textbox.tsx.scss";
 import { focusring } from "./focusring";
 import { ensureInternalStyle } from "./internalstyles";
@@ -32,11 +32,11 @@ export const TextBox: NativeExtendingComponent<
     ["value", "onInput", "maxLength"],
   );
 
-  let r: HTMLInputElement;
+  let r: HTMLInputElement = undefined!;
   createEffect(() => {
     // only set value if it changed, to avoid unnecessary resets of scroll position from doing value = value
     if (r && local.value !== r.value) {
-      r.value = local.value;
+      r.value = local.value ?? "";
     }
   });
 
@@ -97,10 +97,10 @@ export const TextArea: NativeExtendingComponent<
 
   const [local, other] = splitProps(rawProps, ["value", "resize-x", "resize-y", "mono", "onInput", "counter"]);
 
-  let r: HTMLTextAreaElement;
+  let r: HTMLTextAreaElement = undefined!;
   createEffect(() => {
     if (local.value !== r?.value && r) {
-      r.value = local.value;
+      r.value = local.value ?? "";
     }
   });
 

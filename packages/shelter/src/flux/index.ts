@@ -17,10 +17,13 @@ export async function getDispatcher() {
 export const stores: Record<string, FluxStore | FluxStore[]> = {};
 
 const unpatchPush = after("push", Array.prototype, function ([element]) {
+  // @ts-expect-error
+  const this_ = this;
+
   if (element?._dispatcher && element?._dispatchToken) {
     resolveDispatcher(element._dispatcher);
     unpatchPush();
-    after("push", this, ([store]) => {
+    after("push", this_, ([store]: any) => {
       const name = store.getName();
       if (!stores[name]) {
         stores[name] = store;
@@ -50,8 +53,8 @@ async function injectIntercept() {
 
   FluxDispatcher._interceptors ??= [];
 
-  const cb = (payload) => {
-    const apply = (obj) => {
+  const cb = (payload: any) => {
+    const apply = (obj: any) => {
       for (const k in Reflect.ownKeys(payload)) delete payload[k];
 
       Object.assign(payload, obj);
@@ -100,18 +103,18 @@ export function intercept(cb: Intercept) {
 }
 
 export const storesFlat = new Proxy<Record<string, FluxStore>>(stores as any, {
-  get: (_, name: string) => stores[name]?.[0] ?? stores[name],
+  get: (_, name: string) => (stores[name] as FluxStore[])?.[0] ?? stores[name],
   set() {
-    throw new Error("do not try to mutate flatStores");
+    throw new Error("do not try to mutate storesFlat");
   },
   deleteProperty() {
-    throw new Error("do not try to mutate flatStores");
+    throw new Error("do not try to mutate storesFlat");
   },
   defineProperty() {
-    throw new Error("do not try to mutate flatStores");
+    throw new Error("do not try to mutate storesFlat");
   },
   setPrototypeOf() {
-    throw new Error("do not try to mutate flatStores");
+    throw new Error("do not try to mutate storesFlat");
   },
 });
 
@@ -119,10 +122,10 @@ const storeInitPromises = new WeakMap<FluxStore, Promise<void>>();
 
 // awaits until the _isInitialized property of a store is true by overwritting it's setter
 function awaitStoreInit(store: FluxStore): Promise<void> {
-  if (store._isInitialized) return;
+  if (store._isInitialized) return Promise.resolve();
 
   if (storeInitPromises.has(store)) {
-    return storeInitPromises.get(store);
+    return Promise.resolve(storeInitPromises.get(store));
   }
   const initPromise = new Promise<void>((resolve) => {
     let actualIsInitialized = false;
@@ -163,7 +166,7 @@ async function getStoreOnCallback(name: string) {
 }
 
 export async function awaitStore(name: string, awaitInit = true): Promise<FluxStore> {
-  const store: FluxStore = stores[name]?.[0] ?? stores[name] ?? (await getStoreOnCallback(name));
+  const store: FluxStore = (stores[name] as FluxStore[])?.[0] ?? stores[name] ?? (await getStoreOnCallback(name));
   if (awaitInit) await awaitStoreInit(store);
   return store;
 }

@@ -101,7 +101,7 @@ Options:
     try {
       await rebuildPlugin(cfg, dir);
     } catch (e) {
-      throw new Error(`cannot start dev: ${e.message}`);
+      throw new Error(`cannot start dev: ${(e as Error).message}`);
     }
 
     startWs();
@@ -112,7 +112,7 @@ Options:
         await rebuildPlugin(cfg, dir);
         await Promise.all([...broadcastList].map((broadcaster) => broadcaster()));
       } catch (e) {
-        console.error(`rebuild failed: ${e.message}`);
+        console.error(`rebuild failed: ${(e as Error).message}`);
       }
     });
   },

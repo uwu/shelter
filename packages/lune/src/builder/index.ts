@@ -7,7 +7,7 @@ import { existsSync } from "fs";
 import { createRolldownBuilder } from "./rolldown";
 import { createEsbuildBuilder } from "./esbuild";
 
-const MD5 = (data) => createHash("md5").update(data).digest("hex").toString();
+const MD5 = (data: any) => createHash("md5").update(data).digest("hex").toString();
 
 export async function buildPlugin(path: string, to: string, cfg: LuneCfg, minify = false) {
   const outfile = resolve(to, "plugin.js");

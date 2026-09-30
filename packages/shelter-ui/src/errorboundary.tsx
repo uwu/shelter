@@ -1,11 +1,11 @@
-import { ErrorBoundary as SEB } from "solid-js";
+import { ErrorBoundary as SEB, JSXElement } from "solid-js";
 import { Button, ButtonColors, ButtonLooks, ButtonSizes } from "./button";
 import { Header, HeaderTags } from "./header";
 import { TextArea } from "./textbox";
 import { css, classes } from "./errorboundary.tsx.scss";
 import { ensureInternalStyle } from "./internalstyles";
 
-const ErrBoundFallback = (err, reset) => {
+const ErrBoundFallback = (err: any, reset: () => void) => {
   ensureInternalStyle(css);
 
   console.error(err);
@@ -21,4 +21,6 @@ const ErrBoundFallback = (err, reset) => {
   );
 };
 
-export const ErrorBoundary = (props) => <SEB fallback={ErrBoundFallback}>{props.children}</SEB>;
+export const ErrorBoundary = (props: { children: JSXElement }) => (
+  <SEB fallback={ErrBoundFallback}>{props.children}</SEB>
+);

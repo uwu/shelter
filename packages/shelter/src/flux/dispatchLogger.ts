@@ -15,8 +15,11 @@ export const initDispatchLogger = async () => {
     // this doesn't appear to ever get hit but i'll handle the case anyway
     set: (val) => (backing = val),
     get: () =>
-      function (...args) {
-        if (!dbStore.logDispatch) return backing.apply(this, args);
+      function (...args: any) {
+        // @ts-expect-error
+        const this_ = this;
+
+        if (!dbStore.logDispatch) return backing.apply(this_, args);
 
         let origDispatch;
         try {
@@ -25,7 +28,7 @@ export const initDispatchLogger = async () => {
           origDispatch = { ...args[0] };
         }
 
-        const ret = backing.apply(this, args);
+        const ret = backing.apply(this_, args);
 
         // interceptors modify the obj in place
         if (args[0][blockedSym]) log(["DISPATCH BLOCKED", args[0]], "warn");

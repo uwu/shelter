@@ -32,7 +32,7 @@ export type StoredPlugin = {
   // optional for backwards compat, but should be filled in always from 2024-09-20
   // the plugin loader will automatically set this if not present to (!src)
   local: boolean;
-  manifest: Record<string, string>;
+  manifest: Record<string, string | undefined>;
   // non existent for normal plugins
   injectorIntegration?: LoaderIntegrationOpts;
 };
@@ -69,7 +69,7 @@ function createStorage(pluginId: string): [Record<string, any>, () => void] {
 
 function createPluginApi(pluginId: string, { manifest, injectorIntegration }: StoredPlugin) {
   const [store, flushStore] = createStorage(pluginId);
-  const scoped = createScopedApiInternal(window["shelter"].flux.dispatcher, !!injectorIntegration);
+  const scoped = createScopedApiInternal((window as any)["shelter"].flux.dispatcher, !!injectorIntegration);
 
   return {
     store,
@@ -80,7 +80,7 @@ function createPluginApi(pluginId: string, { manifest, injectorIntegration }: St
       openModal((mprops) => (
         <ModalRoot>
           <ModalHeader close={mprops.close}>Settings - {manifest.name}</ModalHeader>
-          <ModalBody>{getSettings(pluginId)({})}</ModalBody>
+          <ModalBody>{getSettings(pluginId)?.({})}</ModalBody>
           <ModalFooter>
             <Button
               size={ButtonSizes.MEDIUM}
@@ -109,7 +109,8 @@ export function startPlugin(pluginId: string) {
   const pluginApi = createPluginApi(pluginId, data);
 
   const shelterPluginEdition = {
-    ...window["shelter"],
+    // @ts-expect-error
+    ...(window["shelter"] as Awaited<ReturnType<typeof WindowApi>>),
     plugin: pluginApi,
   };
 
@@ -305,7 +306,7 @@ export function showSettingsFor(id: string) {
       return (
         <ModalRoot>
           <ModalHeader close={mprops.close}>Settings - {internalData[id].manifest.name}</ModalHeader>
-          <ModalBody>{p.settings({})}</ModalBody>
+          <ModalBody>{p.settings?.({})}</ModalBody>
         </ModalRoot>
       );
     });
@@ -330,6 +331,7 @@ export async function ensureLoaderPlugin(id: string, plugin: [string, LoaderInte
     plugin.local = true;
     plugin.update = false;
     delete plugin.src;
+    // @ts-expect-error - why is this like this? fucked if i know but sure. - sink
     delete plugin.on;
   }
 

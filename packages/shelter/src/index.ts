@@ -16,7 +16,7 @@ const start = performance.now();
 util.log("shelter is initializing...");
 
 const waitForAppMount = async () => {
-  let appMount: HTMLDivElement;
+  let appMount: HTMLDivElement | undefined;
   while (!appMount) {
     appMount = document.getElementById("app-mount") as HTMLDivElement;
     await sleep();
@@ -43,7 +43,7 @@ const waitForAppMount = async () => {
 
   ui.injectInternalStyles();
 
-  window["shelter"] = await windowApi(unloads);
+  (window as any)["shelter"] = await windowApi(unloads);
 
   // shelter injector settings support
   // used for injectors and custom clients such as the web ext, desktop inj, armcord, to use our settings services cleanly

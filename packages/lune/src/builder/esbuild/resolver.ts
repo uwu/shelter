@@ -1,7 +1,7 @@
 import type { Plugin } from "esbuild";
 
 export const ShelterSolidResolver = (): Plugin => {
-  const resolverRoots = {
+  const resolverRoots: Record<string, string> = {
     "solid-js": "solid",
   };
   return {

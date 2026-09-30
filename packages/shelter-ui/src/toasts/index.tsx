@@ -31,6 +31,15 @@ export function initToasts(mountPoint: HTMLElement) {
   };
 }
 
+type ToastOpts = {
+  title: string;
+  content: string;
+  color: (typeof ToastColors)[keyof typeof ToastColors];
+  onClick: () => void;
+  class: string;
+  duration: number;
+};
+
 export function showToast({
   title = undefined,
   content = undefined,
@@ -38,7 +47,7 @@ export function showToast({
   onClick = () => {},
   class: _class = undefined,
   duration = 3000,
-}) {
+}: Partial<ToastOpts>) {
   const id = genId();
   const removeFn = () => removeToast(id);
 

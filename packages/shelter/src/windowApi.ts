@@ -33,7 +33,7 @@ function without<T extends Record<string, any>, TK extends string>(object: T, ..
   return cloned as Omit<T, TK>;
 }
 
-const windowApi = async (unloads) => {
+const windowApi = async (unloads: (undefined | (() => void))[]) => {
   const dispatcher = await flux.getDispatcher();
 
   return {

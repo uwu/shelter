@@ -7,7 +7,7 @@ import { BadgeType, registerSection, registerInjSection } from "../settings";
 import { injectCss } from "@uwu/shelter-ui";
 import { Dispatcher } from "../types";
 
-export type DisposableFn = (...props: unknown[]) => () => void;
+export type DisposableFn = (...props: any) => () => void;
 function shimDisposableFn<F extends DisposableFn>(unpatches: (() => void)[], f: F) {
   return (...props: Parameters<F>) => {
     const up = f(...props);
@@ -19,7 +19,7 @@ function shimDisposableFn<F extends DisposableFn>(unpatches: (() => void)[], f: 
 export const createScopedApi = (dispatcher: Dispatcher) => createScopedApiInternal(dispatcher, false);
 
 export function createScopedApiInternal(dispatcher: Dispatcher, injector: boolean) {
-  const disposes = [];
+  const disposes: (() => void)[] = [];
 
   return {
     disposes,

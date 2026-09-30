@@ -2,7 +2,7 @@ import { exit } from "process";
 import { argparse } from "./argparser.js";
 import { helptext } from "./help.js";
 import { commands } from "./commands/index.js";
-import pkg from "../package.json" assert { type: "json" };
+import pkg from "../package.json" with { type: "json" };
 
 import "./ssg";
 

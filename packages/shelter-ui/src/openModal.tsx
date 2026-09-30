@@ -7,7 +7,7 @@ import { ErrorBoundary } from "./errorboundary";
 type ModalProps = { close(): void };
 
 const [currentModals, setCurrentModals] = createSignal<Component<ModalProps>[]>([]);
-let dispose: () => void;
+let dispose: undefined | (() => void);
 
 // dont show modals for one tick after mounting ("pre") to trigger transition
 // and hide them 250ms before hiding them ("post") to allow the transition to play out
@@ -21,8 +21,9 @@ const [bgAnimPrePost, setBgAnimPrePost] = createSignal(true);
 const ModalRoot: Component = () => {
   ensureInternalStyle(css);
 
-  let dialogEl;
-  let backdropEl;
+  // these are set by `ref={}`
+  let dialogEl: HTMLDialogElement = undefined!;
+  let backdropEl: HTMLDivElement = undefined!;
 
   createEffect(() => {
     dialogEl.showModal();

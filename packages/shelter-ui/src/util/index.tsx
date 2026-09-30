@@ -35,7 +35,7 @@ export const niceScrollbarsClass = () => {
 };
 
 // just using document.body is not enough with dialog.showModal(), we must find the specific layer's root
-export const getRoot = (el: Node) =>
-  el instanceof ShadowRoot || (el as Element).tagName === "DIALOG" || el === document.body
+export const getRoot = (el: Node | null): Node | null =>
+  el instanceof ShadowRoot || (el as Element).tagName === "DIALOG" || el === document.body || !el
     ? el
     : getRoot(el.parentNode);

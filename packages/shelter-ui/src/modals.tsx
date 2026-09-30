@@ -51,7 +51,8 @@ export const ModalBody: Component<{ children?: JSX.Element }> = (props) => (
 const confirmColours = {
   danger: ButtonColors.RED,
   confirm: ButtonColors.GREEN,
-};
+  neutral: undefined,
+} as const;
 
 type ModalTypes = "neutral" | "danger" | "confirm";
 
@@ -101,8 +102,8 @@ export const openConfirmationModal = ({
   type,
   size,
 }: {
-  body?: Component;
-  header?: Component;
+  body: Component;
+  header: Component;
   confirmText?: string;
   cancelText?: string;
   type?: ModalTypes;

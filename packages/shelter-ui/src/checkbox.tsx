@@ -52,7 +52,7 @@ export const CheckboxItem: NativeExtendingComponent<
       style={local.mt ? "margin-top: 20px" : ""}
     >
       <div class={classes.checkbox}>
-        <CheckIcon state={checkboxProps.checked} />
+        <CheckIcon state={!!checkboxProps.checked} />
         <input type="checkbox" use:focusring use:tooltip={local.tooltip} id={id} {...checkboxProps} />
       </div>
       <Show when={local.children} keyed={false}>

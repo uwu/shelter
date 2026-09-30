@@ -38,18 +38,18 @@ export const renderSolidInReact = (comp: Component<any>, props?: any) => {
 
     componentDidMount() {
       const render = () => {
-        const [component, props] = this.propsRef.current[0]();
+        const [component, props] = this.propsRef.current![0]();
         return component(props);
       };
 
-      this.divRef.current.innerHTML = "";
-      this.divRef.current.append((<ReactiveRoot>{render()}</ReactiveRoot>) as HTMLDivElement);
+      this.divRef.current!.innerHTML = "";
+      this.divRef.current!.append((<ReactiveRoot>{render()}</ReactiveRoot>) as HTMLDivElement);
     }
 
-    shouldComponentUpdate(nextProps /*, _nextState, _nextContext*/) {
+    shouldComponentUpdate(nextProps: any /*, _nextState, _nextContext*/) {
       // don't let react rerender EVER in case it fucks with our tree
       // - we want to handle any changes using solid's reactivity.
-      this.propsRef.current[1]([nextProps.comp, nextProps.props]);
+      this.propsRef.current![1]([nextProps.comp, nextProps.props]);
       return false;
     }
   }

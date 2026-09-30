@@ -1,7 +1,7 @@
 import { promisify } from "util";
 import { execFile } from "child_process";
 import { formatISO9075 } from "date-fns";
-import pkg from "../../package.json" assert { type: "json" };
+import pkg from "../../package.json" with { type: "json" };
 
 async function tryGetGitHash() {
   try {

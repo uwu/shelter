@@ -9,7 +9,7 @@ const isInitedSymbol = Symbol();
 const initPromiseSymbol = Symbol();
 
 // taken from valtio source code and tweaked
-const shouldProxy = (x) =>
+const shouldProxy = (x: unknown) =>
   typeof x === "object" &&
   x !== null &&
   (Array.isArray(x) || !(Symbol.iterator in x)) &&
@@ -38,7 +38,7 @@ const deepWrapValtioStorage = <T extends object>(
       if (property === initPromiseSymbol) return initState[0];
 
       const generateValue = () => {
-        const value = unwrapped[property];
+        const value = (unwrapped as any)[property];
 
         return shouldProxy(value) ? deepWrapValtioStorage(value, flush, initState) : value;
       };
@@ -54,7 +54,7 @@ const deepWrapValtioStorage = <T extends object>(
 
     set(target, property, value, receiver) {
       // deeply unwrap shelter storages
-      const unwrapStoragesDeep = (value: unknown) => {
+      const unwrapStoragesDeep = (value: any) => {
         if (typeof value !== "object") return;
 
         for (const k in value) {
@@ -71,19 +71,19 @@ const deepWrapValtioStorage = <T extends object>(
     },
   });
 
-export const isShelterStorage = (shelterProxy: object) => !!shelterProxy?.[isShelterProxySymbol];
+export const isShelterStorage = (shelterProxy: object) => !!(shelterProxy as any)?.[isShelterProxySymbol];
 
 export function underlyingValtioProxy<T extends object>(shelterProxy: T): T {
   if (!isShelterStorage(shelterProxy))
     throw new Error("Cannot get underlying valtio proxy from an object that is not a shelter storage proxy");
 
-  return shelterProxy[getValtioSymbol] as T;
+  return (shelterProxy as any)[getValtioSymbol] as T;
 }
 
 export function flush(shelterProxy: object) {
   if (!isShelterStorage(shelterProxy)) throw new Error("Cannot flush an object that is not a shelter storage proxy");
 
-  return shelterProxy[flushSymbol]();
+  return (shelterProxy as any)[flushSymbol]();
 }
 
 export function createShelterStorage(backingName: string) {
@@ -108,7 +108,7 @@ export function createShelterStorage(backingName: string) {
     .then(() => entries(backingName))
     .then((entries) => {
       for (const [k, v] of entries as [string, unknown][]) {
-        if (!(k in store)) store[k] = v;
+        if (!(k in store)) (store as any)[k] = v;
       }
 
       initRes();
@@ -152,9 +152,9 @@ export function getSnapshotSignal<T extends object>(shelterProxy: T) {
 // stuff like this is necessary when you *need* to have gets return persisted values as well as newly set ones
 
 /** if the store is or is not yet connected to IDB */
-export const isInited = (store: unknown) => !!store[isInitedSymbol];
+export const isInited = (store: any) => !!store[isInitedSymbol];
 /** returns a promise that resolves when the store is connected to IDB (if connected, resolves instantly) */
-export const waitInit = (store: unknown) => store[initPromiseSymbol];
+export const waitInit = (store: any) => store[initPromiseSymbol];
 
 /** sets default values for the store. these only apply once the store connects to IDB to prevent overwriting persist */
 export const defaults = <T extends object = any>(store: T, fallbacks: T) =>
