@@ -1,3 +1,4 @@
 *
-!dist/**/*
+!dist
+!dist/**
 !tsconfig.json
