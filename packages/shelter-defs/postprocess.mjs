@@ -9,12 +9,10 @@ async function fixShelterUi(currentDir, depth = 0) {
     const statted = await stat(join(currentDir, entry));
 
     if (statted.isDirectory()) await fixShelterUi(join(currentDir, entry), depth + 1);
-    else if (entry.endsWith(".d.ts"))
-      await replace(
-        join(currentDir, entry),
-        'from "@uwu/shelter-ui',
-        `from "${"../".repeat(depth)}shelter-ui/src/index`,
-      );
+    else if (entry.endsWith(".d.ts")) {
+      await replace(join(currentDir, entry), '"@uwu/shelter-ui/dist/', `"${"../".repeat(depth)}shelter-ui/src/`);
+      await replace(join(currentDir, entry), '"@uwu/shelter-ui', `"${"../".repeat(depth)}shelter-ui/src/index`);
+    }
   }
 }
 
