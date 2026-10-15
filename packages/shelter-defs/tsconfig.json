@@ -1,5 +1,12 @@
 {
-  "include": ["rootdefs.ts", "../*/*.d.ts", "../shelter/src/**/*", "../shelter-ui/src/**/*", "../../globals.d.ts"],
+  "include": [
+    "rootdefs.ts",
+    "../*/*.d.ts",
+    "../shelter/src/**/*",
+    "../shelter-ui/src/**/*",
+    "../shelter-storage/**/*",
+    "../../globals.d.ts"
+  ],
   "compilerOptions": {
     "rootDir": "..",
     "target": "ESNext",
