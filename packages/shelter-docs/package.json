@@ -11,7 +11,7 @@
     "@shikijs/vitepress-twoslash": "^3.4.0",
     "babel-preset-solid": "1.6.16",
     "unocss": "^66.1.0",
-    "vite-plugin-solid": "^2.10.1",
+    "vite-plugin-solid": "2.6.1",
     "vitepress": "^1.6.3"
   },
   "dependencies": {

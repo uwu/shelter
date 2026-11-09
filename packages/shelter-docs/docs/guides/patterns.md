@@ -186,9 +186,7 @@ The pattern can look like this:
 function MyComponent() {
   // queueMicrotask to give React enough time to finish the rerender
   shelter.solid.onCleanup(() => queueMicrotask(insertComponent))
-  return (
-    <h1>My Header</h1>
-  )
+  return<h1>My Header</h1>
 }
 
 function insertComponent() {
