@@ -187,9 +187,7 @@ function MyComponent() {
   // queueMicrotask to give React enough time to finish the rerender
   shelter.solid.onCleanup(() => queueMicrotask(insertComponent))
   return (
-    <ReactiveRoot>
-      <h1>My Header</h1>
-    </ReactiveRoot>
+    <h1>My Header</h1>
   )
 }
 
@@ -199,7 +197,7 @@ function insertComponent() {
 
   const parent = document.querySelector(`[class*="whatever"]`)
   if (parent) {
-    parent.append(<MyComponent />)
+    parent.append(<ReactiveRoot><MyComponent /></ReactiveRoot>);
   } else {
     // long lived observer here just in case
   }
